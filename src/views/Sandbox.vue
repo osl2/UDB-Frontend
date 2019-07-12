@@ -1,15 +1,15 @@
 <template>
-    <SandboxQuery></SandboxQuery>
+    <Query></Query>
 </template>
 
 <script lang="ts">
 
     import {Component, Vue} from 'vue-property-decorator';
-    import SandboxQuery from '@/components/SandboxQuery.vue';
+    import Query from '@/components/Query.vue';
 
     @Component({
         components: {
-            SandboxQuery,
+            Query,
         },
     })
 
