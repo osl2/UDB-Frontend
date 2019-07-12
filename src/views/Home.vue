@@ -1,22 +1,18 @@
 <template>
-  <div class="home">
-    <HelloWorld msg="test"></HelloWorld>
-  </div>
+    <div class="home">
+        <StartPage></StartPage>
+    </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+  import {Component, Vue} from 'vue-property-decorator';
+  import StartPage from '@/components/StartPage.vue'; // @ is an alias to /src
 
-function test() {
-  console.log("Test")
-}
-test();
-
-@Component({
-  components: {
-    HelloWorld,
-  },
-})
-export default class Home extends Vue {}
+  @Component({
+    components: {
+      StartPage,
+    },
+  })
+  export default class Home extends Vue {
+  }
 </script>
