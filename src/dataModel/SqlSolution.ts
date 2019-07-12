@@ -7,7 +7,7 @@ import Solution from '@/dataModel/Solution';
  * stored as an attribute in the class SqlTask, a subtask of the class Subtask.
  */
 
-class SqlSolution extends Solution {
+export default class SqlSolution extends Solution {
     private _querySolution: String;
     private _columns: String[];
     private _values: String[][];

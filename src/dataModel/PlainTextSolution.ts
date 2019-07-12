@@ -7,7 +7,7 @@ import Solution from '@/dataModel/Solution';
  * stored as an attribute in the class PlainTextTask, a subtask of the class Subtask.
  */
 
-class PlainTextSolution extends Solution {
+export default class PlainTextSolution extends Solution {
     private _text: String;
 
     /**

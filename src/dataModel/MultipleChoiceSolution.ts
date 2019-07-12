@@ -7,7 +7,7 @@ import Solution from '@/dataModel/Solution';
  * stored as an attribute in the class MultipleChoiceTask, a subtask of the class Subtask.
  */
 
-class MultipleChoiceSolution extends Solution {
+export default class MultipleChoiceSolution extends Solution {
 
     private _choices:number[];
 
