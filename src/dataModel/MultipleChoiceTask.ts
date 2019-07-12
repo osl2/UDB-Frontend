@@ -1,5 +1,6 @@
 import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
 import Subtask from '@/dataModel/Subtask';
+import Task from '@/dataModel/Task';
 
 /**
  * The class MultipleChoiceTask represents the type of subtask where there are multiple answers to choose from.
@@ -9,7 +10,7 @@ class MultipleChoiceTask extends Subtask {
     private _answerOptions: String[];
 
 
-    constructor(id: String, parent: any, solution: MultipleChoiceSolution | undefined, instruction: String,
+    constructor(id: String, parent: Task, solution: MultipleChoiceSolution | undefined, instruction: String,
                 isSolutionVeryfiable: boolean, answerOptions: String[]) {
         super(id, parent, solution, instruction, isSolutionVeryfiable);
         this._answerOptions = answerOptions;

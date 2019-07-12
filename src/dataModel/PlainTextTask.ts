@@ -1,5 +1,6 @@
 import Subtask from '@/dataModel/Subtask';
 import PlainTextSolution from "@/dataModel/Solution";
+import Task from '@/dataModel/Task';
 
 /**
  * The class PlainTextTask represents the type of subtask where an answer just needs
@@ -8,7 +9,7 @@ import PlainTextSolution from "@/dataModel/Solution";
  */
 export default class PlainTextTask extends Subtask{
 
-    constructor(id: String, parent: any, solution: PlainTextSolution | undefined,
+    constructor(id: String, parent: Task, solution: PlainTextSolution | undefined,
                 instruction: String, isSolutionVeryfiable: boolean) {
         super(id, parent, solution, instruction, isSolutionVeryfiable);
     }

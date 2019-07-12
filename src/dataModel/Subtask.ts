@@ -1,5 +1,6 @@
 import Solution from '@/dataModel/Solution';
 import DataModel from '@/dataModel/DataModel';
+import Task from '@/dataModel/Task';
 
 /**
  * The abstract class Subtask represents a subtask of a task.
@@ -8,7 +9,7 @@ import DataModel from '@/dataModel/DataModel';
 
 export default abstract class Subtask extends DataModel{
     private _id: String;
-    private _parent: any; //TODO change type when Task is written!!!
+    private _parent: Task;
     private _solution: Solution | undefined; //A subtask does not always have a solution
     private _instruction: String;
     private _isSolutionVeryfiable: boolean;
@@ -23,7 +24,7 @@ export default abstract class Subtask extends DataModel{
      * @param isSolutionVeryfiable: This attribute tells if the teacher inserted a solution and
      *                              set the option for the student to verify their solution with it.
      */
-    constructor(id: String, parent: any, solution: Solution | undefined,
+    constructor(id: String, parent: Task, solution: Solution | undefined,
                 instruction: String, isSolutionVeryfiable: boolean) {
         super();
         this._id = id;
