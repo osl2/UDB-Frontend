@@ -1,5 +1,5 @@
 import Subtask from '@/dataModel/Subtask';
-import PlainTextSolution from "@/dataModel/Solution";
+import PlainTextSolution from "@/dataModel/PlainTextSolution";
 import Task from '@/dataModel/Task';
 
 /**
