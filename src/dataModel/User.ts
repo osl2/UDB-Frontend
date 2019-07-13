@@ -1,4 +1,4 @@
-//TODO import UserGroup from '@/dataModel/UserGroup';
+import UserGroup from '@/dataModel/UserGroup';
 
 /**
  *
@@ -10,7 +10,7 @@ export default class User {
     private _password: String;
     private _salt: String;
     private _token: String;
-    private _userGroup: any; //TODO USERGROUP ENUM hinzufügen
+    private _userGroup: UserGroup;
 
     /**
      *
@@ -22,7 +22,7 @@ export default class User {
      * @param userGroup
      */
 
-    constructor(id: String, name: String, password: String, salt: String, token: String, userGroup: any) {
+    constructor(id: String, name: String, password: String, salt: String, token: String, userGroup: UserGroup) {
         this._id = id;
         this._name = name;
         this._password = password;
@@ -75,11 +75,11 @@ export default class User {
         this._token = value;
     }
 
-    get userGroup(): any {
+    get userGroup(): UserGroup {
         return this._userGroup;
     }
 
-    set userGroup(value: any) {
+    set userGroup(value: UserGroup) {
         this._userGroup = value;
     }
 }
