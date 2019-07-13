@@ -2,7 +2,8 @@ import DataModel from '@/dataModel/DataModel';
 import Task from '@/dataModel/Task';
 
 /**
- * 
+ * The class Worksheet represents a worksheet provided by a teacher.
+ * Students can solve the worksheet in the matching course.
  */
 
 export default class Worksheet extends DataModel {
@@ -13,12 +14,13 @@ export default class Worksheet extends DataModel {
     private _isSolutionOnline: boolean;
 
     /**
-     *
-     * @param id
-     * @param name
-     * @param tasks
-     * @param isOnline
-     * @param isSolutionOnline
+     * The constructor of this class.
+     * @param id: The unique id of a worksheet.
+     * @param name: The name of the worksheet set by a teacher.
+     * @param tasks: An array of tasks which are assigned to the worksheet.
+     * @param isOnline: The information if a worksheet is online meaning it can be solved in the course.
+     * @param isSolutionOnline: The information if the teacher published the solution sheet
+     *        so it can get downloaded by students of the course.
      */
 
     constructor(id: String, name: String, tasks: Task[], isOnline: boolean, isSolutionOnline: boolean) {
@@ -31,7 +33,7 @@ export default class Worksheet extends DataModel {
     }
 
     /**
-     *
+     * The following methods are getter and setter for each attribute in this class.
      */
 
     get id(): String {

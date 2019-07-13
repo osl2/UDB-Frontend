@@ -1,7 +1,8 @@
 import UserGroup from '@/dataModel/UserGroup';
 
 /**
- *
+ * The class user stores information about the user. With information like the
+ * user group for example restrictions can be made in the user interface.
  */
 
 export default class User {
@@ -13,13 +14,13 @@ export default class User {
     private _userGroup: UserGroup;
 
     /**
-     *
-     * @param id
-     * @param name
-     * @param password
-     * @param salt
-     * @param token
-     * @param userGroup
+     * The constructor of the class.
+     * @param id: The unique id of the user.
+     * @param name: The username of the user.
+     * @param password: The password of the user. //TODO in Client speichern??
+     * @param salt: The salt for the password hash. //TODO getter entfernen?
+     * @param token: The JSON Web Token for authentication.
+     * @param userGroup: The user group of the current user.
      */
 
     constructor(id: String, name: String, password: String, salt: String, token: String, userGroup: UserGroup) {
@@ -32,7 +33,7 @@ export default class User {
     }
 
     /**
-     *
+     * The following methods are getter and setter for each attribute in this class.
      */
 
     get id(): String {
