@@ -1,19 +1,24 @@
 <template>
     <div>
-
+        <b-button class="switchBtn"
+                  @click="switchComponent">
+            Wechsel
+        </b-button>
+        <div>
         <b-container class="queryContainer">
+            <b-row></b-row>
             <b-row>
                 <b-col sm="10" offset="1">
                     <component
                             :is="dynamicComponent"
                             @executeQuery="executeQuery"
                     ></component>
-                    <b-button @click="switchComponent"> Wechsel </b-button>
                 </b-col>
             </b-row>
-
             {{query}}
         </b-container>
+        </div>
+
     </div>
 </template>
 
@@ -65,5 +70,8 @@
 </script>
 
 <style scoped>
+    .switchBtn{
+        float: right;
+    }
 
 </style>
