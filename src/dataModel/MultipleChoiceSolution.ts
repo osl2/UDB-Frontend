@@ -9,7 +9,7 @@ import Solution from '@/dataModel/Solution';
 
 export default class MultipleChoiceSolution extends Solution {
 
-    private _choices:number[];
+    private _choices: number[];
 
     /**
      * The constructor for this class.

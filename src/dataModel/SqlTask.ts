@@ -6,12 +6,12 @@ import Task from '@/dataModel/Task';
  * The class SqlTask represents the type of subtask where an answer is a sql statement.
  * Because of that the solution should be an instance of the class SqlSolution.
  */
-class SqlTask extends Subtask{
+class SqlTask extends Subtask {
     private _isPointAndClickAllowed: boolean;
     private _doesRowOrderMatter: boolean;
 
 
-    constructor(id: String, parent: Task, solution: SqlSolution | undefined, instruction: String,
+    constructor(id: string, parent: Task, solution: SqlSolution | undefined, instruction: string,
                 isSolutionVeryfiable: boolean, isPointAndClickAllowed: boolean, doesRowOrderMatter: boolean) {
         super(id, parent, solution, instruction, isSolutionVeryfiable);
         this._isPointAndClickAllowed = isPointAndClickAllowed;

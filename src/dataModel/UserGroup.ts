@@ -11,7 +11,7 @@ enum UserGroup {
     Teacher,
     Student,
     Unauthenticated,
-    Admin
+    Admin,
 }
 
 export default UserGroup;

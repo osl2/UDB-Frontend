@@ -8,9 +8,9 @@ import Solution from '@/dataModel/Solution';
  */
 
 export default class SqlSolution extends Solution {
-    private _querySolution: String;
-    private _columns: String[];
-    private _values: String[][];
+    private _querySolution: string;
+    private _columns: string[];
+    private _values: string[][];
 
 
     /**
@@ -22,7 +22,7 @@ export default class SqlSolution extends Solution {
      * @param values: The attribute values represents values of
      *                the result after executing the querySolution.
      */
-    constructor(querySolution: String, columns: String[], values: String[][]) {
+    constructor(querySolution: string, columns: string[], values: string[][]) {
         super();
         this._querySolution = querySolution;
         this._columns = columns;
@@ -33,27 +33,27 @@ export default class SqlSolution extends Solution {
      * The following methods are getter and setter for each attribute in this class.
      */
 
-    public get querySolution(): String {
+    public get querySolution(): string {
         return this._querySolution;
     }
 
-    public set querySolution(querySolution: String) {
+    public set querySolution(querySolution: string) {
         this._querySolution = querySolution;
     }
 
-    public get columns(): String[] {
+    public get columns(): string[] {
         return this._columns;
     }
 
-    public set columns(columns: String[]) {
+    public set columns(columns: string[]) {
         this._columns = columns;
     }
 
-    public get values(): String[][] {
+    public get values(): string[][] {
         return this._values;
     }
 
-    public set values(value: String[][]) {
+    public set values(value: string[][]) {
         this._values = value;
     }
 }

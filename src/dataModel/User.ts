@@ -6,11 +6,11 @@ import UserGroup from '@/dataModel/UserGroup';
  */
 
 export default class User {
-    private _id: String;
-    private _name: String;
-    private _password: String;
-    private _salt: String;
-    private _token: String;
+    private _id: string;
+    private _name: string;
+    private _password: string;
+    private _salt: string;
+    private _token: string;
     private _userGroup: UserGroup;
 
     /**
@@ -23,7 +23,7 @@ export default class User {
      * @param userGroup: The user group of the current user.
      */
 
-    constructor(id: String, name: String, password: String, salt: String, token: String, userGroup: UserGroup) {
+    constructor(id: string, name: string, password: string, salt: string, token: string, userGroup: UserGroup) {
         this._id = id;
         this._name = name;
         this._password = password;
@@ -36,43 +36,43 @@ export default class User {
      * The following methods are getter and setter for each attribute in this class.
      */
 
-    get id(): String {
+    get id(): string {
         return this._id;
     }
 
-    set id(value: String) {
+    set id(value: string) {
         this._id = value;
     }
 
-    get name(): String {
+    get name(): string {
         return this._name;
     }
 
-    set name(value: String) {
+    set name(value: string) {
         this._name = value;
     }
 
-    get password(): String {
+    get password(): string {
         return this._password;
     }
 
-    set password(value: String) {
+    set password(value: string) {
         this._password = value;
     }
 
-    get salt(): String {
+    get salt(): string {
         return this._salt;
     }
 
-    set salt(value: String) {
+    set salt(value: string) {
         this._salt = value;
     }
 
-    get token(): String {
+    get token(): string {
         return this._token;
     }
 
-    set token(value: String) {
+    set token(value: string) {
         this._token = value;
     }
 

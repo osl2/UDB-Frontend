@@ -4,5 +4,7 @@
  */
 
 export default abstract class Solution {
-    protected constructor(){}
+    protected constructor() {
+
+    }
 }

@@ -6,9 +6,9 @@ import DataModel from '@/dataModel/DataModel';
  * database when they start working on the task.
  */
 
-export default class Database extends DataModel{
-    private _id: String;
-    private _name: String;
+export default class Database extends DataModel {
+    private _id: string;
+    private _name: string;
     private _content: any;
 
     /**
@@ -18,7 +18,7 @@ export default class Database extends DataModel{
      * @param content: The content of the database.
      */
 
-    constructor(id: String, name: String, content: any) {
+    constructor(id: string, name: string, content: any) {
         super();
         this._id = id;
         this._name = name;
@@ -29,19 +29,19 @@ export default class Database extends DataModel{
      * The following methods are getter and setter for each attribute in this class.
      */
 
-    get id(): String {
+    get id(): string {
         return this._id;
     }
 
-    set id(value: String) {
+    set id(value: string) {
         this._id = value;
     }
 
-    get name(): String {
+    get name(): string {
         return this._name;
     }
 
-    set name(value: String) {
+    set name(value: string) {
         this._name = value;
     }
 
