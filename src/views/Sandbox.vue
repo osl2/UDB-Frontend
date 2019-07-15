@@ -3,9 +3,13 @@
     <b-container class="bv-example-row">
         <b-row>
             <b-col sm="10" offset="1">
-                <Query></Query>
+                <Query
+                        @executeQuery="executeQuery"
+                ></Query>
             </b-col>
         </b-row>
+
+        {{query}}
     </b-container>
     </div>
 </template>
@@ -19,6 +23,16 @@
     export default Vue.extend({
         components: {
             Query,
+        },
+        data() {
+            return {
+                query: '',
+            }
+        },
+        methods: {
+            executeQuery: function(query: string){
+                this.query = query;
+            }
         }
     })
 

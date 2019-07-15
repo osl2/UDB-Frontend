@@ -7,6 +7,9 @@
                 rows="3"
                 max-rows="6"
         ></b-form-textarea>
+        <b-button @click="$emit('executeQuery', query)">
+            Ausführen
+        </b-button>
     </div>
 </template>
 
