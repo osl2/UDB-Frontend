@@ -1,17 +1,27 @@
 <template>
     <div>
-        <h2>Hier kommt freier modus</h2>
+        <b-form-textarea
+                id="textarea"
+                v-model="query"
+                placeholder="SQL-Statement eingeben"
+                rows="3"
+                max-rows="6"
+        ></b-form-textarea>
     </div>
 </template>
 
 <script lang="ts">
-    import { Component, Prop, Vue } from 'vue-property-decorator';
+    import Vue  from 'vue';
 
-    @Component
-    export default class Query extends Vue {
-    }
+    export default Vue.extend({
+            data() {
+                return {
+                    query: '',
+                }
+            },
+        }
+    )
 </script>
 
 <style scoped>
-
 </style>
