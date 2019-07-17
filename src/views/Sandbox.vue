@@ -11,10 +11,11 @@
                     :is="dynamicComponent"
                     @executeQuery="executeQuery"
             ></component>
-            {{query}}
-            {{lastQueryExecuted}}
         </div>
         <div>
+            <p v-show="gotFirstQueryExecuted">
+                Ergebnis des zuletzt ausgeführten SQL-Statements({{lastQueryExecuted}}):
+            </p>
             <QueryResult :queryResult="queryResult"
                          v-show="gotFirstQueryExecuted"
             ></QueryResult>
@@ -44,6 +45,7 @@
                 query: '',
                 switchButtonText: 'Point-and-Click Feature',
                 lastQueryExecuted: '',
+                //TODO Array nicht hard coden
                 queryResult: [
                     {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
                     {Name: 'Müller', Vorname: 'Herbert', Alter: 29},

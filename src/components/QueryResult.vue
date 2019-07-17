@@ -1,7 +1,5 @@
 <template>
-    <div class="table">
-        Hier kommt ein Ergebnis hin.
-        {{queryResult}}
+    <div>
         <b-table striped hover :items="queryResult"></b-table>
     </div>
 </template>
@@ -18,6 +16,7 @@
 
 .table {
     border: 1px lightgray solid;
+    border-radius: 3px;
 }
 
 </style>
