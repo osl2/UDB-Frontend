@@ -14,6 +14,8 @@
                 Ausführen
             </b-button>
         </div>
+        <div class="clear">
+        </div>
     </div>
 </template>
 

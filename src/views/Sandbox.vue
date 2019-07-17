@@ -5,7 +5,7 @@
                 {{switchButtonText}}
             </b-button>
         </div>
-        <div>
+        <div class="clear">
             <component
                     class="sqlComponent"
                     :is="dynamicComponent"
@@ -90,11 +90,11 @@
         width: 80%;
         margin: auto;
     }
-    /*.switchButton {
+    .switchButton {
         float: right;
         margin-top: 15px;
         margin-bottom: 15px;
-    }*/
+    }
     /*.container .btn {
         float: right;
         margin-top: 15px;
@@ -106,4 +106,10 @@
     }
 
 
+</style>
+<!-- TODO auslagern in globales CSS sheet -->
+<style>
+    .clear {
+        clear: both;
+    }
 </style>
