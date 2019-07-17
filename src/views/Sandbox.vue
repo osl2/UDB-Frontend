@@ -15,8 +15,8 @@
             {{lastQueryExecuted}}
         </div>
         <div>
-            <QueryResult :queryResultColumnNames="queryResultColumnNames"
-                         :queryResultValues="queryResultValues"
+            <QueryResult :queryResult="queryResult"
+                         v-show="gotFirstQueryExecuted"
             ></QueryResult>
         </div>
 
@@ -40,16 +40,20 @@
         data() {
             return {
                 isPointAndClickActive: false,
+                gotFirstQueryExecuted: false,
                 query: '',
                 switchButtonText: 'Point-and-Click Feature',
                 lastQueryExecuted: '',
-                queryResultColumnNames:['Name', 'Vorname'],
-                queryResultValues: [['Schmidt', 'Müller'], ['Anna', 'Herbert']],
+                queryResult: [
+                    {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
+                    {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
+                ],
 
             };
         },
         methods: {
             executeQuery: function(query: string) {
+                this.gotFirstQueryExecuted = true;
                 this.query = query;
                 this.lastQueryExecuted = query;
                 //TODO executeQuery()

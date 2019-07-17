@@ -1,22 +1,8 @@
 <template>
     <div class="table">
         Hier kommt ein Ergebnis hin.
-        {{queryResultValues}}
-        {{queryResultColumnNames}}
-        <table class="table">
-            <thead>
-            <tr>
-                <th v-for="columnName in queryResultColumnNames"
-                    scope="col">{{columnName}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="column in queryResultValues">
-                <td v-for="value in column">{{value}}</td>
-            </tr>
-            </tbody>
-        </table>
-
+        {{queryResult}}
+        <b-table striped hover :items="queryResult"></b-table>
     </div>
 </template>
 
@@ -24,7 +10,7 @@
     import Vue from 'vue';
 
     export default Vue.extend({
-        props: ['queryResultColumnNames', 'queryResultValues'],
+        props: ['queryResult'],
     })
 </script>
 
