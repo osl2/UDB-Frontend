@@ -21,7 +21,7 @@
             ></QueryResult>
         </div>
         <div>
-            <!--<PointAndClick></PointAndClick>-->
+            <PointAndClick></PointAndClick>
         </div>
 
     </div>
@@ -34,14 +34,14 @@
     import Query from '@/components/Query.vue';
     import Test from '@/components/Test.vue';
     import QueryResult from '@/components/QueryResult.vue';
-    //import PointAndClick from '@/components/PointAndClick.vue';
+    import PointAndClick from '@/components/PointAndClick.vue';
 
     export default Vue.extend({
         components: {
             Query,
             Test,
             QueryResult,
-            //PointAndClick,
+            PointAndClick,
         },
         data() {
             return {

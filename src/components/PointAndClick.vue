@@ -1,5 +1,5 @@
 <template>
-    <div id="blockDiv">
+    <div id="blockDiv" style="height: 800px; width: 70%; float:left">
         <xml id="toolbox" style="display: none">
             <block type="block_alter"></block>
         </xml>
@@ -23,7 +23,7 @@
             //blocklyScript.type = 'text/javascript';
             //blocklyScript.setAttribute('src', '@/toVue/blockly_compressed.js');
             //document.head.appendChild(blocklyScript);
-            //let demoWorkspace = Blockly.inject('blockDiv', {toolbox: document.getElementById('toolbox')});
+            let demoWorkspace = Blockly.inject('blockDiv', {toolbox: document.getElementById('toolbox')});
         }
     })
 </script>
