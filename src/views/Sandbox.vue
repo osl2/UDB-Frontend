@@ -20,6 +20,9 @@
                          v-show="gotFirstQueryExecuted"
             ></QueryResult>
         </div>
+        <div>
+            <!--<PointAndClick></PointAndClick>-->
+        </div>
 
     </div>
 </template>
@@ -31,12 +34,14 @@
     import Query from '@/components/Query.vue';
     import Test from '@/components/Test.vue';
     import QueryResult from '@/components/QueryResult.vue';
+    //import PointAndClick from '@/components/PointAndClick.vue';
 
     export default Vue.extend({
         components: {
             Query,
             Test,
             QueryResult,
+            //PointAndClick,
         },
         data() {
             return {
