@@ -7,6 +7,8 @@ import VueI18n from 'vue-i18n';
 import './registerServiceWorker';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import de from '@/languages/de.ts';
+import en from '@/languages/en.ts';
 
 Vue.use(BootstrapVue);
 
@@ -15,17 +17,10 @@ Vue.config.productionTip = false;
 Vue.use(VueI18n);
 
 const messages = {
-  de: {
-    standbox: {
-      titleStartpage: 'Freier Modus',
-    },
-  },
-  en: {
-    standbox: {
-      titleStartpage: 'Free mode',
-    },
-  },
+  de: de,
+  en: en,
 };
+
 // Create VueI18n instance with options
 const i18n = new VueI18n({
   locale: 'de', // set locale
