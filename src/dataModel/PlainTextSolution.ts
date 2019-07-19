@@ -8,25 +8,25 @@ import Solution from '@/dataModel/Solution';
  */
 
 export default class PlainTextSolution extends Solution {
-  private _text: string;
+    private _text: string;
 
-  /**
-   * The constructor for this class.
-   * @param text: The attribute text represents the students written answer to the Subtask.
-   */
-  constructor(text: string) {
-    super();
-    this._text = text;
-  }
+    /**
+     * The constructor for this class.
+     * @param text: The attribute text represents the students written answer to the Subtask.
+     */
+    constructor(text: string) {
+        super();
+        this._text = text;
+    }
 
-  /**
-   * The following methods are getter and setter for the attribute text.
-   */
-  get text(): string {
-    return this._text;
-  }
+    /**
+     * The following methods are getter and setter for the attribute text.
+     */
+    get text(): string {
+        return this._text;
+    }
 
-  set text(value: string) {
-    this._text = value;
-  }
+    set text(value: string) {
+        this._text = value;
+    }
 }

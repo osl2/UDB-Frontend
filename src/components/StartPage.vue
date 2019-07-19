@@ -1,13 +1,9 @@
 <template>
     <div class="startpage">
-
-
         <div class="card-deck mb-3 text-center">
-            <StartPagePanel title="test" path="/sandbox" description="desc" buttonName="Go"></StartPagePanel>
-            <StartPagePanel title="test" path="/sandbox" description="desc" buttonName="Go"></StartPagePanel>
-            <StartPagePanel title="test" path="/sandbox" description="desc" buttonName="Go"></StartPagePanel>
-
-
+            <StartPagePanel :title="$t('sandbox.titleStartPage')" path="/sandbox" description="desc" buttonName="Go"></StartPagePanel>
+            <StartPagePanel title="Lehrerbereich" path="/" description="desc" buttonName="Go"></StartPagePanel>
+            <StartPagePanel title="Kursbereich" path="/" description="desc" buttonName="Go"></StartPagePanel>
         </div>
     </div>
 </template>

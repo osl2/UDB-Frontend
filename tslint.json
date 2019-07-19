@@ -10,7 +10,7 @@
   },
   "rules": {
     "quotemark": [
-      true,
+      false,
       "single"
     ],
     "indent": [

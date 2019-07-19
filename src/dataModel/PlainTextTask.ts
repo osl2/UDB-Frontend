@@ -1,5 +1,5 @@
 import Subtask from '@/dataModel/Subtask';
-import PlainTextSolution from '@/dataModel/Solution';
+import PlainTextSolution from '@/dataModel/PlainTextSolution';
 import Task from '@/dataModel/Task';
 
 /**
@@ -9,8 +9,8 @@ import Task from '@/dataModel/Task';
  */
 export default class PlainTextTask extends Subtask {
 
-  constructor(id: string, parent: Task, solution: PlainTextSolution | undefined,
-              instruction: string, isSolutionVeryfiable: boolean) {
-    super(id, parent, solution, instruction, isSolutionVeryfiable);
-  }
+    constructor(id: string, parent: Task, solution: PlainTextSolution | undefined,
+                instruction: string, isSolutionVeryfiable: boolean) {
+        super(id, parent, solution, instruction, isSolutionVeryfiable);
+    }
 }
