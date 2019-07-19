@@ -20,9 +20,7 @@
                          v-show="gotFirstQueryExecuted"
             ></QueryResult>
         </div>
-        <div>
-            <PointAndClick></PointAndClick>
-        </div>
+
 
     </div>
 </template>
@@ -80,7 +78,7 @@
             dynamicComponent: function () {
                 if (this.isPointAndClickActive) {
                     this.switchButtonText = 'Zurück zum Textfeld';
-                    return Test;
+                    return PointAndClick;
                 } else {
                     this.switchButtonText = 'Point-and-Click Feature aktivieren';
                     return Query;

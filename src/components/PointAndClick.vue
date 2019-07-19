@@ -1,5 +1,14 @@
 <template>
-    <div id="blocklyDiv" style="height: 600px; width: 100%; float:left">
+    <div>
+        <div id="blocklyDiv" style="height: 600px; width: 100%; float:left">
+        </div>
+        <div class="btn">
+            <b-button @click="$emit('executeQuery', code)">
+                Ausführen
+            </b-button>
+        </div>
+        <div class="clear">
+        </div>
     </div>
 </template>
 
@@ -55,5 +64,7 @@
 </script>
 
 <style scoped>
-
+    .btn {
+        float: right;
+    }
 </style>
