@@ -4,61 +4,61 @@ import Worksheet from '@/dataModel/Worksheet';
 /**
  *
  */
-export default class Course extends DataModel{
-    private _id: String;
-    private _name: String;
-    private _description: String;
-    private _worksheets: Worksheet[];
+export default class Course extends DataModel {
+  private _id: string;
+  private _name: string;
+  private _description: string;
+  private _worksheets: Worksheet[];
 
-    /**
-     *
-     * @param id
-     * @param name
-     * @param description
-     * @param worksheets
-     */
+  /**
+   *
+   * @param id
+   * @param name
+   * @param description
+   * @param worksheets
+   */
 
-    constructor(id: String, name: String, description: String, worksheets: Worksheet[]) {
-        super();
-        this._id = id;
-        this._name = name;
-        this._description = description;
-        this._worksheets = worksheets;
-    }
+  constructor(id: string, name: string, description: string, worksheets: Worksheet[]) {
+    super();
+    this._id = id;
+    this._name = name;
+    this._description = description;
+    this._worksheets = worksheets;
+  }
 
-    /**
-     *
-     */
+  /**
+   *
+   */
 
-    get id(): String {
-        return this._id;
-    }
+  get id(): string {
+    return this._id;
+  }
 
-    set id(value: String) {
-        this._id = value;
-    }
+  set id(value: string) {
+    this._id = value;
+  }
 
-    get name(): String {
-        return this._name;
-    }
+  get name(): string {
+    return this._name;
+  }
 
-    set name(value: String) {
-        this._name = value;
-    }
+  set name(value: string) {
+    this._name = value;
+  }
 
-    get description(): String {
-        return this._description;
-    }
+  get description(): string {
+    return this._description;
+  }
 
-    set description(value: String) {
-        this._description = value;
-    }
+  set description(value: string) {
+    this._description = value;
+  }
 
-    get worksheets(): Worksheet[] {
-        return this._worksheets;
-    }
+  get worksheets(): Worksheet[] {
+    return this._worksheets;
+  }
 
-    set worksheets(value: Worksheet[]) {
-        this._worksheets = value;
-    }
+  set worksheets(value: Worksheet[]) {
+    this._worksheets = value;
+  }
 }

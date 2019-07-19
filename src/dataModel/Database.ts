@@ -4,50 +4,50 @@ import DataModel from '@/dataModel/DataModel';
  *
  */
 
-export default class Database extends DataModel{
-    private _id: String;
-    private _name: String;
-    private _content: any;
+export default class Database extends DataModel {
+  private _id: string;
+  private _name: string;
+  private _content: any;
 
-    /**
-     *
-     * @param id
-     * @param name
-     * @param content
-     */
+  /**
+   *
+   * @param id
+   * @param name
+   * @param content
+   */
 
-    constructor(id: String, name: String, content: any) {
-        super();
-        this._id = id;
-        this._name = name;
-        this._content = content;
-    }
+  constructor(id: string, name: string, content: any) {
+    super();
+    this._id = id;
+    this._name = name;
+    this._content = content;
+  }
 
-    /**
-     *
-     */
+  /**
+   *
+   */
 
-    get id(): String {
-        return this._id;
-    }
+  get id(): string {
+    return this._id;
+  }
 
-    set id(value: String) {
-        this._id = value;
-    }
+  set id(value: string) {
+    this._id = value;
+  }
 
-    get name(): String {
-        return this._name;
-    }
+  get name(): string {
+    return this._name;
+  }
 
-    set name(value: String) {
-        this._name = value;
-    }
+  set name(value: string) {
+    this._name = value;
+  }
 
-    get content(): any {
-        return this._content;
-    }
+  get content(): any {
+    return this._content;
+  }
 
-    set content(value: any) {
-        this._content = value;
-    }
+  set content(value: any) {
+    this._content = value;
+  }
 }

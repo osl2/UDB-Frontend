@@ -1,85 +1,85 @@
-//TODO import UserGroup from '@/dataModel/UserGroup';
+// TODO import UserGroup from '@/dataModel/UserGroup';
 
 /**
  *
  */
 
 export default class User {
-    private _id: String;
-    private _name: String;
-    private _password: String;
-    private _salt: String;
-    private _token: String;
-    private _userGroup: any; //TODO USERGROUP ENUM hinzufügen
+  private _id: string;
+  private _name: string;
+  private _password: string;
+  private _salt: string;
+  private _token: string;
+  private _userGroup: any; // TODO USERGROUP ENUM hinzufügen
 
-    /**
-     *
-     * @param id
-     * @param name
-     * @param password
-     * @param salt
-     * @param token
-     * @param userGroup
-     */
+  /**
+   *
+   * @param id
+   * @param name
+   * @param password
+   * @param salt
+   * @param token
+   * @param userGroup
+   */
 
-    constructor(id: String, name: String, password: String, salt: String, token: String, userGroup: any) {
-        this._id = id;
-        this._name = name;
-        this._password = password;
-        this._salt = salt;
-        this._token = token;
-        this._userGroup = userGroup;
-    }
+  constructor(id: string, name: string, password: string, salt: string, token: string, userGroup: any) {
+    this._id = id;
+    this._name = name;
+    this._password = password;
+    this._salt = salt;
+    this._token = token;
+    this._userGroup = userGroup;
+  }
 
-    /**
-     *
-     */
+  /**
+   *
+   */
 
-    get id(): String {
-        return this._id;
-    }
+  get id(): string {
+    return this._id;
+  }
 
-    set id(value: String) {
-        this._id = value;
-    }
+  set id(value: string) {
+    this._id = value;
+  }
 
-    get name(): String {
-        return this._name;
-    }
+  get name(): string {
+    return this._name;
+  }
 
-    set name(value: String) {
-        this._name = value;
-    }
+  set name(value: string) {
+    this._name = value;
+  }
 
-    get password(): String {
-        return this._password;
-    }
+  get password(): string {
+    return this._password;
+  }
 
-    set password(value: String) {
-        this._password = value;
-    }
+  set password(value: string) {
+    this._password = value;
+  }
 
-    get salt(): String {
-        return this._salt;
-    }
+  get salt(): string {
+    return this._salt;
+  }
 
-    set salt(value: String) {
-        this._salt = value;
-    }
+  set salt(value: string) {
+    this._salt = value;
+  }
 
-    get token(): String {
-        return this._token;
-    }
+  get token(): string {
+    return this._token;
+  }
 
-    set token(value: String) {
-        this._token = value;
-    }
+  set token(value: string) {
+    this._token = value;
+  }
 
-    get userGroup(): any {
-        return this._userGroup;
-    }
+  get userGroup(): any {
+    return this._userGroup;
+  }
 
-    set userGroup(value: any) {
-        this._userGroup = value;
-    }
+  set userGroup(value: any) {
+    this._userGroup = value;
+  }
 }

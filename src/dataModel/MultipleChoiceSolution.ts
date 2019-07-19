@@ -9,26 +9,27 @@ import Solution from '@/dataModel/Solution';
 
 export default class MultipleChoiceSolution extends Solution {
 
-    private _choices:number[];
+  private _choices: number[];
 
-    /**
-     * The constructor for this class.
-     * @param choices: This attribute represents the choice (or choice) the student
-     *                 chose to be the answer to the multiple choice task.
-     */
-    constructor(choices: number[]) {
-        super();
-        this._choices = choices;
-    }
+  /**
+   * The constructor for this class.
+   * @param choices: This attribute represents the choice (or choice) the student
+   *                 chose to be the answer to the multiple choice task.
+   */
+  constructor(choices: number[]) {
+    super();
+    this._choices = choices;
+  }
 
-    /**
-     * The following methods are getter and setter for the attribute choices.
-     */
-    get choices(): number[] {
-        return this._choices;
-    }
+  /**
+   * The following methods are getter and setter for the attribute choices.
+   */
+  get choices(): number[] {
+    return this._choices;
+  }
 
-    set choices(value: number[]) {
-        this._choices = value;
-    }
+  set choices(value: number[]) {
+    this._choices = value;
+  }
 }
+

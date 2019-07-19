@@ -7,25 +7,25 @@ import Task from '@/dataModel/Task';
  * Because of that the solution should be an instance of the class MultipleChoiceSolution.
  */
 class MultipleChoiceTask extends Subtask {
-    private _answerOptions: String[];
+  private _answerOptions: string[];
 
 
-    constructor(id: String, parent: Task, solution: MultipleChoiceSolution | undefined, instruction: String,
-                isSolutionVeryfiable: boolean, answerOptions: String[]) {
-        super(id, parent, solution, instruction, isSolutionVeryfiable);
-        this._answerOptions = answerOptions;
-    }
+  constructor(id: string, parent: Task, solution: MultipleChoiceSolution | undefined, instruction: string,
+              isSolutionVerifiable: boolean, answerOptions: string[]) {
+    super(id, parent, solution, instruction, isSolutionVerifiable);
+    this._answerOptions = answerOptions;
+  }
 
-    /**
-     * The following methods are getter and setter for the additional attribute in this class.
-     */
+  /**
+   * The following methods are getter and setter for the additional attribute in this class.
+   */
 
 
-    get answerOptions(): String[] {
-        return this._answerOptions;
-    }
+  get answerOptions(): string[] {
+    return this._answerOptions;
+  }
 
-    set answerOptions(value: String[]) {
-        this._answerOptions = value;
-    }
+  set answerOptions(value: string[]) {
+    this._answerOptions = value;
+  }
 }
