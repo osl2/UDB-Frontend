@@ -1,17 +1,20 @@
 <template>
-    <div class="container">
-        <div>
+    <div >
+        <div class="head">
             <h1>{{course.name}}</h1>
             <h2>{{course.description}}</h2>
         </div>
-        <div>
+        <div class="container">
             <WorksheetList
                     :course="course"
+                    @loadWorksheet="loadWorksheet"
             ></WorksheetList>
         </div>
-        <div @loadWorksheet="loadWorksheet">
-            {{worksheetName}}
-            {{isTestVisible}}
+        <div class="container">
+            <SolutionsheetList
+                    :course="course"
+                    @generateSolutionsheet="generateSolutionsheet"
+            ></SolutionsheetList>
         </div>
     </div>
 </template>
@@ -26,7 +29,7 @@
     // TODO entferne hardgecodete Worksheet Daten:
     let worksheet1 = new Worksheet('123', 'Blatt 01', [], true, true);
     let worksheet2 = new Worksheet('456', 'Blatt 02', [], true, false);
-    let worksheet3 = new Worksheet('456', 'Blatt 03', [], true, false);
+    let worksheet3 = new Worksheet('456', 'Blatt 03', [], true, true);
     let worksheet4 = new Worksheet('456', 'Blatt 04', [], true, false);
 
     export default Vue.extend({
@@ -37,15 +40,15 @@
         data() {
             return {
                 course: null,
-                isTestVisible: false,
-                worksheetName: '',
             }
         },
         methods: {
-            loadWorksheet: function(worksheetName: string) {
-                this.isTestVisible = true;
-                this.worksheetName = worksheetName;
-            }
+            loadWorksheet: function(worksheet: Worksheet) {
+                // TODO: route zu WorksheetView mit übergebenem Worksheet
+            },
+            generateSolutionsheet: function(worksheet: Worksheet){
+                // TODO: generateSolutionsheet als PDF + anzeigen
+            },
         },
 
         mounted: function() {
@@ -58,5 +61,13 @@
     .container {
         width: 80%;
         margin: auto;
+    }
+    .head {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        margin-bottom: 35px;
+        text-align: center;
+        background-color: darkcyan;
+        color: white;
     }
 </style>

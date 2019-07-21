@@ -13,10 +13,9 @@
                     </b-card-title>
                     <b-button
                             slot="footer"
-                            @click="$emit('loadWorksheet', 'love')"
+                            @click="$emit('loadWorksheet', worksheet)"
                     >Blatt bearbeiten
                     </b-button>
-                    <div class="clear"></div>
                 </b-card>
             </b-card-group>
         </div>
@@ -36,6 +35,7 @@
         background: lightgray;
         height: 12rem;
         overflow: auto;
+        margin-bottom: 30px;
     }
 
     .card {
@@ -50,7 +50,6 @@
 
     .btn {
         background-color: darkcyan;
-        float: bottom;
     }
 
 </style>
