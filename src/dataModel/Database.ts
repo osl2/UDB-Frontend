@@ -6,7 +6,7 @@ import DataModel from '@/dataModel/DataModel';
  * database when they start working on the task.
  */
 
-export default class Database extends DataModel {
+export class Database extends DataModel {
     private _id: string;
     private _name: string;
     private _content: any;
@@ -53,3 +53,19 @@ export default class Database extends DataModel {
         this._content = value;
     }
 }
+
+export function DatabaseFromJSON(json: any): Database {
+    return new Database(json['id'], json['name'], json['database']);
+}
+
+export function DatabaseToJSON(value?: Database): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'database': value.content,
+        'id': value.id,
+        'name': value.name,
+    };
+}
+
