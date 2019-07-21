@@ -9,12 +9,12 @@
                         v-show="worksheet.isSolutionOnline"
                 >
                     <b-card-title>
-                        Lösungsblatt zu: {{worksheet.name}}
+                        {{$t('courseViewStudent.solutionsheetText')}} {{worksheet.name}}
                     </b-card-title>
                     <b-button
                             slot="footer"
                             @click="$emit('generateSolutionsheet', worksheet)"
-                    >Blatt öffnen
+                    >{{$t('courseViewStudent.showSolutionsheetButton')}}
                     </b-button>
                 </b-card>
             </b-card-group>

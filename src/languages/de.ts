@@ -10,6 +10,11 @@ const de = {
     titleStartPage: 'Freier Modus',
 
   },
+  courseViewStudent: {
+    solveWorksheetButton: 'Blatt bearbeiten',
+    showSolutionsheetButton: 'Blatt öffnen',
+    solutionsheetText:'Lösungsblatt zu: ',
+  },
 };
 export default de;
 

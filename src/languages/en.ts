@@ -9,5 +9,10 @@ const en = {
   sandbox: {
     titleStartPage: 'Free mode',
   },
+  courseViewStudent: {
+    solveWorksheetButton: 'solve sheet',
+    showSolutionsheetButton: 'show sheet',
+    solutionsheetText:'solution sheet of: ',
+  },
 };
 export default en;

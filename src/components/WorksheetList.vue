@@ -14,7 +14,7 @@
                     <b-button
                             slot="footer"
                             @click="$emit('loadWorksheet', worksheet)"
-                    >Blatt bearbeiten
+                    >{{$t('courseViewStudent.solveWorksheetButton')}}
                     </b-button>
                 </b-card>
             </b-card-group>
