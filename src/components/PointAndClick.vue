@@ -42,6 +42,7 @@
             comments: false,
             disable: false,
             maxBlocks: Infinity,
+            maxInstances: {'block_select': 1},
             trashcan: true,
             horizontalLayout: false,
             toolboxPosition: 'start',
