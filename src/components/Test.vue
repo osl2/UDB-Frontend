@@ -3,9 +3,9 @@
         <h3>
             HALLO DAS SWITCHEN FUNKTIONIERT
         </h3>
-    </div>
-    <div>
-        {{apitest}}
+        <div>
+            {{apitest}}
+        </div>
     </div>
 </template>
 
