@@ -1,6 +1,7 @@
 import DataModel from '@/dataModel/DataModel';
 import {SqlJs} from 'sql.js/module';
 
+
 /**
  * The class Database represents a database which a teacher assigns to a
  * task so the students can work on it. The students each get a copy of the
@@ -13,6 +14,7 @@ export default class Database extends DataModel {
 
     /**
      * The constructor of this class.
+     * @param id: The unique id of the database.
      * @param name: The name the teacher can set for the database.
      * @param content: The content of the database.
      */
@@ -35,11 +37,27 @@ export default class Database extends DataModel {
         this._name = value;
     }
 
-    get content(): SqlJs.Database | null {
+    get content(): any {
         return this._content;
     }
 
-    set content(value: SqlJs.Database | null) {
+    set content(value: any) {
         this._content = value;
     }
 }
+
+export function DatabaseFromJSON(json: any): Database {
+    return new Database(json.id, json.name, json.database);
+}
+
+export function DatabaseToJSON(value?: Database): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        database: value.content,
+        id: value.id,
+        name: value.name,
+    };
+}
+

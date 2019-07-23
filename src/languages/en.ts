@@ -9,5 +9,17 @@ const en = {
   sandbox: {
     titleStartPage: 'Free mode',
   },
+  courseViewStudent: {
+    solveWorksheetButton: 'solve sheet',
+    showSolutionsheetButton: 'show sheet',
+    solutionsheetText: 'solution sheet of: ',
+  },
+  sidebar: {
+    courseDropdown: 'my courses',
+    databaseDropdown: 'my databases',
+    profileDropdown: 'profile',
+    settings: 'settings',
+    logout: 'logout',
+  },
 };
 export default en;
