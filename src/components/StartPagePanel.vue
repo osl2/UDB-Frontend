@@ -5,7 +5,7 @@
                 <ul class="list-unstyled mt-3 mb-4">
                     {{ description }}
                 </ul>
-                <router-link tag="button" class="btn btn-lg btn-block btn-primary" :to="path">{{buttonName}}
+                <router-link tag="button" class="btn btn-lg btn-block btn-secondary" :to="path">{{buttonName}}
                 </router-link>
             </div>
         </div>

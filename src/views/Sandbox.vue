@@ -1,15 +1,15 @@
 <template>
-    <div class="container">
+    <div>
+        <DatabaseComponent elementId="sandbox-dropzone-db" ref="databaseComponent"></DatabaseComponent>
         <div class="switchButton">
             <b-button v-on:click="switchComponent">
                 {{switchButtonText}}
             </b-button>
         </div>
         <div class="clear">
-            <component
-                    class="sqlComponent"
-                    :is="dynamicComponent"
-                    @executeQuery="executeQuery"
+            <component class="sqlComponent"
+                       :is="dynamicComponent"
+                       @executeQuery="executeQuery"
             ></component>
         </div>
         <div>
@@ -27,67 +27,67 @@
 
 
 <script lang="ts">
+  import Vue from 'vue';
+  import Query from '@/components/Query.vue';
+  import Test from '@/components/Test.vue';
+  import QueryResult from '@/components/QueryResult.vue';
+  import PointAndClick from '@/components/PointAndClick.vue';
+  import DatabaseComponent from '@/components/DatabaseComponent.vue';
 
-    import Vue from 'vue';
-    import Query from '@/components/Query.vue';
-    import Test from '@/components/Test.vue';
-    import QueryResult from '@/components/QueryResult.vue';
-    import PointAndClick from '@/components/PointAndClick.vue';
+  export default Vue.extend({
+    components: {
+      Query,
+      Test,
+      QueryResult,
+      PointAndClick,
+      DatabaseComponent,
+    },
+    data() {
+      return {
+        isPointAndClickActive: false,
+        gotFirstQueryExecuted: false,
+        query: '',
+        switchButtonText: 'Point-and-Click Feature',
+        lastQueryExecuted: '',
+        // TODO Array nicht hard coden
+        queryResult: [
+          {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
+          {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
+        ],
 
-    export default Vue.extend({
-        components: {
-            Query,
-            Test,
-            QueryResult,
-            PointAndClick,
-        },
-        data() {
-            return {
-                isPointAndClickActive: false,
-                gotFirstQueryExecuted: false,
-                query: '',
-                switchButtonText: 'Point-and-Click Feature',
-                lastQueryExecuted: '',
-                //TODO Array nicht hard coden
-                queryResult: [
-                    {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
-                    {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
-                ],
+      };
+    },
+    methods: {
+      executeQuery(query: string) {
+        this.gotFirstQueryExecuted = true;
+        this.query = query;
+        this.lastQueryExecuted = query;
+        this.queryResult = this.$refs.databaseComponent.database.content.exec(query);
+      },
+      switchComponent() {
+        this.resetQuery();
+        this.isPointAndClickActive = !this.isPointAndClickActive;
 
-            };
-        },
-        methods: {
-            executeQuery: function(query: string) {
-                this.gotFirstQueryExecuted = true;
-                this.query = query;
-                this.lastQueryExecuted = query;
-                //TODO executeQuery()
-            },
-            switchComponent: function() {
-                this.resetQuery();
-                this.isPointAndClickActive = !this.isPointAndClickActive;
+      },
+      resetQuery() {
+        this.query = '';
+      },
 
-            },
-            resetQuery: function() {
-                this.query = '';
-            },
+    },
 
-        },
+    computed: {
+      dynamicComponent() {
+        if (this.isPointAndClickActive) {
+          this.switchButtonText = 'Zurück zum Textfeld';
+          return PointAndClick;
+        } else {
+          this.switchButtonText = 'Point-and-Click Feature aktivieren';
+          return Query;
+        }
+      },
+    },
 
-        computed: {
-            dynamicComponent: function () {
-                if (this.isPointAndClickActive) {
-                    this.switchButtonText = 'Zurück zum Textfeld';
-                    return PointAndClick;
-                } else {
-                    this.switchButtonText = 'Point-and-Click Feature aktivieren';
-                    return Query;
-                }
-            }
-        },
-
-    })
-
+  });
 </script>
 
 <style scoped>
@@ -95,11 +95,13 @@
         width: 80%;
         margin: auto;
     }
+
     .switchButton {
         float: right;
         margin-top: 15px;
         margin-bottom: 15px;
     }
+
     /*.container .btn {
         float: right;
         margin-top: 15px;

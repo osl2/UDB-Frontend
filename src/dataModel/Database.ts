@@ -1,4 +1,5 @@
 import DataModel from '@/dataModel/DataModel';
+import {SqlJs} from 'sql.js/module';
 
 /**
  * The class Database represents a database which a teacher assigns to a
@@ -7,20 +8,17 @@ import DataModel from '@/dataModel/DataModel';
  */
 
 export default class Database extends DataModel {
-    private _id: string;
     private _name: string;
-    private _content: any;
+    private _content: SqlJs.Database | null;
 
     /**
      * The constructor of this class.
-     * @param id: The unique id of the database.
      * @param name: The name the teacher can set for the database.
      * @param content: The content of the database.
      */
 
-    constructor(id: string, name: string, content: any) {
-        super();
-        this._id = id;
+    constructor(id: string, name: string, content: SqlJs.Database| null) {
+        super(id);
         this._name = name;
         this._content = content;
     }
@@ -28,14 +26,6 @@ export default class Database extends DataModel {
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
-
-    get id(): string {
-        return this._id;
-    }
-
-    set id(value: string) {
-        this._id = value;
-    }
 
     get name(): string {
         return this._name;
@@ -45,11 +35,11 @@ export default class Database extends DataModel {
         this._name = value;
     }
 
-    get content(): any {
+    get content(): SqlJs.Database | null {
         return this._content;
     }
 
-    set content(value: any) {
+    set content(value: SqlJs.Database | null) {
         this._content = value;
     }
 }

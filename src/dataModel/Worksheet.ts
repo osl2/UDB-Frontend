@@ -7,7 +7,6 @@ import Task from '@/dataModel/Task';
  */
 
 export default class Worksheet extends DataModel {
-    private _id: string;
     private _name: string;
     private _tasks: Task[];
     private _isOnline: boolean;
@@ -15,7 +14,6 @@ export default class Worksheet extends DataModel {
 
     /**
      * The constructor of this class.
-     * @param id: The unique id of a worksheet.
      * @param name: The name of the worksheet set by a teacher.
      * @param tasks: An array of tasks which are assigned to the worksheet.
      * @param isOnline: The information if a worksheet is online meaning it can be solved in the course.
@@ -24,8 +22,7 @@ export default class Worksheet extends DataModel {
      */
 
     constructor(id: string, name: string, tasks: Task[], isOnline: boolean, isSolutionOnline: boolean) {
-        super();
-        this._id = id;
+        super(id);
         this._name = name;
         this._tasks = tasks;
         this._isOnline = isOnline;
@@ -35,14 +32,6 @@ export default class Worksheet extends DataModel {
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
-
-    get id(): string {
-        return this._id;
-    }
-
-    set id(value: string) {
-        this._id = value;
-    }
 
     get name(): string {
         return this._name;

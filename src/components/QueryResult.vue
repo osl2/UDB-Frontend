@@ -5,11 +5,11 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+import Vue from 'vue';
 
-    export default Vue.extend({
-        props: ['queryResult'],
-    })
+export default Vue.extend({
+    props: ['queryResult'],
+});
 </script>
 
 <style scoped>

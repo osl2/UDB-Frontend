@@ -7,7 +7,6 @@ import Subtask from '@/dataModel/Subtask';
  */
 
 export default class Task extends DataModel {
-    private _id: string;
     private _database: Database;
     private _subtasks: Subtask[];
 
@@ -19,8 +18,7 @@ export default class Task extends DataModel {
      */
 
     constructor(id: string, database: Database, subtasks: Subtask[]) {
-        super();
-        this._id = id;
+        super(id);
         this._database = database;
         this._subtasks = subtasks;
     }
@@ -28,14 +26,6 @@ export default class Task extends DataModel {
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
-
-    get id(): string {
-        return this._id;
-    }
-
-    set id(value: string) {
-        this._id = value;
-    }
 
     get database(): Database {
         return this._database;

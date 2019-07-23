@@ -8,7 +8,6 @@ import Task from '@/dataModel/Task';
  */
 
 export default abstract class Subtask extends DataModel {
-    private _id: string;
     private _parent: Task;
     private _solution: Solution | undefined; // A subtask does not always have a solution
     private _instruction: string;
@@ -26,8 +25,7 @@ export default abstract class Subtask extends DataModel {
      */
     constructor(id: string, parent: Task, solution: Solution | undefined,
                 instruction: string, isSolutionVeryfiable: boolean) {
-        super();
-        this._id = id;
+        super(id);
         this._parent = parent;
         this._solution = solution;
         this._instruction = instruction;
@@ -37,14 +35,6 @@ export default abstract class Subtask extends DataModel {
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
-
-    get id(): string {
-        return this._id;
-    }
-
-    set id(value: string) {
-        this._id = value;
-    }
 
     get parent(): any {
         return this._parent;
