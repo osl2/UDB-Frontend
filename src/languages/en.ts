@@ -14,5 +14,12 @@ const en = {
     showSolutionsheetButton: 'show sheet',
     solutionsheetText:'solution sheet of: ',
   },
+  sidebar: {
+    courseDropdown: 'my courses',
+    databaseDropdown:'my databases',
+    profileDropdown: 'profile',
+    settings: 'settings',
+    logout: 'logout',
+  },
 };
 export default en;

@@ -15,6 +15,13 @@ const de = {
     showSolutionsheetButton: 'Blatt öffnen',
     solutionsheetText:'Lösungsblatt zu: ',
   },
+  sidebar: {
+    courseDropdown: 'Meine Kurse',
+    databaseDropdown:'Meine Datenbanken',
+    profileDropdown: 'Profil',
+    settings: 'Einstellungen',
+    logout: 'Abmelden',
+  },
 };
 export default de;
 
