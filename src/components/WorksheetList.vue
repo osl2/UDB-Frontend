@@ -1,7 +1,6 @@
 <template>
-    <div class="list">
-        <div class="scroll">
-            <b-card-group>
+    <div class="container-fluid bg-secondary mb-2">
+        <div class="d-flex flex-row flex-nowrap">
                 <b-card
                         v-for="worksheet in course.worksheets"
                         bg-variant="light"
@@ -12,12 +11,12 @@
                         {{worksheet.name}}
                     </b-card-title>
                     <b-button
+                            class="bg-info"
                             slot="footer"
                             @click="$emit('loadWorksheet', worksheet)"
                     >{{$t('courseViewStudent.solveWorksheetButton')}}
                     </b-button>
                 </b-card>
-            </b-card-group>
         </div>
     </div>
 </template>
@@ -30,14 +29,10 @@
 </script>
 
 <style scoped>
-    .scroll {
-        border: 1px lightgray solid;
-        background: lightgray;
-        height: 12rem;
-        overflow: auto;
-        margin-bottom: 30px;
+    .container-fluid {
+        overflow-x: auto;
+        display: flex;
     }
-
     .card {
         text-align: center;
         min-width: 12rem;
@@ -45,11 +40,5 @@
         max-width: 12rem;
         max-height: 10rem;
         margin: 10px 20px 10px 10px;
-
     }
-
-    .btn {
-        background-color: darkcyan;
-    }
-
 </style>
