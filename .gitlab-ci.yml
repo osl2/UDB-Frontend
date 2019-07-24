@@ -10,6 +10,7 @@ cache:
     - node_modules/
 
 prepare:
+  stage: prepare
   script:
     - yarn install
 
@@ -29,10 +30,15 @@ test-unit:
     - yarn test:unit
 
 build:
+  stage: build
   script:
     - yarn build
+  artifacts:
+    paths:
+      - dist
 
 docker:
+  stage: docker
   image: docker:latest
   services:
     - docker:dind
