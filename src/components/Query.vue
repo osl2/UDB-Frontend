@@ -19,16 +19,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+  import {Vue, Component, Prop} from 'vue-property-decorator';
 
-export default Vue.extend({
-    data() {
-      return {
-        query: '',
-      };
-    },
-  },
-);
+export default class Query extends Vue{
+  // Data
+  query: string = '';
+  };
 </script>
 
 <style scoped>

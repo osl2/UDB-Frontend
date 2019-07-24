@@ -2,8 +2,13 @@
     <div>
         <DatabaseComponent elementId="sandbox-dropzone-db" ref="databaseComponent"></DatabaseComponent>
         <div class="switchButton">
-            <b-button v-on:click="switchComponent">
-                {{switchButtonText}}
+            <b-button v-on:click="switchComponent"
+                      v-if="isPointAndClickActive">
+                {{$t('sandbox.switchToPlainSQL')}}
+            </b-button>
+            <b-button v-on:click="switchComponent"
+                      v-else>
+                {{$t('sandbox.switchToPointAndClick')}}
             </b-button>
         </div>
         <div class="clear">
@@ -14,7 +19,7 @@
         </div>
         <div>
             <p v-show="gotFirstQueryExecuted">
-                Ergebnis des zuletzt ausgeführten SQL-Statements({{lastQueryExecuted}}):
+                {{$t('sandbox.resultText')}}({{lastQueryExecuted}}):
             </p>
             <QueryResult :queryResult="queryResult"
                          v-show="gotFirstQueryExecuted"
@@ -27,14 +32,14 @@
 
 
 <script lang="ts">
-  import Vue from 'vue';
+  import {Vue, Component, Prop} from 'vue-property-decorator';
   import Query from '@/components/Query.vue';
   import Test from '@/components/Test.vue';
   import QueryResult from '@/components/QueryResult.vue';
   import PointAndClick from '@/components/PointAndClick.vue';
   import DatabaseComponent from '@/components/DatabaseComponent.vue';
 
-  export default Vue.extend({
+  @Component({
     components: {
       Query,
       Test,
@@ -42,53 +47,49 @@
       PointAndClick,
       DatabaseComponent,
     },
-    data() {
-      return {
-        isPointAndClickActive: false,
-        gotFirstQueryExecuted: false,
-        query: '',
-        switchButtonText: 'Point-and-Click Feature',
-        lastQueryExecuted: '',
-        // TODO Array nicht hard coden
-        queryResult: [
-          {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
-          {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
-        ],
+  })
 
-      };
-    },
-    methods: {
-      executeQuery(query: string) {
-        this.gotFirstQueryExecuted = true;
-        this.query = query;
-        this.lastQueryExecuted = query;
-        const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-        this.queryResult = dbComponent.$data.database.content.exec(query);
-      },
-      switchComponent() {
-        this.resetQuery();
-        this.isPointAndClickActive = !this.isPointAndClickActive;
+  export default class Sandbox extends Vue{
 
-      },
+    // Data
+    isPointAndClickActive: boolean = false;
+    gotFirstQueryExecuted: boolean = false;
+    query: string = '';
+    lastQueryExecuted: string = '';
+    // TODO Array nicht hard coden
+    queryResult: Object[] = [
+      {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
+      {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
+    ];
+
+    // Methods
+    executeQuery(query: string) {
+      this.gotFirstQueryExecuted = true;
+      this.query = query;
+      this.lastQueryExecuted = query;
+      const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+      this.queryResult = dbComponent.$data.database.content.exec(query);
+    }
+    switchComponent() {
+      this.resetQuery();
+      this.isPointAndClickActive = !this.isPointAndClickActive;
+    }
       resetQuery() {
         this.query = '';
-      },
+      }
 
-    },
-
-    computed: {
-      dynamicComponent() {
+      // Computed Properties
+    get dynamicComponent() {
         if (this.isPointAndClickActive) {
-          this.switchButtonText = 'Zurück zum Textfeld';
           return PointAndClick;
         } else {
-          this.switchButtonText = 'Point-and-Click Feature aktivieren';
           return Query;
         }
-      },
-    },
+      }
 
-  });
+
+  };
+
 </script>
 
 <style scoped>
@@ -103,11 +104,6 @@
         margin-bottom: 15px;
     }
 
-    /*.container .btn {
-        float: right;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }*/
     .sqlComponent {
         position: relative;
         margin-bottom: 15px;
