@@ -57,7 +57,7 @@
   })
   export default class DatabaseComponent extends Vue {
 
-    private database: Database = new Database('', '', null);
+    public database: Database = new Database('', '', null);
 
     @Prop() private elementId!: string;
     @Prop() private activateUpload!: boolean;
@@ -66,6 +66,7 @@
     get cursorClickable() {
       return !this.database || !this.database.content ? 'cursorClickable' : '';
     }
+
 
     get tableMetaData(): TableMetaData[] {
       // TODO: mixing too much business logic with component view logic. Move later to appropriate service or controller

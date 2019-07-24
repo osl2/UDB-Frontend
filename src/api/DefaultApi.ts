@@ -13,8 +13,8 @@
 
 
 import * as runtime from "@/api/BaseApi";
+import Database from '@/dataModel/Database'
 import {
-    Database,
     DatabaseFromJSON,
     DatabaseToJSON,
 } from '../dataModel';

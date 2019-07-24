@@ -1,5 +1,5 @@
 import DataModel from '@/dataModel/DataModel';
-import {Database} from '@/dataModel/Database';
+import Database from '@/dataModel/Database';
 import Subtask from '@/dataModel/Subtask';
 
 /**

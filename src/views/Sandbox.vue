@@ -62,7 +62,8 @@
         this.gotFirstQueryExecuted = true;
         this.query = query;
         this.lastQueryExecuted = query;
-        this.queryResult = this.$refs.databaseComponent.database.content.exec(query);
+        const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+        this.queryResult = dbComponent.$data.database.content.exec(query);
       },
       switchComponent() {
         this.resetQuery();
