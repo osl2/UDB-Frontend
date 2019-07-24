@@ -28,8 +28,8 @@ const en = {
     executeButton: 'execute query',
   },
   database: {
-    dropDatabase: 'Drop a database file or click to choose from a directory',
-    createDatabase: 'If there is no database file yet feel free to create one below',
+    dropDatabase: 'Drop a database file or click to choose from a directory.',
+    createDatabase: 'If there is no database file yet feel free to create one below.',
   },
 };
 export default en;

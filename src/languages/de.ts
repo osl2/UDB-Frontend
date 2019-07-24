@@ -28,9 +28,8 @@ const de = {
     executeButton: 'Ausführen',
   },
   database: {
-    dropDatabase: 'Lege ein Datenbank Datei hier ab oder klicke um eine Datei\n' + 'auszufwählen',
-    createDatabase: 'Falls Du noch keine Datenbank Datei hast, dann erstelle hier ein\n' +
-      'leeres.',
+    dropDatabase: 'Ziehe eine Datenbank Datei in dieses Feld oder klicke um eine Datei auszuwählen.',
+    createDatabase: 'Falls Du noch keine Datenbank Datei hast, dann erstelle hier eine.',
   },
 };
 export default de;
