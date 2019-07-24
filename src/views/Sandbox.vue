@@ -57,7 +57,7 @@
     query: string = '';
     lastQueryExecuted: string = '';
     // TODO Array nicht hard coden
-    queryResult: Object[] = [
+    queryResult: object[] = [
       {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
       {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
     ];
