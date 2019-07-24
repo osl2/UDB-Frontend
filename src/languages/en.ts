@@ -14,7 +14,7 @@ const en = {
     showSolutionsheetButton: 'show sheet',
     solutionsheetText: 'solution sheet of: ',
   },
-  sidebar: {
+  navbar: {
     courseDropdown: 'my courses',
     databaseDropdown: 'my databases',
     profileDropdown: 'profile',

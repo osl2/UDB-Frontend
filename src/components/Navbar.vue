@@ -5,7 +5,7 @@
             <b-collapse id="nav-collapse" is-nav>
 
                 <b-navbar-nav>
-                    <b-nav-item-dropdown :text="$t('sidebar.courseDropdown')">
+                    <b-nav-item-dropdown :text="$t('navbar.courseDropdown')">
                         <b-dropdown-item v-for="course in courses"
                                          @click="$emit('loadCourse', course)">
                             {{course.name}}
@@ -14,7 +14,7 @@
                 </b-navbar-nav>
 
                 <b-navbar-nav>
-                    <b-nav-item-dropdown :text="$t('sidebar.databaseDropdown')">
+                    <b-nav-item-dropdown :text="$t('navbar.databaseDropdown')">
                         <b-dropdown-item v-for="database in databases"
                                          @click="$emit('showDatabase', database)">
                             {{database.name}}
@@ -24,9 +24,9 @@
 
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item-dropdown right>
-                        <template slot="button-content">{{$t('sidebar.profileDropdown')}}</template>
-                        <b-dropdown-item href="#">{{$t('sidebar.settings')}}</b-dropdown-item>
-                        <b-dropdown-item href="#">{{$t('sidebar.logout')}}</b-dropdown-item>
+                        <template slot="button-content">{{$t('navbar.profileDropdown')}}</template>
+                        <b-dropdown-item href="#">{{$t('navbar.settings')}}</b-dropdown-item>
+                        <b-dropdown-item href="#">{{$t('navbar.logout')}}</b-dropdown-item>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
 

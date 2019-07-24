@@ -8,14 +8,13 @@ const de = {
   },
   sandbox: {
     titleStartPage: 'Freier Modus',
-
   },
   courseViewStudent: {
     solveWorksheetButton: 'Blatt bearbeiten',
     showSolutionsheetButton: 'Blatt öffnen',
     solutionsheetText: 'Lösungsblatt zu: ',
   },
-  sidebar: {
+  navbar: {
     courseDropdown: 'Meine Kurse',
     databaseDropdown: 'Meine Datenbanken',
     profileDropdown: 'Profil',
