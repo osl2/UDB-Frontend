@@ -52,7 +52,12 @@
     },
 
     mounted() {
-      //this.course = new Course('abc', 'Klasse 7a', 'Schuljahr 19/20', [worksheet1, worksheet2, worksheet3, worksheet4]);
+      // this.course = new Course("abc", "Klasse 7a", "Schuljahr 19/20", [
+      //   worksheet1,
+      //   worksheet2,
+      //   worksheet3,
+      //   worksheet4
+      // ]);
     },
   });
 </script>
