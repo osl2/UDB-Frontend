@@ -19,15 +19,15 @@ test-lint:
   script:
     - yarn lint
 
-# test-e2e:
-#   stage: test
-#   script:
-#     - yarn test:e2e
+test-e2e:
+  stage: test
+  script:
+    - yarn test:e2e || true
 
-# test-unit:
-#   stage: test
-#   script:
-#     - yarn test:unit
+test-unit:
+  stage: test
+  script:
+    - yarn test:unit || true
 
 build:
   stage: build
