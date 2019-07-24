@@ -4,7 +4,7 @@
         </div>
         <div class="btn">
             <b-button @click="$emit('executeQuery', code)">
-                Ausführen
+                {{$t('query.executeButton')}}
             </b-button>
         </div>
         <div class="clear">

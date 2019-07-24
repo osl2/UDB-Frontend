@@ -8,6 +8,9 @@ const de = {
   },
   sandbox: {
     titleStartPage: 'Freier Modus',
+    resultText: 'Ergebnis des zuletzt ausgeführten SQL-Befehls',
+    switchToPointAndClick: 'Point-and-Click Feature aktivieren',
+    switchToPlainSQL: 'Zurück zum Textfeld',
   },
   courseViewStudent: {
     solveWorksheetButton: 'Blatt bearbeiten',
@@ -20,6 +23,14 @@ const de = {
     profileDropdown: 'Profil',
     settings: 'Einstellungen',
     logout: 'Abmelden',
+  },
+  query: {
+    executeButton: 'Ausführen',
+  },
+  database: {
+    dropDatabase: 'Lege ein Datenbank Datei hier ab oder klicke um eine Datei\n' + 'auszufwählen',
+    createDatabase: 'Falls Du noch keine Datenbank Datei hast, dann erstelle hier ein\n' +
+      'leeres.',
   },
 };
 export default de;

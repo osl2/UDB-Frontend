@@ -20,10 +20,8 @@
                     </div>
                     <div class="col-sm-6 ">
 
-                        <p class="text-muted">Lege ein Datenbank Datei hier ab oder klicke um eine Datei
-                            auszufwählen</p>
-                        <p class="text-muted">Falls Du noch keine Datenbank Datei hast, dann erstelle hier ein
-                            leeres.</p>
+                        <p class="text-muted">{{$t('database.dropDatabase')}}</p>
+                        <p class="text-muted">{{$t('database.createDatabase')}}</p>
                     </div>
                     <input :id="elementId+'dbFile'" type="file" name="image" @change="changeHandler">
                 </div>
