@@ -1,6 +1,6 @@
 import {SqlJs} from 'sql.js/module';
 import Database from '@/dataModel/Database';
-import sql from 'sql.js';
+import initSqlJs from 'sql.js';
 
 
 /**
@@ -14,7 +14,7 @@ export default class DatabaseUtils {
    * @return a promise of Database object
    */
   public static readFromFile(file: File): Promise<Database> {
-    return sql(config).then((sqlJs: SqlJs.SqlJsStatic) => {
+    return initSqlJs(config).then((sqlJs: SqlJs.SqlJsStatic) => {
       return this.convertFileToSqlDb(file, sqlJs);
     }).then((sqlJsDb: SqlJs.Database) => {
       return new Database('', file.name, sqlJsDb);
@@ -27,7 +27,7 @@ export default class DatabaseUtils {
    * @param name the name of the database
    */
   public static createEmptyDatabase(name: string): Promise<Database> {
-    return sql(config).then((SQL: SqlJs.SqlJsStatic) => {
+    return initSqlJs(config).then((SQL: SqlJs.SqlJsStatic) => {
       const db = new SQL.Database();
       const dbIntern = new Database('', name, db);
       return dbIntern;
@@ -43,7 +43,7 @@ export default class DatabaseUtils {
    * @param database internal database object
    */
   public static downloadDatabase(database: Database) {
-    sql(config).then((SQL: SqlJs.SqlJsStatic) => {
+    initSqlJs(config).then((SQL: SqlJs.SqlJsStatic) => {
 
       const blob = new Blob([database.content!.export()]);
       const a = document.createElement('a');
