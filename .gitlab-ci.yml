@@ -1,0 +1,46 @@
+image: node:latest
+stages:
+  - prepare
+  - test
+  - build
+  - docker
+
+cache:
+  paths:
+    - node_modules/
+
+prepare:
+  script:
+    - yarn install
+
+test-lint:
+  stage: test
+  script:
+    - yarn lint
+
+test-e2e:
+  stage: test
+  script:
+    - yarn test:e2e
+
+test-unit:
+  stage: test
+  script:
+    - yarn test:unit
+
+build:
+  script:
+    - yarn build
+
+docker:
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+  only:
+    - master
+  
