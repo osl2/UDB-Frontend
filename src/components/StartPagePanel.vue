@@ -12,18 +12,19 @@
                     <b-button class="btn btn-lg" v-b-modal.modal-1> Anmelden </b-button>
 
                     <b-modal id="modal-1" >
+
                         <div>
-                            <b-form-input class="inputfield" v-model="text" placeholder="Nutzername"></b-form-input>
+                            <b-form-input class="inputfield" v-model="username" placeholder="Nutzername"></b-form-input>
                         </div>
                         <div>
-                            <b-form-input class="inputfield" v-model="loginPassword" type="password" placeholder="Passwort"></b-form-input>
+                            <b-form-input class="inputfield" v-model="password" type="password" placeholder="Passwort"></b-form-input>
+                        </div>
+                        <div>
+                            {{errormsg}}
                         </div>
                         <template slot="modal-footer">
-                            <b-button size="sm" @click=router.push(path)>
+                            <b-button size="sm" @click="login(username, password)">
                                 Anmelden
-                            </b-button>
-                            <b-button size="sm" @click=hide()>
-                                Abbrechen
                             </b-button>
                         </template>
                     </b-modal>
@@ -31,20 +32,17 @@
                     <b-button class="btn btn-lg" v-b-modal.modal-2>Registrieren</b-button>
                     <b-modal id="modal-2">
                         <div>
-                            <b-form-input class="inputfield" v-model="text" placeholder="Nutzername"></b-form-input>
+                            <b-form-input class="inputfield" v-model="username" placeholder="Nutzername"></b-form-input>
                         </div>
                         <div>
-                            <b-form-input class="inputfield" v-model="text" type="password" placeholder="Passwort"></b-form-input>
+                            <b-form-input class="inputfield" v-model="password" type="password" placeholder="Passwort"></b-form-input>
                         </div>
                         <div>
-                            <b-form-input class="inputfield" v-model="text" type="password" placeholder="Passwort wiederholen"></b-form-input>
+                            <b-form-input class="inputfield" v-model="repeatedpw" type="password" placeholder="Passwort wiederholen"></b-form-input>
                         </div>
                         <template slot="modal-footer">
-                            <b-button size="sm" >
+                            <b-button size="sm" @click="registration(username, password, repeatedpw)">
                                 Registrieren
-                            </b-button>
-                            <b-button size="sm" @click=hide()>
-                                Abbrechen
                             </b-button>
                         </template>
                     </b-modal>
@@ -56,6 +54,11 @@
                         <div>
                             <b-form-input class="inputfield" v-model="courseId" placeholder="Kurs-ID"></b-form-input>
                         </div>
+                        <template slot="modal-footer">
+                            <b-button size="sm" @click="enterCourse(courseId)">
+                                Beitreten
+                            </b-button>
+                        </template>
                     </b-modal>
                 </template>
 
@@ -77,10 +80,59 @@
     @Prop() private buttonName!: string;
     @Prop() private path!: string;
     @Prop() private type!: string;
+    //set default to false
+    private sucessfull: boolean = true;
+    private errormsg: String ='';
 
     private login(username:String, password:String){
+        if(username === null){
+            this.errormsg = "Gib einen Nutzernamen ein";
+        }
+        if(password === null){
+            this.errormsg = "gib ein Passwort ein";
+        }
+        //login methode einfügen
+        if(this.sucessfull) {
+            this.$router.push(this.path);
+        }else{
+            this.errormsg = "something went wrong"; //error vom server
+        }
 
         }
+    private registration(username:String, password:String, repeatedpw:String) {
+        if (username.length === null){
+            this.errormsg = "gib einen Nutzernamen ein";
+            return
+        }
+        if (password.length === null|| repeatedpw.length === null) {
+            this.errormsg = "gib ein passwort ein";
+            return
+        }
+        if (password !== repeatedpw) {
+            this.errormsg = "die Passwörter stimmen nicht überein";
+            return
+        }
+        // registrerung methode hier einfügen
+
+        if (this.sucessfull) {
+            this.$router.push(this.path);
+        } else {
+            this.errormsg = "something went wrong";// nur in genauer - hängt von serverantwort ab
+        }
+
+
+    }
+    private enterCourse(courseId:number){
+        if(courseId === null){
+            this.errormsg = "gib eine KursId ein";
+        }
+        //hier kursbeitritt methode einfügen
+        if(this.sucessfull) {
+            this.$router.push(this.path);
+        }else{
+            this.errormsg = "something went wrong"; //wieder serverabhängig
+        }
+    }
     }
 
   
