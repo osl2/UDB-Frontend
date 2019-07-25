@@ -1,5 +1,12 @@
 # upowdb
 
+##Prerequisite
+
+Download and install Node.js https://nodejs.org/en/download/
+
+Download and install Yarn https://yarnpkg.com/lang/en/docs/install/
+
+
 ## Project setup
 ```
 yarn install
