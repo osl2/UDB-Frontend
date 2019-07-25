@@ -1,6 +1,6 @@
 # upowdb
 
-##Prerequisite
+## Prerequisite
 
 Download and install Node.js https://nodejs.org/en/download/
 
