@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "preserve": "cp node_modules/sql.js/dist/sql-wasm.wasm public/static/wasm/sql-wasm.wasm",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "postbuild": "mkdir -p dist/static/wasm/; cp node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm",
