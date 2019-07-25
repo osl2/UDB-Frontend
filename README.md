@@ -6,6 +6,8 @@ Download and install Node.js https://nodejs.org/en/download/
 
 Download and install Yarn https://yarnpkg.com/lang/en/docs/install/
 
+Alternatively, if yarn does not work for you, you can try npm instead, which is compatible with yarn.
+
 
 ## Project setup
 ```
