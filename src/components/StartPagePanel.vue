@@ -10,6 +10,7 @@
                         student: A modal button to enter a course-id-->
                 <template v-if="type === 'teacher'">
                     <b-button class="btn btn-lg" v-b-modal.modal-1> Anmelden </b-button>
+
                     <b-modal id="modal-1" >
                         <div>
                             <b-form-input class="inputfield" v-model="text" placeholder="Nutzername"></b-form-input>
@@ -17,9 +18,18 @@
                         <div>
                             <b-form-input class="inputfield" v-model="loginPassword" type="password" placeholder="Passwort"></b-form-input>
                         </div>
+                        <template slot="modal-footer">
+                            <b-button size="sm" @click=router.push(path)>
+                                Anmelden
+                            </b-button>
+                            <b-button size="sm" @click=hide()>
+                                Abbrechen
+                            </b-button>
+                        </template>
                     </b-modal>
+
                     <b-button class="btn btn-lg" v-b-modal.modal-2>Registrieren</b-button>
-                    <b-modal id="modal-2" ok-title="Registrieren" cancel-title="Abbrechen" >
+                    <b-modal id="modal-2">
                         <div>
                             <b-form-input class="inputfield" v-model="text" placeholder="Nutzername"></b-form-input>
                         </div>
@@ -29,6 +39,14 @@
                         <div>
                             <b-form-input class="inputfield" v-model="text" type="password" placeholder="Passwort wiederholen"></b-form-input>
                         </div>
+                        <template slot="modal-footer">
+                            <b-button size="sm" >
+                                Registrieren
+                            </b-button>
+                            <b-button size="sm" @click=hide()>
+                                Abbrechen
+                            </b-button>
+                        </template>
                     </b-modal>
                 </template>
 
@@ -50,6 +68,7 @@
 
 <script lang="ts">
   import {Component, Prop, Vue} from 'vue-property-decorator';
+  import router from '@/router';
 
   @Component
   export default class StartPagePanel extends Vue {
@@ -59,8 +78,12 @@
     @Prop() private path!: string;
     @Prop() private type!: string;
 
+    private login(username:String, password:String){
 
-  }
+        }
+    }
+
+  
 </script>
 
 <style scoped lang="scss">
