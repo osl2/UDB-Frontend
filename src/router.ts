@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '@/views/Home.vue';
 import Sandbox from '@/views/Sandbox.vue';
-import CourseViewStudent from "@/views/CourseViewStudent.vue";
+import CourseView from "@/views/CourseView.vue";
 import StartpageTeacher from "@/views/StartpageTeacher.vue";
 
 Vue.use(Router);
@@ -36,9 +36,9 @@ export default new Router({
       component: StartpageTeacher,
     },
     {
-      path: '/courseViewStudent',
-      name: 'courseViewStudent',
-      component: CourseViewStudent,
+      path: '/courseView',
+      name: 'courseView',
+      component: CourseView,
     },
   ],
 });

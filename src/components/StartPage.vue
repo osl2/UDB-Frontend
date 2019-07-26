@@ -3,7 +3,7 @@
         <div class="card-deck mb-3 text-center">
             <StartPagePanel :title="$t('sandbox.titleStartPage')" path="/sandbox" description="desc" buttonName="Go"></StartPagePanel>
             <StartPagePanel title="Lehrerbereich" type="teacher"  path="/startPageTeacher" description="desc" buttonName="Anmelden"></StartPagePanel>
-            <StartPagePanel title="Kursbereich" type="student" path="/courseViewStudent" description="desc" buttonName="Kurs beitreten"></StartPagePanel>
+            <StartPagePanel title="Kursbereich" type="student" path="/courseView" description="desc" buttonName="Kurs beitreten"></StartPagePanel>
         </div>
     </div>
 </template>
