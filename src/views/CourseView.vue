@@ -37,7 +37,7 @@ import Worksheet from '@/dataModel/Worksheet.ts';
 })
 
 
-export default class CourseViewStudent extends Vue {
+export default class CourseView extends Vue {
 
   // Data
   public courseId: any = this.$route.params.courseId;
