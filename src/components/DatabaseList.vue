@@ -1,22 +1,17 @@
 <template>
-    <div class="container-fluid mb-2">
-        <div class="d-flex flex-row flex-nowrap">
-            <b-card
+    <div class="container-fluid">
+        <b-list-group>
+            <b-list-group-item
                     v-for="database in databases"
                     bg-variant="light"
                     class="card"
             >
-                <b-card-title>
-                    {{database.name}}
-                </b-card-title>
-                <b-button
-                        class="bg-info"
-                        slot="footer"
-                        @click="$emit('showDatabase', database)"
-                >Datenbank anzeigen
+                {{database.name}}
+                <b-button class="bg-info">
+                    {{$t('buttonText.delete')}}
                 </b-button>
-            </b-card>
-        </div>
+            </b-list-group-item>
+        </b-list-group>
     </div>
 </template>
 

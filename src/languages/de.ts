@@ -31,6 +31,9 @@ const de = {
     dropDatabase: 'Ziehe eine Datenbank Datei in dieses Feld oder klicke um eine Datei auszuwählen.',
     createDatabase: 'Falls Du noch keine Datenbank Datei hast, dann erstelle hier eine.',
   },
+  buttonText: {
+    delete: 'Löschen',
+  },
 };
 export default de;
 

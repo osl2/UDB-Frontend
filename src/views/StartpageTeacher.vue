@@ -7,14 +7,15 @@
                     @showDatabase="showDatabase"
             ></Navbar>
         </div>
-        <div>
-            <CourseList class="container"
-                        :courses="courses"
+        <div class="container">
+            <h2 class="headings">{{$t('navbar.courseDropdown')}}:</h2>
+            <CourseList :courses="courses"
                         @loadCourse="loadCourse"
             ></CourseList>
         </div>
-        <div>
-            <DatabaseList class="container"
+        <div class="container">
+            <h2 class="headings">{{$t('navbar.databaseDropdown')}}:</h2>
+            <DatabaseList class="d-flex flex-column"
                           :databases="databases"
                           @showDatabase="showDatabase"
             ></DatabaseList>
@@ -23,45 +24,50 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {Vue, Component, Prop} from 'vue-property-decorator';
 import Navbar from '@/components/Navbar.vue';
 import CourseList from "@/components/CourseList.vue";
 import DatabaseList from "@/components/DatabaseList.vue";
 import Course from "@/dataModel/Course.ts";
 import Database from "@/dataModel/Database.ts";
+import router from '@/router';
 
-// TODO Diese Kurse sind als Beispiel hard gecodet
-const course1 = new Course("1234", "Klasse 7a", "SJ 18/19", []);
-const course2 = new Course("345", "Klasse 8a", "SJ 18/19", []);
-const course3 = new Course("rte", "Klasse 9b", "SJ 18/19", []);
-const database1 = new Database("nuief", "Schule", null);
-const database2 = new Database("gdghrt", "Mitarbeiter", null);
-const database3 = new Database("fhkrwe", "Musik", null);
-
-export default Vue.extend({
+@Component({
   components: {
     Navbar,
     CourseList,
     DatabaseList,
   },
-  data() {
-    return {
-      databases: [database1, database2, database3], // TODO in mounted initialisieren
-      courses: [course1, course2, course3],
-    };
-  },
-  methods: {
-    loadCourse(course: Course) {
-      alert("TODO: Lade den Kurs mit Namen: " + course.name);
-    },
-    showDatabase(database: Database) {
-      alert("TODO: Zeige die Datenbanke mit folgendem Namen an: " + database.name);
-    },
-  },
-});
+})
+
+export default class StartpageTeacher extends Vue {
+
+  // Data
+  public databases!: Database[];
+  public courses!: Course[];
+
+
+  public loadCourse(course: Course) {
+    router.push('/courseView/' + course.id);
+    alert("TODO: Lade den Kurs mit Namen: " + course.name);
+  }
+  public showDatabase(database: Database) {
+    alert("TODO: Zeige die Datenbank mit folgendem Namen an: " + database.name);
+  }
+
+  public created() {
+    /* TODO: getAll- Methoden der Services für den angemeldeten Lehrer aufrufen: Rückgabewerte müssen
+        ein Database-Array und ein Course-Array sein, um die Attribute zu initialisieren.
+     */
+  }
+
+}
 </script>
 
 <style scoped>
+    .headings{
+        color: #333;
+    }
     .container {
         width: 80%;
         margin: auto;
@@ -70,5 +76,4 @@ export default Vue.extend({
     .head {
         margin-bottom: 40px;
     }
-
 </style>
