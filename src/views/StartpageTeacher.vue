@@ -27,8 +27,8 @@ import Vue from 'vue';
 import Navbar from '@/components/Navbar.vue';
 import CourseList from "@/components/CourseList.vue";
 import DatabaseList from "@/components/DatabaseList.vue";
-import Course from "@/dataModel/Course.ts"
-import Database from "@/dataModel/Database.ts"
+import Course from "@/dataModel/Course.ts";
+import Database from "@/dataModel/Database.ts";
 
 // TODO Diese Kurse sind als Beispiel hard gecodet
 const course1 = new Course("1234", "Klasse 7a", "SJ 18/19", []);
@@ -46,18 +46,18 @@ export default Vue.extend({
   },
   data() {
     return {
-      databases: [database1, database2, database3], //TODO in mounted initialisieren
+      databases: [database1, database2, database3], // TODO in mounted initialisieren
       courses: [course1, course2, course3],
-    }
+    };
   },
   methods: {
-    loadCourse: function (course: Course) {
+    loadCourse(course: Course) {
       alert("TODO: Lade den Kurs mit Namen: " + course.name);
     },
-    showDatabase: function (database: Database) {
-      alert("TODO: Zeige die Datenbanke mit folgendem Namen an: " + database.name)
+    showDatabase(database: Database) {
+      alert("TODO: Zeige die Datenbanke mit folgendem Namen an: " + database.name);
     },
-  }
+  },
 });
 </script>
 

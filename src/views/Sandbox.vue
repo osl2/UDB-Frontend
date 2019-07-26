@@ -32,64 +32,63 @@
 
 
 <script lang="ts">
-  import {Vue, Component, Prop} from 'vue-property-decorator';
-  import Query from '@/components/Query.vue';
-  import Test from '@/components/Test.vue';
-  import QueryResult from '@/components/QueryResult.vue';
-  import PointAndClick from '@/components/PointAndClick.vue';
-  import DatabaseComponent from '@/components/DatabaseComponent.vue';
+import {Vue, Component, Prop} from 'vue-property-decorator';
+import Query from '@/components/Query.vue';
+import Test from '@/components/Test.vue';
+import QueryResult from '@/components/QueryResult.vue';
+import PointAndClick from '@/components/PointAndClick.vue';
+import DatabaseComponent from '@/components/DatabaseComponent.vue';
 
-  @Component({
-    components: {
-      Query,
-      Test,
-      QueryResult,
-      PointAndClick,
-      DatabaseComponent,
-    },
-  })
+@Component({
+  components: {
+    Query,
+    Test,
+    QueryResult,
+    PointAndClick,
+    DatabaseComponent,
+  },
+})
 
-  export default class Sandbox extends Vue{
+export default class Sandbox extends Vue {
 
-    // Data
-    isPointAndClickActive: boolean = false;
-    gotFirstQueryExecuted: boolean = false;
-    query: string = '';
-    lastQueryExecuted: string = '';
-    // TODO Array nicht hard coden
-    queryResult: object[] = [
-      {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
-      {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
-    ];
+  // Data
+  public isPointAndClickActive: boolean = false;
+  public gotFirstQueryExecuted: boolean = false;
+  public query: string = '';
+  public lastQueryExecuted: string = '';
+  // TODO Array nicht hard coden
+  public queryResult: object[] = [
+    {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
+    {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
+  ];
 
-    // Methods
-    executeQuery(query: string) {
-      this.gotFirstQueryExecuted = true;
-      this.query = query;
-      this.lastQueryExecuted = query;
-      const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-      this.queryResult = dbComponent.$data.database.content.exec(query);
+  // Methods
+  public executeQuery(query: string) {
+    this.gotFirstQueryExecuted = true;
+    this.query = query;
+    this.lastQueryExecuted = query;
+    const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+    this.queryResult = dbComponent.$data.database.content.exec(query);
+  }
+  public switchComponent() {
+    this.resetQuery();
+    this.isPointAndClickActive = !this.isPointAndClickActive;
+  }
+    public resetQuery() {
+      this.query = '';
     }
-    switchComponent() {
-      this.resetQuery();
-      this.isPointAndClickActive = !this.isPointAndClickActive;
+
+    // Computed Properties
+  get dynamicComponent() {
+      if (this.isPointAndClickActive) {
+        return PointAndClick;
+      } else {
+        return Query;
+      }
     }
-      resetQuery() {
-        this.query = '';
-      }
-
-      // Computed Properties
-    get dynamicComponent() {
-        if (this.isPointAndClickActive) {
-          return PointAndClick;
-        } else {
-          return Query;
-        }
-      }
 
 
-  };
-
+}
 </script>
 
 <style scoped>

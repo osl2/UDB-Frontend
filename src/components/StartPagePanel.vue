@@ -69,83 +69,81 @@
 </template>
 
 <script lang="ts">
-  import {Component, Prop, Vue} from 'vue-property-decorator';
-  import router from '@/router';
+import {Component, Prop, Vue} from 'vue-property-decorator';
+import router from '@/router';
 
-  @Component
-  export default class StartPagePanel extends Vue {
-      data(){
-          return{
+@Component
+export default class StartPagePanel extends Vue {
+  // set default to false
+  public sucessfull: boolean = true;
+  public errormsg: string = 'fehler';
+  @Prop() private title!: string;
+  @Prop() private description!: string;
+  @Prop() private buttonName!: string;
+  @Prop() private path!: string;
+  @Prop() private type!: string;
+    public data() {
+        return{
 
-          }
+        };
+    }
+
+  // methods
+  private loginteacher(username: string, password: string, mmsg: string): void {
+      /* if(username.length < 0){
+          this.errormsg = 'Gib einen Nutzernamen ein';
+          return;
       }
-    @Prop() private title!: string;
-    @Prop() private description!: string;
-    @Prop() private buttonName!: string;
-    @Prop() private path!: string;
-    @Prop() private type!: string;
-    //set default to false
-    sucessfull: boolean = true;
-    errormsg: string ='fehler';
+      if(password == null){
+          this.errormsg = "gib ein passwort ein";
+          return;
+      }
+      */
+      // login methode einfügen
 
-    //methods
-    private loginteacher(username:string, password:string, mmsg: string):void{
-        /* if(username.length < 0){
-            this.errormsg = 'Gib einen Nutzernamen ein';
-            return;
-        }
-        if(password == null){
-            this.errormsg = "gib ein passwort ein";
-            return;
-        }
-        */
-        //login methode einfügen
+      if (this.sucessfull) {
+          this.$router.push(this.path);
+      } else {
+          this.errormsg = "something went wrong"; // error vom server
+      }
 
-        if(this.sucessfull) {
-            this.$router.push(this.path);
-        }else{
-            this.errormsg = "something went wrong"; //error vom server
-        }
-
-        }
-    private registration(username:string, password:string, repeatedpw:string):void {
-        /*if (username.length === null){
-            this.errormsg = "gib einen Nutzernamen ein";
-            return;
-        }
-        if (password.length === null|| repeatedpw.length === null) {
-            this.errormsg = "gib ein passwort ein";
-            return
-        }
-        if (password !== repeatedpw) {
-            this.errormsg = "die Passwörter stimmen nicht überein";
-            return
-        }
-        // registrerung methode hier einfügen
-        */
-        if (this.sucessfull) {
-            this.$router.push(this.path);
-        } else {
-            this.errormsg = "something went wrong";// nur in genauer - hängt von serverantwort ab
-        }
+      }
+  private registration(username: string, password: string, repeatedpw: string): void {
+      /*if (username.length === null){
+          this.errormsg = "gib einen Nutzernamen ein";
+          return;
+      }
+      if (password.length === null|| repeatedpw.length === null) {
+          this.errormsg = "gib ein passwort ein";
+          return
+      }
+      if (password !== repeatedpw) {
+          this.errormsg = "die Passwörter stimmen nicht überein";
+          return
+      }
+      // registrerung methode hier einfügen
+      */
+      if (this.sucessfull) {
+          this.$router.push(this.path);
+      } else {
+          this.errormsg = "something went wrong"; // nur in genauer - hängt von serverantwort ab
+      }
 
 
-    }
-    private enterCourse(courseId:number):void{
-        /*if(courseId === null){
-            this.errormsg = "gib eine KursId ein";
-        }
-        //hier kursbeitritt methode einfügen
-         */
-        if(this.sucessfull) {
-            this.$router.push(this.path);
-        }else{
-            this.errormsg = "something went wrong"; //wieder serverabhängig
-        }
-    }
-    }
-
-  
+  }
+  private enterCourse(courseId: number): void {
+      /*if(courseId === null){
+          this.errormsg = "gib eine KursId ein";
+      }
+      //hier kursbeitritt methode einfügen
+       */
+      if (this.sucessfull) {
+          this.$router.push(this.path);
+      } else {
+          this.errormsg = "something went wrong"; // wieder serverabhängig
+      }
+  }
+  }
 </script>
 
 <style scoped lang="scss">

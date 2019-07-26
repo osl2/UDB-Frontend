@@ -19,12 +19,12 @@
 </template>
 
 <script lang="ts">
-  import {Vue, Component, Prop} from 'vue-property-decorator';
+import {Vue, Component, Prop} from 'vue-property-decorator';
 
-export default class Query extends Vue{
+export default class Query extends Vue {
   // Data
-  query: string = '';
-  };
+  public query: string = '';
+  }
 </script>
 
 <style scoped>
