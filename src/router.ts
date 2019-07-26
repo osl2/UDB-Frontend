@@ -36,7 +36,7 @@ export default new Router({
       component: StartpageTeacher,
     },
     {
-      path: '/courseView',
+      path: '/courseView/:courseId',
       name: 'courseView',
       component: CourseView,
     },
