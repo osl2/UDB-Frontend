@@ -10,7 +10,7 @@ import {SqlJs} from 'sql.js/module';
 
 export default class Database extends DataModel {
     private _name: string;
-    private _content: SqlJs.Database | null;
+    private _content: Uint8Array;
 
     /**
      * The constructor of this class.
@@ -19,7 +19,7 @@ export default class Database extends DataModel {
      * @param content: The content of the database.
      */
 
-    constructor(id: string, name: string, content: SqlJs.Database| null) {
+    constructor(id: string, name: string, content: Uint8Array) {
         super(id);
         this._name = name;
         this._content = content;
@@ -37,11 +37,11 @@ export default class Database extends DataModel {
         this._name = value;
     }
 
-    get content(): any {
+    get content(): Uint8Array {
         return this._content;
     }
 
-    set content(value: any) {
+    set content(value: Uint8Array) {
         this._content = value;
     }
 }
