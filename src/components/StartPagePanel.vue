@@ -9,28 +9,27 @@
                         teacher: two modal buttons, one for login with two input fields and one for registration with 3input fields
                         student: A modal button to enter a course-id-->
                 <template v-if="type === 'teacher'">
-                    <b-button class="btn btn-lg" v-b-modal.modal-1> Anmelden </b-button>
-
-                    <b-modal id="modal-1" >
-
+                    <b-button class="btn btn-lg" v-b-modal.modal-login> Anmelden </b-button>
+                    <b-modal id="modal-login" >
+                        <p >
+                            {{errormsg}}
+                        </p>
                         <div>
                             <b-form-input class="inputfield" v-model="username" placeholder="Nutzername"></b-form-input>
                         </div>
                         <div>
                             <b-form-input class="inputfield" v-model="password" type="password" placeholder="Passwort"></b-form-input>
                         </div>
-                        <div>
-                            {{errormsg}}
-                        </div>
+
                         <template slot="modal-footer">
-                            <b-button size="sm" @click="login(username, password)">
+                            <b-button size="sm" @click="loginteacher(username, password)">
                                 Anmelden
                             </b-button>
                         </template>
                     </b-modal>
 
-                    <b-button class="btn btn-lg" v-b-modal.modal-2>Registrieren</b-button>
-                    <b-modal id="modal-2">
+                    <b-button class="btn btn-lg" v-b-modal.modal-registration>Registrieren</b-button>
+                    <b-modal id="modal-registration">
                         <div>
                             <b-form-input class="inputfield" v-model="username" placeholder="Nutzername"></b-form-input>
                         </div>
@@ -49,8 +48,8 @@
                 </template>
 
                 <template v-else-if="type === 'student'">
-                    <b-button class="btn btn-lg btn-block" v-b-modal.modal-3>{{buttonName}}</b-button>
-                    <b-modal id="modal-3" ok-title="Beitreten" cancel-title="Abbrechen">
+                    <b-button class="btn btn-lg btn-block" v-b-modal.modal-joinCourse>{{buttonName}}</b-button>
+                    <b-modal id="modal-joinCourse" ok-title="Beitreten" cancel-title="Abbrechen">
                         <div>
                             <b-form-input class="inputfield" v-model="courseId" placeholder="Kurs-ID"></b-form-input>
                         </div>
@@ -75,23 +74,33 @@
 
   @Component
   export default class StartPagePanel extends Vue {
+      data(){
+          return{
+
+          }
+      }
     @Prop() private title!: string;
     @Prop() private description!: string;
     @Prop() private buttonName!: string;
     @Prop() private path!: string;
     @Prop() private type!: string;
     //set default to false
-    private sucessfull: boolean = true;
-    private errormsg: String ='';
+    sucessfull: boolean = true;
+    errormsg: string ='fehler';
 
-    private login(username:String, password:String){
-        if(username === null){
-            this.errormsg = "Gib einen Nutzernamen ein";
+    //methods
+    private loginteacher(username:string, password:string, mmsg: string):void{
+        /* if(username.length < 0){
+            this.errormsg = 'Gib einen Nutzernamen ein';
+            return;
         }
-        if(password === null){
-            this.errormsg = "gib ein Passwort ein";
+        if(password == null){
+            this.errormsg = "gib ein passwort ein";
+            return;
         }
+        */
         //login methode einfügen
+
         if(this.sucessfull) {
             this.$router.push(this.path);
         }else{
@@ -99,10 +108,10 @@
         }
 
         }
-    private registration(username:String, password:String, repeatedpw:String) {
-        if (username.length === null){
+    private registration(username:string, password:string, repeatedpw:string):void {
+        /*if (username.length === null){
             this.errormsg = "gib einen Nutzernamen ein";
-            return
+            return;
         }
         if (password.length === null|| repeatedpw.length === null) {
             this.errormsg = "gib ein passwort ein";
@@ -113,7 +122,7 @@
             return
         }
         // registrerung methode hier einfügen
-
+        */
         if (this.sucessfull) {
             this.$router.push(this.path);
         } else {
@@ -122,11 +131,12 @@
 
 
     }
-    private enterCourse(courseId:number){
-        if(courseId === null){
+    private enterCourse(courseId:number):void{
+        /*if(courseId === null){
             this.errormsg = "gib eine KursId ein";
         }
         //hier kursbeitritt methode einfügen
+         */
         if(this.sucessfull) {
             this.$router.push(this.path);
         }else{
@@ -143,9 +153,6 @@
         position: absolute;
         alignment: center;
         bottom: 17px;
-    }
-    .btn{
-        margin-right: 10px;
     }
     .inputfield{
         margin-bottom: 5px;
