@@ -8,7 +8,7 @@
     </div>
 </template>
 
-<script type="ts">
+<script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
   import StartPagePanel from '@/components/StartPagePanel.vue';
 
