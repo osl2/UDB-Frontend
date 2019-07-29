@@ -11,7 +11,7 @@
                 <template v-if="type === 'teacher'">
                     <b-button class="btn btn-lg" v-b-modal.modal-login> Anmelden </b-button>
                     <b-modal id="modal-login" >
-                        <p >
+                        <p class = error>
                             {{errormsg}}
                         </p>
                         <div>
@@ -75,30 +75,26 @@ import router from '@/router';
 @Component
 export default class StartPagePanel extends Vue {
   // set default to false
-  public sucessfull: boolean = true;
-  public errormsg: string = 'fehler';
+  private sucessfull: boolean = true;
+  private errormsg: string = '';
   @Prop() private title!: string;
   @Prop() private description!: string;
   @Prop() private buttonName!: string;
   @Prop() private path!: string;
   @Prop() private type!: string;
-    public data() {
-        return{
 
-        };
-    }
 
   // methods
   private loginteacher(username: string, password: string, mmsg: string): void {
-      /* if(username.length < 0){
+      /* if(username == null){
           this.errormsg = 'Gib einen Nutzernamen ein';
           return;
       }
       if(password == null){
-          this.errormsg = "gib ein passwort ein";
+          this.errormsg = "Gib ein Passwort ein";
           return;
       }
-      */
+        */
       // login methode einfügen
 
       if (this.sucessfull) {
@@ -110,15 +106,15 @@ export default class StartPagePanel extends Vue {
       }
   private registration(username: string, password: string, repeatedpw: string): void {
       /*if (username.length === null){
-          this.errormsg = "gib einen Nutzernamen ein";
+          this.errormsg = "Gib einen Nutzernamen ein";
           return;
       }
       if (password.length === null|| repeatedpw.length === null) {
-          this.errormsg = "gib ein passwort ein";
+          this.errormsg = "Gib ein passwort ein";
           return
       }
       if (password !== repeatedpw) {
-          this.errormsg = "die Passwörter stimmen nicht überein";
+          this.errormsg = "Die Passwörter stimmen nicht überein";
           return
       }
       // registrerung methode hier einfügen
@@ -154,6 +150,10 @@ export default class StartPagePanel extends Vue {
     }
     .inputfield{
         margin-bottom: 5px;
+    }
+
+    .error {
+        color: darkred;
     }
 
 </style>
