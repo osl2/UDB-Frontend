@@ -1,5 +1,5 @@
 import Subtask from '@/dataModel/Subtask';
-import Task from '@/dataModel/Task';
+
 
 /**
  * The class InstructionTask represents the type of subtask where the teacher just gives an instruction
@@ -8,7 +8,7 @@ import Task from '@/dataModel/Task';
  */
 export default class InstructionTask extends Subtask {
 
-    constructor(id: string, parent: Task, instruction: string) {
-        super(id, parent, undefined, instruction, false);
+    constructor(id: string, instruction: string) {
+        super(id, undefined, instruction, false);
     }
 }

@@ -8,7 +8,7 @@ import Task from '@/dataModel/Task';
  */
 
 export default abstract class Subtask extends DataModel {
-    private _parent: Task;
+    private _parent: Task | undefined; // This attribute gets set when assigning it to a Task
     private _solution: Solution | undefined; // A subtask does not always have a solution
     private _instruction: string;
     private _isSolutionVeryfiable: boolean;
@@ -17,16 +17,14 @@ export default abstract class Subtask extends DataModel {
     /**
      * The constructor for this class.
      * @param id: This attribute represents the ID of an Subtask.
-     * @param parent: This attribute references the task (class Task) to which the subtask belongs
      * @param solution: This attribute represents the students solution to a task.
      * @param instruction: This attribute represents the textual instruction for a subtask.
      * @param isSolutionVeryfiable: This attribute tells if the teacher inserted a solution and
      *                              set the option for the student to verify their solution with it.
      */
-    constructor(id: string, parent: Task, solution: Solution | undefined,
+    constructor(id: string, solution: Solution | undefined,
                 instruction: string, isSolutionVeryfiable: boolean) {
         super(id);
-        this._parent = parent;
         this._solution = solution;
         this._instruction = instruction;
         this._isSolutionVeryfiable = isSolutionVeryfiable;

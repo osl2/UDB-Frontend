@@ -21,6 +21,15 @@ export default class Task extends DataModel {
         super(id);
         this._database = database;
         this._subtasks = subtasks;
+        // parent for every subtask has to be set as soon as they get assigned to the task
+        for (const subtask of this._subtasks) {
+            subtask.parent = this;
+        }
+    }
+
+    public appendSubtask(subtask: Subtask) {
+        subtask.parent = this;
+        this._subtasks.push(subtask);
     }
 
     /**

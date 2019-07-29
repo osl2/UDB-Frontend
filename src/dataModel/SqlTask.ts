@@ -1,6 +1,5 @@
 import SqlSolution from '@/dataModel/SqlSolution';
 import Subtask from '@/dataModel/Subtask';
-import Task from '@/dataModel/Task';
 
 /**
  * The class SqlTask represents the type of subtask where an answer is a sql statement.
@@ -11,9 +10,9 @@ export default class SqlTask extends Subtask {
     private _doesRowOrderMatter: boolean;
 
 
-    constructor(id: string, parent: Task, solution: SqlSolution | undefined, instruction: string,
+    constructor(id: string, solution: SqlSolution | undefined, instruction: string,
                 isSolutionVeryfiable: boolean, isPointAndClickAllowed: boolean, doesRowOrderMatter: boolean) {
-        super(id, parent, solution, instruction, isSolutionVeryfiable);
+        super(id, solution, instruction, isSolutionVeryfiable);
         this._isPointAndClickAllowed = isPointAndClickAllowed;
         this._doesRowOrderMatter = doesRowOrderMatter;
     }
