@@ -6,7 +6,7 @@ import Task from '@/dataModel/Task';
  * The class SqlTask represents the type of subtask where an answer is a sql statement.
  * Because of that the solution should be an instance of the class SqlSolution.
  */
-class SqlTask extends Subtask {
+export default class SqlTask extends Subtask {
     private _isPointAndClickAllowed: boolean;
     private _doesRowOrderMatter: boolean;
 

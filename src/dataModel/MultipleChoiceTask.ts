@@ -6,7 +6,7 @@ import Task from '@/dataModel/Task';
  * The class MultipleChoiceTask represents the type of subtask where there are multiple answers to choose from.
  * Because of that the solution should be an instance of the class MultipleChoiceSolution.
  */
-class MultipleChoiceTask extends Subtask {
+export default class MultipleChoiceTask extends Subtask {
     private _answerOptions: string[];
 
 
