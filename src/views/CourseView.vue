@@ -44,7 +44,6 @@ export default class CourseView extends Vue {
 
   // Data
   private course!: Course;
-  private courseId: any = this.$route.params.courseId;
   private solutionsheet!: Uint8Array;
   private courseController: ParentService<Course, Worksheet> = new CourseController();
   private worksheetController: SolutionService = new WorksheetController();
@@ -64,7 +63,7 @@ export default class CourseView extends Vue {
 
 
   public created() {
-    this.course = this.courseController.get(this.courseId);
+    this.course = this.courseController.get(this.$route.params.courseId);
   }
 }
 </script>
