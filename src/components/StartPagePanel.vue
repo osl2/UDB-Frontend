@@ -131,14 +131,14 @@ export default class StartPagePanel extends Vue {
 
 
   }
-  private enterCourse(courseId: number): void {
+  private enterCourse(courseId: string): void {
       /*if(courseId === null){
           this.errormsg = "gib eine KursId ein";
       }
       //hier kursbeitritt methode einfügen
        */
       if (this.sucessfull) {
-          this.$router.push(this.path);
+          this.$router.push(this.path + courseId);
       } else {
           this.errormsg = "something went wrong"; // wieder serverabhängig
       }
