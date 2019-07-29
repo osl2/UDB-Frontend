@@ -30,7 +30,13 @@ import CourseList from "@/components/CourseList.vue";
 import DatabaseList from "@/components/DatabaseList.vue";
 import Course from "@/dataModel/Course.ts";
 import Database from "@/dataModel/Database.ts";
+import Worksheet from "@/dataModel/Worksheet";
+import DataManagementService from '@/services/DataManagementService';
+import ParentService from '@/services/ParentService';
+import DatabaseController from '@/controller/DatabaseController';
+import CourseController from '@/controller/CourseController';
 import router from '@/router';
+
 
 @Component({
   components: {
@@ -45,20 +51,20 @@ export default class StartpageTeacher extends Vue {
   // Data
   public databases!: Database[];
   public courses!: Course[];
+  private courseController: ParentService<Course, Worksheet> = new CourseController();
+  private databaseController: DataManagementService<Database> = new DatabaseController();
 
 
   public loadCourse(course: Course) {
     router.push('/courseView/' + course.id);
-    alert("TODO: Lade den Kurs mit Namen: " + course.name);
   }
   public showDatabase(database: Database) {
     alert("TODO: Zeige die Datenbank mit folgendem Namen an: " + database.name);
   }
 
   public created() {
-    /* TODO: getAll- Methoden der Services für den angemeldeten Lehrer aufrufen: Rückgabewerte müssen
-        ein Database-Array und ein Course-Array sein, um die Attribute zu initialisieren.
-     */
+    this.courses = this.courseController.getAll();
+    this.databases = this.databaseController.getAll();
   }
 
 }

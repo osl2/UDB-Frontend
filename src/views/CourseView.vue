@@ -26,7 +26,10 @@ import WorksheetList from '@/components/WorksheetList.vue';
 import SolutionsheetList from '@/components/SolutionsheetList.vue';
 import Course from '@/dataModel/Course.ts';
 import Worksheet from '@/dataModel/Worksheet.ts';
-
+import ParentService from '@/services/ParentService';
+import SolutionService from '@/services/SolutionService';
+import WorksheetController from '@/controller/WorksheetController';
+import CourseController from '@/controller/CourseController';
 
 
 @Component({
@@ -40,8 +43,11 @@ import Worksheet from '@/dataModel/Worksheet.ts';
 export default class CourseView extends Vue {
 
   // Data
-  public courseId: any = this.$route.params.courseId;
-  public course!: Course;
+  private course!: Course;
+  private courseId: any = this.$route.params.courseId;
+  private solutionsheet!: Uint8Array;
+  private courseController: ParentService<Course, Worksheet> = new CourseController();
+  private worksheetController: SolutionService = new WorksheetController();
 
   // Functions
 
@@ -52,15 +58,13 @@ export default class CourseView extends Vue {
   }
 
   public generateSolutionsheet(worksheet: Worksheet) {
-    alert('TODO: generateSolutionsheet als PDF + anzeigen' + worksheet.name);
+    this.solutionsheet = this.worksheetController.getSolution(worksheet);
+    alert('TODO: PDF anzeigen' + worksheet.name);
   }
 
 
   public created() {
-    /* TODO rufe hier getCourse() by ID auf mit übergebener courseID (s. Data - Abschnitt).
-        Der Rückgabetyp MUSS ein Course-Object sein. Die Methode soll also das Attribut
-        course initialisieren.
-    */
+    this.course = this.courseController.get(this.courseId);
   }
 }
 </script>
