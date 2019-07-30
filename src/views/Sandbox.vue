@@ -25,9 +25,6 @@
                          v-show="gotFirstQueryExecuted"
             ></QueryResult>
         </div>
-        <div>
-            <Test></Test>
-        </div>
 
     </div>
 </template>
@@ -36,7 +33,6 @@
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-property-decorator';
 import Query from '@/components/Query.vue';
-import Test from '@/components/Test.vue';
 import QueryResult from '@/components/QueryResult.vue';
 import PointAndClick from '@/components/PointAndClick.vue';
 import DatabaseComponent from '@/components/DatabaseComponent.vue';
@@ -44,7 +40,6 @@ import DatabaseComponent from '@/components/DatabaseComponent.vue';
 @Component({
   components: {
     Query,
-    Test,
     QueryResult,
     PointAndClick,
     DatabaseComponent,
