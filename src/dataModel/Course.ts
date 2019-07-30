@@ -1,5 +1,4 @@
 import DataModel from '@/dataModel/DataModel';
-import Worksheet from '@/dataModel/Worksheet';
 import {exists} from "@/api/BaseApi";
 
 /**
@@ -9,20 +8,20 @@ import {exists} from "@/api/BaseApi";
 export default class Course extends DataModel {
   private _name: string;
   private _description: string;
-  private _worksheet_ids: string[];
+  private _worksheetIds: string[];
 
   /**
    * The constructor of this class.
    * @param name: The name ist the name the teacher sets for the Course.
    * @param description: The description is a description the teacher can set.
-   * @param worksheet_ids: The worksheets which are assigned to the course.
+   * @param worksheetIds: The worksheets which are assigned to the course.
    */
 
-  constructor(id: string, name: string, description: string, worksheet_ids: string[]) {
+  constructor(id: string, name: string, description: string, worksheetIds: string[]) {
     super(id);
     this._name = name;
     this._description = description;
-    this._worksheet_ids = worksheet_ids;
+    this._worksheetIds = worksheetIds;
   }
 
   /**
@@ -46,19 +45,19 @@ export default class Course extends DataModel {
     this._description = value;
   }
 
-  get worksheet_ids(): string[] {
-    return this._worksheet_ids;
+  get worksheetIds(): string[] {
+    return this._worksheetIds;
   }
 
-  set worksheet_ids(value: string[]) {
-    this._worksheet_ids = value;
+  set worksheetIds(value: string[]) {
+    this._worksheetIds = value;
   }
 }
 export function CourseFromJSON(json: any): Course {
-    return new Course(json['id'],
-        json['name'],
-        !exists(json, 'description') ? undefined : json['description'],
-        json['worksheets']);
+    return new Course(json.id,
+        json.name,
+        !exists(json, 'description') ? undefined : json.description,
+        json.worksheets);
 }
 
 export function CourseToJSON(value?: Course): any {
@@ -66,9 +65,9 @@ export function CourseToJSON(value?: Course): any {
         return undefined;
     }
     return {
-        'id': value.id,
-        'name': value.name,
-        'description': value.description,
-        'worksheets': value.worksheet_ids,
+        id: value.id,
+        name: value.name,
+        description: value.description,
+        worksheets: value.worksheetIds,
     };
 }
