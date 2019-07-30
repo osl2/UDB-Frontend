@@ -1,5 +1,6 @@
 import DataModel from '@/dataModel/DataModel';
 import Worksheet from '@/dataModel/Worksheet';
+import {exists} from "@/api/BaseApi";
 
 /**
  * The class Course represents a workspace for a student in this application.
@@ -8,20 +9,20 @@ import Worksheet from '@/dataModel/Worksheet';
 export default class Course extends DataModel {
   private _name: string;
   private _description: string;
-  private _worksheets: Worksheet[];
+  private _worksheet_ids: string[];
 
   /**
    * The constructor of this class.
    * @param name: The name ist the name the teacher sets for the Course.
    * @param description: The description is a description the teacher can set.
-   * @param worksheets: The worksheets which are assigned to the course.
+   * @param worksheet_ids: The worksheets which are assigned to the course.
    */
 
-  constructor(id: string, name: string, description: string, worksheets: Worksheet[]) {
+  constructor(id: string, name: string, description: string, worksheet_ids: string[]) {
     super(id);
     this._name = name;
     this._description = description;
-    this._worksheets = worksheets;
+    this._worksheet_ids = worksheet_ids;
   }
 
   /**
@@ -45,11 +46,29 @@ export default class Course extends DataModel {
     this._description = value;
   }
 
-  get worksheets(): Worksheet[] {
-    return this._worksheets;
+  get worksheet_ids(): string[] {
+    return this._worksheet_ids;
   }
 
-  set worksheets(value: Worksheet[]) {
-    this._worksheets = value;
+  set worksheet_ids(value: string[]) {
+    this._worksheet_ids = value;
   }
+}
+export function CourseFromJSON(json: any): Course {
+    return new Course(json['id'],
+        json['name'],
+        !exists(json, 'description') ? undefined : json['description'],
+        json['worksheets']);
+}
+
+export function CourseToJSON(value?: Course): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'id': value.id,
+        'name': value.name,
+        'description': value.description,
+        'worksheets': value.worksheet_ids,
+    };
 }

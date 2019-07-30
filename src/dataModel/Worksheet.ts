@@ -1,5 +1,6 @@
 import DataModel from '@/dataModel/DataModel';
 import Task from '@/dataModel/Task';
+import {exists} from "@/api/BaseApi";
 
 /**
  * The class Worksheet represents a worksheet provided by a teacher.
@@ -8,23 +9,23 @@ import Task from '@/dataModel/Task';
 
 export default class Worksheet extends DataModel {
     private _name: string;
-    private _tasks: Task[];
+    private _task_ids: string[];
     private _isOnline: boolean;
     private _isSolutionOnline: boolean;
 
     /**
      * The constructor of this class.
      * @param name: The name of the worksheet set by a teacher.
-     * @param tasks: An array of tasks which are assigned to the worksheet.
+     * @param task_ids: An array of tasks which are assigned to the worksheet.
      * @param isOnline: The information if a worksheet is online meaning it can be solved in the course.
      * @param isSolutionOnline: The information if the teacher published the solution sheet
      *        so it can get downloaded by students of the course.
      */
 
-    constructor(id: string, name: string, tasks: Task[], isOnline: boolean, isSolutionOnline: boolean) {
+    constructor(id: string, name: string, task_ids: string[], isOnline: boolean, isSolutionOnline: boolean) {
         super(id);
         this._name = name;
-        this._tasks = tasks;
+        this._task_ids = task_ids;
         this._isOnline = isOnline;
         this._isSolutionOnline = isSolutionOnline;
     }
@@ -41,12 +42,12 @@ export default class Worksheet extends DataModel {
         this._name = value;
     }
 
-    get tasks(): Task[] {
-        return this._tasks;
+    get task_ids(): string[] {
+        return this._task_ids;
     }
 
-    set tasks(value: Task[]) {
-        this._tasks = value;
+    set task_ids(value: string[]) {
+        this._task_ids = value;
     }
 
     get isOnline(): boolean {
@@ -64,4 +65,25 @@ export default class Worksheet extends DataModel {
     set isSolutionOnline(value: boolean) {
         this._isSolutionOnline = value;
     }
+}
+
+export function WorksheetFromJSON(json: any): Worksheet {
+    return new Worksheet(json['id'],
+        !exists(json, 'name') ? undefined : json['name'],
+        !exists(json, 'tasks') ? undefined : json['tasks'],
+        json['is_online'],
+        json['is_solution_online']);
+}
+
+export function WorksheetToJSON(value?: Worksheet): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'id': value.id,
+        'name': value.name,
+        'is_online': value.isOnline,
+        'is_solution_online': value.isSolutionOnline,
+        'tasks': value.task_ids
+    };
 }

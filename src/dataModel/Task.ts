@@ -7,48 +7,65 @@ import Subtask from '@/dataModel/Subtask';
  */
 
 export default class Task extends DataModel {
-    private _database: Database;
-    private _subtasks: Subtask[];
+    private _name: string;
+    private _database_id: string;
+    private _subtask_ids: string[];
 
     /**
      * The constructor of this class.
      * @param id: The unique id of the task.
-     * @param database: The assigned database to the class.
-     * @param subtasks: An array of assigned subtasks.
+     * @param database_id: The assigned database to the class.
+     * @param subtask_ids: An array of assigned subtasks.
      */
 
-    constructor(id: string, database: Database, subtasks: Subtask[]) {
+    constructor(id: string, name: string, database_id: string, subtask_ids: string[]) {
         super(id);
-        this._database = database;
-        this._subtasks = subtasks;
-        // parent for every subtask has to be set as soon as they get assigned to the task
-        for (const subtask of this._subtasks) {
-            subtask.parent = this;
-        }
-    }
-
-    public appendSubtask(subtask: Subtask) {
-        subtask.parent = this;
-        this._subtasks.push(subtask);
+        this._name = name;
+        this._database_id = database_id;
+        this._subtask_ids = subtask_ids;
     }
 
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
 
-    get database(): Database {
-        return this._database;
+    get name(): string {
+        return this._name;
     }
 
-    set database(value: Database) {
-        this._database = value;
+    set name(value: string) {
+        this._name = value;
     }
 
-    get subtasks(): Subtask[] {
-        return this._subtasks;
+    get database_id(): string {
+        return this._database_id;
     }
 
-    set subtasks(value: Subtask[]) {
-        this._subtasks = value;
+    set database_id(value: string) {
+        this._database_id = value;
     }
+
+    get subtask_ids(): string[] {
+        return this._subtask_ids;
+    }
+
+    set subtask_ids(value: string[]) {
+        this._subtask_ids = value;
+    }
+}
+
+export function TaskFromJSON(json: any): Task {
+    return new Task(json['id'], json['name'], json['database'], json['subtasks'])
+}
+
+export function TaskToJSON(value?: Task): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'id': value.id,
+        'name': value.name,
+        'database': value.database_id,
+        'subtasks': value.subtask_ids,
+    };
 }
