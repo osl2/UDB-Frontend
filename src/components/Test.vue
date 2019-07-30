@@ -22,7 +22,7 @@ export default class Test extends Vue {
   public errmsg: string = '';
 
 
-  public create() {
+  public mounted() {
         this.$store.getters.api.getDatabases()
             .then((response: {}) => (this.apitest = response));
         this.$store.getters.api.getDatabase(this.request).then((response: {}) => (this.test2 = response))
