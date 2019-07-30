@@ -22,9 +22,9 @@ export default class TeacherOne {
   public worksheet2 = new Worksheet('456', 'Blatt 02', [], true, false);
   public worksheet3 = new Worksheet('456', 'Blatt 03', [], true, true);
   public worksheet4 = new Worksheet('456', 'Blatt 04', [], true, false);
-  public course1 = new Course("1234", "Klasse 7a", "SJ 18/19", [this.worksheet1]);
-  public course2 = new Course("345", "Klasse 8a", "SJ 18/19", [this.worksheet2, this.worksheet3]);
-  public course3 = new Course("rte", "Klasse 9b", "SJ 18/19", [this.worksheet4]);
+  public course1 = new Course("1234", "Klasse 7a", "SJ 18/19", [this.worksheet1.id]);
+  public course2 = new Course("345", "Klasse 8a", "SJ 18/19", [this.worksheet2.id, this.worksheet3.id]);
+  public course3 = new Course("rte", "Klasse 9b", "SJ 18/19", [this.worksheet4.id]);
 
 
 
@@ -44,7 +44,7 @@ export default class TeacherOne {
   public sqlTask1bW1 = new SqlTask('sqlTask1bT1', undefined,
     'Lasse Dir die Titel der Alben ausgeben, die mehr als 11 Titel besitzen.', false,
     true, false);
-  public task1W1 = new Task('task1T1', this.musicDb, [this.sqlTask1aW1, this.sqlTask1bW1]);
+  public task1W1 = new Task('task1T1', 'Aufgabe 1',  this.musicDb.id, [this.sqlTask1aW1.id, this.sqlTask1bW1.id]);
 
   // Task 2
 
@@ -54,17 +54,18 @@ export default class TeacherOne {
     ['select * from Menschen', 'select * where Alter > 4', 'select Name from Menschen where Alter > 56']);
   public instructionTask2bW1 = new InstructionTask('instructionTask2bT1',
     'Hier steht ein informativer Text für Schüler');
-  public task2W1 = new Task('task2T1', this.humanDb, [this.multipleChoiceTask2aW1, this.instructionTask2bW1]);
+  public task2W1 = new Task('task2T1', 'Aufgabe 2',  this.humanDb.id,
+    [this.multipleChoiceTask2aW1.id, this.instructionTask2bW1.id]);
 
 
   // Worksheet 1
 
-  public worksheet1T1 = new Worksheet('worksheet1T1', 'Aufgabenblatt 1', [this.task1W1, this.task2W1],
+  public worksheet1T1 = new Worksheet('worksheet1T1', 'Aufgabenblatt 1', [this.task1W1.id, this.task2W1.id],
     true, true);
 
   // Course 1
   public course1T1 = new Course('course1T1', 'Klasse 7a', 'Schuljahr 18/19',
-    [this.worksheet1T1]);
+    [this.worksheet1T1.id]);
 
   // Arrays
   public databaseArray = [this.musicDb, this.humanDb, this.database1, this.database2, this.database3];
