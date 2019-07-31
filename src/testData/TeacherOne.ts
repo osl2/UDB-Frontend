@@ -19,9 +19,9 @@ export default class TeacherOne {
   public database2 = new Database("gdghrt", "Mitarbeiter", new Uint8Array());
   public database3 = new Database("fhkrwe", "Musik", new Uint8Array());
   public worksheet1 = new Worksheet('123', 'Blatt 01', [], true, true);
-  public worksheet2 = new Worksheet('456', 'Blatt 02', [], true, false);
-  public worksheet3 = new Worksheet('456', 'Blatt 03', [], true, true);
-  public worksheet4 = new Worksheet('456', 'Blatt 04', [], true, false);
+  public worksheet2 = new Worksheet('456', 'Blatt 02', [], false, false);
+  public worksheet3 = new Worksheet('678', 'Blatt 03', [], true, true);
+  public worksheet4 = new Worksheet('93847', 'Blatt 04', [], true, false);
   public course1 = new Course("1234", "Klasse 7a", "SJ 18/19", [this.worksheet1.id]);
   public course2 = new Course("345", "Klasse 8a", "SJ 18/19", [this.worksheet2.id, this.worksheet3.id]);
   public course3 = new Course("rte", "Klasse 9b", "SJ 18/19", [this.worksheet4.id]);
@@ -84,6 +84,22 @@ export default class TeacherOne {
       }
     }
     throw new Error("Kein passender Kurs gefunden");
+  }
+  public getWorksheetByID(id: string): Worksheet {
+    for (const worksheet of this.worksheetArray) {
+      if (worksheet.id === id) {
+        return worksheet;
+      }
+    }
+    throw new Error("Kein passender Kurs gefunden");
+  }
+
+  public getWorksheetsfromCourse(course: Course): Worksheet[] {
+    let worksheets: Worksheet[] = [];
+    for (const worksheetId of course.worksheetIds) {
+      worksheets.push(this.getWorksheetByID(worksheetId));
+    }
+    return worksheets;
   }
 
   public getAllCourses(): Course[] {
