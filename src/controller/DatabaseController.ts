@@ -1,8 +1,16 @@
 import DataManagementService from '@/services/DataManagementService';
 import Database from '@/dataModel/Database';
 import ExportImport from '@/services/ExportImport';
+import {DefaultApi} from "@/api/DefaultApi";
 
 export default class DatabaseController implements DataManagementService<Database>, ExportImport<Database> {
+
+    private _api: DefaultApi;
+
+    constructor(api: DefaultApi) {
+        this._api = api;
+    }
+
     public create(): Database {
         throw new Error("Method not implemented.");
     }
@@ -15,8 +23,8 @@ export default class DatabaseController implements DataManagementService<Databas
     public get(id: string): Database {
         throw new Error("Method not implemented.");
     }
-    public getAll(): Database[] {
-        throw new Error("Method not implemented.");
+    public getAll(): Promise<Database[]> {
+        return this._api.getDatabases();
     }
     public exportObject(object: Database): Uint8Array {
         throw new Error("Method not implemented.");

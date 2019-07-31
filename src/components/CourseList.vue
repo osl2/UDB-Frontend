@@ -16,6 +16,18 @@
                 >Kurs öffnen
                 </b-button>
             </b-card>
+            <b-card>
+                <b-card-body>
+                    <b-form-input v-model="name" placeholder="Name"></b-form-input>
+                    <b-form-input v-model="description" placeholder="Beschreibung"></b-form-input>
+                </b-card-body>
+                <b-button
+                        class="bg-info"
+                        slot="footer"
+                        @click="$emit('addCourse', name, description)"
+                >Neuer Kurs
+                </b-button>
+            </b-card>
         </div>
     </div>
     

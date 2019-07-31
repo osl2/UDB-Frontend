@@ -15,6 +15,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {GetDatabaseRequest} from "@/api/DefaultApi";
+import Database from "@/dataModel/Database";
 
 
 
@@ -33,7 +34,7 @@ export default Vue.extend({
   },
 
   mounted() {  this.$store.getters.api.getDatabases()
-    .then((response: {}) => (this.apitest = response));
+    .then((response: Database[]) => (this.apitest = response));
                this.$store.getters.api.getDatabase(this.request).then((response: {}) => (this.test2 = response))
       .catch((error: any) => (this.errmsg = error.message));
   },

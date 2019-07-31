@@ -25,7 +25,7 @@
                          v-show="gotFirstQueryExecuted"
             ></QueryResult>
         </div>
-
+        <Test></Test>
     </div>
 </template>
 
