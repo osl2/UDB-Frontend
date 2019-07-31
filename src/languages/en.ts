@@ -35,6 +35,10 @@ const en = {
     worksheetOnline: 'worksheet is online',
     worksheetOffline: 'worksheet is offline',
   },
+  solutionsheetList: {
+    solutionsheetOnline: 'solution sheet is online',
+    solutionsheetOffline: 'solution sheet is offline',
+  },
   buttonText: {
     delete: 'delete',
   },

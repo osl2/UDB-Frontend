@@ -35,6 +35,10 @@ const de = {
     worksheetOnline: 'Aufgabenblatt ist online',
     worksheetOffline: 'Aufgabenblatt ist offline',
   },
+  solutionsheetList: {
+    solutionsheetOnline: 'Lösungsblatt ist online',
+    solutionsheetOffline: 'Lösungsblatt ist offline',
+  },
   buttonText: {
     delete: 'Löschen',
   },
