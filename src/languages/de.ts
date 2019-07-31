@@ -41,6 +41,10 @@ const de = {
   },
   buttonText: {
     delete: 'Löschen',
+    changeView: 'Wechsel',
+  },
+  hoverText: {
+    switchToStudentsView: 'Hier klicken, um anzuzeigen, was die Schüler vom Kurs sehen werden.',
   },
 };
 export default de;

@@ -41,6 +41,11 @@ const en = {
   },
   buttonText: {
     delete: 'delete',
+    changeView: 'change view',
   },
+  hoverText: {
+    switchToStudentsView: 'Click here to show what the students are going to see.',
+  },
+
 };
 export default en;
