@@ -1,10 +1,17 @@
-
 <template>
     <div>
         <div class="head">
             <h1>{{course.name}}</h1>
             <h2>{{course.description}}</h2>
         </div>
+        <!-- TODO ButtonTexte Englisch und ButtonTexte wechseln lassen"-->
+        <div class="container">
+            <b-button v-b-popover.hover="'Hier klicken, um zu sehen, was die Schüler vom Kurs sehen'"
+                      class="studentViewButton">
+                Schülersicht
+            </b-button>
+        </div>
+        <div class="clear"></div>
         <div class="container">
             <WorksheetList
                     :course="course"
@@ -21,18 +28,20 @@
 </template>
 
 <script lang="ts">
-import {Vue, Component, Prop} from 'vue-property-decorator';
-import WorksheetList from '@/components/WorksheetList.vue';
-import SolutionsheetList from '@/components/SolutionsheetList.vue';
-import Course from '@/dataModel/Course.ts';
-import Worksheet from '@/dataModel/Worksheet.ts';
-import ParentService from '@/services/ParentService';
-import SolutionService from '@/services/SolutionService';
-import WorksheetController from '@/controller/WorksheetController';
-import CourseController from '@/controller/CourseController';
+import {Component, Vue} from 'vue-property-decorator';
+  import WorksheetList from '@/components/WorksheetList.vue';
+  import SolutionsheetList from '@/components/SolutionsheetList.vue';
+  import Course from '@/dataModel/Course.ts';
+  import Worksheet from '@/dataModel/Worksheet.ts';
+  import ParentService from '@/services/ParentService';
+  import SolutionService from '@/services/SolutionService';
+  import WorksheetController from '@/controller/WorksheetController';
+  import CourseController from '@/controller/CourseController';
+  import {userState} from '@/globalData/UserState';
+  import UserGroup from "@/dataModel/UserGroup";
+  import router from '@/router';
 
-
-@Component({
+  @Component({
   components: {
     WorksheetList,
     SolutionsheetList,
@@ -47,6 +56,7 @@ export default class CourseView extends Vue {
   private solutionsheet!: Uint8Array;
   private courseController: ParentService<Course, Worksheet> = new CourseController();
   private worksheetController: SolutionService = new WorksheetController();
+  private isStudentsViewActive!: boolean;
 
   // Functions
 
@@ -62,9 +72,14 @@ export default class CourseView extends Vue {
   }
 
 
-  public created() {
-    this.course = this.courseController.get(this.$route.params.courseId);
-  }
+    public created() {
+      if (userState.user.userGroup === UserGroup.Unauthenticated) {
+        alert('Kein Zugriff auf diese Seite. Bitte Anmelden.');
+        router.push('/');
+      }
+
+      this.course = this.courseController.get(this.$route.params.courseId);
+    }
 }
 </script>
 
