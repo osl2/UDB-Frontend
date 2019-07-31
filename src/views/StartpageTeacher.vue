@@ -77,25 +77,25 @@ export default class StartpageTeacher extends Vue {
               course.id = response;
               this.courses.push(course)
           })
-          .catch((error: string) => {
-              this.messages.push("Fehler beim Erstellen des Kurses: " + error);
+          .catch((error_msg: string) => {
+              this.messages.push("Fehler beim Erstellen des Kurses: " + error_msg);
           });
   }
 
   public created() {
     this.courseController.getAll()
-        .then((courses) => {
+        .then((courses: Course[]) => {
             this.courses = courses;
         })
-        .catch((error) => {
-            this.messages.push("Fehler beim Laden der Kurse: " + error);
+        .catch((error_msg: string) => {
+            this.messages.push("Fehler beim Laden der Kurse: " + error_msg);
         });
     this.databaseController.getAll()
-        .then((databases) => {
+        .then((databases: Database[]) => {
             this.databases = databases;
         })
-        .catch((error) => {
-            this.messages.push("Fehler beim Laden der Datenbanken: " + error);
+        .catch((error_msg: string) => {
+            this.messages.push("Fehler beim Laden der Datenbanken: " + error_msg);
         });
   }
 
