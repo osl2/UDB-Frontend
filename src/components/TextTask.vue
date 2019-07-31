@@ -16,10 +16,15 @@
     import PlainTextTask from "../dataModel/PlainTextTask";
 
     export default {
-        @Prop() private currentSubtask: PlainTextTask;
-
+        @Prop() currentSubtask: PlainTextTask;
 
     //methods
+    public save(solution: string){
+
+    }
+    public compare(solution: string){
+
+    }
     }
 </script>
 

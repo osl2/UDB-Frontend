@@ -2,13 +2,16 @@
     <div>
         <b-form-group label="checkbox-group">
             <b-form-checkbox-group
-                    v-for=" option in currentSubtask._answerOptions"
+                    v-for=" (option,index) in options"
                     v-model="selected"
+                    value ="index"
                     :options="options"
-                    name="flavour-2a"
+                    name="checkbox"
                     stacked
             ></b-form-checkbox-group>
         </b-form-group>
+        <v-button @click="save">Speichern</v-button>
+        <v-button v-if=" currentSubtask._isSolutionVeryfiable" @click="compare"></v-button>
     
 </template>
 
@@ -17,9 +20,18 @@
     import {Component, Prop, Vue} from 'vue-property-decorator';
 
     export default {
-        name: "McTask"
-        @Prop private currentSubtask: MultipleChoiceTask;
-        options: currentTask._answerOptions;
+        name: "McTask";
+        @Prop private currentSubtask: MultipleChoiceTask ;
+        private options: string[] = currentSubtask._answerOptions;
+
+        //methods
+        public save(){
+            currentSubtask.solution.setchoices(selected);
+        }
+
+        public compare(){
+            //toDo
+    }
     }
 </script>
 
