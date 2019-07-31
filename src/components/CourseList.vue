@@ -10,6 +10,11 @@
                     {{course.name}}
                 </b-card-title>
                 <b-button
+                    class="bg-danger"
+                    slot="footer"
+                    @click="$emit('removeCourse', course)"
+                >Löschen</b-button>
+                <b-button
                         class="bg-info"
                         slot="footer"
                         @click="$emit('loadCourse', course)"
@@ -17,6 +22,9 @@
                 </b-button>
             </b-card>
             <b-card>
+                <b-card-title>
+                    Neuer Kurs
+                </b-card-title>
                 <b-card-body>
                     <b-form-input v-model="name" placeholder="Name"></b-form-input>
                     <b-form-input v-model="description" placeholder="Beschreibung"></b-form-input>
@@ -25,7 +33,7 @@
                         class="bg-info"
                         slot="footer"
                         @click="$emit('addCourse', name, description)"
-                >Neuer Kurs
+                >Hinzufügen
                 </b-button>
             </b-card>
         </div>

@@ -17,6 +17,7 @@
             <CourseList :courses="courses"
                         @loadCourse="loadCourse"
                         @addCourse="addCourse"
+                        @removeCourse="removeCourse"
             ></CourseList>
         </div>
         <div class="container">
@@ -42,7 +43,6 @@ import ParentService from '@/services/ParentService';
 import DatabaseController from '@/controller/DatabaseController';
 import CourseController from '@/controller/CourseController';
 import router from '@/router';
-import {error} from "vue-i18n/src/util";
 
 
 @Component({
@@ -57,7 +57,6 @@ export default class StartpageTeacher extends Vue {
 
   // Data
   public databases: Database[] = [];
-  public courses: Course[] = [];
   public messages: string[] = [];
   private courseController: ParentService<Course, Worksheet> = new CourseController(this.$store.getters.api);
   private databaseController: DataManagementService<Database> = new DatabaseController(this.$store.getters.api);
@@ -71,32 +70,19 @@ export default class StartpageTeacher extends Vue {
   }
 
   public addCourse(name: string, description: string) {
-      let course = new Course("", name, description, [])
-      this.courseController.create(course)
-          .then((response: string) => {
-              course.id = response;
-              this.courses.push(course)
-          })
-          .catch((error_msg: string) => {
-              this.messages.push("Fehler beim Erstellen des Kurses: " + error_msg);
-          });
+      this.courseController.create(new Course("", name, description, []));
+  }
+
+  public removeCourse(course: Course) {
+      this.courseController.remove(course);
   }
 
   public created() {
-    this.courseController.getAll()
-        .then((courses: Course[]) => {
-            this.courses = courses;
-        })
-        .catch((error_msg: string) => {
-            this.messages.push("Fehler beim Laden der Kurse: " + error_msg);
-        });
-    this.databaseController.getAll()
-        .then((databases: Database[]) => {
-            this.databases = databases;
-        })
-        .catch((error_msg: string) => {
-            this.messages.push("Fehler beim Laden der Datenbanken: " + error_msg);
-        });
+      this.databaseController.getAll()
+  }
+
+  get courses() {
+      return this.courseController.getAll();
   }
 
 }
