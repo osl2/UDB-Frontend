@@ -38,13 +38,13 @@ import Worksheet from "@/dataModel/Worksheet";
 export default Vue.extend({
     props: ['worksheets', 'isStudentsViewActive'],
   methods: {
-    showWorksheet: function(sheet: Worksheet): boolean {
-      if(this.isStudentsViewActive) {
+    showWorksheet(sheet: Worksheet): boolean {
+      if (this.isStudentsViewActive) {
         return sheet.isOnline;
       } else {
         return true;
       }
-    }
+    },
   },
 });
 </script>

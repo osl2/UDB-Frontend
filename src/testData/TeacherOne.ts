@@ -95,7 +95,7 @@ export default class TeacherOne {
   }
 
   public getWorksheetsfromCourse(course: Course): Worksheet[] {
-    let worksheets: Worksheet[] = [];
+    const worksheets: Worksheet[] = [];
     for (const worksheetId of course.worksheetIds) {
       worksheets.push(this.getWorksheetByID(worksheetId));
     }

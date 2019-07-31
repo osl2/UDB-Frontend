@@ -34,20 +34,20 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-  import WorksheetList from '@/components/WorksheetList.vue';
-  import SolutionsheetList from '@/components/SolutionsheetList.vue';
-  import Course from '@/dataModel/Course.ts';
-  import Worksheet from '@/dataModel/Worksheet.ts';
-  import ParentService from '@/services/ParentService';
-  import SolutionService from '@/services/SolutionService';
-  import WorksheetController from '@/controller/WorksheetController';
-  import CourseController from '@/controller/CourseController';
-  import {userState} from '@/globalData/UserState';
-  import UserGroup from "@/dataModel/UserGroup";
-  import router from '@/router';
+import WorksheetList from '@/components/WorksheetList.vue';
+import SolutionsheetList from '@/components/SolutionsheetList.vue';
+import Course from '@/dataModel/Course.ts';
+import Worksheet from '@/dataModel/Worksheet.ts';
+import ParentService from '@/services/ParentService';
+import SolutionService from '@/services/SolutionService';
+import WorksheetController from '@/controller/WorksheetController';
+import CourseController from '@/controller/CourseController';
+import {userState} from '@/globalData/UserState';
+import UserGroup from "@/dataModel/UserGroup";
+import router from '@/router';
 
 
-  @Component({
+@Component({
   components: {
     WorksheetList,
     SolutionsheetList,
@@ -73,28 +73,9 @@ export default class CourseView extends Vue {
     */
   }
 
-    private toggleView(){
-    this.isStudentsViewActive = !this.isStudentsViewActive;
-  }
-
   public generateSolutionsheet(worksheet: Worksheet) {
     this.solutionsheet = this.worksheetController.getSolution(worksheet);
     alert('TODO: PDF anzeigen' + worksheet.name);
-  }
-
-  private checkUserState(): boolean {
-    if (userState.user.userGroup === UserGroup.Teacher) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  private setIsStudentsViewActive() {
-    if(userState.user.userGroup === UserGroup.Teacher) {
-      this.isStudentsViewActive = false;
-    } else if (userState.user.userGroup === UserGroup.Student) {
-      this.isStudentsViewActive = true;
-    }
   }
 
 
@@ -107,6 +88,25 @@ export default class CourseView extends Vue {
       this.course = this.courseController.get(this.$route.params.courseId);
       this.worksheets = this.courseController.getChildren(this.course);
     }
+
+    private toggleView() {
+    this.isStudentsViewActive = !this.isStudentsViewActive;
+  }
+
+  private checkUserState(): boolean {
+    if (userState.user.userGroup === UserGroup.Teacher) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  private setIsStudentsViewActive() {
+    if (userState.user.userGroup === UserGroup.Teacher) {
+      this.isStudentsViewActive = false;
+    } else if (userState.user.userGroup === UserGroup.Student) {
+      this.isStudentsViewActive = true;
+    }
+  }
 
 
 }
