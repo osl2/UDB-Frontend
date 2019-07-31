@@ -1,13 +1,24 @@
 <template>
-    {{subtask._instruction}}
+    <div>
+        {{this.currentSubtask.instruction}}
+    </div>
+
     <div>
         <b-form-textarea
                 id="textarea"
                 v-model="studentSolution"
                 placeholder="Antwort eingeben">
-           </b-form-textarea>
+           </b-form-textarea>S
         <v-button @click="save(studentSolution)">Speichern</v-button>
-        <v-button v-if="subtask._isSolutionVeryfiable" @click="compare(studentSolution)">Vergleich mit Musterlösung</v-button>
+        <v-button v-if="currentubtask.isSolutionVeryfiable" @click="compare(studentSolution)">Vergleich mit Musterlösung</v-button>
+        <b-modal>
+            <p>Wenn du die Teilaufgabe zurücksetzt geht dein bisheriger Fortschritt verloren. Dieser Vorgang ist irreversible</p>
+            <template slot="modal-footer">
+                <b-button size="sm" @click="reset()">
+                    Ok
+                </b-button>
+            </template>
+        </b-modal>
     </div>
 </template>
 
@@ -15,14 +26,14 @@
     import {Component, Prop, Vue} from 'vue-property-decorator';
     import PlainTextTask from "../dataModel/PlainTextTask";
 
-    export default {
-        @Prop() currentSubtask: PlainTextTask;
+    export default class extends Vue{
+        @Prop() currentSubtask!: PlainTextTask;
 
     //methods
-    public save(solution: string){
+    public save(){
 
     }
-    public compare(solution: string){
+    public compare(){
 
     }
     }

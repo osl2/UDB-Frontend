@@ -1,6 +1,9 @@
 <template>
     <div>
-        <div v-if="currentSubtask._isPointAndClickAllowed" class="switchButton">
+        {{this.currentSubtask.instruction}}
+    </div>
+    <div>
+        <div v-if="currentSubtask.isPointAndClickAllowed" class="switchButton">
             <b-button v-on:click="switchComponent"
                       v-if="isPointAndClickActive">
                 {{$t('sandbox.switchToPlainSQL')}}
@@ -19,7 +22,15 @@
         </div>
 
         <v-button @click='save()'>Speichern</v-button>
-        <v-button v-if="currentSubtask._isSolutionVeryfiable" @click='compare()'>Vergleich mit Musterlösung</v-button>
+        <v-button v-if="currentSubtask.isSolutionVeryfiable" @click='compare()'>Vergleich mit Musterlösung</v-button>
+        <b-modal>
+            <p>Wenn du die Teilaufgabe zurücksetzt geht dein bisheriger Fortschritt verloren. Dieser Vorgang ist irreversible</p>
+            <template slot="modal-footer">
+                <b-button size="sm" @click="reset()">
+                   Ok
+                </b-button>
+            </template>
+        </b-modal>
 
         <div>
             <p v-show="gotFirstQueryExecuted">
@@ -35,15 +46,13 @@
 
 <script lang="ts">
     import {Vue, Component, Prop} from 'vue-property-decorator';
-    import {Vue, Component, Prop} from 'vue-property-decorator';
     import Query from '@/components/Query.vue';
     import QueryResult from '@/components/QueryResult.vue';
     import PointAndClick from '@/components/PointAndClick.vue';
     import DatabaseComponent from '@/components/DatabaseComponent.vue';
     import SqlTask from '@/dataModel/SqlTask.ts'
-    export default {
-        name: "SqlTask"
-        @Prop currentSubtask: SqlTask;
+    export default class extends Vue {
+        @Prop() currentSubtask!: SqlTask;
     public isPointAndClickActive: boolean = false;
     public gotFirstQueryExecuted: boolean = false;
     public query: string = '';
@@ -61,6 +70,10 @@
     public compare(){
 
     }
+    public reset(){
+
+    }
+
     public executeQuery(query: string) {
         this.gotFirstQueryExecuted = true;
         this.query = query;
@@ -89,6 +102,5 @@
 </script >
 
 <style scoped>
-    import {Component, Prop, Vue} from 'vue-property-decorator';
 
 </style>
