@@ -15,7 +15,7 @@ export default class SqlTask extends Subtask {
     constructor(id: string, solution: SqlSolution | undefined, instruction: string,
                 isSolutionVeryfiable: boolean, isPointAndClickAllowed: boolean, doesRowOrderMatter: boolean,
                 allowedSqlStatements: AllowedSqlStatements) {
-        super(id, solution, instruction, isSolutionVeryfiable);
+        super(id, solution, instruction, isSolutionVeryfiable, 'sql');
         this._isPointAndClickAllowed = isPointAndClickAllowed;
         this._doesRowOrderMatter = doesRowOrderMatter;
         this._allowedSqlStatements = allowedSqlStatements;

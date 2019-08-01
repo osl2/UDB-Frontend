@@ -11,6 +11,6 @@ export default class PlainTextTask extends Subtask {
 
     constructor(id: string, solution: PlainTextSolution | undefined,
                 instruction: string, isSolutionVeryfiable: boolean) {
-        super(id, solution, instruction, isSolutionVeryfiable);
+        super(id, solution, instruction, isSolutionVeryfiable, 'text');
     }
 }

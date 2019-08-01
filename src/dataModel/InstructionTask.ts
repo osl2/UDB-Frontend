@@ -9,6 +9,6 @@ import Subtask from '@/dataModel/Subtask';
 export default class InstructionTask extends Subtask {
 
     constructor(id: string, instruction: string) {
-        super(id, undefined, instruction, false);
+        super(id, undefined, instruction, false, 'instruction');
     }
 }

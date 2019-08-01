@@ -12,7 +12,7 @@ export default class MultipleChoiceTask extends Subtask {
 
     constructor(id: string, solution: MultipleChoiceSolution | undefined, instruction: string,
                 isSolutionVeryfiable: boolean, answerOptions: string[]) {
-        super(id, solution, instruction, isSolutionVeryfiable);
+        super(id, solution, instruction, isSolutionVeryfiable, 'mc');
         this._answerOptions = answerOptions;
     }
 
