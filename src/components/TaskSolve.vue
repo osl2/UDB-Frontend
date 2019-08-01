@@ -43,48 +43,45 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue';
+import DatabaseComponent from "@/components/DatabaseComponent.vue";
+import Task from "@/dataModel/Task.js";
+import SqlTask from '@/dataModel/SqlTask.js';
+import Subtask from "@/dataModel/Subtask.js";
+import MultipleChoiceTask from '@/dataModel/MultipleChoiceTask.js';
+import PlainTextTask from '@/dataModel/PlainTextTask.js';
+import InstructionTaskComp from '@/components/InstructionTaskComp.vue';
+import SqlTaskComp from '@/components/SqlTaskComp.vue';
+import McTask from '@/components/McTask.vue';
+import TextTask from '@/components/TextTask.vue';
 
-    import Vue from 'vue';
-    import DatabaseComponent from "@/components/DatabaseComponent.vue";
-    import Task from "@/dataModel/Task.js";
-    import SqlTask from '@/dataModel/SqlTask.js';
-    import Subtask from "@/dataModel/Subtask.js";
-    import MultipleChoiceTask from '@/dataModel/MultipleChoiceTask.js';
-    import PlainTextTask from '@/dataModel/PlainTextTask.js';
-    import InstructionTaskComp from '@/components/InstructionTaskComp.vue'
-    import SqlTaskComp from '@/components/SqlTaskComp.vue';
-    import McTask from '@/components/McTask.vue';
-    import TextTask from '@/components/TextTask.vue';
-
-    export default Vue.extend({
-        props: ['currentSubtask'],
-
+export default Vue.extend({
+    props: ['currentSubtask'],
 
 
-        components: {
-            SqlTaskComp,
-            TextTask,
-            McTask,
-            InstructionTaskComp,
-            DatabaseComponent,
-        },
-        methods:{
-          typeOfSubtask() :number {
-              if(this.currentSubtask.type === 'sql'){
-                  return 1;
-              }else if(this.currentSubtask.type === 'mc'){
-                  return 2;
-              }else if(this.currentSubtask.type === 'text'){
-                  return 3;
-              }else{ // Instruction Task
-                  return 4;
-              }
 
+    components: {
+        SqlTaskComp,
+        TextTask,
+        McTask,
+        InstructionTaskComp,
+        DatabaseComponent,
+    },
+    methods: {
+      typeOfSubtask(): number {
+          if (this.currentSubtask.type === 'sql') {
+              return 1;
+          } else if (this.currentSubtask.type === 'mc') {
+              return 2;
+          } else if (this.currentSubtask.type === 'text') {
+              return 3;
+          } else { // Instruction Task
+              return 4;
           }
-        },
-    })
 
-
+      },
+    },
+});
 </script>
 
 <style scoped>

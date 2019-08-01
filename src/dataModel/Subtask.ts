@@ -25,12 +25,12 @@ export default abstract class Subtask extends DataModel {
      *                              set the option for the student to verify their solution with it.
      */
     constructor(id: string, solution: Solution | undefined,
-                instruction: string, isSolutionVeryfiable: boolean,type: string) {
+                instruction: string, isSolutionVeryfiable: boolean, type: string) {
         super(id);
         this._solution = solution;
         this._instruction = instruction;
         this._isSolutionVeryfiable = isSolutionVeryfiable;
-        this._type= type;
+        this._type = type;
     }
 
     /**

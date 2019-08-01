@@ -8,10 +8,10 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from 'vue-property-decorator';
-    export default class extends Vue{
-        @Prop() private helpmsg!: string;
-    }
+import {Component, Prop, Vue} from 'vue-property-decorator';
+export default class extends Vue {
+    @Prop() private helpmsg!: string;
+}
 </script>
 
 <style scoped>

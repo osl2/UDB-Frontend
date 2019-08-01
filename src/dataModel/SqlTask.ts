@@ -11,7 +11,7 @@ export default class SqlTask extends Subtask {
     private _isPointAndClickAllowed: boolean;
     private _doesRowOrderMatter: boolean;
     private _allowedSqlStatements: AllowedSqlStatements;
-    
+
     constructor(id: string, solution: SqlSolution | undefined, instruction: string,
                 isSolutionVeryfiable: boolean, isPointAndClickAllowed: boolean, doesRowOrderMatter: boolean,
                 allowedSqlStatements: AllowedSqlStatements) {

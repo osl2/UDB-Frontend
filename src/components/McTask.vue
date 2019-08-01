@@ -19,31 +19,31 @@
 </template>
 
 <script lang ="ts">
-    import MultipleChoiceTask from '@/datamodel/MultipleChoiceTask.ts'
-    import Vue from 'vue';
+import MultipleChoiceTask from '@/datamodel/MultipleChoiceTask.ts';
+import Vue from 'vue';
 
-        export default Vue.extend({
-            props: ['currentSubtask'],
-            data() {
-                return {
-                    selected: [],
-                    options: [{}], // am anfang leeres object drinnen? an index 0
-                };
-            },
-            methods:{
-                setOptions(){
-                    for(let index=0; index < this.currentSubtask.answerOptions.length; index++){
+export default Vue.extend({
+        props: ['currentSubtask'],
+        data() {
+            return {
+                selected: [],
+                options: [{}], // am anfang leeres object drinnen? an index 0
+            };
+        },
+        methods: {
+            setOptions() {
+                for (let index = 0; index < this.currentSubtask.answerOptions.length; index++) {
 
-                        this.options.push({text: this.currentSubtask.answerOptions[index], value: index})
+                    this.options.push({text: this.currentSubtask.answerOptions[index], value: index});
 
-                    }
                 }
             },
-            created(): void {
-                this.setOptions();
-            }
+        },
+        created(): void {
+            this.setOptions();
+        },
 
-        })
+    });
 </script>
 
 <style scoped>

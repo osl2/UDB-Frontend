@@ -57,8 +57,8 @@ export default class StartpageTeacher extends Vue {
 
   // Data
   public databases: Database[] = [];
-  private courses!: Course[];
   public messages: string[] = [];
+  private courses!: Course[];
   private courseController: ParentService<Course, Worksheet> = new CourseController(this.$store.getters.api);
   private databaseController: DataManagementService<Database> = new DatabaseController(this.$store.getters.api);
 
