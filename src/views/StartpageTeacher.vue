@@ -57,6 +57,7 @@ export default class StartpageTeacher extends Vue {
 
   // Data
   public databases: Database[] = [];
+  private courses!: Course[];
   public messages: string[] = [];
   private courseController: ParentService<Course, Worksheet> = new CourseController(this.$store.getters.api);
   private databaseController: DataManagementService<Database> = new DatabaseController(this.$store.getters.api);
@@ -78,12 +79,10 @@ export default class StartpageTeacher extends Vue {
   }
 
   public created() {
-      this.databaseController.getAll()
+      this.databases = this.databaseController.getAll();
+      this.courses = this.courseController.getAll();
   }
 
-  get courses() {
-      return this.courseController.getAll();
-  }
 
 }
 </script>
