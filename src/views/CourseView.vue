@@ -61,16 +61,14 @@ export default class CourseView extends Vue {
   private course!: Course;
   private worksheets!: Worksheet[];
   private solutionsheet!: Uint8Array;
-  private courseController: ParentService<Course, Worksheet> = new CourseController();
+  private courseController: ParentService<Course, Worksheet> = new CourseController(this.$store.getters.api);
   private worksheetController: SolutionService = new WorksheetController();
   private isStudentsViewActive: boolean = false;
 
   // Functions
 
   public loadWorksheet(worksheet: Worksheet) {
-    alert('TODO: route zu WorksheetView mit übergebenem Worksheet' + worksheet.name);
-    /* TODO: Sobald die WorksheetViewStudent steht, wird von hier aus der Router aufgerufen
-    */
+      router.push('/studentWorksheet/' + worksheet.id);
   }
 
   public generateSolutionsheet(worksheet: Worksheet) {
