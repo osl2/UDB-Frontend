@@ -60,23 +60,23 @@ export default class Sandbox extends Vue {
   ];
 
   // Methods
-  public executeQuery(query: string) {
+  private executeQuery(query: string) {
     this.gotFirstQueryExecuted = true;
     this.query = query;
     this.lastQueryExecuted = query;
     const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
     this.queryResult = dbComponent.$data.database.content.exec(query);
   }
-  public switchComponent() {
+  private switchComponent() {
     this.resetQuery();
     this.isPointAndClickActive = !this.isPointAndClickActive;
   }
-    public resetQuery() {
+    private resetQuery() {
       this.query = '';
     }
 
     // Computed Properties
-  get dynamicComponent() {
+  private get dynamicComponent() {
       if (this.isPointAndClickActive) {
         return PointAndClick;
       } else {
