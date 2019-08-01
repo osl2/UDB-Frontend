@@ -9,6 +9,8 @@ import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
 import SqlTask from '@/dataModel/SqlTask';
 import SqlSolution from '@/dataModel/SqlSolution';
 import InstructionTask from '@/dataModel/InstructionTask';
+import AllowedSqlStatements from '@/dataModel/allowedSqlStatements';
+import Subtask from '@/dataModel/Subtask';
 
 
 export default class TeacherOne {
@@ -22,7 +24,7 @@ export default class TeacherOne {
   public worksheet2 = new Worksheet('456', 'Blatt 02', [], false, false);
   public worksheet3 = new Worksheet('678', 'Blatt 03', [], true, true);
   public worksheet4 = new Worksheet('93847', 'Blatt 04', [], true, false);
-  public course1 = new Course("1234", "Klasse 7a", "SJ 18/19", [this.worksheet1.id]);
+  public course1 = new Course("1234", "Klasse 7b", "SJ 18/19", [this.worksheet1.id]);
   public course2 = new Course("345", "Klasse 8a", "SJ 18/19", [this.worksheet2.id, this.worksheet3.id]);
   public course3 = new Course("rte", "Klasse 9b", "SJ 18/19", [this.worksheet4.id]);
 
@@ -40,10 +42,10 @@ export default class TeacherOne {
   public sqlSolution1aW1 = new SqlSolution('select * from Alben', [], [[]]);
   public sqlTask1aW1 = new SqlTask('sqlTask1aT1', this.sqlSolution1aW1,
     'Lasse Dir die Tabelle Alben mit allen Einträgen anzeigen.', true,
-    true, false);
+    true, false, AllowedSqlStatements.NoRestriction);
   public sqlTask1bW1 = new SqlTask('sqlTask1bT1', undefined,
     'Lasse Dir die Titel der Alben ausgeben, die mehr als 11 Titel besitzen.', false,
-    true, false);
+    true, false, AllowedSqlStatements.NoRestriction);
   public task1W1 = new Task('task1T1', 'Aufgabe 1',  this.musicDb.id, [this.sqlTask1aW1.id, this.sqlTask1bW1.id]);
 
   // Task 2
@@ -54,8 +56,10 @@ export default class TeacherOne {
     ['select * from Menschen', 'select * where Alter > 4', 'select Name from Menschen where Alter > 56']);
   public instructionTask2bW1 = new InstructionTask('instructionTask2bT1',
     'Hier steht ein informativer Text für Schüler');
+  public plainTextTask = new PlainTextTask('1337', undefined,
+      'Schreibe eine Kurzgeschichte zu deiner Lieblingsdatenbank', false);
   public task2W1 = new Task('task2T1', 'Aufgabe 2',  this.humanDb.id,
-    [this.multipleChoiceTask2aW1.id, this.instructionTask2bW1.id]);
+    [this.multipleChoiceTask2aW1.id, this.instructionTask2bW1.id, this.plainTextTask.id]);
 
 
   // Worksheet 1
@@ -69,7 +73,8 @@ export default class TeacherOne {
 
   // Arrays
   public databaseArray = [this.musicDb, this.humanDb, this.database1, this.database2, this.database3];
-  public subTaskArray = [this.sqlTask1aW1, this.sqlTask1bW1, this.multipleChoiceTask2aW1, this.instructionTask2bW1];
+  public subTaskArray = [this.sqlTask1aW1, this.sqlTask1bW1, this.multipleChoiceTask2aW1, this.instructionTask2bW1,
+    this.plainTextTask];
   public taskArray = [this.task1W1, this.task2W1];
   public worksheetArray = [this.worksheet1T1, this.worksheet1, this.worksheet2, this.worksheet3, this.worksheet4];
   public courseArray = [this.course1T1, this.course1, this.course2, this.course3];
@@ -91,8 +96,17 @@ export default class TeacherOne {
         return worksheet;
       }
     }
+    throw new Error("Kein passendes Aufgabenblatt gefunden");
+  }
+  public getTaskByID(id: string): Task {
+    for (const task of this.taskArray) {
+      if (task.id === id) {
+        return task;
+      }
+    }
     throw new Error("Kein passender Kurs gefunden");
   }
+
 
   public getWorksheetsfromCourse(course: Course): Worksheet[] {
     const worksheets: Worksheet[] = [];
@@ -102,6 +116,30 @@ export default class TeacherOne {
     return worksheets;
   }
 
+  public getSubtasksFromTask(task: Task): Subtask[] {
+    const subtasks: Subtask[] = [];
+    for (const subtaskId of task.subtaskIds) {
+      subtasks.push(this.getSubtaskByID(subtaskId));
+    }
+    return subtasks;
+  }
+
+  public getSubtaskByID(id: string): Subtask {
+    for (const subtask of this.subTaskArray) {
+      if (subtask.id === id) {
+        return subtask;
+      }
+    }
+    throw new Error("Kein passender Kurs gefunden");
+  }
+
+  public getTasksFromWorksheet(worksheet: Worksheet): Task[] {
+    const tasks: Task[] = [];
+    for (const taskId of worksheet.taskIds) {
+      tasks.push(this.getTaskByID(taskId));
+    }
+    return tasks;
+  }
   public getAllCourses(): Course[] {
     return this.courseArray;
   }
