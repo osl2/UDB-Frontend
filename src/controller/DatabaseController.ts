@@ -1,7 +1,12 @@
 import DataManagementService from '@/services/DataManagementService';
 import Database from '@/dataModel/Database';
 import ExportImport from '@/services/ExportImport';
-import {DefaultApi} from "@/api/DefaultApi";
+import {
+    CreateDatabaseRequest,
+    DefaultApi,
+    DeleteDatabaseRequest,
+    UpdateDatabaseRequest,
+} from "@/api/DefaultApi";
 
 export default class DatabaseController implements DataManagementService<Database>, ExportImport<Database> {
 
@@ -12,26 +17,46 @@ export default class DatabaseController implements DataManagementService<Databas
         this._api = api;
         this._databases = [];
         this._api.getDatabases()
-            .then((response: Database[]) => {
-                this._databases = response;
-            });
+          .then((response: Database[]) => {
+              this._databases = response;
+          });
+
     }
 
-    public create(): Database {
-        throw new Error("Method not implemented.");
+    public create(database: Database): void {
+        this._api.createDatabase({database} as CreateDatabaseRequest)
+          .then((response: string) => {
+              database.id = response;
+              this._databases.push(database);
+          })
+          .catch((error) => {
+              throw new Error("Error creating database: " + error);
+          });
     }
     public remove(object: Database): void {
-        throw new Error("Method not implemented.");
+        this._api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest)
+          .then((response) => {
+              const index = this._databases.indexOf(object, 0);
+              if (index > -1) {
+                  this._databases.splice(index, 1);
+              }
+          });
     }
     public save(object: Database): void {
-        throw new Error("Method not implemented.");
+        this._api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest)
+          .then(() => {
+              const index = this._databases.findIndex((database) => database.id === object.id);
+              if (index > -1) {
+                  this._databases[index] = object;
+              }
+          });
     }
     public get(id: string): Database {
-        const foundDatabase = this._databases.find((database) => database.id === id);
-        if (foundDatabase === undefined) {
-            throw new Error("Course not found");
+        const tempDatabase = this._databases.find((database) => database.id === id);
+        if (tempDatabase === undefined) {
+            throw new Error("Database not found");
         }
-        return foundDatabase;
+        return tempDatabase;
     }
     public getAll(): Database[] {
         return this._databases;

@@ -5,13 +5,15 @@ import {
     DefaultApi,
     CreateCourseRequest,
     DeleteCourseRequest,
-    GetWorksheetRequest,
     UpdateCourseRequest,
 } from "@/api/DefaultApi";
+import Task from "@/dataModel/Task";
+import WorksheetController from "@/controller/WorksheetController";
 
 export default class CourseController implements ParentService<Course, Worksheet> {
     private _api: DefaultApi;
     private _courses: Course[];
+    private _worksheetController: ParentService<Worksheet, Task>;
 
     constructor(api: DefaultApi) {
         this._api = api;
@@ -20,15 +22,14 @@ export default class CourseController implements ParentService<Course, Worksheet
             .then((response: Course[]) => {
                 this._courses = response;
             });
+        // needed for getting children of a Course
+        this._worksheetController = new WorksheetController(api);
     }
 
     public getChildren(object: Course): Worksheet[] {   // muss hier ein Kurs übergeben werden oder reicht die UUID?
         const worksheets: Worksheet[] = [];
         object.worksheetIds.forEach((worksheetId: string) => {
-            this._api.getWorksheet({worksheetId} as GetWorksheetRequest)
-                .then((worksheet: Worksheet) => {
-                    worksheets.push(worksheet);
-                });
+            worksheets.push(this._worksheetController.get(worksheetId));
         });
         return worksheets;
     }
@@ -62,11 +63,11 @@ export default class CourseController implements ParentService<Course, Worksheet
             });
     }
     public get(id: string): Course {
-        const foundCourse = this._courses.find((course) => course.id === id);
-        if (foundCourse === undefined) {
+        const tempCourse = this._courses.find((course) => course.id === id);
+        if (tempCourse === undefined) {
             throw new Error("Course not found");
         }
-        return foundCourse;
+        return tempCourse;
     }
     public getAll(): Course[] {
         return this._courses;
