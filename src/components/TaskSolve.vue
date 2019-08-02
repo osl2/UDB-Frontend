@@ -43,19 +43,16 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import DatabaseComponent from "@/components/DatabaseComponent.vue";
-import Task from "@/dataModel/Task.js";
-import SqlTask from '@/dataModel/SqlTask.js';
-import Subtask from "@/dataModel/Subtask.js";
-import MultipleChoiceTask from '@/dataModel/MultipleChoiceTask.js';
-import PlainTextTask from '@/dataModel/PlainTextTask.js';
-import InstructionTaskComp from '@/components/InstructionTaskComp.vue';
-import SqlTaskComp from '@/components/SqlTaskComp.vue';
-import McTask from '@/components/McTask.vue';
-import TextTask from '@/components/TextTask.vue';
+  import Vue from 'vue';
+  import DatabaseComponent from "@/components/DatabaseComponent.vue";
+  import InstructionTaskComp from '@/components/InstructionTaskComp.vue';
+  import SqlTaskComp from '@/components/SqlTaskComp.vue';
+  import McTask from '@/components/McTask.vue';
+  import TextTask from '@/components/TextTask.vue';
+  import SubtaskTypes from "@/dataModel/SubtaskTypes";
 
-export default Vue.extend({
+
+  export default Vue.extend({
     props: ['currentSubtask'],
 
 
@@ -69,11 +66,11 @@ export default Vue.extend({
     },
     methods: {
       typeOfSubtask(): number {
-          if (this.currentSubtask.type === 'sql') {
+          if (this.currentSubtask.type === SubtaskTypes.Sql) {
               return 1;
-          } else if (this.currentSubtask.type === 'mc') {
+          } else if (this.currentSubtask.type === SubtaskTypes.MultipleChoice) {
               return 2;
-          } else if (this.currentSubtask.type === 'text') {
+          } else if (this.currentSubtask.type === SubtaskTypes.PlainText) {
               return 3;
           } else { // Instruction Task
               return 4;

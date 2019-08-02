@@ -1,4 +1,5 @@
 import Subtask from '@/dataModel/Subtask';
+import SubtaskTypes from "@/dataModel/SubtaskTypes";
 
 
 /**
@@ -9,6 +10,6 @@ import Subtask from '@/dataModel/Subtask';
 export default class InstructionTask extends Subtask {
 
     constructor(id: string, instruction: string) {
-        super(id, undefined, instruction, false, 'instruction');
+        super(id, undefined, instruction, false, SubtaskTypes.Instruction);
     }
 }

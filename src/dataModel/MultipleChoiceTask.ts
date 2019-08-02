@@ -1,5 +1,6 @@
 import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
 import Subtask from '@/dataModel/Subtask';
+import SubtaskTypes from "@/dataModel/SubtaskTypes";
 
 
 /**
@@ -12,7 +13,7 @@ export default class MultipleChoiceTask extends Subtask {
 
     constructor(id: string, solution: MultipleChoiceSolution | undefined, instruction: string,
                 isSolutionVeryfiable: boolean, answerOptions: string[]) {
-        super(id, solution, instruction, isSolutionVeryfiable, 'mc');
+        super(id, solution, instruction, isSolutionVeryfiable, SubtaskTypes.MultipleChoice);
         this._answerOptions = answerOptions;
     }
 

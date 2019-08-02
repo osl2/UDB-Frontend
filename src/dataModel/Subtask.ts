@@ -1,6 +1,7 @@
 import Solution from '@/dataModel/Solution';
 import DataModel from '@/dataModel/DataModel';
 import Task from '@/dataModel/Task';
+import SubtaskTypes from "@/dataModel/SubtaskTypes";
 
 /**
  * The abstract class Subtask represents a subtask of a task.
@@ -13,7 +14,7 @@ export default abstract class Subtask extends DataModel {
     private _solution: Solution | undefined; // A subtask does not always have a solution
     private _instruction: string;
     private _isSolutionVeryfiable: boolean;
-    private _type: string;
+    private _type: SubtaskTypes;
 
 
     /**
@@ -25,7 +26,7 @@ export default abstract class Subtask extends DataModel {
      *                              set the option for the student to verify their solution with it.
      */
     constructor(id: string, solution: Solution | undefined,
-                instruction: string, isSolutionVeryfiable: boolean, type: string) {
+                instruction: string, isSolutionVeryfiable: boolean, type: SubtaskTypes) {
         super(id);
         this._solution = solution;
         this._instruction = instruction;
@@ -68,11 +69,11 @@ export default abstract class Subtask extends DataModel {
     set isSolutionVeryfiable(value: boolean) {
         this._isSolutionVeryfiable = value;
     }
-    get type(): string {
+    get type(): SubtaskTypes {
         return this._type;
     }
 
-    set type(value: string) {
+    set type(value: SubtaskTypes) {
         this._type = value;
     }
 }

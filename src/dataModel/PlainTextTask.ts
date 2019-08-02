@@ -1,5 +1,6 @@
 import Subtask from '@/dataModel/Subtask';
 import PlainTextSolution from '@/dataModel/PlainTextSolution';
+import SubtaskTypes from "@/dataModel/SubtaskTypes";
 
 
 /**
@@ -11,6 +12,6 @@ export default class PlainTextTask extends Subtask {
 
     constructor(id: string, solution: PlainTextSolution | undefined,
                 instruction: string, isSolutionVeryfiable: boolean) {
-        super(id, solution, instruction, isSolutionVeryfiable, 'text');
+        super(id, solution, instruction, isSolutionVeryfiable, SubtaskTypes.PlainText);
     }
 }
