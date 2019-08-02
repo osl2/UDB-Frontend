@@ -71,17 +71,23 @@
 <script lang="ts">
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import router from '@/router';
+import CourseController from "@/controller/CourseController";
+import ParentService from "@/services/ParentService";
+import Worksheet from "@/dataModel/Worksheet";
+import Course from "@/dataModel/Course";
+import {userState} from '@/globalData/UserState';
+import UserGroup from "@/dataModel/UserGroup";
 
 @Component
 export default class StartPagePanel extends Vue {
-  // set default to false
-  private sucessfull: boolean = true;
+
   private errormsg: string = '';
   @Prop() private title!: string;
   @Prop() private description!: string;
   @Prop() private buttonName!: string;
   @Prop() private path!: string;
   @Prop() private type!: string;
+  private courseController: ParentService<Course, Worksheet> = new CourseController(this.$store.getters.api);
 
 
   // methods
@@ -95,15 +101,15 @@ export default class StartPagePanel extends Vue {
           return;
       }
         */
-      // login methode einfügen
 
-      if (this.sucessfull) {
+      if (this.checkLogin(username, password)) {
           this.$router.push(this.path);
       } else {
           this.errormsg = "something went wrong"; // error vom server
       }
-
       }
+
+
   private registration(username: string, password: string, repeatedpw: string): void {
       /*if (username.length === null){
           this.errormsg = "Gib einen Nutzernamen ein";
@@ -117,9 +123,8 @@ export default class StartPagePanel extends Vue {
           this.errormsg = "Die Passwörter stimmen nicht überein";
           return
       }
-      // registrerung methode hier einfügen
       */
-      if (this.sucessfull) {
+      if (this.checkRegistration(username, password)) {
           this.$router.push(this.path);
       } else {
           this.errormsg = "something went wrong"; // nur in genauer - hängt von serverantwort ab
@@ -131,15 +136,49 @@ export default class StartPagePanel extends Vue {
       /*if(courseId === null){
           this.errormsg = "gib eine KursId ein";
       }
-      //hier kursbeitritt methode einfügen
+
        */
-      if (this.sucessfull) {
+      if (this.checkCourseEntry(courseId)) {
           this.$router.push(this.path + courseId);
       } else {
           this.errormsg = "something went wrong"; // wieder serverabhängig
       }
   }
+
+  private checkCourseEntry(courseId: string): boolean {
+    try {
+      this.courseController.get(courseId);
+    } catch (err) {
+      alert('Laden des Kurses ist fehlgeschlagen: ' + err.message + '. Bitte versuche es erneut.')
+      return false;
+    }
+    // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
+    if (userState.user.userGroup === UserGroup.Teacher){
+      return true;
+    }
+    userState.user.userGroup = UserGroup.Student;
+    return true;
   }
+
+  private checkLogin(username: string, password: string): boolean {
+    alert('TODO: serverseitige Login Methode aufrufen.')
+    userState.user.userGroup = UserGroup.Teacher;
+    return true;
+  }
+
+  private checkRegistration(username: string, password: string): boolean {
+    alert('TODO: serverseitige Registrierungsmethode aufrufen.')
+    userState.user.userGroup = UserGroup.Teacher;
+    return true;
+  }
+
+
+
+
+
+  }
+
+
 </script>
 
 <style scoped lang="scss">
