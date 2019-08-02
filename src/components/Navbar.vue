@@ -25,8 +25,11 @@
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item-dropdown right>
                         <template slot="button-content">{{$t('navbar.profileDropdown')}}</template>
-                        <b-dropdown-item href="#">{{$t('navbar.settings')}}</b-dropdown-item>
-                        <b-dropdown-item href="#">{{$t('navbar.logout')}}</b-dropdown-item>
+                       <!-- TODO: Implement settings view
+                       <b-dropdown-item href="#">{{$t('navbar.settings')}}</b-dropdown-item> -->
+                        <b-dropdown-item href="#"
+                                         @click="logoutTeacher"
+                        >{{$t('navbar.logout')}}</b-dropdown-item>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
 
@@ -40,6 +43,11 @@ import Vue from 'vue';
 
 export default Vue.extend( {
   props: ['courses', 'databases'],
+  methods: {
+    logoutTeacher(){
+      alert('TODO: Logout implementieren!');
+    }
+  },
 });
 </script>
 
