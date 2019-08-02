@@ -15,8 +15,8 @@ export function AllowedSqlFromJSON(json: any): AllowedSqlStatements {
   }
 }
 
-export function AllowedSqlToJSON(allowed_sql: AllowedSqlStatements): any {
-  switch (allowed_sql) {
+export function AllowedSqlToJSON(allowedSql: AllowedSqlStatements): any {
+  switch (allowedSql) {
     case AllowedSqlStatements.NoRestriction: return "ALL";
     case AllowedSqlStatements.SelectStatements: return "QUERY";
     case AllowedSqlStatements.NoStatements: return "NONE";

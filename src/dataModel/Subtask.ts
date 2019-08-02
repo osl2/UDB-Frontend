@@ -32,7 +32,8 @@ export default abstract class Subtask extends DataModel {
      * @param type
      */
     constructor(id: string, solution: Solution | undefined,
-                instruction: string, isSolutionVeryfiable: boolean, isSolutionVisible: boolean, allowedSqlStatements: AllowedSqlStatements, type: SubtaskTypes) {
+                instruction: string, isSolutionVeryfiable: boolean,
+                isSolutionVisible: boolean, allowedSqlStatements: AllowedSqlStatements, type: SubtaskTypes) {
         super(id);
         this._solution = solution;
         this._instruction = instruction;
@@ -101,5 +102,5 @@ export default abstract class Subtask extends DataModel {
         this._type = value;
     }
 
-    abstract toJSON(): any;
+    public abstract toJSON(): any;
 }

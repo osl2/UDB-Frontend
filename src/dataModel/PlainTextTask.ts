@@ -11,12 +11,7 @@ import AllowedSqlStatements, {AllowedSqlFromJSON, AllowedSqlToJSON} from "@/data
  */
 export default class PlainTextTask extends Subtask {
 
-    constructor(id: string, solution: PlainTextSolution | undefined,
-                instruction: string, isSolutionVeryfiable: boolean, isSolutionVisible: boolean, allowedSqlStatements: AllowedSqlStatements) {
-        super(id, solution, instruction, isSolutionVeryfiable, isSolutionVisible, allowedSqlStatements, SubtaskTypes.PlainText);
-    }
-
-    static fromJSON(json: any): PlainTextTask {
+    public static fromJSON(json: any): PlainTextTask {
         return new PlainTextTask(json.id,
             new PlainTextSolution(json.content.plaintext.solution.text),
             json.instruction,
@@ -25,7 +20,14 @@ export default class PlainTextTask extends Subtask {
             AllowedSqlFromJSON(json.allowed_sql));
     }
 
-    toJSON(): any {
+    constructor(id: string, solution: PlainTextSolution | undefined,
+                instruction: string, isSolutionVeryfiable: boolean,
+                isSolutionVisible: boolean, allowedSqlStatements: AllowedSqlStatements) {
+        super(id, solution, instruction, isSolutionVeryfiable,
+            isSolutionVisible, allowedSqlStatements, SubtaskTypes.PlainText);
+    }
+
+    public toJSON(): any {
         return {
             id: this.id,
             instruction: this.instruction,
@@ -34,9 +36,9 @@ export default class PlainTextTask extends Subtask {
             allowed_sql: AllowedSqlToJSON(this.allowedSqlStatements),
             content: {
                 plaintext: {
-                    solution: this.solution? this.solution.toJSON() : {},
-                }
-            }
-        }
+                    solution: this.solution ? this.solution.toJSON() : {},
+                },
+            },
+        };
     }
 }

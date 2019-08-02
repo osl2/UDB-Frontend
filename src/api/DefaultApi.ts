@@ -133,7 +133,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters.course ? requestParameters.course.toJSON(): undefined,
+            body: requestParameters.course ? requestParameters.course.toJSON() : undefined,
         });
 
         return new runtime.TextApiResponse(response);
@@ -240,13 +240,15 @@ export class DefaultApi extends runtime.BaseAPI {
      * Creates a new instance of a `Subtask`.
      * Create a Subtask
      */
-    async createSubtaskRaw(requestParameters: CreateSubtaskRequest): Promise<runtime.ApiResponse<string>> {
+    public async createSubtaskRaw(requestParameters: CreateSubtaskRequest): Promise<runtime.ApiResponse<string>> {
         if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling createSubtask.');
+            throw new runtime.RequiredError('taskId',
+                'Required parameter requestParameters.taskId was null or undefined when calling createSubtask.');
         }
 
         if (requestParameters.subtask === null || requestParameters.subtask === undefined) {
-            throw new runtime.RequiredError('subtask','Required parameter requestParameters.subtask was null or undefined when calling createSubtask.');
+            throw new runtime.RequiredError('subtask',
+                'Required parameter requestParameters.subtask was null or undefined when calling createSubtask.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -260,11 +262,12 @@ export class DefaultApi extends runtime.BaseAPI {
             const tokenString = typeof token === 'function' ? token("Token", []) : token;
 
             if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+                headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks`.replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            path: `/tasks/{taskId}/subtasks`
+                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -278,7 +281,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * Creates a new instance of a `Subtask`.
      * Create a Subtask
      */
-    async createSubtask(requestParameters: CreateSubtaskRequest): Promise<string> {
+    public async createSubtask(requestParameters: CreateSubtaskRequest): Promise<string> {
         const response = await this.createSubtaskRaw(requestParameters);
         return await response.value();
     }
@@ -741,7 +744,8 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}`.replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            path: `/tasks/{taskId}`
+                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

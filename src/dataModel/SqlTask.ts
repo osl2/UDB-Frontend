@@ -9,17 +9,6 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
  */
 export default class SqlTask extends Subtask {
 
-    private _isPointAndClickAllowed: boolean;
-    private _doesRowOrderMatter: boolean;
-
-    constructor(id: string, solution: SqlSolution | undefined, instruction: string,
-                isSolutionVeryfiable: boolean, isPointAndClickAllowed: boolean, doesRowOrderMatter: boolean,
-                isSolutionVisible: boolean, allowedSqlStatements: AllowedSqlStatements) {
-        super(id, solution, instruction, isSolutionVeryfiable, isSolutionVisible, allowedSqlStatements, SubtaskTypes.Sql);
-        this._isPointAndClickAllowed = isPointAndClickAllowed;
-        this._doesRowOrderMatter = doesRowOrderMatter;
-    }
-
     /**
      * The following methods are getter and setter for each additional attribute in this class.
      */
@@ -40,7 +29,7 @@ export default class SqlTask extends Subtask {
         this._doesRowOrderMatter = value;
     }
 
-    static fromJSON(json: any): SqlTask {
+    public static fromJSON(json: any): SqlTask {
         if (!json.hasOwnProperty("content")) {
             return new SqlTask(json.id,
                 undefined,
@@ -54,7 +43,7 @@ export default class SqlTask extends Subtask {
         if (!json.content.hasOwnProperty("sql")) {
             throw new Error("Wrong subtask type");
         }
-        let solution = new SqlSolution(json.content.sql.solution.query,
+        const solution = new SqlSolution(json.content.sql.solution.query,
                 json.content.sql.solution.columns,
                 json.content.sql.solution.rows);
         return new SqlTask(json.id, solution,
@@ -66,7 +55,19 @@ export default class SqlTask extends Subtask {
             AllowedSqlFromJSON(json.allowed_sql));
     }
 
-    toJSON() {
+    private _isPointAndClickAllowed: boolean;
+    private _doesRowOrderMatter: boolean;
+
+    constructor(id: string, solution: SqlSolution | undefined, instruction: string,
+                isSolutionVeryfiable: boolean, isPointAndClickAllowed: boolean, doesRowOrderMatter: boolean,
+                isSolutionVisible: boolean, allowedSqlStatements: AllowedSqlStatements) {
+        super(id, solution, instruction, isSolutionVeryfiable,
+            isSolutionVisible, allowedSqlStatements, SubtaskTypes.Sql);
+        this._isPointAndClickAllowed = isPointAndClickAllowed;
+        this._doesRowOrderMatter = doesRowOrderMatter;
+    }
+
+    public toJSON() {
         return {
             id: this.id,
             instruction: this.instruction,
@@ -77,8 +78,8 @@ export default class SqlTask extends Subtask {
                 sql: {
                     row_order_matters: this.doesRowOrderMatter,
                     solution: this.solution ? this.solution.toJSON() : {},
-                }
-            }
-        }
+                },
+            },
+        };
     }
 }

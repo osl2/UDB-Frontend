@@ -76,10 +76,6 @@ export default class StartpageTeacher extends Vue {
       this.courseController.remove(course);
   }
 
-  public created() {
-
-  }
-
   get courses() {
       return this.courseController.getAll();
   }

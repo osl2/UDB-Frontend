@@ -14,7 +14,7 @@ export default class DatabaseController implements DataManagementService<Databas
         this._api.getDatabases()
             .then((response: Database[]) => {
                 this._databases = response;
-            })
+            });
     }
 
     public create(): Database {
