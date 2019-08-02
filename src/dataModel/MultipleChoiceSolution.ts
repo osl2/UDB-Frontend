@@ -21,10 +21,10 @@ export default class MultipleChoiceSolution extends Solution {
         this._choices = choices;
     }
 
-    toJSON(): any {
+    public toJSON(): any {
         return {
             choices: this.choices,
-        }
+        };
     }
 
     /**

@@ -31,6 +31,13 @@ export default class User extends DataModel {
         this._userGroup = userGroup;
     }
 
+    toJSON(): any {
+        return {
+            name: this.name,
+            password: this.password
+        }
+    }
+
     /**
      * The following methods are getter and setter for each attribute in this class.
      */

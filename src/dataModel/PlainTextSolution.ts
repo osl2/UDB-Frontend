@@ -19,6 +19,12 @@ export default class PlainTextSolution extends Solution {
         this._text = text;
     }
 
+    public toJSON(): any {
+        return {
+            text: this.text,
+        };
+    }
+
     /**
      * The following methods are getter and setter for the attribute text.
      */
@@ -28,11 +34,5 @@ export default class PlainTextSolution extends Solution {
 
     set text(value: string) {
         this._text = value;
-    }
-
-    toJSON(): any {
-        return {
-            text: this.text,
-        }
     }
 }

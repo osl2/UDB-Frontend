@@ -34,7 +34,7 @@ export default class SqlSolution extends Solution {
             query: this.querySolution,
             columns: this.columns,
             rows: this.values,
-        }
+        };
     }
 
     /**

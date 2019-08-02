@@ -2,7 +2,6 @@ import Solution from '@/dataModel/Solution';
 import DataModel from '@/dataModel/DataModel';
 import Task from '@/dataModel/Task';
 import SubtaskTypes from "@/dataModel/SubtaskTypes";
-import AllowedSqlStatements from "@/dataModel/allowedSqlStatements";
 
 /**
  * The abstract class Subtask represents a subtask of a task.
@@ -16,7 +15,6 @@ export default abstract class Subtask extends DataModel {
     private _instruction: string;
     private _isSolutionVeryfiable: boolean;
     private _isSolutionVisible: boolean;
-    private _allowedSqlStatements: AllowedSqlStatements;
     private _type: SubtaskTypes;
 
 
@@ -33,13 +31,16 @@ export default abstract class Subtask extends DataModel {
      */
     constructor(id: string, solution: Solution | undefined,
                 instruction: string, isSolutionVeryfiable: boolean,
-                isSolutionVisible: boolean, allowedSqlStatements: AllowedSqlStatements, type: SubtaskTypes) {
+                isSolutionVisible: boolean, type: SubtaskTypes) {
         super(id);
         this._solution = solution;
         this._instruction = instruction;
         this._isSolutionVeryfiable = isSolutionVeryfiable;
+        this._isSolutionVisible = isSolutionVisible;
         this._type = type;
     }
+
+    public abstract toJSON(): any;
 
     /**
      * The following methods are getter and setter for each attribute in this class.
@@ -85,15 +86,6 @@ export default abstract class Subtask extends DataModel {
         this._isSolutionVisible = value;
     }
 
-
-    get allowedSqlStatements(): AllowedSqlStatements {
-        return this._allowedSqlStatements;
-    }
-
-    set allowedSqlStatements(value: AllowedSqlStatements) {
-        this._allowedSqlStatements = value;
-    }
-
     get type(): SubtaskTypes {
         return this._type;
     }
@@ -101,6 +93,4 @@ export default abstract class Subtask extends DataModel {
     set type(value: SubtaskTypes) {
         this._type = value;
     }
-
-    public abstract toJSON(): any;
 }

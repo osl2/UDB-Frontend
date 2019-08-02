@@ -18,11 +18,22 @@ export default class Database extends DataModel {
      * @param name: The name the teacher can set for the database.
      * @param content: The content of the database.
      */
-
     constructor(id: string, name: string, content: Uint8Array) {
         super(id);
         this._name = name;
         this._content = content;
+    }
+
+    public toJSON(): any {
+        return {
+            id: this.id,
+            database: this.content,
+            name: this.name,
+        };
+    }
+
+    public static fromJSON(json: any): Database {
+        return new Database(json.id, json.name, json.database);
     }
 
     /**
@@ -43,17 +54,5 @@ export default class Database extends DataModel {
 
     set content(value: Uint8Array) {
         this._content = value;
-    }
-
-    toJSON(): any {
-        return {
-            id: this.id,
-            database: this.content,
-            name: this.name,
-        }
-    }
-
-    static fromJSON(json: any): Database {
-        return new Database(json.id, json.name, json.database);
     }
 }

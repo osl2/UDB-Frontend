@@ -1,7 +1,6 @@
 import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
 import Subtask from '@/dataModel/Subtask';
 import SubtaskTypes from "@/dataModel/SubtaskTypes";
-import AllowedSqlStatements, {AllowedSqlFromJSON, AllowedSqlToJSON} from "@/dataModel/allowedSqlStatements";
 
 
 /**
@@ -9,18 +8,13 @@ import AllowedSqlStatements, {AllowedSqlFromJSON, AllowedSqlToJSON} from "@/data
  * Because of that the solution should be an instance of the class MultipleChoiceSolution.
  */
 export default class MultipleChoiceTask extends Subtask {
+    private _answerOptions: string[];
 
-    /**
-     * The following methods are getter and setter for the additional attribute in this class.
-     */
-
-
-    get answerOptions(): string[] {
-        return this._answerOptions;
-    }
-
-    set answerOptions(value: string[]) {
-        this._answerOptions = value;
+    constructor(id: string, solution: MultipleChoiceSolution | undefined, instruction: string,
+                isSolutionVeryfiable: boolean,  isSolutionVisible: boolean, answerOptions: string[]) {
+        super(id, solution, instruction, isSolutionVeryfiable,
+            isSolutionVisible, SubtaskTypes.MultipleChoice);
+        this._answerOptions = answerOptions;
     }
 
     public static fromJSON(json: any): MultipleChoiceTask {
@@ -29,18 +23,7 @@ export default class MultipleChoiceTask extends Subtask {
             json.instruction,
             json.solution_verifiable,
             json.solution_visible,
-            AllowedSqlFromJSON(json.allowed_sql),
             json.content.multiple_choice.answer_options);
-    }
-    private _answerOptions: string[];
-
-
-    constructor(id: string, solution: MultipleChoiceSolution | undefined, instruction: string,
-                isSolutionVeryfiable: boolean,  isSolutionVisible: boolean,
-                allowedSqlStatements: AllowedSqlStatements, answerOptions: string[]) {
-        super(id, solution, instruction, isSolutionVeryfiable,
-            isSolutionVisible, allowedSqlStatements, SubtaskTypes.MultipleChoice);
-        this._answerOptions = answerOptions;
     }
 
     public toJSON(): any {
@@ -49,7 +32,6 @@ export default class MultipleChoiceTask extends Subtask {
             instruction: this.instruction,
             solution_verifiable: this.isSolutionVeryfiable,
             solution_visible: this.isSolutionVisible,
-            allowed_sql: AllowedSqlToJSON(this.allowedSqlStatements),
             content: {
                 multiple_choice: {
                     answer_options: this.answerOptions,
@@ -57,5 +39,17 @@ export default class MultipleChoiceTask extends Subtask {
                 },
             },
         };
+    }
+
+    /**
+     * The following methods are getter and setter for the additional attribute in this class.
+     */
+
+    get answerOptions(): string[] {
+        return this._answerOptions;
+    }
+
+    set answerOptions(value: string[]) {
+        this._answerOptions = value;
     }
 }

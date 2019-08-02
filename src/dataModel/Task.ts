@@ -23,11 +23,11 @@ export default class Task extends DataModel {
         this._subtaskIds = subtaskIds;
     }
 
-    static fromJSON(json: any): Task {
+    public static fromJSON(json: any): Task {
         return new Task(json.id, json.name, json.database, json.subtasks);
     }
 
-    toJSON(): any {
+    public toJSON(): any {
         return {
             id: this.id,
             name: this.name,

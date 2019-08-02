@@ -1,6 +1,5 @@
 import Subtask from '@/dataModel/Subtask';
 import SubtaskTypes from "@/dataModel/SubtaskTypes";
-import AllowedSqlStatements, {AllowedSqlToJSON} from "@/dataModel/allowedSqlStatements";
 
 
 /**
@@ -10,21 +9,20 @@ import AllowedSqlStatements, {AllowedSqlToJSON} from "@/dataModel/allowedSqlStat
  */
 export default class InstructionTask extends Subtask {
 
-    constructor(id: string, instruction: string, allowedSqlStatements: AllowedSqlStatements) {
-        super(id, undefined, instruction, false, false, allowedSqlStatements, SubtaskTypes.Instruction);
+    constructor(id: string, instruction: string) {
+        super(id, undefined, instruction, false, false, SubtaskTypes.Instruction);
     }
 
-    static fromJSON(json: any): InstructionTask {
-        return new InstructionTask(json.id, json.instruction, json.allowed_sql);
+    public static fromJSON(json: any): InstructionTask {
+        return new InstructionTask(json.id, json.instruction);
     }
 
-    toJSON(): any {
+    public toJSON(): any {
         return {
             id: this.id,
             instruction: this.instruction,
             solution_verifiable: this.isSolutionVeryfiable,
             solution_visible: this.isSolutionVisible,
-            allowed_sql: AllowedSqlToJSON(this.allowedSqlStatements)
-        }
+        };
     }
 }

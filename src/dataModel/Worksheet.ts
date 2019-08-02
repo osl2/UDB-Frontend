@@ -29,7 +29,7 @@ export default class Worksheet extends DataModel {
         this._isSolutionOnline = isSolutionOnline;
     }
 
-    static fromJSON(json: any): Worksheet {
+    public static fromJSON(json: any): Worksheet {
         return new Worksheet(json.id,
             !exists(json, 'name') ? undefined : json.name,
             !exists(json, 'tasks') ? undefined : json.tasks,
@@ -37,7 +37,7 @@ export default class Worksheet extends DataModel {
             json.is_solution_online);
     }
 
-    toJSON(): any {
+    public toJSON(): any {
         return {
             id: this.id,
             name: this.name,
