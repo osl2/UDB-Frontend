@@ -20,4 +20,10 @@ export default class SubtaskController implements SubtaskService {
     public getAll(): Subtask[] {
         throw new Error("Method not implemented.");
     }
+    public getWithoutSolution(id: string): Subtask {
+        throw new Error("Method not implemented.");
+    }
+    public getAllWithoutSolution(): Subtask[] {
+        throw new Error("Method not implemented.");
+    }
 }
