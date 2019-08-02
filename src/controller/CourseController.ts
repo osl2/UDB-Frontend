@@ -5,35 +5,53 @@ import {
     DefaultApi,
     CreateCourseRequest,
     DeleteCourseRequest,
+    GetWorksheetRequest,
     UpdateCourseRequest,
+    GetCourseRequest,
 } from "@/api/DefaultApi";
-import Task from "@/dataModel/Task";
-import WorksheetController from "@/controller/WorksheetController";
+import DataManagementService from "@/services/DataManagementService";
 
-export default class CourseController implements ParentService<Course, Worksheet> {
+export default class CourseController implements DataManagementService<Course> {
+
     private _api: DefaultApi;
-    private _courses: Course[];
-    private _worksheetController: ParentService<Worksheet, Task>;
+    private _courses: Course[] = [];
+    private _course?: Course = undefined;
 
     constructor(api: DefaultApi) {
         this._api = api;
-        this._courses = [];
+    }
+
+    /**
+     * Loads all courses available to the currently logged in Teacher
+     */
+    public loadAll(): void {
         this._api.getCourses()
             .then((response: Course[]) => {
                 this._courses = response;
             });
-        // needed for getting children of a Course
-        this._worksheetController = new WorksheetController(api);
     }
 
-    public getChildren(object: Course): Worksheet[] {   // muss hier ein Kurs übergeben werden oder reicht die UUID?
-        const worksheets: Worksheet[] = [];
-        object.worksheetIds.forEach((worksheetId: string) => {
-            worksheets.push(this._worksheetController.get(worksheetId));
-        });
-        return worksheets;
+    /**
+     * Loads a course with given id
+     *
+     * @param id
+     */
+    public load(id: string): void {
+        this._course = this._courses.find((course) => course.id === id);
+        if (this._course === undefined) {
+            this._api.getCourse({courseId: id} as GetCourseRequest)
+                .then((response: Course) => {
+                    this._course = response;
+                })
+
+        }
     }
 
+    /**
+     * Create a new course and add to courses as soon as API call is successful
+     *
+     * @param course
+     */
     public create(course: Course): void {
         this._api.createCourse({course} as CreateCourseRequest)
             .then((response: string) => {
@@ -44,15 +62,7 @@ export default class CourseController implements ParentService<Course, Worksheet
                 throw new Error("Error creating course: " + error);
             });
     }
-    public remove(object: Course): void {   // hier reicht vielleicht auch UUID?
-        this._api.deleteCourse({courseId: object.id} as DeleteCourseRequest)
-            .then((response) => {
-                const index = this._courses.indexOf(object, 0);
-                if (index > -1) {
-                    this._courses.splice(index, 1);
-                }
-            });
-    }
+
     public save(object: Course): void {
         this._api.updateCourse({course: object, courseId: object.id} as UpdateCourseRequest)
             .then(() => {
@@ -62,14 +72,28 @@ export default class CourseController implements ParentService<Course, Worksheet
                 }
             });
     }
-    public get(id: string): Course {
-        const tempCourse = this._courses.find((course) => course.id === id);
-        if (tempCourse === undefined) {
-            throw new Error("Course not found");
-        }
-        return tempCourse;
+
+    public remove(object: Course): void {   // hier reicht vielleicht auch UUID?
+        this._api.deleteCourse({courseId: object.id} as DeleteCourseRequest)
+            .then((response) => {
+                const index = this._courses.indexOf(object, 0);
+                if (index > -1) {
+                    this._courses.splice(index, 1);
+                }
+            });
     }
-    public getAll(): Course[] {
+
+    /**
+     * Getter for loaded courses.
+     */
+    get all(): Course[] {
         return this._courses;
+    }
+
+    /**
+     * Getter for single loaded course.
+     */
+    get one(): Course | undefined {
+        return this._course;
     }
 }

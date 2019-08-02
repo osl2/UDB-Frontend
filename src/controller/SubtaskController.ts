@@ -1,7 +1,7 @@
 import SubtaskService from '@/services/SubtaskService';
 import Subtask from '@/dataModel/Subtask';
 import {DefaultApi, DeleteSubtaskRequest} from "@/api/DefaultApi";
-
+import Task from "@/dataModel/Task";
 
 export default class SubtaskController implements SubtaskService {
     private _api: DefaultApi;
@@ -16,6 +16,18 @@ export default class SubtaskController implements SubtaskService {
               this._subtasks = response;
           }); */
     }
+    loadAll(): void {
+        throw new Error("Method not implemented.");
+    }
+
+    loadChildren(object: Task): void {
+        throw new Error("Method not implemented.");
+    }
+
+    load(id: string): void {
+        throw new Error("Method not implemented.");
+    }
+
     public create(subtask: Subtask): void {
         /*
         this._api.createSubtask({subtask} as CreateSubtaskRequest)
@@ -51,14 +63,7 @@ export default class SubtaskController implements SubtaskService {
         throw new Error("Method not implemented.");
     }
     public get(id: string): Subtask {
-        const tempSubtask = this._subtasks.find((subtask) => subtask.id === id);
-        if (tempSubtask === undefined) {
-            throw new Error("Subtask not found");
-        }
-        return tempSubtask;
-    }
-    public getAll(): Subtask[] {
-        return this._subtasks;
+        throw new Error("Method not implemented.");
     }
     public getWithoutSolution(id: string): Subtask {
         let subtask: Subtask;
@@ -78,6 +83,14 @@ export default class SubtaskController implements SubtaskService {
         return subtasks;
     }
     public compareSolution(subtask: Subtask) {
-            throw new Error("Method not implemented.");
+        throw new Error("Method not implemented.");
+    }
+
+    get all(): Subtask[] {
+        throw new Error("Method not implemented.");
+    }
+
+    get one(): Subtask {
+        throw new Error("Method not implemented.");
     }
 }

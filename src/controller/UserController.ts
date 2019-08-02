@@ -1,6 +1,12 @@
 import UserService from '@/services/UserService';
+import {DefaultApi} from "@/api/DefaultApi";
 
 export default class UserController implements UserService {
+
+    constructor(api: DefaultApi) {
+
+    }
+
     public logout(): void {
         throw new Error("Method not implemented.");
     }

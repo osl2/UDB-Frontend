@@ -3,57 +3,57 @@ import Worksheet from '@/dataModel/Worksheet';
 import Task from '@/dataModel/Task';
 import ExportPDF from '@/services/ExportPDF';
 import SolutionService from '@/services/SolutionService';
+import Course from "@/dataModel/Course";
 import {
-    CreateWorksheetRequest,
     DefaultApi,
+    CreateWorksheetRequest,
     DeleteWorksheetRequest,
     UpdateWorksheetRequest,
+    GetWorksheetRequest,
 } from "@/api/DefaultApi";
-import Subtask from "@/dataModel/Subtask";
-import TaskController from "@/controller/TaskController";
 
 
 export default class WorksheetController
-    implements ParentService<Worksheet, Task>, ExportPDF<Worksheet>, SolutionService {
+    implements ParentService<Course, Worksheet>, ExportPDF<Worksheet>, SolutionService {
+
     private _api: DefaultApi;
-    private _worksheets: Worksheet[];
-    private _taskController: ParentService<Task, Subtask>;
+    private _worksheets: Worksheet[] = [];
+    private _worksheet?: Worksheet = undefined;
 
     constructor(api: DefaultApi) {
         this._api = api;
-        this._worksheets = [];
-        this._api.getworksheets()
-          .then((response: Worksheet[]) => {
-              this._worksheets = response;
-          });
-        this._taskController = new TaskController(api);
     }
 
-    public getChildren(object: Worksheet): Task[] {
-        const tasks: Task[] = [];
-        object.taskIds.forEach((taskId: string) => {
-            tasks.push(this._taskController.get(taskId));
-        });
-        return tasks;
+    public loadAll() {
+        this._worksheets = [];
+        this._api.getworksheets()
+            .then((response: Worksheet[]) => {
+                this._worksheets = response;
+            })
     }
+    public loadChildren(object: Course) {
+        this._worksheets = [];
+        object.worksheetIds.forEach((worksheetId) => {
+            this._api.getWorksheet({worksheetId: worksheetId} as GetWorksheetRequest)
+                .then((response: Worksheet) => {
+                    this._worksheets.push(response);
+                })
+        })
+    }
+    public load(id: string) {
+        this._worksheet = this._worksheets.find((worksheet) => worksheet.id === id);
+        this._api.getWorksheet({worksheetId: id} as GetWorksheetRequest)
+            .then((response: Worksheet) => {
+                this._worksheet = response;
+            })
+    }
+
     public create(worksheet: Worksheet): void {
-        this._api.createWorksheet({worksheet} as CreateWorksheetRequest)
-          .then((response: string) => {
-              worksheet.id = response;
-              this._worksheets.push(worksheet);
-          })
-          .catch((error) => {
-              throw new Error("Error creating worksheet: " + error);
-          });
-    }
-    public remove(object: Worksheet): void {
-        this._api.deleteWorksheet({worksheetId: object.id} as DeleteWorksheetRequest)
-          .then((response) => {
-              const index = this._worksheets.indexOf(object, 0);
-              if (index > -1) {
-                  this._worksheets.splice(index, 1);
-              }
-          });
+        this._api.createWorksheet({worksheet: worksheet} as CreateWorksheetRequest)
+            .then((response: string) => {
+                worksheet.id = response;
+                this._worksheets.push(worksheet);
+            })
     }
     public save(object: Worksheet): void {
         this._api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest)
@@ -64,15 +64,14 @@ export default class WorksheetController
               }
           });
     }
-    public get(id: string): Worksheet {
-        const tempWorksheet = this._worksheets.find((worksheet) => worksheet.id === id);
-        if (tempWorksheet === undefined) {
-            throw new Error("Worksheet not found");
-        }
-        return tempWorksheet;
-    }
-    public getAll(): Worksheet[] {
-        return this._worksheets;
+    public remove(object: Worksheet): void {
+        this._api.deleteWorksheet({worksheetId: object.id} as DeleteWorksheetRequest)
+            .then((response) => {
+                const index = this._worksheets.indexOf(object, 0);
+                if (index > -1) {
+                    this._worksheets.splice(index, 1);
+                }
+            });
     }
 
     public exportPDF(object: Worksheet): Uint8Array {
@@ -86,5 +85,12 @@ export default class WorksheetController
     }
     public getSolution(sheet: Worksheet): Uint8Array {
         throw new Error("Method not implemented.");
+    }
+
+    get all() {
+        return this._worksheets;
+    }
+    get one(): Worksheet | undefined {
+        return this._worksheet;
     }
 }

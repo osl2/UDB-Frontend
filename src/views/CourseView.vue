@@ -45,6 +45,7 @@ import CourseController from '@/controller/CourseController';
 import {userState} from '@/globalData/UserState';
 import UserGroup from "@/dataModel/UserGroup";
 import router from '@/router';
+import DataManagementService from "@/services/DataManagementService";
 
 
 @Component({
@@ -58,11 +59,9 @@ import router from '@/router';
 export default class CourseView extends Vue {
 
   // Data
-  private course!: Course;
-  private worksheets!: Worksheet[];
   private solutionsheet!: Uint8Array;
-  private courseController: ParentService<Course, Worksheet> = new CourseController(this.$store.getters.api);
-  private worksheetController: SolutionService = new WorksheetController(this.$store.getters.api);
+  private courseController: DataManagementService<Course> = new CourseController(this.$store.getters.api);
+  private worksheetController: WorksheetController = new WorksheetController(this.$store.getters.api);
   private isStudentsViewActive: boolean = false;
 
   // Functions
@@ -83,8 +82,7 @@ export default class CourseView extends Vue {
         router.push('/');
       }
       this.setIsStudentsViewActive();
-      this.course = this.courseController.get(this.$route.params.courseId);
-      this.worksheets = this.courseController.getChildren(this.course);
+      this.courseController.load(this.$route.params.courseId);
     }
 
     private toggleView() {
@@ -106,7 +104,16 @@ export default class CourseView extends Vue {
     }
   }
 
+  get course() {
+      if (this.courseController.one !== undefined) {
+          this.worksheetController.loadChildren(this.courseController.one);
+      }
+      return this.courseController.one;
+  }
 
+  get worksheets() {
+      return this.worksheetController.all;
+  }
 }
 </script>
 

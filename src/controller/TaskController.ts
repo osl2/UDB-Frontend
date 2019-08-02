@@ -1,37 +1,34 @@
 import ParentService from '@/services/ParentService';
 import Task from '@/dataModel/Task';
-import Subtask from '@/dataModel/Subtask';
 import {
     CreateTaskRequest,
     DefaultApi,
     DeleteTaskRequest,
     UpdateTaskRequest,
 } from "@/api/DefaultApi";
-import SubtaskService from "@/services/SubtaskService";
-import SubtaskController from "@/controller/SubtaskController";
+import Worksheet from "@/dataModel/Worksheet";
 
-export default class TaskController implements ParentService<Task, Subtask> {
+export default class TaskController implements ParentService<Worksheet, Task> {
     private _api: DefaultApi;
-    private _tasks: Task[];
-    private _subtaskController: SubtaskService;
+    private _tasks: Task[] = [];
 
     constructor(api: DefaultApi) {
         this._api = api;
-        this._tasks = [];
-        this._api.gettasks()
-          .then((response: Task[]) => {
-              this._tasks = response;
-          });
-        this._subtaskController = new SubtaskController(api);
     }
 
-    public getChildren(object: Task): Subtask[] {
-        const subtasks: Subtask[] = [];
-        object.subtaskIds.forEach((subtaskId: string) => {
-            subtasks.push(this._subtaskController.get(subtaskId));
-        });
-        return subtasks;
+    loadAll(): void {
+        this._api.gettasks()
+            .then((response: Task[]) => {
+                this._tasks = response;
+            });
     }
+    public loadChildren(object: Worksheet): Task[] {
+        throw new Error("Method not implemented.");
+    }
+    load(id: string): void {
+        throw new Error("Method not implemented.");
+    }
+
     public create(task: Task): void {
         this._api.createTask({task} as CreateTaskRequest)
           .then((response: string) => {
@@ -67,7 +64,11 @@ export default class TaskController implements ParentService<Task, Subtask> {
         }
         return tempTask;
     }
-    public getAll(): Task[] {
-        return this._tasks;
+
+    get all(): Task[] {
+        throw new Error("Method not implemented.");
+    }
+    get one(): Task {
+        throw new Error("Method not implemented.");
     }
 }
