@@ -44,9 +44,9 @@ import Vue from 'vue';
 export default Vue.extend( {
   props: ['courses', 'databases'],
   methods: {
-    logoutTeacher(){
+    logoutTeacher() {
       alert('TODO: Logout implementieren!');
-    }
+    },
   },
 });
 </script>

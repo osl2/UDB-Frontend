@@ -149,11 +149,11 @@ export default class StartPagePanel extends Vue {
     try {
       this.courseController.get(courseId);
     } catch (err) {
-      alert('Laden des Kurses ist fehlgeschlagen: ' + err.message + '. Bitte versuche es erneut.')
+      alert('Laden des Kurses ist fehlgeschlagen: ' + err.message + '. Bitte versuche es erneut.');
       return false;
     }
     // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
-    if (userState.user.userGroup === UserGroup.Teacher){
+    if (userState.user.userGroup === UserGroup.Teacher) {
       return true;
     }
     userState.user.userGroup = UserGroup.Student;
@@ -161,13 +161,13 @@ export default class StartPagePanel extends Vue {
   }
 
   private checkLogin(username: string, password: string): boolean {
-    alert('TODO: serverseitige Login Methode aufrufen.')
+    alert('TODO: serverseitige Login Methode aufrufen.');
     userState.user.userGroup = UserGroup.Teacher;
     return true;
   }
 
   private checkRegistration(username: string, password: string): boolean {
-    alert('TODO: serverseitige Registrierungsmethode aufrufen.')
+    alert('TODO: serverseitige Registrierungsmethode aufrufen.');
     userState.user.userGroup = UserGroup.Teacher;
     return true;
   }
@@ -177,8 +177,6 @@ export default class StartPagePanel extends Vue {
 
 
   }
-
-
 </script>
 
 <style scoped lang="scss">

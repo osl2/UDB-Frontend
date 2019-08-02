@@ -51,8 +51,8 @@ export default class StudentWorksheet extends Vue {
     private currentSubtask: Subtask = new InstructionTask('', '');
     private subtaskIndex: number = 0;
     private showSheetInstructions: boolean = true;
-    private worksheetController: ParentService<Worksheet, Task> = new WorksheetController();
-    private taskController: ParentService<Task, Subtask> = new TaskController();
+    private worksheetController: ParentService<Worksheet, Task> = new WorksheetController(this.$store.getters.api);
+    private taskController: ParentService<Task, Subtask> = new TaskController(this.$store.getters.api);
 
     // methods
     public exportSheet() {

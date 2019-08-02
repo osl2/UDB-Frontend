@@ -62,7 +62,7 @@ export default class CourseView extends Vue {
   private worksheets!: Worksheet[];
   private solutionsheet!: Uint8Array;
   private courseController: ParentService<Course, Worksheet> = new CourseController(this.$store.getters.api);
-  private worksheetController: SolutionService = new WorksheetController();
+  private worksheetController: SolutionService = new WorksheetController(this.$store.getters.api);
   private isStudentsViewActive: boolean = false;
 
   // Functions
