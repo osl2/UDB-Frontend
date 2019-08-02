@@ -24,7 +24,7 @@ export default class DatabaseController implements DataManagementService<Databas
         throw new Error("Method not implemented.");
     }
     public getAll(): Promise<Database[]> {
-        return this._api.getDatabases();
+        throw new Error("Method not implemented.");
     }
     public exportObject(object: Database): Uint8Array {
         throw new Error("Method not implemented.");
