@@ -2,7 +2,9 @@
 
 enum SubtaskTypes {
   Sql,
-  MultipleChoice
+  MultipleChoice,
+  PlainText,
+  Instruction,
 }
 
 export default SubtaskTypes;

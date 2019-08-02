@@ -23,7 +23,7 @@ export default class DatabaseController implements DataManagementService<Databas
     public get(id: string): Database {
         throw new Error("Method not implemented.");
     }
-    public getAll(): Promise<Database[]> {
+    public getAll(): Database[] {
         throw new Error("Method not implemented.");
     }
     public exportObject(object: Database): Uint8Array {
