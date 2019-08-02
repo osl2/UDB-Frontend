@@ -11,22 +11,11 @@
  */
 
 
-import Course, {
-    CourseFromJSON,
-    CourseToJSON,
-} from "@/dataModel/Course";
-import Database, {
-    DatabaseFromJSON,
-    DatabaseToJSON,
-} from "@/dataModel/Database";
-import Task, {
-    TaskFromJSON,
-    TaskToJSON,
-} from "@/dataModel/Task";
-import Worksheet, {
-    WorksheetFromJSON,
-    WorksheetToJSON,
-} from '@/dataModel/Worksheet';
+import Course from "@/dataModel/Course";
+import Database from "@/dataModel/Database";
+import Subtask from "@/dataModel/Subtask";
+import Task from "@/dataModel/Task";
+import Worksheet from '@/dataModel/Worksheet';
 import * as runtime from "@/api/BaseApi";
 
 export interface CreateCourseRequest {
@@ -35,6 +24,11 @@ export interface CreateCourseRequest {
 
 export interface CreateDatabaseRequest {
     database: Database;
+}
+
+export interface CreateSubtaskRequest {
+    taskId: string;
+    subtask: Subtask;
 }
 
 export interface CreateTaskRequest {
@@ -139,7 +133,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: CourseToJSON(requestParameters.course),
+            body: requestParameters.course ? requestParameters.course.toJSON(): undefined,
         });
 
         return new runtime.TextApiResponse(response);
@@ -183,7 +177,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: DatabaseToJSON(requestParameters.database),
+            body: requestParameters.database ? requestParameters.database.toJSON() : undefined,
         });
 
         return new runtime.TextApiResponse(response);
@@ -227,7 +221,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: TaskToJSON(requestParameters.task),
+            body: requestParameters.task ? requestParameters.task.toJSON() : undefined,
         });
 
         return new runtime.TextApiResponse(response);
@@ -239,6 +233,53 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async createTask(requestParameters: CreateTaskRequest): Promise<string> {
         const response = await this.createTaskRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Creates a new instance of a `Subtask`.
+     * Create a Subtask
+     */
+    async createSubtaskRaw(requestParameters: CreateSubtaskRequest): Promise<runtime.ApiResponse<string>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling createSubtask.');
+        }
+
+        if (requestParameters.subtask === null || requestParameters.subtask === undefined) {
+            throw new runtime.RequiredError('subtask','Required parameter requestParameters.subtask was null or undefined when calling createSubtask.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+            const token = this.configuration.accessToken || this.configuration.apiKey;
+            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/tasks/{taskId}/subtasks`.replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.subtask ? requestParameters.subtask.toJSON() : undefined,
+        });
+
+        return new runtime.TextApiResponse(response);
+    }
+
+    /**
+     * Creates a new instance of a `Subtask`.
+     * Create a Subtask
+     */
+    async createSubtask(requestParameters: CreateSubtaskRequest): Promise<string> {
+        const response = await this.createSubtaskRaw(requestParameters);
         return await response.value();
     }
 
@@ -271,7 +312,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: WorksheetToJSON(requestParameters.worksheet),
+            body: requestParameters.worksheet ? requestParameters.worksheet.toJSON() : undefined,
         });
 
         return new runtime.TextApiResponse(response);
@@ -551,7 +592,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => CourseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => Course.fromJSON(jsonValue));
     }
 
     /**
@@ -587,7 +628,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(CourseFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(Course.fromJSON));
     }
 
     /**
@@ -629,7 +670,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => DatabaseFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => Database.fromJSON(jsonValue));
     }
 
     /**
@@ -665,7 +706,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(DatabaseFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(Database.fromJSON));
     }
 
     /**
@@ -706,7 +747,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => Task.fromJSON(jsonValue));
     }
 
     /**
@@ -748,7 +789,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => WorksheetFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => Worksheet.fromJSON(jsonValue));
     }
 
     /**
@@ -784,7 +825,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TaskFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(Task.fromJSON));
     }
 
     /**
@@ -820,7 +861,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(WorksheetFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(Worksheet.fromJSON));
     }
 
     /**
@@ -867,7 +908,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: CourseToJSON(requestParameters.course),
+            body: requestParameters.course ? requestParameters.course.toJSON() : undefined,
         });
 
         return new runtime.VoidApiResponse(response);
@@ -916,7 +957,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: DatabaseToJSON(requestParameters.database),
+            body: requestParameters.database ? requestParameters.database.toJSON() : undefined,
         });
 
         return new runtime.VoidApiResponse(response);
@@ -965,7 +1006,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: TaskToJSON(requestParameters.task),
+            body: requestParameters.task ? requestParameters.task.toJSON() : undefined,
         });
 
         return new runtime.VoidApiResponse(response);
@@ -1014,7 +1055,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: WorksheetToJSON(requestParameters.worksheet),
+            body: requestParameters.worksheet ? requestParameters.worksheet.toJSON() : undefined,
         });
 
         return new runtime.VoidApiResponse(response);

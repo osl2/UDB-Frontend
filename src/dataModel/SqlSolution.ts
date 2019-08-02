@@ -29,6 +29,14 @@ export default class SqlSolution extends Solution {
         this._values = values;
     }
 
+    public toJSON(): any {
+        return {
+            query: this.querySolution,
+            columns: this.columns,
+            rows: this.values,
+        }
+    }
+
     /**
      * The following methods are getter and setter for each attribute in this class.
      */

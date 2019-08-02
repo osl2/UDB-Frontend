@@ -29,4 +29,10 @@ export default class PlainTextSolution extends Solution {
     set text(value: string) {
         this._text = value;
     }
+
+    toJSON(): any {
+        return {
+            text: this.text,
+        }
+    }
 }

@@ -24,7 +24,23 @@ export default class Course extends DataModel {
     this._worksheetIds = worksheetIds;
   }
 
-  /**
+  static fromJSON(json: any): Course {
+      return new Course(json.id,
+          json.name,
+          !exists(json, 'description') ? undefined : json.description,
+          json.worksheets);
+  }
+
+  toJSON(): any {
+      return {
+          id: this.id,
+          name: this.name,
+          description: this.description,
+          worksheets: this.worksheetIds,
+      };
+  }
+
+    /**
    * The following methods are getter and setter for each attribute in this class.
    */
 
@@ -53,21 +69,4 @@ export default class Course extends DataModel {
     this._worksheetIds = value;
   }
 }
-export function CourseFromJSON(json: any): Course {
-    return new Course(json.id,
-        json.name,
-        !exists(json, 'description') ? undefined : json.description,
-        json.worksheets);
-}
 
-export function CourseToJSON(value?: Course): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        id: value.id,
-        name: value.name,
-        description: value.description,
-        worksheets: value.worksheetIds,
-    };
-}

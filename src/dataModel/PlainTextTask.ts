@@ -1,6 +1,7 @@
 import Subtask from '@/dataModel/Subtask';
 import PlainTextSolution from '@/dataModel/PlainTextSolution';
 import SubtaskTypes from "@/dataModel/SubtaskTypes";
+import AllowedSqlStatements, {AllowedSqlFromJSON, AllowedSqlToJSON} from "@/dataModel/allowedSqlStatements";
 
 
 /**
@@ -11,7 +12,31 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
 export default class PlainTextTask extends Subtask {
 
     constructor(id: string, solution: PlainTextSolution | undefined,
-                instruction: string, isSolutionVeryfiable: boolean) {
-        super(id, solution, instruction, isSolutionVeryfiable, SubtaskTypes.PlainText);
+                instruction: string, isSolutionVeryfiable: boolean, isSolutionVisible: boolean, allowedSqlStatements: AllowedSqlStatements) {
+        super(id, solution, instruction, isSolutionVeryfiable, isSolutionVisible, allowedSqlStatements, SubtaskTypes.PlainText);
+    }
+
+    static fromJSON(json: any): PlainTextTask {
+        return new PlainTextTask(json.id,
+            new PlainTextSolution(json.content.plaintext.solution.text),
+            json.instruction,
+            json.solution_verifiable,
+            json.solution_visible,
+            AllowedSqlFromJSON(json.allowed_sql));
+    }
+
+    toJSON(): any {
+        return {
+            id: this.id,
+            instruction: this.instruction,
+            solution_verifiable: this.isSolutionVeryfiable,
+            solution_visible: this.isSolutionVisible,
+            allowed_sql: AllowedSqlToJSON(this.allowedSqlStatements),
+            content: {
+                plaintext: {
+                    solution: this.solution? this.solution.toJSON() : {},
+                }
+            }
+        }
     }
 }

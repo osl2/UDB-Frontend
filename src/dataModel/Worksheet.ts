@@ -29,6 +29,24 @@ export default class Worksheet extends DataModel {
         this._isSolutionOnline = isSolutionOnline;
     }
 
+    static fromJSON(json: any): Worksheet {
+        return new Worksheet(json.id,
+            !exists(json, 'name') ? undefined : json.name,
+            !exists(json, 'tasks') ? undefined : json.tasks,
+            json.is_online,
+            json.is_solution_online);
+    }
+
+    toJSON(): any {
+        return {
+            id: this.id,
+            name: this.name,
+            is_online: this.isOnline,
+            is_solution_online: this.isSolutionOnline,
+            tasks: this.taskIds,
+        };
+    }
+
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
@@ -66,23 +84,4 @@ export default class Worksheet extends DataModel {
     }
 }
 
-export function WorksheetFromJSON(json: any): Worksheet {
-    return new Worksheet(json.id,
-        !exists(json, 'name') ? undefined : json.name,
-        !exists(json, 'tasks') ? undefined : json.tasks,
-        json.is_online,
-        json.is_solution_online);
-}
 
-export function WorksheetToJSON(value?: Worksheet): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        id: value.id,
-        name: value.name,
-        is_online: value.isOnline,
-        is_solution_online: value.isSolutionOnline,
-        tasks: value.taskIds,
-    };
-}

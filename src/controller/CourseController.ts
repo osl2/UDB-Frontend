@@ -6,7 +6,7 @@ import {
     CreateCourseRequest,
     DeleteCourseRequest,
     GetWorksheetRequest,
-    UpdateCourseRequest
+    UpdateCourseRequest,
 } from "@/api/DefaultApi";
 
 export default class CourseController implements ParentService<Course, Worksheet> {
@@ -23,13 +23,13 @@ export default class CourseController implements ParentService<Course, Worksheet
     }
 
     public getChildren(object: Course): Worksheet[] {   // muss hier ein Kurs übergeben werden oder reicht die UUID?
-        let worksheets: Worksheet[] = []
+        const worksheets: Worksheet[] = [];
         object.worksheetIds.forEach((worksheetId: string) => {
-            this._api.getWorksheet({worksheetId: worksheetId} as GetWorksheetRequest)
+            this._api.getWorksheet({worksheetId} as GetWorksheetRequest)
                 .then((worksheet: Worksheet) => {
                     worksheets.push(worksheet);
                 });
-        })
+        });
         return worksheets;
     }
 
@@ -41,9 +41,9 @@ export default class CourseController implements ParentService<Course, Worksheet
             })
             .catch((error) => {
                 throw new Error("Error creating course: " + error);
-            })
+            });
     }
-    public remove(object: Course): void {   //hier reicht vielleicht auch UUID?
+    public remove(object: Course): void {   // hier reicht vielleicht auch UUID?
         this._api.deleteCourse({courseId: object.id} as DeleteCourseRequest)
             .then((response) => {
                 const index = this._courses.indexOf(object, 0);
@@ -55,18 +55,18 @@ export default class CourseController implements ParentService<Course, Worksheet
     public save(object: Course): void {
         this._api.updateCourse({course: object, courseId: object.id} as UpdateCourseRequest)
             .then(() => {
-                const index = this._courses.findIndex((course) => { return course.id == object.id; });
+                const index = this._courses.findIndex((course) => course.id === object.id);
                 if (index > -1) {
                     this._courses[index] = object;
                 }
-            })
+            });
     }
     public get(id: string): Course {
-        let course = this._courses.find((course) => { return course.id == id; })
-        if (course == undefined) {
+        const foundCourse = this._courses.find((course) => course.id === id);
+        if (foundCourse === undefined) {
             throw new Error("Course not found");
         }
-        return course;
+        return foundCourse;
     }
     public getAll(): Course[] {
         return this._courses;

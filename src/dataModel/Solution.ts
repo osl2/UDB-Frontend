@@ -7,4 +7,5 @@ export default abstract class Solution {
     protected constructor() {
 
     }
+    abstract toJSON(): any;
 }

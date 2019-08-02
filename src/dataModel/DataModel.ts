@@ -10,6 +10,8 @@ export default abstract class DataModel {
     this._id = id;
   }
 
+  abstract toJSON(): any;
+
   get id(): string {
     return this._id;
   }

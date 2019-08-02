@@ -23,6 +23,19 @@ export default class Task extends DataModel {
         this._subtaskIds = subtaskIds;
     }
 
+    static fromJSON(json: any): Task {
+        return new Task(json.id, json.name, json.database, json.subtasks);
+    }
+
+    toJSON(): any {
+        return {
+            id: this.id,
+            name: this.name,
+            database: this.databaseId,
+            subtasks: this.subtaskIds,
+        };
+    }
+
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
@@ -50,20 +63,4 @@ export default class Task extends DataModel {
     set subtaskIds(value: string[]) {
         this._subtaskIds = value;
     }
-}
-
-export function TaskFromJSON(json: any): Task {
-    return new Task(json.id, json.name, json.database, json.subtasks);
-}
-
-export function TaskToJSON(value?: Task): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        id: value.id,
-        name: value.name,
-        database: value.databaseId,
-        subtasks: value.subtaskIds,
-    };
 }

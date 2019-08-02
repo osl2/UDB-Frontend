@@ -44,20 +44,16 @@ export default class Database extends DataModel {
     set content(value: Uint8Array) {
         this._content = value;
     }
-}
 
-export function DatabaseFromJSON(json: any): Database {
-    return new Database(json.id, json.name, json.database);
-}
-
-export function DatabaseToJSON(value?: Database): any {
-    if (value === undefined) {
-        return undefined;
+    toJSON(): any {
+        return {
+            id: this.id,
+            database: this.content,
+            name: this.name,
+        }
     }
-    return {
-        database: value.content,
-        id: value.id,
-        name: value.name,
-    };
-}
 
+    static fromJSON(json: any): Database {
+        return new Database(json.id, json.name, json.database);
+    }
+}

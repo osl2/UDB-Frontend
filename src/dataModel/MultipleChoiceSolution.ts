@@ -21,6 +21,12 @@ export default class MultipleChoiceSolution extends Solution {
         this._choices = choices;
     }
 
+    toJSON(): any {
+        return {
+            choices: this.choices,
+        }
+    }
+
     /**
      * The following methods are getter and setter for the attribute choices.
      */
