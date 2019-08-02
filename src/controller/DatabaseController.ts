@@ -6,9 +6,15 @@ import {DefaultApi} from "@/api/DefaultApi";
 export default class DatabaseController implements DataManagementService<Database>, ExportImport<Database> {
 
     private _api: DefaultApi;
+    private _databases: Database[];
 
     constructor(api: DefaultApi) {
         this._api = api;
+        this._databases = [];
+        this._api.getDatabases()
+            .then((response: Database[]) => {
+                this._databases = response;
+            })
     }
 
     public create(): Database {
@@ -21,10 +27,14 @@ export default class DatabaseController implements DataManagementService<Databas
         throw new Error("Method not implemented.");
     }
     public get(id: string): Database {
-        throw new Error("Method not implemented.");
+        const foundDatabase = this._databases.find((database) => database.id === id);
+        if (foundDatabase === undefined) {
+            throw new Error("Course not found");
+        }
+        return foundDatabase;
     }
     public getAll(): Database[] {
-        throw new Error("Method not implemented.");
+        return this._databases;
     }
     public exportObject(object: Database): Uint8Array {
         throw new Error("Method not implemented.");
