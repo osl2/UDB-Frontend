@@ -27,7 +27,7 @@ export default Vue.extend({
   },
   methods: {
     initBlockly() {
-      const toolbox = require('@/assets/blockly/toolbox.xml'); // Vielleicht hier verschiedene Versionen haben
+      const toolbox = require('@/assets/blockly/toolbox_all.xml'); // Vielleicht hier verschiedene Versionen haben
       // remove metadata from loaded toolbox
       const cleantoolbox = toolbox.substring(28).toString();
       // decode base64
@@ -37,7 +37,7 @@ export default Vue.extend({
         'blocklyDiv',
         {
           toolbox: decodedtoolbox,
-          path: 'static/js/blockly/',
+          path: '/static/js/blockly/',
           collapse: false,
           comments: false,
           disable: false,
@@ -46,7 +46,7 @@ export default Vue.extend({
           horizontalLayout: false,
           toolboxPosition: 'start',
           css: true,
-          media: 'static/js/blockly/media/',
+          media: '/static/js/blockly/media/',
           rtl: false,
           scrollbars: false,
           sounds: true,
