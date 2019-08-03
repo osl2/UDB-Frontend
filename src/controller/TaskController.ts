@@ -1,32 +1,62 @@
 import ParentService from '@/services/ParentService';
 import Task from '@/dataModel/Task';
+import Worksheet from "@/dataModel/Worksheet";
 import {
-    CreateTaskRequest,
     DefaultApi,
+    CreateTaskRequest,
     DeleteTaskRequest,
     UpdateTaskRequest,
+    GetTaskRequest,
 } from "@/api/DefaultApi";
-import Worksheet from "@/dataModel/Worksheet";
 
 export default class TaskController implements ParentService<Worksheet, Task> {
+
     private _api: DefaultApi;
     private _tasks: Task[] = [];
+    private _task?: Task = undefined;
 
     constructor(api: DefaultApi) {
         this._api = api;
     }
 
-    loadAll(): void {
+    /**
+     * Loads all tasks available
+     */
+    public loadAll(): void {
         this._api.gettasks()
             .then((response: Task[]) => {
                 this._tasks = response;
             });
     }
-    public loadChildren(object: Worksheet): Task[] {
-        throw new Error("Method not implemented.");
+
+    /**
+     * Loads all tasks for the given Worksheet
+     *
+     * @param object
+     */
+    public loadChildren(object: Worksheet) {
+        this._tasks = [];
+        object.taskIds.forEach((taskId) => {
+            this._api.getTask({taskId} as GetTaskRequest)
+                .then((response: Task) => {
+                    this._tasks.push(response);
+                });
+        });
     }
-    load(id: string): void {
-        throw new Error("Method not implemented.");
+
+    /**
+     * Loads single task with given id
+     *
+     * @param id
+     */
+    public load(id: string): void {
+        this._task = this._tasks.find((task) => task.id === id);
+        if (this._task === undefined) {
+            this._api.getTask({taskId: id} as GetTaskRequest)
+                .then((response: Task) => {
+                    this._task = response;
+                });
+        }
     }
 
     public create(task: Task): void {
@@ -65,10 +95,17 @@ export default class TaskController implements ParentService<Worksheet, Task> {
         return tempTask;
     }
 
+    /**
+     * Getter for loaded courses.
+     */
     get all(): Task[] {
-        throw new Error("Method not implemented.");
+        return this._tasks;
     }
-    get one(): Task {
-        throw new Error("Method not implemented.");
+
+    /**
+     * Getter for single loaded course.
+     */
+    get one(): Task | undefined {
+        return this._task;
     }
 }

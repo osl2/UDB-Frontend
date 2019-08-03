@@ -2,22 +2,26 @@ import DataManagementService from '@/services/DataManagementService';
 import Database from '@/dataModel/Database';
 import ExportImport from '@/services/ExportImport';
 import {
-    CreateDatabaseRequest,
     DefaultApi,
+    CreateDatabaseRequest,
     DeleteDatabaseRequest,
     UpdateDatabaseRequest,
+    GetDatabaseRequest,
 } from "@/api/DefaultApi";
 
 export default class DatabaseController implements DataManagementService<Database>, ExportImport<Database> {
 
     private _api: DefaultApi;
-    private _databases: Database[];
+    private _databases: Database[] = [];
+    private _database?: Database = undefined;
 
     constructor(api: DefaultApi) {
         this._api = api;
-        this._databases = [];
     }
 
+    /**
+     * Load all available databases for the authenticated user
+     */
     public loadAll(): void {
         this._api.getDatabases()
             .then((response: Database[]) => {
@@ -25,10 +29,26 @@ export default class DatabaseController implements DataManagementService<Databas
             });
     }
 
+    /**
+     * Load a database with a given id
+     *
+     * @param id
+     */
     public load(id: string): void {
-        throw new Error("Method not implemented.");
+        this._database = this._databases.find((database) => database.id === id);
+        if (this._database === undefined) {
+            this._api.getDatabase({databaseId: id} as GetDatabaseRequest)
+                .then((response: Database) => {
+                    this._database = response;
+                });
+        }
     }
 
+    /**
+     * Create a new database, add to databases if API call is successful
+     *
+     * @param database
+     */
     public create(database: Database): void {
         this._api.createDatabase({database} as CreateDatabaseRequest)
             .then((response: string) => {
@@ -65,11 +85,17 @@ export default class DatabaseController implements DataManagementService<Databas
         throw new Error("Method not implemented.");
     }
 
+    /**
+     * Getter for all loaded databases.
+     */
     get all(): Database[] {
         return this._databases;
     }
 
+    /**
+     * Getter for single loaded database.
+     */
     get one(): Database | undefined {
-        throw new Error("Method not implemented.");
+        return this._database;
     }
 }
