@@ -51,7 +51,6 @@ export default class Sandbox extends Vue {
   // Data
   public isPointAndClickActive: boolean = false;
   public gotFirstQueryExecuted: boolean = false;
-  public query: string = '';
   public lastQueryExecuted: string = '';
   // TODO Array nicht hard coden
   public queryResult: object[] = [
@@ -60,20 +59,17 @@ export default class Sandbox extends Vue {
   ];
 
   // Methods
+
   private executeQuery(query: string) {
     this.gotFirstQueryExecuted = true;
-    this.query = query;
     this.lastQueryExecuted = query;
     const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
     this.queryResult = dbComponent.$data.database.content.exec(query);
   }
   private switchComponent() {
-    this.resetQuery();
     this.isPointAndClickActive = !this.isPointAndClickActive;
   }
-    private resetQuery() {
-      this.query = '';
-    }
+
 
     // Computed Properties
   private get dynamicComponent() {

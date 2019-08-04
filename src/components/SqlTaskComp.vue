@@ -53,7 +53,6 @@ export default Vue.extend({
         return{
             isPointAndClickActive: false,
     gotFirstQueryExecuted: false,
-    query: '',
     lastQueryExecuted: '',
         // TODO Array nicht hard coden
     queryResult: [
@@ -66,19 +65,13 @@ export default Vue.extend({
     methods: {
         executeQuery(query: string) {
             this.gotFirstQueryExecuted = true;
-            this.query = query;
             this.lastQueryExecuted = query;
             const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
             this.queryResult = dbComponent.$data.database.content.exec(query);
         },
 
         switchComponent() {
-            this.resetQuery();
             this.isPointAndClickActive = !this.isPointAndClickActive;
-        },
-
-        resetQuery() {
-            this.query = '';
         },
     },
     computed: {
