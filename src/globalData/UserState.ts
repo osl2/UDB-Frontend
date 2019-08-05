@@ -5,7 +5,7 @@ import UserGroup from "@/dataModel/UserGroup";
 export let userState = new Vue(
   {
     data: {
-      user: new User('', '', '', '', '', UserGroup.Teacher),
+      user: new User('', '', '', '', '', UserGroup.Unauthenticated),
     },
   },
 );
