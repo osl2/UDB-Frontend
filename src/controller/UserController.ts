@@ -11,6 +11,7 @@ export default class UserController implements UserService {
     }
 
     public logout(): void {
+        // reset user
         userState.user = new User('', '', '', '', '', UserGroup.Unauthenticated);
         alert('TODO: Serverseitige Logout-Methode aufrufen');
     }
