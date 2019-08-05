@@ -34,6 +34,7 @@ import Subtask from '@/dataModel/Subtask';
 import TaskController from "@/controller/TaskController";
 import TaskSolve from '@/components/TaskSolve.vue';
 import InstructionTask from '@/dataModel/InstructionTask';
+import Course from "@/dataModel/Course";
 
 @Component({
     components: {
@@ -43,16 +44,14 @@ import InstructionTask from '@/dataModel/InstructionTask';
 })
 export default class StudentWorksheet extends Vue {
     // Data
-    private worksheet!: Worksheet;
-    private tasks: Task[] = [];
     private subtasks: Subtask[][] = [];
     private currentTask: Task = new Task('', '', '', []);
     private currentMatchingSubtasks!: Subtask[];
     private currentSubtask: Subtask = new InstructionTask('', '');
     private subtaskIndex: number = 0;
     private showSheetInstructions: boolean = true;
-    private worksheetController: ParentService<Worksheet, Task> = new WorksheetController(this.$store.getters.api);
-    private taskController: ParentService<Task, Subtask> = new TaskController(this.$store.getters.api);
+    private worksheetController: ParentService<Course, Worksheet> = new WorksheetController(this.$store.getters.api);
+    private taskController: ParentService<Worksheet, Task> = new TaskController(this.$store.getters.api);
 
     // methods
     public exportSheet() {
@@ -90,12 +89,9 @@ export default class StudentWorksheet extends Vue {
     }
 
     public created() {
-        this.worksheet = this.worksheetController.get(this.$route.params.worksheetId);
-        this.tasks = this.worksheetController.getChildren(this.worksheet);
-        for (const task of this.tasks) {
-            this.subtasks.push(this.taskController.getChildren(task));
-        }
+        this.worksheetController.load(this.$route.params.worksheetId);
     }
+
     private save() {
         alert("wird noch implementiert");
     }
@@ -113,6 +109,18 @@ export default class StudentWorksheet extends Vue {
     }
     private switchback() {
         this.showSheetInstructions = true;
+    }
+
+
+    get worksheet() {
+      if (this.worksheetController.one !== undefined) {
+        this.taskController.loadChildren(this.worksheetController.one);
+      }
+      return this.worksheetController.one;
+    }
+
+    get tasks() {
+      return this.taskController.all;
     }
 }
 </script>
