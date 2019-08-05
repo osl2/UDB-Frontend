@@ -5,6 +5,7 @@
                     :databases="databases"
                     @loadCourse="loadCourse"
                     @showDatabase="showDatabase"
+                    @logoutTeacher="logoutTeacher"
             ></Navbar>
         </div>
         <div>
@@ -43,6 +44,8 @@ import ParentService from '@/services/ParentService';
 import DatabaseController from '@/controller/DatabaseController';
 import CourseController from '@/controller/CourseController';
 import router from '@/router';
+import UserService from "@/services/UserService";
+import UserController from "@/controller/UserController";
 
 
 @Component({
@@ -59,6 +62,7 @@ export default class StartpageTeacher extends Vue {
   public messages: string[] = [];
   private courseController: DataManagementService<Course> = new CourseController(this.$store.getters.api);
   private databaseController: DataManagementService<Database> = new DatabaseController(this.$store.getters.api);
+  private userController: UserService = new UserController(this.$store.getters.api);
 
 
   public loadCourse(course: Course) {
@@ -66,6 +70,10 @@ export default class StartpageTeacher extends Vue {
   }
   public showDatabase(database: Database) {
     alert("TODO: Zeige die Datenbank mit folgendem Namen an: " + database.name);
+  }
+  public logoutTeacher() {
+    this.userController.logout();
+    this.$router.push("/");
   }
 
   public addCourse(name: string, description: string) {

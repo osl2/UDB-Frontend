@@ -28,7 +28,7 @@
                        <!-- TODO: Implement settings view
                        <b-dropdown-item href="#">{{$t('navbar.settings')}}</b-dropdown-item> -->
                         <b-dropdown-item href="#"
-                                         @click="logoutTeacher"
+                                         @click="$emit('logoutTeacher')"
                         >{{$t('navbar.logout')}}</b-dropdown-item>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
@@ -43,11 +43,6 @@ import Vue from 'vue';
 
 export default Vue.extend( {
   props: ['courses', 'databases'],
-  methods: {
-    logoutTeacher() {
-      alert('TODO: Logout implementieren!');
-    },
-  },
 });
 </script>
 
