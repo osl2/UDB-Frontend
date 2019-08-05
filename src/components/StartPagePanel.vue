@@ -73,9 +73,10 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 import router from '@/router';
 import CourseController from "@/controller/CourseController";
 import Course from "@/dataModel/Course";
-import {userState} from '@/globalData/UserState';
 import UserGroup from "@/dataModel/UserGroup";
 import DataManagementService from "@/services/DataManagementService";
+import UserService from "@/services/UserService";
+import UserController from "@/controller/UserController";
 
 @Component
 export default class StartPagePanel extends Vue {
@@ -87,6 +88,7 @@ export default class StartPagePanel extends Vue {
   @Prop() private path!: string;
   @Prop() private type!: string;
   private courseController: DataManagementService<Course> = new CourseController(this.$store.getters.api);
+  private userController: UserService = new UserController(this.$store.getters.api);
 
 
   // methods
@@ -152,22 +154,22 @@ export default class StartPagePanel extends Vue {
       return false;
     }
     // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
-    if (userState.user.userGroup === UserGroup.Teacher) {
+    if (this.userController.getCurrentUserGroup() === UserGroup.Teacher) {
       return true;
     }
-    userState.user.userGroup = UserGroup.Student;
+    this.userController.switchUserGroup(UserGroup.Student);
     return true;
   }
 
   private checkLogin(username: string, password: string): boolean {
     alert('TODO: serverseitige Login Methode aufrufen.');
-    userState.user.userGroup = UserGroup.Teacher;
+    this.userController.switchUserGroup(UserGroup.Teacher);
     return true;
   }
 
   private checkRegistration(username: string, password: string): boolean {
     alert('TODO: serverseitige Registrierungsmethode aufrufen.');
-    userState.user.userGroup = UserGroup.Teacher;
+    this.userController.switchUserGroup(UserGroup.Teacher);
     return true;
   }
 
