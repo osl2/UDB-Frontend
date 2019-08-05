@@ -42,30 +42,32 @@ export default class TeacherOne {
   public sqlSolution1aW1 = new SqlSolution('select * from Alben', [], [[]]);
   public sqlTask1aW1 = new SqlTask('sqlTask1aT1', this.sqlSolution1aW1,
     'Lasse Dir die Tabelle Alben mit allen Einträgen anzeigen.', true,
-    true, false, AllowedSqlStatements.NoRestriction);
+    true, false, true, AllowedSqlStatements.NoRestriction);
   public sqlTask1bW1 = new SqlTask('sqlTask1bT1', undefined,
     'Lasse Dir die Titel der Alben ausgeben, die mehr als 11 Titel besitzen.', false,
-    true, false, AllowedSqlStatements.NoRestriction);
-  public task1W1 = new Task('task1T1', 'Aufgabe 1',  this.musicDb.id, [this.sqlTask1aW1.id, this.sqlTask1bW1.id]);
+    true, false, false, AllowedSqlStatements.NoRestriction);
+  public task1W1 = new Task('task1T1', 'Aufgabe 1',  this.musicDb.id,
+    [this.sqlTask1aW1.id, this.sqlTask1bW1.id]);
 
   // Task 2
 
   public multipleChoiceSolution2aW1 = new MultipleChoiceSolution([1, 3]);
   public multipleChoiceTask2aW1 = new MultipleChoiceTask('multipleChoiceTask2aT1', this.multipleChoiceSolution2aW1,
-    'Welche der folgenden Befehle sind korrekte SQL-Befehle (Mehrfachnennung möglich)?', true,
+    'Welche der folgenden Befehle sind korrekte SQL-Befehle (Mehrfachnennung möglich)?',
+    true, true,
     ['select * from Menschen', 'select * where Alter > 4', 'select Name from Menschen where Alter > 56']);
   public instructionTask2bW1 = new InstructionTask('instructionTask2bT1',
     'Hier steht ein informativer Text für Schüler');
   public plainTextTask = new PlainTextTask('1337', undefined,
-      'Schreibe eine Kurzgeschichte zu deiner Lieblingsdatenbank', false);
+      'Schreibe eine Kurzgeschichte zu deiner Lieblingsdatenbank', false, false);
   public task2W1 = new Task('task2T1', 'Aufgabe 2',  this.humanDb.id,
     [this.multipleChoiceTask2aW1.id, this.instructionTask2bW1.id, this.plainTextTask.id]);
 
 
   // Worksheet 1
 
-  public worksheet1T1 = new Worksheet('worksheet1T1', 'Aufgabenblatt 1', [this.task1W1.id, this.task2W1.id],
-    true, true);
+  public worksheet1T1 = new Worksheet('worksheet1T1', 'Aufgabenblatt 1',
+    [this.task1W1.id, this.task2W1.id], true, true);
 
   // Course 1
   public course1T1 = new Course('course1T1', 'Klasse 7a', 'Schuljahr 18/19',
