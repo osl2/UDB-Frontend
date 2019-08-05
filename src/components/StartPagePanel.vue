@@ -72,11 +72,10 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import router from '@/router';
 import CourseController from "@/controller/CourseController";
-import ParentService from "@/services/ParentService";
-import Worksheet from "@/dataModel/Worksheet";
 import Course from "@/dataModel/Course";
 import {userState} from '@/globalData/UserState';
 import UserGroup from "@/dataModel/UserGroup";
+import DataManagementService from "@/services/DataManagementService";
 
 @Component
 export default class StartPagePanel extends Vue {
@@ -87,7 +86,7 @@ export default class StartPagePanel extends Vue {
   @Prop() private buttonName!: string;
   @Prop() private path!: string;
   @Prop() private type!: string;
-  private courseController: ParentService<Course, Worksheet> = new CourseController(this.$store.getters.api);
+  private courseController: DataManagementService<Course> = new CourseController(this.$store.getters.api);
 
 
   // methods
@@ -138,6 +137,7 @@ export default class StartPagePanel extends Vue {
       }
 
        */
+    this.courseController.load(courseId);
       if (this.checkCourseEntry(courseId)) {
           this.$router.push(this.path + courseId);
       } else {
@@ -146,10 +146,9 @@ export default class StartPagePanel extends Vue {
   }
 
   private checkCourseEntry(courseId: string): boolean {
-    try {
-      this.courseController.get(courseId);
-    } catch (err) {
-      alert('Laden des Kurses ist fehlgeschlagen: ' + err.message + '. Bitte versuche es erneut.');
+   if (this.courseController.one === undefined) {
+      alert('Laden des Kurses ist fehlgeschlagen: Es wurde kein Kurs mit der eingegebenen ID gefunden. ' +
+        'Bitte versuche es erneut.');
       return false;
     }
     // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
