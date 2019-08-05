@@ -64,29 +64,50 @@ export default class StartpageTeacher extends Vue {
   private databaseController: DataManagementService<Database> = new DatabaseController(this.$store.getters.api);
   private userController: UserService = new UserController(this.$store.getters.api);
 
-
+  /*
+  * This method sets the route to the requested course.
+   */
   public loadCourse(course: Course) {
     router.push('/courseView/' + course.id);
   }
+
+  /*
+  * This method should display a requested database.
+   */
   public showDatabase(database: Database) {
     alert("TODO: Zeige die Datenbank mit folgendem Namen an: " + database.name);
   }
+
+  /*
+  * This method is called if a teacher wants to logout. The route is set to the startpage.
+   */
   public logoutTeacher() {
     this.userController.logout();
     this.$router.push("/");
   }
 
+  /*
+  * Method to create a new Course with a name and description given by the user.
+   */
   public addCourse(name: string, description: string) {
       this.courseController.create(new Course("", name, description, []));
   }
 
+  /*
+  * Method to permanently remove a course.
+   */
   public removeCourse(course: Course) {
+    alert('TODO: Warnmeldung, die bestätigt werden muss.')
       this.courseController.remove(course);
   }
 
+
   public created() {
       this.courseController.loadAll();
+      this.databaseController.loadAll();
   }
+
+  // Computed methods
 
   get courses() {
       return this.courseController.all;
