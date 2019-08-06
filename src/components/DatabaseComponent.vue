@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div v-else="database.content" class="card-body" :database:sync="database">
-                <div class="row">
+                <div class="d-flex flex-row flex-nowrap">
                     <DatabaseTable :tableName="tableMeta.tableName" :columns="tableMeta.columns" v-for="tableMeta in tableMetaData"></DatabaseTable>
                 </div>
             </div>
@@ -143,7 +143,7 @@
         cursor: pointer;
     }
 
-    .row {
-    overflow: auto;
+    .card-body {
+    overflow-x: auto;
     }
 </style>

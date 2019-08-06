@@ -2,10 +2,10 @@
     <div class="col-sm-12 col-lg-4 col-xl-3 col-md-6" style="margin-bottom: 1em">
         <div class="card">
             <div class="card-header">
-                {{tableName}}
+                <b>{{tableName}}</b>
             </div>
             <ul class="list-group list-group-flush" v-for="column in columns">
-                <li class="list-group-item">{{column}}</li>
+                <li class="list-group-item py-0">{{column}}</li>
             </ul>
         </div>
     </div>
