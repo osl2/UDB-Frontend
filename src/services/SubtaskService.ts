@@ -4,4 +4,6 @@ import Task from "@/dataModel/Task";
 
 export default interface SubtaskService extends ParentService<Task, Subtask> {
     compareSolution(subtask: Subtask): any; // TODO: Set proper return value here
+    getAllWithoutSolution(): Subtask[];
+    getWithoutSolution(id: string): Subtask;
 }
