@@ -1,26 +1,40 @@
 <template>
     <div>
-        <b-list-group v-for="(task, index) in tasks">
+        <b-list-group>
             <h3>{{task.name}}</h3>
-            <b-button @click="$emit('openTask',task, subtasks[index])">Bearbeiten</b-button>
+            <b-button @click="$emit('openTask', task, subtasks)">Bearbeiten</b-button>
 
-            <b-list-group-item v-for="subtask in subtasks[index]">
+            <b-list-group-item v-for="subtask in subtasks">
             {{subtask.instruction}}
             </b-list-group-item>
-
         </b-list-group>
-        <b-button @click="$emit('exportSheet')">Bearbeitungsstand exportieren</b-button>
-        <b-button @click="$emit('importSheet')">Bearbeitungsstand importieren</b-button>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import SubtaskController from "@/controller/SubtaskController";
+import SubtaskService from "@/services/SubtaskService";
+import Subtask from "@/dataModel/Subtask";
 
 
 export default  Vue.extend({
-    props: ['tasks', 'subtasks'],
-
+  props: ['task'],
+  data() {
+    return {
+      subtaskController: new SubtaskController(this.$store.getters.api) as SubtaskService,
+    };
+  },
+  created: function() {
+    this.subtaskController.loadChildren(this.task);
+  },
+  computed: {
+    subtasks: {
+      get: function(): Subtask[] {
+        return this.subtaskController.getAllWithoutSolution();
+      },
+    }
+  }
 });
 </script>
 

@@ -3,37 +3,52 @@
     <DatabaseComponent></DatabaseComponent>
 
         <div v-if="typeOfSubtask()===1">
-            <SqlTaskComp :currentSubtask="currentSubtask"> </SqlTaskComp>
+            <SqlTaskComp :currentSubtask="currentSubtask"
+                         :solutions="solutions"
+                         @save="$emit('save', currentSubtask.id, subtaskSolution)"
+                         @compare="$emit('compare', subtaskSolution)"
+            >
+            </SqlTaskComp>
         </div>
         <div v-else-if="typeOfSubtask()===2">
-            <McTask :currentSubtask="currentSubtask"> </McTask>
+            <McTask :currentSubtask="currentSubtask"
+                    :solutions="solutions"
+                    @save="$emit('save', currentSubtask.id, subtaskSolution)"
+                    @compare="$emit('compare', subtaskSolution)"
+            >
+            </McTask>
         </div>
         <div v-else-if="typeOfSubtask()===3">
-            <TextTask :currentSubtask="currentSubtask"> </TextTask>
+            <TextTask :currentSubtask="currentSubtask"
+                      :solutions="solutions"
+                      @save="$emit('save', currentSubtask.id, subtaskSolution)"
+                      @compare="$emit('compare', subtaskSolution)"
+            >
+            </TextTask>
         </div>
         <div v-else>
-            <InstructionTaskComp :currentSubtask="currentSubtask"> </InstructionTaskComp>
+            <InstructionTaskComp :currentSubtask="currentSubtask"></InstructionTaskComp>
         </div>
 
-    <div>
-        <b-button @click="$emit('prevSubtask')">Vorherige Aufgabe</b-button>
-        <b-button @click="$emit('nextSubtask')">nächste Aufgabe</b-button>
+        <!-- Buttons to navigate through one task-->
+        <div>
+            <b-button @click="$emit('prevSubtask')">Vorherige Aufgabe</b-button>
+            <b-button @click="$emit('nextSubtask')">nächste Aufgabe</b-button>
+        </div>
 
-    </div>
         <div>
             <b-button @click="$emit('switchback')">Zurück zur Übersicht</b-button>
-            <b-button @click="$emit('save')">Speichern</b-button>
-            <b-button v-show="currentSubtask.isSolutionVeryfiable"
-                      @click="$emit('compare')">
-                Vergleich mit Musterlösung
-            </b-button>
 
             <b-button class="btn" v-b-modal.modal-reset>Aufgabe zurücksetzen</b-button>
             <b-modal id="modal-reset">
-                <p>Wenn du die Teilaufgabe zurücksetzt geht dein bisheriger Fortschritt verloren. Dieser Vorgang ist irreversible</p>
+                <p>Wenn Du die Aufgabe zurücksetzt, geht Dein bisheriger Fortschritt aller zugehörigen Teilaufgaben
+                    verloren. Du kannst diesen Vorgang nicht rückgängig machen.</p>
                 <template slot="modal-footer">
                     <b-button size="sm" @click="$emit('reset')">
-                        Ok
+                        Aufgabe zurücksetzen
+                    </b-button>
+                    <b-button size="sm" @click="$bvModal.hide('modal-reset')">
+                        Abbrechen
                     </b-button>
                 </template>
             </b-modal>
@@ -53,7 +68,7 @@
 
 
   export default Vue.extend({
-    props: ['currentSubtask'],
+    props: ['currentSubtask', 'solutions'],
 
 
 
