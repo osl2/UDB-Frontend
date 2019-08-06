@@ -27,8 +27,8 @@
                 </div>
             </div>
             <div v-else="database.content" class="card-body" :database:sync="database">
-                <div class="row" v-for="tableMeta in tableMetaData">
-                    <DatabaseTable :tableName="tableMeta.tableName" :columns="tableMeta.columns"></DatabaseTable>
+                <div class="row">
+                    <DatabaseTable :tableName="tableMeta.tableName" :columns="tableMeta.columns" v-for="tableMeta in tableMetaData"></DatabaseTable>
                 </div>
             </div>
         </div>
@@ -69,13 +69,13 @@
     get tableMetaData(): TableMetaData[] {
       // TODO: mixing too much business logic with component view logic. Move later to appropriate service or controller
       const sqlDb = this.database.content as SqlJs.Database;
-      const results: QueryResults[] = sqlDb.exec('SELECT name FROM sqlite_master where type = \'table\';');
+      const results: QueryResults[] = sqlDb.exec('SELECT name FROM sqlite_master WHERE type = \'table\' ORDER BY name;');
       const tableMetaData: TableMetaData[] = [];
-      for (const result of results) {
+      for (const result of results[0].values) {
         // its no me, its on maintainers of sql.js or typescript module generation
         // the imported module says ValueType = number | string | Uint8Array;
         // but debugging gives an string[]. Therefore, we need to make this unclean typecasts
-        const tableName = result.values[0] as unknown as string[];
+        const tableName = result as unknown as string[];
         const columnsResults = sqlDb.exec('PRAGMA table_info(' + tableName[0] + ');');
         const columns: string[] = [];
         if (columnsResults[0]) {
@@ -141,5 +141,9 @@
 
     .cursorClickable {
         cursor: pointer;
+    }
+
+    .row {
+    overflow: auto;
     }
 </style>
