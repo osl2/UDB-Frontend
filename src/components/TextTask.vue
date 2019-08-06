@@ -31,23 +31,23 @@ export default Vue.extend({
   data() {
       return {
         studentSolution: '' as string,
-      }
+      };
   },
 
   // if there is a saved solution in the solutions map it gets displayed by setting the attribute studentSolution
-  created: function() {
-    if(this.solutions.has(this.currentSubtask.id)){
+  created() {
+    if (this.solutions.has(this.currentSubtask.id)) {
       this.studentSolution = this.solutions.get(this.currentSubtask.id).text;
     }
   },
 
   computed: {
     subtaskSolution: {
-      get: function(): PlainTextSolution {
+      get(): PlainTextSolution {
         return new PlainTextSolution(this.studentSolution);
       },
-    }
-  }
+    },
+  },
 });
 </script>
 

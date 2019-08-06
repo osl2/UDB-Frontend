@@ -6,7 +6,6 @@ import {exists} from "@/api/BaseApi";
  * It holds the worksheets and solution sheets provided by a teacher.
  */
 export default class Course extends DataModel {
-
     private _name: string;
     private _description: string;
     private _alias: string;

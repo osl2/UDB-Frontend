@@ -25,16 +25,16 @@ export default  Vue.extend({
       subtaskController: new SubtaskController(this.$store.getters.api) as SubtaskService,
     };
   },
-  created: function() {
+  created() {
     this.subtaskController.loadChildren(this.task);
   },
   computed: {
     subtasks: {
-      get: function(): Subtask[] {
+      get(): Subtask[] {
         return this.subtaskController.getAllWithoutSolution();
       },
-    }
-  }
+    },
+  },
 });
 </script>
 

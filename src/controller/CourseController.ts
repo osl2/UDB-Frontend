@@ -41,7 +41,6 @@ export default class CourseController implements DataManagementService<Course> {
                 .then((response: Course) => {
                     this._course = response;
                 });
-
         }
     }
 

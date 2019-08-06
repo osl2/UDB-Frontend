@@ -51,6 +51,19 @@ import SubtaskController from "@/controller/SubtaskController";
     },
 })
 export default class StudentWorksheet extends Vue {
+
+
+    // computed methods
+    get worksheet() {
+      if (this.worksheetController.one !== undefined) {
+        this.taskController.loadChildren(this.worksheetController.one);
+      }
+      return this.worksheetController.one;
+    }
+
+    get tasks() {
+      return this.taskController.all;
+    }
     // Data
 
     // the solution maps an id of a subtask to the students solution.
@@ -82,13 +95,6 @@ export default class StudentWorksheet extends Vue {
     public openTask(task: Task, subtasks: Subtask[]) {
         this.showSheetInstructions = false;
         this.setCurrentTask(task, subtasks, 0);
-    }
-
-    private setCurrentTask(task: Task, subtasks: Subtask[], index: number) {
-      this.currentTask = task;
-      this.currentMatchingSubtasks = subtasks;
-      this.currentSubtask = subtasks[index];
-      this.subtaskIndex = index;
     }
 
     public prevSubtask() {
@@ -150,17 +156,11 @@ export default class StudentWorksheet extends Vue {
       this.worksheetController.load(this.$route.params.worksheetId);
     }
 
-
-    // computed methods
-    get worksheet() {
-      if (this.worksheetController.one !== undefined) {
-        this.taskController.loadChildren(this.worksheetController.one);
-      }
-      return this.worksheetController.one;
-    }
-
-    get tasks() {
-      return this.taskController.all;
+    private setCurrentTask(task: Task, subtasks: Subtask[], index: number) {
+      this.currentTask = task;
+      this.currentMatchingSubtasks = subtasks;
+      this.currentSubtask = subtasks[index];
+      this.subtaskIndex = index;
     }
 }
 </script>
