@@ -59,6 +59,7 @@ export default class DatabaseController implements DataManagementService<Databas
                 throw new Error("Error creating database: " + error);
             });
     }
+
     public save(object: Database): void {
         this._api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest)
             .then(() => {
@@ -78,11 +79,44 @@ export default class DatabaseController implements DataManagementService<Databas
           });
     }
 
-    public exportObject(object: Database): Uint8Array {
-        throw new Error("Method not implemented.");
+    /**
+     * If this method is executed from the browser, then a file is downloaded.
+     * This appends an <a> link element on body and then clicks it.
+     * The href of this link holds the blob of the database.
+     * After the click happened the element is removed again.
+     * The name of the file is the same as [[database.name]] with the extension .db
+     * @param database internal database object
+     */
+    public exportObject(object: Database): void {
+        const blob = new Blob([object.content]);
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.href = window.URL.createObjectURL(blob);
+        a.download = object.name + '.db';
+        a.onclick = () => {
+            setTimeout(() => {
+                window.URL.revokeObjectURL(a.href);
+            }, 1500);
+        };
+        a.click();
+        // ensure that the link is again removed since it wont be needed any more
+        a.parentNode!.removeChild(a);
     }
-    public importObject(object: Uint8Array): Database {
-        throw new Error("Method not implemented.");
+
+    /**
+    * Imports an database object and returns an internal database object
+     */
+    public importObject(file: File): Database {
+        const fileReader = new FileReader();
+        let uInts = new Uint8Array();
+        fileReader.onerror = () => {
+            fileReader.abort();
+            new DOMException('Problem parsing input file.');
+        };
+        fileReader.onload = () => {
+            uInts = new Uint8Array(fileReader.result as ArrayBuffer);
+        };
+        return new Database('', file.name, uInts);
     }
 
     /**
@@ -97,5 +131,16 @@ export default class DatabaseController implements DataManagementService<Databas
      */
     get one(): Database | undefined {
         return this._database;
+    }
+
+    /**
+     * This creates an database object with content is empty (no tables).
+     * This method is just used on the client side, there is no communication with the API.
+     * @param name the name of the database
+     */
+    public static createEmptyDatabase(name: string): Database {
+            const db = new Uint8Array();
+            const dbIntern = new Database('', name, db);
+            return dbIntern;
     }
 }

@@ -61,10 +61,17 @@ export default class Sandbox extends Vue {
   // Methods
 
   private executeQuery(query: string) {
+
+    const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+    try {
+      this.queryResult = dbComponent.$data.database.content.exec(query);
+    } catch(error) {
+      alert(error.message);
+      return;
+    }
     this.gotFirstQueryExecuted = true;
     this.lastQueryExecuted = query;
-    const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-    this.queryResult = dbComponent.$data.database.content.exec(query);
+
   }
   private switchComponent() {
     this.isPointAndClickActive = !this.isPointAndClickActive;

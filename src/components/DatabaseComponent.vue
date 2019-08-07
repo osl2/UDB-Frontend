@@ -5,7 +5,7 @@
 
              :class="cursorClickable">
 
-            <div v-if="!database || !database.content" :database:sync="database"
+            <div v-if="!isSomethingUploaded" :database:sync="database"
                  class="card-body"
                  @dragover.prevent
                  @drop="dropHandler"
@@ -26,7 +26,7 @@
                     <input :id="elementId+'dbFile'" type="file" name="image" @change="changeHandler">
                 </div>
             </div>
-            <div v-else="database.content" class="card-body" :database:sync="database">
+            <div v-else-if="isSomethingUploaded" class="card-body" :database:sync="database">
                 <div class="d-flex flex-row flex-nowrap">
                     <DatabaseTable :tableName="tableMeta.tableName" :columns="tableMeta.columns" v-for="tableMeta in tableMetaData"></DatabaseTable>
                 </div>
@@ -48,6 +48,11 @@
   import {SqlJs} from 'sql.js/module';
   import TableMetaData from '@/dataModel/TableDataModel';
   import QueryResults = SqlJs.QueryResults;
+  import SQLService from "@/services/SQLService";
+  import SQLExecutor from "@/controller/SQLExecutor";
+  import ExportImport from "@/services/ExportImport";
+  import DatabaseController from "@/controller/DatabaseController";
+  import QueryResult from "@/dataModel/QueryResult";
 
 
   @Component({
@@ -55,7 +60,8 @@
   })
   export default class DatabaseComponent extends Vue {
 
-    public database: Database = new Database('', '', null);
+    public database: Database = new Database('', '', new Uint8Array());
+    private isSomethingUploaded: boolean = false;
 
     @Prop() private elementId!: string;
     @Prop() private activateUpload!: boolean;
@@ -64,22 +70,24 @@
     get cursorClickable() {
       return !this.database || !this.database.content ? 'cursorClickable' : '';
     }
-
+    private sqlExecutor = new SQLExecutor();
+    private databaseController = new DatabaseController(this.$store.getters.api);
+    private databaseNumber!: number;
 
     get tableMetaData(): TableMetaData[] {
-      // TODO: mixing too much business logic with component view logic. Move later to appropriate service or controller
-      const sqlDb = this.database.content as SqlJs.Database;
-      const results: QueryResults[] = sqlDb.exec('SELECT name FROM sqlite_master WHERE type = \'table\' ORDER BY name;');
+      const results: QueryResult = this.sqlExecutor
+        .executeQuery(this.databaseNumber, 'SELECT name FROM sqlite_master WHERE type = \'table\' ORDER BY name;', 0);
       const tableMetaData: TableMetaData[] = [];
-      for (const result of results[0].values) {
+      for (const result of results.result.columns) {
         // its no me, its on maintainers of sql.js or typescript module generation
         // the imported module says ValueType = number | string | Uint8Array;
         // but debugging gives an string[]. Therefore, we need to make this unclean typecasts
         const tableName = result as unknown as string[];
-        const columnsResults = sqlDb.exec('PRAGMA table_info(' + tableName[0] + ');');
+        const columnsResults = this.sqlExecutor
+          .executeQuery(this.databaseNumber,'PRAGMA table_info(' + tableName[0] + ');', 0);
         const columns: string[] = [];
-        if (columnsResults[0]) {
-          columnsResults[0].values.forEach((row: any) => {
+        if (columnsResults.result.values) {
+          columnsResults.result.values.forEach((row: any) => {
             const columnName = row[1] as string;
             const columnType = row[2] as string;
             columns.push(columnName + ': ' + columnType);
@@ -120,11 +128,15 @@
     }
 
     private initDatabase(file: File) {
-      DatabaseUtils.readFromFile(file).then((db: Database) => this.database = db);
+      this.database = this.databaseController.importObject(file);
+      this.databaseNumber = this.sqlExecutor.open(this.database);
+      this.isSomethingUploaded = true;
       this.removeBackgroundColor();
     }
 
+    created() {
 
+    }
   }
 </script>
 
