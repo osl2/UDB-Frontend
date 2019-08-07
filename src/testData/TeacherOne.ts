@@ -108,6 +108,15 @@ export default class TeacherOne {
     }
     throw new Error("Kein passender Kurs gefunden");
   }
+  public getSubtaskByID(id: string): Subtask {
+    for (const subtask of this.subTaskArray) {
+      if (subtask.id === id) {
+        return subtask;
+      }
+    }
+    throw new Error("Kein passender Kurs gefunden");
+  }
+
 
 
   public getWorksheetsfromCourse(course: Course): Worksheet[] {
@@ -126,15 +135,6 @@ export default class TeacherOne {
     return subtasks;
   }
 
-  public getSubtaskByID(id: string): Subtask {
-    for (const subtask of this.subTaskArray) {
-      if (subtask.id === id) {
-        return subtask;
-      }
-    }
-    throw new Error("Kein passender Kurs gefunden");
-  }
-
   public getTasksFromWorksheet(worksheet: Worksheet): Task[] {
     const tasks: Task[] = [];
     for (const taskId of worksheet.taskIds) {
@@ -142,6 +142,8 @@ export default class TeacherOne {
     }
     return tasks;
   }
+
+
   public getAllCourses(): Course[] {
     return this.courseArray;
   }

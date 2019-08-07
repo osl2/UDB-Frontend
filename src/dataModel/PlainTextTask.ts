@@ -10,19 +10,19 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
  */
 export default class PlainTextTask extends Subtask {
 
-    constructor(id: string, solution: PlainTextSolution | undefined,
-                instruction: string, isSolutionVeryfiable: boolean,
-                isSolutionVisible: boolean) {
-        super(id, solution, instruction, isSolutionVeryfiable,
-            isSolutionVisible, SubtaskTypes.PlainText);
-    }
-
     public static fromJSON(json: any): PlainTextTask {
         return new PlainTextTask(json.id,
             new PlainTextSolution(json.content.plaintext.solution.text),
             json.instruction,
             json.solution_verifiable,
             json.solution_visible);
+    }
+
+    constructor(id: string, solution: PlainTextSolution | undefined,
+                instruction: string, isSolutionVeryfiable: boolean,
+                isSolutionVisible: boolean) {
+        super(id, solution, instruction, isSolutionVeryfiable,
+            isSolutionVisible, SubtaskTypes.PlainText);
     }
 
     public toJSON(): any {

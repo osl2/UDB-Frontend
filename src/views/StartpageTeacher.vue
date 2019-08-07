@@ -97,8 +97,8 @@ export default class StartpageTeacher extends Vue {
   * Method to permanently remove a course.
    */
   public removeCourse(course: Course) {
-    alert('TODO: Warnmeldung, die bestätigt werden muss.')
-      this.courseController.remove(course);
+    alert('TODO: Warnmeldung, die bestätigt werden muss.');
+    this.courseController.remove(course);
   }
 
 

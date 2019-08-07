@@ -4,7 +4,7 @@ import DataModel from '@/dataModel/DataModel';
  * A DataManagementService implements the handling of DataModel objects.
  * This includes creating new objects, uploading them to the server,
  * loading existing objects from the server and accessing them.
- * 
+ *
  * @typeparam T The DataManagementService interface can be used with all DataModel types.
  */
 export default interface DataManagementService<T extends DataModel> {
@@ -21,7 +21,7 @@ export default interface DataManagementService<T extends DataModel> {
    * This method removes the object passed to it from the local store of the service,
    * from [[one]] if it's the currently used object, and from the API if it exists on
    * the API.
-   * 
+   *
    * @param object The object to remove.
    */
   remove(object: T): void;

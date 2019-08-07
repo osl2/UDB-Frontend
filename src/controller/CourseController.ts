@@ -42,7 +42,7 @@ export default class CourseController implements DataManagementService<Course> {
             this._api.getCourse({courseId: id} as GetCourseRequest)
                 .then((response: Course) => {
                     this._course = response;
-                })
+                });
 
         }
     }

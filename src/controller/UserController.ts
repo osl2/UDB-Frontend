@@ -5,9 +5,9 @@ import UserGroup from "@/dataModel/UserGroup";
 import User from "@/dataModel/User";
 
 export default class UserController implements UserService {
-
+    private _api: DefaultApi;
     constructor(api: DefaultApi) {
-
+        this._api = api;
     }
 
     public logout(): void {

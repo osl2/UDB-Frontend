@@ -29,31 +29,31 @@ export default class WorksheetController
         this._api.getworksheets()
             .then((response: Worksheet[]) => {
                 this._worksheets = response;
-            })
+            });
     }
     public loadChildren(object: Course) {
         this._worksheets = [];
         object.worksheetIds.forEach((worksheetId) => {
-            this._api.getWorksheet({worksheetId: worksheetId} as GetWorksheetRequest)
+            this._api.getWorksheet({worksheetId} as GetWorksheetRequest)
                 .then((response: Worksheet) => {
                     this._worksheets.push(response);
-                })
-        })
+                });
+        });
     }
     public load(id: string) {
         this._worksheet = this._worksheets.find((worksheet) => worksheet.id === id);
         this._api.getWorksheet({worksheetId: id} as GetWorksheetRequest)
             .then((response: Worksheet) => {
                 this._worksheet = response;
-            })
+            });
     }
 
     public create(worksheet: Worksheet): void {
-        this._api.createWorksheet({worksheet: worksheet} as CreateWorksheetRequest)
+        this._api.createWorksheet({worksheet} as CreateWorksheetRequest)
             .then((response: string) => {
                 worksheet.id = response;
                 this._worksheets.push(worksheet);
-            })
+            });
     }
     public save(object: Worksheet): void {
         this._api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest)

@@ -9,6 +9,30 @@ import {SqlJs} from 'sql.js/module';
  */
 
 export default class Database extends DataModel {
+
+    /**
+     * The following methods are getter and setter for each attribute in this class.
+     */
+
+    get name(): string {
+        return this._name;
+    }
+
+    set name(value: string) {
+        this._name = value;
+    }
+
+    get content(): Uint8Array {
+        return this._content;
+    }
+
+    set content(value: Uint8Array) {
+        this._content = value;
+    }
+
+    public static fromJSON(json: any): Database {
+        return new Database(json.id, json.name, json.database);
+    }
     private _name: string;
     private _content: Uint8Array;
 
@@ -30,29 +54,5 @@ export default class Database extends DataModel {
             database: this.content,
             name: this.name,
         };
-    }
-
-    public static fromJSON(json: any): Database {
-        return new Database(json.id, json.name, json.database);
-    }
-
-    /**
-     * The following methods are getter and setter for each attribute in this class.
-     */
-
-    get name(): string {
-        return this._name;
-    }
-
-    set name(value: string) {
-        this._name = value;
-    }
-
-    get content(): Uint8Array {
-        return this._content;
-    }
-
-    set content(value: Uint8Array) {
-        this._content = value;
     }
 }

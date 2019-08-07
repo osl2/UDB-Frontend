@@ -5,36 +5,6 @@ import DataModel from '@/dataModel/DataModel';
  */
 
 export default class Task extends DataModel {
-    private _name: string;
-    private _databaseId: string;
-    private _subtaskIds: string[];
-
-    /**
-     * The constructor of this class.
-     * @param id: The unique id of the task.
-     * @param databaseId: The assigned database to the class.
-     * @param subtaskIds: An array of assigned subtasks.
-     */
-
-    constructor(id: string, name: string, databaseId: string, subtaskIds: string[]) {
-        super(id);
-        this._name = name;
-        this._databaseId = databaseId;
-        this._subtaskIds = subtaskIds;
-    }
-
-    public static fromJSON(json: any): Task {
-        return new Task(json.id, json.name, json.database, json.subtasks);
-    }
-
-    public toJSON(): any {
-        return {
-            id: this.id,
-            name: this.name,
-            database: this.databaseId,
-            subtasks: this.subtaskIds,
-        };
-    }
 
     /**
      * The following methods are getter and setter for each attribute in this class.
@@ -62,5 +32,35 @@ export default class Task extends DataModel {
 
     set subtaskIds(value: string[]) {
         this._subtaskIds = value;
+    }
+
+    public static fromJSON(json: any): Task {
+        return new Task(json.id, json.name, json.database, json.subtasks);
+    }
+    private _name: string;
+    private _databaseId: string;
+    private _subtaskIds: string[];
+
+    /**
+     * The constructor of this class.
+     * @param id: The unique id of the task.
+     * @param databaseId: The assigned database to the class.
+     * @param subtaskIds: An array of assigned subtasks.
+     */
+
+    constructor(id: string, name: string, databaseId: string, subtaskIds: string[]) {
+        super(id);
+        this._name = name;
+        this._databaseId = databaseId;
+        this._subtaskIds = subtaskIds;
+    }
+
+    public toJSON(): any {
+        return {
+            id: this.id,
+            name: this.name,
+            database: this.databaseId,
+            subtasks: this.subtaskIds,
+        };
     }
 }

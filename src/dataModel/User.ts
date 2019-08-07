@@ -31,11 +31,11 @@ export default class User extends DataModel {
         this._userGroup = userGroup;
     }
 
-    toJSON(): any {
+    public toJSON(): any {
         return {
             name: this.name,
-            password: this.password
-        }
+            password: this.password,
+        };
     }
 
     /**

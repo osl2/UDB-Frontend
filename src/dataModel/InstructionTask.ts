@@ -9,12 +9,12 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
  */
 export default class InstructionTask extends Subtask {
 
-    constructor(id: string, instruction: string) {
-        super(id, undefined, instruction, false, false, SubtaskTypes.Instruction);
-    }
-
     public static fromJSON(json: any): InstructionTask {
         return new InstructionTask(json.id, json.instruction);
+    }
+
+    constructor(id: string, instruction: string) {
+        super(id, undefined, instruction, false, false, SubtaskTypes.Instruction);
     }
 
     public toJSON(): any {

@@ -140,7 +140,7 @@ export default class StartPagePanel extends Vue {
 
        */
     this.courseController.load(courseId);
-      if (this.checkCourseEntry(courseId)) {
+    if (this.checkCourseEntry(courseId)) {
           this.$router.push(this.path + courseId);
       } else {
           this.errormsg = "something went wrong"; // wieder serverabhängig
@@ -154,11 +154,11 @@ export default class StartPagePanel extends Vue {
       return false;
     }
     // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
-    if (this.userController.getCurrentUserGroup() === UserGroup.Teacher) {
+   if (this.userController.getCurrentUserGroup() === UserGroup.Teacher) {
       return true;
     }
-    this.userController.switchUserGroup(UserGroup.Student);
-    return true;
+   this.userController.switchUserGroup(UserGroup.Student);
+   return true;
   }
 
   private checkLogin(username: string, password: string): boolean {

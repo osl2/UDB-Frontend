@@ -8,13 +8,17 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
  * Because of that the solution should be an instance of the class MultipleChoiceSolution.
  */
 export default class MultipleChoiceTask extends Subtask {
-    private _answerOptions: string[];
 
-    constructor(id: string, solution: MultipleChoiceSolution | undefined, instruction: string,
-                isSolutionVeryfiable: boolean,  isSolutionVisible: boolean, answerOptions: string[]) {
-        super(id, solution, instruction, isSolutionVeryfiable,
-            isSolutionVisible, SubtaskTypes.MultipleChoice);
-        this._answerOptions = answerOptions;
+    /**
+     * The following methods are getter and setter for the additional attribute in this class.
+     */
+
+    get answerOptions(): string[] {
+        return this._answerOptions;
+    }
+
+    set answerOptions(value: string[]) {
+        this._answerOptions = value;
     }
 
     public static fromJSON(json: any): MultipleChoiceTask {
@@ -24,6 +28,14 @@ export default class MultipleChoiceTask extends Subtask {
             json.solution_verifiable,
             json.solution_visible,
             json.content.multiple_choice.answer_options);
+    }
+    private _answerOptions: string[];
+
+    constructor(id: string, solution: MultipleChoiceSolution | undefined, instruction: string,
+                isSolutionVeryfiable: boolean,  isSolutionVisible: boolean, answerOptions: string[]) {
+        super(id, solution, instruction, isSolutionVeryfiable,
+            isSolutionVisible, SubtaskTypes.MultipleChoice);
+        this._answerOptions = answerOptions;
     }
 
     public toJSON(): any {
@@ -39,17 +51,5 @@ export default class MultipleChoiceTask extends Subtask {
                 },
             },
         };
-    }
-
-    /**
-     * The following methods are getter and setter for the additional attribute in this class.
-     */
-
-    get answerOptions(): string[] {
-        return this._answerOptions;
-    }
-
-    set answerOptions(value: string[]) {
-        this._answerOptions = value;
     }
 }

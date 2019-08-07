@@ -7,45 +7,6 @@ import {exists} from "@/api/BaseApi";
  */
 
 export default class Worksheet extends DataModel {
-    private _name: string;
-    private _taskIds: string[];
-    private _isOnline: boolean;
-    private _isSolutionOnline: boolean;
-
-    /**
-     * The constructor of this class.
-     * @param name: The name of the worksheet set by a teacher.
-     * @param taskIds: An array of tasks which are assigned to the worksheet.
-     * @param isOnline: The information if a worksheet is online meaning it can be solved in the course.
-     * @param isSolutionOnline: The information if the teacher published the solution sheet
-     *        so it can get downloaded by students of the course.
-     */
-
-    constructor(id: string, name: string, taskIds: string[], isOnline: boolean, isSolutionOnline: boolean) {
-        super(id);
-        this._name = name;
-        this._taskIds = taskIds;
-        this._isOnline = isOnline;
-        this._isSolutionOnline = isSolutionOnline;
-    }
-
-    public static fromJSON(json: any): Worksheet {
-        return new Worksheet(json.id,
-            !exists(json, 'name') ? undefined : json.name,
-            !exists(json, 'tasks') ? undefined : json.tasks,
-            json.is_online,
-            json.is_solution_online);
-    }
-
-    public toJSON(): any {
-        return {
-            id: this.id,
-            name: this.name,
-            is_online: this.isOnline,
-            is_solution_online: this.isSolutionOnline,
-            tasks: this.taskIds,
-        };
-    }
 
     /**
      * The following methods are getter and setter for each attribute in this class.
@@ -81,6 +42,45 @@ export default class Worksheet extends DataModel {
 
     set isSolutionOnline(value: boolean) {
         this._isSolutionOnline = value;
+    }
+
+    public static fromJSON(json: any): Worksheet {
+        return new Worksheet(json.id,
+            !exists(json, 'name') ? undefined : json.name,
+            !exists(json, 'tasks') ? undefined : json.tasks,
+            json.is_online,
+            json.is_solution_online);
+    }
+    private _name: string;
+    private _taskIds: string[];
+    private _isOnline: boolean;
+    private _isSolutionOnline: boolean;
+
+    /**
+     * The constructor of this class.
+     * @param name: The name of the worksheet set by a teacher.
+     * @param taskIds: An array of tasks which are assigned to the worksheet.
+     * @param isOnline: The information if a worksheet is online meaning it can be solved in the course.
+     * @param isSolutionOnline: The information if the teacher published the solution sheet
+     *        so it can get downloaded by students of the course.
+     */
+
+    constructor(id: string, name: string, taskIds: string[], isOnline: boolean, isSolutionOnline: boolean) {
+        super(id);
+        this._name = name;
+        this._taskIds = taskIds;
+        this._isOnline = isOnline;
+        this._isSolutionOnline = isSolutionOnline;
+    }
+
+    public toJSON(): any {
+        return {
+            id: this.id,
+            name: this.name,
+            is_online: this.isOnline,
+            is_solution_online: this.isSolutionOnline,
+            tasks: this.taskIds,
+        };
     }
 }
 
