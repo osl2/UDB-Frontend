@@ -1215,17 +1215,24 @@ export class DefaultApi extends runtime.BaseAPI {
      * Checks if the given solution is correct for this subtask.
      * Verify solution
      */
-    async verifySubtaskSolutionRaw(requestParameters: VerifySubtaskSolutionRequest): Promise<runtime.ApiResponse<SolutionDiff>> {
+    public async verifySubtaskSolutionRaw(requestParameters: VerifySubtaskSolutionRequest)
+        : Promise<runtime.ApiResponse<SolutionDiff>> {
         if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling tasksTaskIdSubtasksSubtaskidVerifyPost.');
+            throw new runtime.RequiredError('taskId',
+                'Required parameter requestParameters.taskId was' +
+                ' null or undefined when calling verifySubtaskSolution.');
         }
 
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
-            throw new runtime.RequiredError('subtaskid','Required parameter requestParameters.subtaskid was null or undefined when calling tasksTaskIdSubtasksSubtaskidVerifyPost.');
+            throw new runtime.RequiredError('subtaskid',
+                'Required parameter requestParameters.subtaskid was ' +
+                'null or undefined when calling verifySubtaskSolution.');
         }
 
         if (requestParameters.solution === null || requestParameters.solution === undefined) {
-            throw new runtime.RequiredError('solution','Required parameter requestParameters.solution was null or undefined when calling tasksTaskIdSubtasksSubtaskidVerifyPost.');
+            throw new runtime.RequiredError('solution',
+                'Required parameter requestParameters.solution was' +
+                ' null or undefined when calling verifySubtaskSolution.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1239,11 +1246,13 @@ export class DefaultApi extends runtime.BaseAPI {
             const tokenString = typeof token === 'function' ? token("Token", []) : token;
 
             if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+                headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks/{subtaskid}/verify`.replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))).replace(`{${"subtaskid"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
+            path: `/tasks/{taskId}/subtasks/{subtaskid}/verify`
+                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId)))
+                .replace(`{${"subtaskid"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -1268,7 +1277,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * Checks if the given solution is correct for this subtask.
      * Verify solution
      */
-    async verifySubtaskSolution(requestParameters: VerifySubtaskSolutionRequest): Promise<SolutionDiff> {
+    public async verifySubtaskSolution(requestParameters: VerifySubtaskSolutionRequest): Promise<SolutionDiff> {
         const response = await this.verifySubtaskSolutionRaw(requestParameters);
         return await response.value();
     }

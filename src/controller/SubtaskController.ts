@@ -38,15 +38,12 @@ export default class SubtaskController implements SubtaskService {
      */
     public loadChildren(object: Task): void {
         this._subtasks = [];
-        /* TODO Kommentare entfernen wenn in DefaultApi implementiert.
         object.subtaskIds.forEach((subtaskId) => {
-            this._api.getSubtask({subtaskId} as GetSubtaskRequest)
-                .then((response: Subtask) => {
-                    this._subtasks.push(response);
+            this._api.getSubtasks({taskId: object.id, subtaskId} as GetSubtaskRequest)
+                .then((response: Subtask[]) => {
+                    this._subtasks = response;
                 });
         });
-         */
-        throw new Error("Method not implemented in DefaultApi.");
     }
 
     /**
