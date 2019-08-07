@@ -8,64 +8,60 @@ import initSqlJs from 'sql.js';
 
 export default class SQLExecutor implements SQLService {
     public databaseSnapshots!: Map<number, SqlJs.Database[]>;
-    public sqlJs!: SqlJs.SqlJsStatic;
+    public sqlJs: Promise<SqlJs.SqlJsStatic>;
 
     constructor() {
         this.databaseSnapshots = new Map();
-        initSqlJs(config).then((SQL: SqlJs.SqlJsStatic) => {this.sqlJs = SQL})
-          .catch((error) => {alert(error)}); // Promise catch bessser abfangen
+        this.sqlJs = initSqlJs(config);
     }
 
-    public executeQuery(database: number, query: string, step: number): QueryResult {
-        const sqlDb = this.databaseSnapshots.get(database)![step];
-        const results: SqlJs.QueryResults[] = sqlDb.exec(query);
-        const resultSet: ResultSet = {
-            status: 0,
-            message: "",
-            columns: results[0].columns,
-            values: [[]],
-        };
-        results.forEach((element) => {
-            resultSet.values.push(element.values);
+    public executeQuery(database: number, query: string, step: number): Promise<QueryResult> {
+        return this.sqlJs.then((SQL: SqlJs.SqlJsStatic) => {
+            const sqlDb = this.databaseSnapshots.get(database)![step];
+            const results: SqlJs.QueryResults[] = sqlDb.exec(query);
+            const resultSet: ResultSet = {
+                status: 0,
+                message: "",
+                columns: results[0].columns,
+                values: [[]],
+            };
+            results.forEach((element) => {
+                resultSet.values.push(element.values);
+            });
+            return {
+                query,
+                result: resultSet,
+            };
         });
-        return {
-            query,
-            result: resultSet,
-        };
     }
-
-    public open(database: Database): number {
-        let dbIndex = Math.random();
-        while (this.databaseSnapshots.has(dbIndex)) {
-            dbIndex = Math.random();
-        }
-        this.databaseSnapshots.set(dbIndex, [new this.sqlJs.Database(database.content)]);
-        return dbIndex;
-    }
-
-    public snapshot(database: number, step: number): Uint8Array {
-        return this.databaseSnapshots.get(database)![step].export();
-    }
-
-    public close(database: number): Uint8Array {
-        const dbArray = this.databaseSnapshots.get(database)!;
-        const retVal = dbArray[dbArray.length].export();
-        dbArray.forEach((element) => {
-            element.close();
+    public open(database: Database): Promise<number> {
+        return this.sqlJs.then((SQL: SqlJs.SqlJsStatic) => {
+            let dbIndex = Math.random();
+            while (this.databaseSnapshots.has(dbIndex)) {
+                dbIndex = Math.random();
+            }
+            this.databaseSnapshots.set(dbIndex, [new SQL.Database(database.content)]);
+            return dbIndex;
         });
-        this.databaseSnapshots.delete(database);
-        return retVal;
+    }
+    public snapshot(database: number, step: number): Promise<Uint8Array> {
+        return this.sqlJs.then((SQL: SqlJs.SqlJsStatic) => {
+            return this.databaseSnapshots.get(database)![step].export();
+        });
+    }
+    public close(database: number): Promise<Uint8Array> {
+        return this.sqlJs.then((SQL: SqlJs.SqlJsStatic) => {
+            const dbArray = this.databaseSnapshots.get(database)!;
+            const retVal = dbArray[dbArray.length].export();
+            dbArray.forEach((element) => {
+                element.close();
+            });
+            this.databaseSnapshots.delete(database);
+            return retVal;
+        });
     }
 
-    /**
-     * This Method exports the current Database State without closing it.
-     * This is needed if someone wants to
-     */
-    public exportCurrentDatabaseState(database: number) : Uint8Array {
-        const dbArray = this.databaseSnapshots.get(database)!;
-        const uInts = dbArray[dbArray.length].export();
-        return uInts;
-    }
+
 }
 /**
  * This config is needed to parse database files in sql.js. This is the web assembly (wasm) binary of SQLLite.

@@ -43,16 +43,12 @@
   import {Prop, Vue} from 'vue-property-decorator';
   import Component from 'vue-class-component';
   import Database from '@/dataModel/Database';
-  import DatabaseUtils from '@/services/DatabaseUtils';
   import DatabaseTable from '@/components/DatabaseTable.vue';
-  import {SqlJs} from 'sql.js/module';
   import TableMetaData from '@/dataModel/TableDataModel';
-  import QueryResults = SqlJs.QueryResults;
-  import SQLService from "@/services/SQLService";
   import SQLExecutor from "@/controller/SQLExecutor";
-  import ExportImport from "@/services/ExportImport";
   import DatabaseController from "@/controller/DatabaseController";
   import QueryResult from "@/dataModel/QueryResult";
+
 
 
   @Component({
@@ -62,6 +58,11 @@
 
     public database: Database = new Database('', '', new Uint8Array());
     private isSomethingUploaded: boolean = false;
+
+    private resultsForShowingDatabase: QueryResult =
+      {query: '', result: {status: 0, message: "", columns: [], values: [[]],}};
+    private columnResults: QueryResult =
+      {query: '', result: {status: 0, message: "", columns: [], values: [[]],}};
 
     @Prop() private elementId!: string;
     @Prop() private activateUpload!: boolean;
@@ -74,20 +75,19 @@
     private databaseController = new DatabaseController(this.$store.getters.api);
     private databaseNumber!: number;
 
+
+    // Ich habe diese Methode sehr auseinander genommen, sie tut bestimmt nicht mehr, was sie mal sollte.
+    // Das ganze scheitert aber schon viel früher (s. initDatabase-Methode)
     get tableMetaData(): TableMetaData[] {
-      const results: QueryResult = this.sqlExecutor
-        .executeQuery(this.databaseNumber, 'SELECT name FROM sqlite_master WHERE type = \'table\' ORDER BY name;', 0);
       const tableMetaData: TableMetaData[] = [];
-      for (const result of results.result.columns) {
+      for (const result of this.resultsForShowingDatabase.result.columns) {
         // its no me, its on maintainers of sql.js or typescript module generation
         // the imported module says ValueType = number | string | Uint8Array;
         // but debugging gives an string[]. Therefore, we need to make this unclean typecasts
         const tableName = result as unknown as string[];
-        const columnsResults = this.sqlExecutor
-          .executeQuery(this.databaseNumber,'PRAGMA table_info(' + tableName[0] + ');', 0);
         const columns: string[] = [];
-        if (columnsResults.result.values) {
-          columnsResults.result.values.forEach((row: any) => {
+        if (this.columnResults.result.values) {
+          this.columnResults.result.values.forEach((row: any) => {
             const columnName = row[1] as string;
             const columnType = row[2] as string;
             columns.push(columnName + ': ' + columnType);
@@ -129,14 +129,34 @@
 
     private initDatabase(file: File) {
       this.database = this.databaseController.importObject(file);
-      this.databaseNumber = this.sqlExecutor.open(this.database);
+      this.sqlExecutor.open(this.database).then((db:number) => {
+        this.databaseNumber = db;
+        this.loadMetaData();
+      });
       this.isSomethingUploaded = true;
       this.removeBackgroundColor();
     }
 
-    created() {
-
+    private loadMetaData(){
+      this.sqlExecutor.executeQuery(this.databaseNumber,
+        'SELECT name FROM sqlite_master WHERE type = \'table\' ORDER BY name;', 0).then((res: QueryResult) => {
+        this.resultsForShowingDatabase = res;
+        alert('ich werde ausgeführt');
+        // von der ursprünglichen schleiche übernommen, müsste überarbeitet werden,
+        // wird aber schon gar nicht mehr ausgeführt. (bekomme keinen Alert angezeigt)
+        for (const result of res.result.columns) {
+          // its no me, its on maintainers of sql.js or typescript module generation
+          // the imported module says ValueType = number | string | Uint8Array;
+          // but debugging gives an string[]. Therefore, we need to make this unclean typecasts
+          const tableName = result as unknown as string[];
+          this.sqlExecutor
+            .executeQuery(this.databaseNumber,'PRAGMA table_info(' + tableName[0] + ');', 0).then((res: QueryResult) => {
+            this.columnResults = res;
+          });
+        }
+      });
     }
+
   }
 </script>
 
