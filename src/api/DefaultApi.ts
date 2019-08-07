@@ -1204,6 +1204,54 @@ export class DefaultApi extends runtime.BaseAPI {
             apiKey: this.configuration.apiKey,
             accessToken: this.configuration.accessToken,
         });
+    /**
+     * Checks if the given solution is correct for this subtask.
+     * Verify solution
+     */
+    async verifySubtaskSolutionRaw(requestParameters: VerifySubtaskSolutionRequest): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling tasksTaskIdSubtasksSubtaskidVerifyPost.');
+        }
+
+        if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
+            throw new runtime.RequiredError('subtaskid','Required parameter requestParameters.subtaskid was null or undefined when calling tasksTaskIdSubtasksSubtaskidVerifyPost.');
+        }
+
+        if (requestParameters.solution === null || requestParameters.solution === undefined) {
+            throw new runtime.RequiredError('solution','Required parameter requestParameters.solution was null or undefined when calling tasksTaskIdSubtasksSubtaskidVerifyPost.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+            const token = this.configuration.accessToken || this.configuration.apiKey;
+            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/tasks/{taskId}/subtasks/{subtaskid}/verify`.replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))).replace(`{${"subtaskid"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.solution.toJSON(),
+        });
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Checks if the given solution is correct for this subtask.
+     * Verify solution
+     */
+    async verifySubtaskSolution(requestParameters: VerifySubtaskSolutionRequest): Promise<void> {
+        await this.verifySubtaskSolutionRaw(requestParameters);
     }
 
     /**

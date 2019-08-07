@@ -9,7 +9,6 @@ import DataModel from '@/dataModel/DataModel';
 export default class User extends DataModel {
     private _name: string;
     private _password: string;
-    private _salt: string;
     private _token: string;
     private _userGroup: UserGroup;
 
@@ -17,16 +16,14 @@ export default class User extends DataModel {
      * The constructor of the class.
      * @param name: The username of the user.
      * @param password: The password of the user. //TODO in Client speichern??
-     * @param salt: The salt for the password hash. //TODO getter entfernen?
      * @param token: The JSON Web Token for authentication.
      * @param userGroup: The user group of the current user.
      */
 
-    constructor(id: string, name: string, password: string, salt: string, token: string, userGroup: UserGroup) {
+    constructor(id: string, name: string, password: string, token: string, userGroup: UserGroup) {
         super(id);
         this._name = name;
         this._password = password;
-        this._salt = salt;
         this._token = token;
         this._userGroup = userGroup;
     }
@@ -56,14 +53,6 @@ export default class User extends DataModel {
 
     set password(value: string) {
         this._password = value;
-    }
-
-    get salt(): string {
-        return this._salt;
-    }
-
-    set salt(value: string) {
-        this._salt = value;
     }
 
     get token(): string {
