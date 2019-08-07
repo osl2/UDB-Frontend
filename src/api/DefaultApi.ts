@@ -23,6 +23,7 @@ import SqlTask from "@/dataModel/SqlTask";
 import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
 import PlainTextTask from "@/dataModel/PlainTextTask";
 import {Configuration} from "@/api/BaseApi";
+import SolutionDiff from "@/dataModel/SolutionDiff";
 
 type Token = string;
 
@@ -1208,7 +1209,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * Checks if the given solution is correct for this subtask.
      * Verify solution
      */
-    async verifySubtaskSolutionRaw(requestParameters: VerifySubtaskSolutionRequest): Promise<runtime.ApiResponse<void>> {
+    async verifySubtaskSolutionRaw(requestParameters: VerifySubtaskSolutionRequest): Promise<runtime.ApiResponse<SolutionDiff>> {
         if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
             throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling tasksTaskIdSubtasksSubtaskidVerifyPost.');
         }
@@ -1243,15 +1244,16 @@ export class DefaultApi extends runtime.BaseAPI {
             body: requestParameters.solution.toJSON(),
         });
 
-        return new runtime.VoidApiResponse(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => SolutionDiff.fromJSON(jsonValue));
     }
 
     /**
      * Checks if the given solution is correct for this subtask.
      * Verify solution
      */
-    async verifySubtaskSolution(requestParameters: VerifySubtaskSolutionRequest): Promise<void> {
-        await this.verifySubtaskSolutionRaw(requestParameters);
+    async verifySubtaskSolution(requestParameters: VerifySubtaskSolutionRequest): Promise<SolutionDiff> {
+        const response = await this.verifySubtaskSolutionRaw(requestParameters);
+        return await response.value();
     }
 
     /**
