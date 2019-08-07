@@ -73,7 +73,7 @@
     }
     private sqlExecutor = new SQLExecutor();
     private databaseController = new DatabaseController(this.$store.getters.api);
-    private databaseNumber!: number;
+    private databaseNumber: number = 0;
 
 
     // Ich habe diese Methode sehr auseinander genommen, sie tut bestimmt nicht mehr, was sie mal sollte.
