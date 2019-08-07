@@ -24,6 +24,12 @@ import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
 import PlainTextTask from "@/dataModel/PlainTextTask";
 import {Configuration} from "@/api/BaseApi";
 import SolutionDiff from "@/dataModel/SolutionDiff";
+import SqlTask from "@/dataModel/SqlTask";
+import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
+import PlainTextTask from "@/dataModel/PlainTextTask";
+import SqlSolutionDiff from "@/dataModel/SqlSolutionDiff";
+import MultipleChoiceSolutionDiff from "@/dataModel/MultipleChoiceSolutionDiff";
+import PlainTextSolutionDiff from "@/dataModel/PlainTextSolutionDiff";
 
 type Token = string;
 
@@ -1244,7 +1250,18 @@ export class DefaultApi extends runtime.BaseAPI {
             body: requestParameters.solution.toJSON(),
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => SolutionDiff.fromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => {
+            if (jsonValue.hasOwnProperty("sql")) {
+                return SqlSolutionDiff.fromJSON(jsonValue);
+            }
+            if (jsonValue.hasOwnProperty("multiple_choice")) {
+                return MultipleChoiceSolutionDiff.fromJSON(jsonValue);
+            }
+            if (jsonValue.hasOwnProperty("plaintext")) {
+                return PlainTextSolutionDiff.fromJSON(jsonValue);
+            }
+            throw new Error(jsonValue.error);
+        });
     }
 
     /**
