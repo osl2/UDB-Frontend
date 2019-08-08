@@ -4,6 +4,7 @@ import Home from '@/views/Home.vue';
 import Sandbox from '@/views/Sandbox.vue';
 import CourseView from "@/views/CourseView.vue";
 import StartpageTeacher from "@/views/StartpageTeacher.vue";
+import TeacherWorksheet from '@/views/TeacherWorksheet.vue'
 import StudentWorksheet from '@/views/StudentWorksheet.vue';
 
 Vue.use(Router);
@@ -45,6 +46,11 @@ export default new Router({
       path: '/studentWorksheet/:worksheetId',
       name: 'studentWorksheet',
       component: StudentWorksheet,
+    },
+    {
+      path: '/teacherWorksheet',
+      name: 'teacherWorksheet',
+      component: TeacherWorksheet,
     },
   ],
 });
