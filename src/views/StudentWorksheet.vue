@@ -15,6 +15,8 @@
            <TaskSolve v-show="!showSheetInstructions"
                       :currentSubtask="currentSubtask"
                       :solutions="solutions"
+                      :subtaskIndex="subtaskIndex"
+                      :numberOfSubtasks="numberOfSubtasks"
                       @prevSubtask="prevSubtask"
                       @nextSubtask="nextSubtask"
                       @switchback="switchback"
@@ -75,6 +77,7 @@ export default class StudentWorksheet extends Vue {
     private currentMatchingSubtasks: Subtask[] = [];
     private currentSubtask: Subtask = new InstructionTask('', '');
     private subtaskIndex: number = 0;
+    private numberOfSubtasks: number = 0;
 
     // Controller
     private worksheetController: ParentService<Course, Worksheet> = new WorksheetController(this.$store.getters.api);
@@ -161,6 +164,7 @@ export default class StudentWorksheet extends Vue {
       this.currentMatchingSubtasks = subtasks;
       this.currentSubtask = subtasks[index];
       this.subtaskIndex = index;
+      this.numberOfSubtasks = this.currentMatchingSubtasks.length;
     }
 }
 </script>

@@ -32,6 +32,13 @@
 
         <!-- Buttons to navigate through one task-->
         <div>
+            <b-card no-body >
+                <div class="bg-secondary text-light">
+                   Teilaufgabe {{subtaskId}} von {{numberOfSubtasks}}
+                </div>
+            </b-card>
+        </div>
+        <div>
             <b-button @click="$emit('prevSubtask')">Vorherige Aufgabe</b-button>
             <b-button @click="$emit('nextSubtask')">nächste Aufgabe</b-button>
         </div>
@@ -68,7 +75,7 @@
 
 
   export default Vue.extend({
-    props: ['currentSubtask', 'solutions'],
+    props: ['currentSubtask', 'solutions', 'subtaskIndex', 'numberOfSubtasks'],
 
 
 

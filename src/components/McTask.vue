@@ -13,6 +13,12 @@
                     stacked
             ></b-form-checkbox-group>
         </b-form-group>
+
+        <b-button @click="$emit('save', currentSubtask.id, subtaskSolution)">Speichern</b-button>
+        <b-button v-show="currentSubtask.isSolutionVisible"
+                  @click="$emit('compare', subtaskSolution)">
+            Vergleich mit Musterlösung
+        </b-button>
     </div>
 
     </div>
@@ -21,9 +27,10 @@
 <script lang ="ts">
 import MultipleChoiceTask from '@/datamodel/MultipleChoiceTask.ts';
 import Vue from 'vue';
+import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
 
 export default Vue.extend({
-        props: ['currentSubtask'],
+        props: ['currentSubtask', 'solutions'],
         data() {
             return {
                 selected: [],
@@ -41,7 +48,19 @@ export default Vue.extend({
         },
         created(): void {
             this.setOptions();
+
+            if (this.solutions.has(this.currentSubtask.id)) {
+                this.selected = this.solutions.get(this.currentSubtask.id).text;
+            }
         },
+
+    computed: {
+        subtaskSolution: {
+            get(): MultipleChoiceSolution {
+                return new MultipleChoiceSolution(this.selected);
+            },
+        },
+    },
 
     });
 </script>
