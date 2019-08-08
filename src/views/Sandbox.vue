@@ -1,6 +1,7 @@
 <template>
   <div>
-    <DatabaseComponent elementId="sandbox-dropzone-db" ref="databaseComponent" @databaseExists="eventDbExists"></DatabaseComponent>
+    <DatabaseComponent elementId="sandbox-dropzone-db" ref="databaseComponent"
+                       @databaseExists="eventDbExists" @reset="reset"></DatabaseComponent>
     <div v-if="databaseExists" :databaseExists:sync="databaseExists">
       <div class="switchButton">
         <b-button v-on:click="switchComponent"
@@ -18,14 +19,16 @@
                    @executeQuery="executeQuery"
         ></component>
       </div>
-      <div>
-        <p v-show="gotFirstQueryExecuted">
-          {{$t('sandbox.resultText')}}({{lastQueryExecuted}}):
+      <div id="queryRes"></div>
+      <div v-if="queryResult">
+        <p>
+          {{$t('sandbox.resultText')}}({{queryResult.query}}):
         </p>
-        <QueryResult :queryResult="queryResult"
-                     v-show="gotFirstQueryExecuted"
-        ></QueryResult>
+        <QueryResultComp :columns="queryResult.result.columns" :rows="queryResult.result.values"
+        ></QueryResultComp>
       </div>
+
+
     </div>
   </div>
 </template>
@@ -34,14 +37,16 @@
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
   import Query from '@/components/Query.vue';
-  import QueryResult from '@/components/QueryResult.vue';
+  import QueryResultComp from '@/components/QueryResult.vue';
   import PointAndClick from '@/components/PointAndClick.vue';
   import DatabaseComponent from '@/components/DatabaseComponent.vue';
+  import QueryResult from '@/dataModel/QueryResult';
+
 
   @Component({
     components: {
       Query,
-      QueryResult,
+      QueryResultComp,
       PointAndClick,
       DatabaseComponent,
     },
@@ -51,14 +56,8 @@
 
     // Data
     public isPointAndClickActive: boolean = false;
-    public gotFirstQueryExecuted: boolean = false;
-    public lastQueryExecuted: string = '';
     private databaseExists: boolean = false;
-    // TODO Array nicht hard coden
-    public queryResult: object[] = [
-      {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
-      {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
-    ];
+    public queryResult: QueryResult | null = null;
 
     // Methods
 
@@ -66,18 +65,25 @@
 
       const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
       try {
-        this.queryResult = dbComponent.$data.database.content.exec(query);
+        const dbNumber = dbComponent.$data.databaseNumber;
+        this.queryResult = dbComponent.$data.sqlExecutor.executeQuery(dbNumber, query, 0);
+        const top = document.getElementById('queryRes')!.offsetTop; //Getting Y of target element
+        window.scrollTo(0, top + 200);
+        dbComponent.loadMetaData();
       } catch (error) {
         alert(error.message);
         return;
       }
-      this.gotFirstQueryExecuted = true;
-      this.lastQueryExecuted = query;
 
     }
 
     private eventDbExists(val: boolean) {
       this.databaseExists = val;
+    }
+
+    private reset() {
+      this.queryResult = null;
+
     }
 
     /**

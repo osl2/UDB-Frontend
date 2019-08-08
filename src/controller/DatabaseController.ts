@@ -145,9 +145,9 @@ export default class DatabaseController implements DataManagementService<Databas
      * This method is just used on the client side, there is no communication with the API.
      * @param name the name of the database
      */
-    public static createEmptyDatabase(name: string): Database {
+    public createEmptyDatabase(name: string): Promise<Database> {
         const db = new Uint8Array();
         const dbIntern = new Database('', name, db);
-        return dbIntern;
+        return Promise.resolve(dbIntern);
     }
 }

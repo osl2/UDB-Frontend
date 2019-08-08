@@ -26,9 +26,13 @@
       </div>
       <div v-else="database.content" class="card-body" :database:sync="database">
 
-        <div class="d-flex flex-row flex-nowrap" :tableMetaData:sync="tableMetaData">
+        <div v-if="tableMetaData.length > 0" class="d-flex flex-row flex-nowrap" :tableMetaData:sync="tableMetaData">
           <DatabaseTable :tableName="tableMeta.tableName" :columns="tableMeta.columns"
                          v-for="tableMeta in tableMetaData"></DatabaseTable>
+
+        </div>
+        <div v-else class="d-flex flex-row flex-nowrap" :tableMetaData:sync="tableMetaData">
+          <p class="text-muted">Datenbank enthält noch keine Tabellen</p>
 
         </div>
 
@@ -39,7 +43,7 @@
 
       Noch keine Datenbank zur Hand? Dann erstelle eine <a href="#" @click="createEmptyDatabase">leere
       Datenbank</a>
-      oder starte mit einem <a href="#" @click="createExampleDatabase">Beipsiel Datenbank</a>.
+      oder starte mit einem <a href="#" @click="createExampleDatabase">Beispiel Datenbank</a>.
 
 
     </div>
@@ -72,20 +76,21 @@
   export default class DatabaseComponent extends Vue {
 
     public database: Database = new Database('', '', null);
+    public sqlExecutor = new SQLExecutor();
+    public databaseNumber: number = 0;
 
     public tableMetaData: TableMetaData[] = [];
     private errorMsg: string = '';
 
     @Prop() private elementId!: string;
-    private isSomethingUploaded: boolean = false;
 
     get cursorClickable() {
       return !this.database || !this.database.content ? 'cursorClickable' : '';
     }
 
-    private sqlExecutor = new SQLExecutor();
+
     private databaseController = new DatabaseController(this.$store.getters.api);
-    private databaseNumber: number = 0;
+
 
     public clickHandler(event: MouseEvent) {
       document.getElementById(this.elementId + 'dbFile')!.click();
@@ -116,9 +121,49 @@
     }
 
     private createEmptyDatabase() {
+      const db = this.databaseController.createEmptyDatabase('meineDatenbank');
+      this.postInit(db);
     }
 
     private createExampleDatabase() {
+      const db = this.databaseController.createEmptyDatabase('angestellte');
+      // TODO: these constant need to be moved somewhere else, TBD
+      const createTableSQL = `
+      DROP TABLE IF EXISTS angestellte;
+CREATE TABLE angestellte( id          integer,  name    text,
+                          job text,     anzahl_angestellte integer,
+                          einstellungsdatum    date,     gehalt  integer);
+
+  INSERT INTO angestellte VALUES (1,'JOHNSON','ADMIN',6,'1990-12-17',18000);
+  INSERT INTO angestellte VALUES (2,'HARDING','MANAGER',9,'1998-02-02',52000);
+  INSERT INTO angestellte VALUES (3,'TAFT','SALES I',2,'1996-01-02',25000);
+  INSERT INTO angestellte VALUES (4,'HOOVER','SALES I',2,'1990-04-02',27000);
+  INSERT INTO angestellte VALUES (5,'LINCOLN','TECH',6,'1994-06-23',22500);
+  INSERT INTO angestellte VALUES (6,'GARFIELD','MANAGER',9,'1993-05-01',54000);
+  INSERT INTO angestellte VALUES (7,'POLK','TECH',6,'1997-09-22',25000);
+  INSERT INTO angestellte VALUES (8,'GRANT','ENGINEER',10,'1997-03-30',32000);
+  INSERT INTO angestellte VALUES (9,'JACKSON','CEO',NULL,'1990-01-01',75000);
+  INSERT INTO angestellte VALUES (10,'FILLMORE','MANAGER',9,'1994-08-09',56000);
+  INSERT INTO angestellte VALUES (11,'ADAMS','ENGINEER',10,'1996-03-15',34000);
+  INSERT INTO angestellte VALUES (12,'WASHINGTON','ADMIN',6,'1998-04-16',18000);
+  INSERT INTO angestellte VALUES (13,'MONROE','ENGINEER',10,'2000-12-03',30000);
+  INSERT INTO angestellte VALUES (14,'ROOSEVELT','CPA',9,'1995-10-12',35000);
+      `;
+
+      db.then(database => {
+        this.database = database;
+        this.sqlExecutor.open(database).then((dbIndex: number) => {
+          this.databaseNumber = dbIndex;
+          this.sqlExecutor.executeQuery(this.databaseNumber, createTableSQL, 0);
+          this.loadMetaData();
+        }).catch((e) => {
+          console.log(e);
+          this.errorMsg = e.message;
+          this.reset();
+        });
+        this.removeBackgroundColor();
+      });
+
 
     }
 
@@ -128,20 +173,28 @@
 
 
     private initDatabase(file: File) {
+      this.errorMsg = '';
       const db = this.databaseController.importObject(file);
+      this.postInit(db);
+    }
+
+    private postInit(db: Promise<Database>) {
       db.then(database => {
         this.database = database;
         this.sqlExecutor.open(database).then((dbIndex: number) => {
           this.databaseNumber = dbIndex;
           this.loadMetaData();
+        }).catch((e) => {
+          console.log(e);
+          this.errorMsg = e.message;
+          this.reset();
         });
-        this.isSomethingUploaded = true;
         this.removeBackgroundColor();
       });
-
     }
 
-    private loadMetaData() {
+    public loadMetaData() {
+      this.tableMetaData = [];
       const results = this.sqlExecutor.executeQuery(this.databaseNumber,
         'SELECT name FROM sqlite_master WHERE type = \'table\' ORDER BY name;', 0);
       for (const result of results.result.values) {
@@ -168,10 +221,15 @@
       this.database = new Database('', '', null);
       this.tableMetaData = [];
       this.sqlExecutor.close(this.databaseNumber);
+      this.$emit('reset');
     }
 
-    public updated(){
-      this.$emit('databaseExists',this.database.content !== null)
+    public updated() {
+      this.$emit('databaseExists', this.database.content !== null);
+    }
+
+    public created(){
+
     }
 
   }

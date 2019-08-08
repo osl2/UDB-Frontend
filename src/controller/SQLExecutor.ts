@@ -15,23 +15,27 @@ export default class SQLExecutor implements SQLService {
   }
 
   public executeQuery(database: number, query: string, step: number): QueryResult {
-    //return this.sqlJs.then((SQL: SqlJs.SqlJsStatic) => {
-    const sqlDb = this.databaseSnapshots.get(database)![step];
-    const results: SqlJs.QueryResults[] = sqlDb.exec(query);
-    const resultSet: ResultSet = {
+    var resultSet: ResultSet = {
       status: 0,
       message: "",
-      columns: results[0].columns,
-      values: results[0].values as unknown as string[][],
+      columns: [],
+      values: [[]],
     };
-    // results.forEach((element) => {
-    //     resultSet.values.push(element.values);
-    // });
+    const sqlDb = this.databaseSnapshots.get(database)![step];
+    const results: SqlJs.QueryResults[] = sqlDb.exec(query);
+    if (results.length > 0) {
+      if (results[0].columns.length > 0) {
+        resultSet.columns = results[0].columns;
+      }
+      if (results[0].values.length > 0) {
+        resultSet.values = results[0].values as unknown as string[][];
+      }
+    }
+
     return {
       query,
       result: resultSet,
     };
-    //});
   }
 
   public open(database: Database): Promise<number> {
