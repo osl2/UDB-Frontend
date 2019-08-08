@@ -166,6 +166,12 @@
 
     private reset() {
       this.database = new Database('', '', null);
+      this.tableMetaData = [];
+      this.sqlExecutor.close(this.databaseNumber);
+    }
+
+    public updated(){
+      this.$emit('databaseExists',this.database.content !== null)
     }
 
   }
