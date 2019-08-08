@@ -1,11 +1,19 @@
 <template>
     <div>
-    <DatabaseComponent></DatabaseComponent>
-
+        <div class="taskHeader">
+            <h2>{{task.name}}</h2>
+            <h3>Teilaufgabe {{subtaskIndex+1}} von {{numberOfSubtasks}}</h3>
+        </div>
+        <div class="containerDatabase">
+            <h3>Übersicht über die Datenbank:</h3>
+            <DatabaseComponent></DatabaseComponent>
+        </div>
         <div v-if="typeOfSubtask()===1">
             <SqlTaskComp :currentSubtask="currentSubtask"
                          :solutions="solutions"
-                         @save="$emit('save', currentSubtask.id, subtaskSolution)"
+                         :sqlExecutor="sqlExecutor"
+                         :databaseNumber="databaseNumber"
+                         @save="saveSubtask"
                          @compare="$emit('compare', subtaskSolution)"
             >
             </SqlTaskComp>
@@ -13,7 +21,7 @@
         <div v-else-if="typeOfSubtask()===2">
             <McTask :currentSubtask="currentSubtask"
                     :solutions="solutions"
-                    @save="$emit('save', currentSubtask.id, subtaskSolution)"
+                    @save="saveSubtask"
                     @compare="$emit('compare', subtaskSolution)"
             >
             </McTask>
@@ -21,7 +29,7 @@
         <div v-else-if="typeOfSubtask()===3">
             <TextTask :currentSubtask="currentSubtask"
                       :solutions="solutions"
-                      @save="$emit('save', currentSubtask.id, subtaskSolution)"
+                      @save="saveSubtask"
                       @compare="$emit('compare', subtaskSolution)"
             >
             </TextTask>
@@ -32,16 +40,10 @@
 
         <!-- Buttons to navigate through one task-->
         <div>
-            <b-card no-body >
-                <div class="bg-secondary text-light">
-                   Teilaufgabe {{subtaskId}} von {{numberOfSubtasks}}
-                </div>
-            </b-card>
-        </div>
-        <div>
             <b-button @click="$emit('prevSubtask')">Vorherige Aufgabe</b-button>
             <b-button @click="$emit('nextSubtask')">nächste Aufgabe</b-button>
         </div>
+        <div class="clear"></div>
 
         <div>
             <b-button @click="$emit('switchback')">Zurück zur Übersicht</b-button>
@@ -51,8 +53,8 @@
                 <p>Wenn Du die Aufgabe zurücksetzt, geht Dein bisheriger Fortschritt aller zugehörigen Teilaufgaben
                     verloren. Du kannst diesen Vorgang nicht rückgängig machen.</p>
                 <template slot="modal-footer">
-                    <b-button size="sm" @click="$emit('reset')">
-                        Aufgabe zurücksetzen
+                    <b-button size="sm" @click="$emit('reset'),$bvModal.hide('modal-reset')">
+                        Aufgabe neu starten
                     </b-button>
                     <b-button size="sm" @click="$bvModal.hide('modal-reset')">
                         Abbrechen
@@ -72,13 +74,19 @@
   import McTask from '@/components/McTask.vue';
   import TextTask from '@/components/TextTask.vue';
   import SubtaskTypes from "@/dataModel/SubtaskTypes";
+  import Solution from "@/dataModel/Solution";
+  import SQLExecutor from "@/controller/SQLExecutor";
+  import SQLService from "@/services/SQLService";
 
 
   export default Vue.extend({
-    props: ['currentSubtask', 'solutions', 'subtaskIndex', 'numberOfSubtasks'],
-
-
-
+    props: ['task','currentSubtask', 'solutions', 'subtaskIndex', 'numberOfSubtasks', 'database'],
+    data() {
+      return {
+        sqlExecutor: new SQLExecutor() as SQLService,
+        databaseNumber: 0 as number,
+        };
+    },
     components: {
         SqlTaskComp,
         TextTask,
@@ -99,10 +107,42 @@
           }
 
       },
+
+      /**
+       * Calls the methods save in StudentWorksheet.vue
+       */
+      saveSubtask(solution: Solution): void {
+        this.$emit('save', this.currentSubtask.id, solution);
+      },
+
+      /**
+       * opens the database provided through props
+       */
+      initDatabase() {
+        this.sqlExecutor.open(this.database).then((dbNumber: number) => {
+          this.databaseNumber = dbNumber;
+        });
+      },
+
+
+      created() {
+        this.initDatabase();
+      },
     },
 });
 </script>
 
 <style scoped>
+    .taskHeader {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        margin-bottom: 35px;
+        text-align: center;
+        background-color: #17a2b8;
+        color: white;
+    }
+    .containerDatabase {
+        margin-bottom: 20px;
+    }
 
 </style>

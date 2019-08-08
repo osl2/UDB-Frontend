@@ -1,6 +1,9 @@
 <template>
         <div>
-            {{this.currentSubtask.instruction}}
+            <h3>Aufgabentext:</h3>
+            <div class="taskContainer">
+                {{this.currentSubtask.instruction}}
+            </div>
         </div>
 
 </template>
@@ -15,5 +18,9 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-
+    .taskContainer {
+        border: 1px lightgray solid;
+        margin: 10px 0px 20px 0px;
+        padding: 5px 0px 5px 10px;
+    }
 </style>

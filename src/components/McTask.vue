@@ -1,31 +1,31 @@
 <template>
     <div>
-    <div>
-        {{this.currentSubtask.instruction}}
-    </div>
+        <h3>Aufgabenstellung:</h3>
+        <div class="taskContainer">
+            {{this.currentSubtask.instruction}}
+        </div>
+        <h3>Antwortmöglichkeiten:</h3>
+        <div class="taskContainer">
 
-    <div>
+            <b-form-group>
+                <b-form-checkbox-group
+                        v-model="selected"
+                        :options="options"
+                        stacked
+                ></b-form-checkbox-group>
+            </b-form-group>
 
-        <b-form-group label="Form-checkbox-group stacked checkboxes">
-            <b-form-checkbox-group
-                    v-model="selected"
-                    :options="options"
-                    stacked
-            ></b-form-checkbox-group>
-        </b-form-group>
-
-        <b-button @click="$emit('save', currentSubtask.id, subtaskSolution)">Speichern</b-button>
-        <b-button v-show="currentSubtask.isSolutionVisible"
-                  @click="$emit('compare', subtaskSolution)">
-            Vergleich mit Musterlösung
-        </b-button>
-    </div>
+            <b-button @click="$emit('save', subtaskSolution)">Speichern</b-button>
+            <b-button v-show="currentSubtask.isSolutionVisible"
+                      @click="$emit('compare', subtaskSolution)">
+                Vergleich mit Musterlösung
+            </b-button>
+        </div>
 
     </div>
 </template>
 
 <script lang ="ts">
-import MultipleChoiceTask from '@/datamodel/MultipleChoiceTask.ts';
 import Vue from 'vue';
 import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
 
@@ -34,7 +34,7 @@ export default Vue.extend({
         data() {
             return {
                 selected: [],
-                options: [{}], // am anfang leeres object drinnen? an index 0
+                options: [] as object[], // am anfang leeres object drinnen? an index 0
             };
         },
         methods: {
@@ -50,7 +50,7 @@ export default Vue.extend({
             this.setOptions();
 
             if (this.solutions.has(this.currentSubtask.id)) {
-                this.selected = this.solutions.get(this.currentSubtask.id).text;
+                this.selected = this.solutions.get(this.currentSubtask.id).choices;
             }
         },
 
@@ -66,5 +66,9 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-
+    .taskContainer {
+        border: 1px lightgray solid;
+        margin: 10px 0px 20px 0px;
+        padding: 5px 0px 5px 10px;
+    }
 </style>

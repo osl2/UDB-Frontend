@@ -71,8 +71,8 @@ export default class CourseView extends Vue {
   }
 
   public generateSolutionsheet(worksheet: Worksheet) {
+    alert('TODO: PDF anzeigen zu: ' + worksheet.name);
     this.solutionsheet = this.worksheetController.getSolution(worksheet);
-    alert('TODO: PDF anzeigen' + worksheet.name);
   }
 
 

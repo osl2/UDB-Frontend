@@ -1,8 +1,9 @@
 <template>
     <div>
-    <div>
-        {{this.currentSubtask.instruction}}
-    </div>
+        <h3>Aufgabenstellung:</h3>
+        <div class="taskContainer">
+            <p>{{this.currentSubtask.instruction}}</p>
+        </div>
 
     <div>
         <b-form-textarea
@@ -11,7 +12,7 @@
                 placeholder="Antwort eingeben">
         </b-form-textarea>
 
-        <b-button @click="$emit('save', currentSubtask.id, subtaskSolution)">Speichern</b-button>
+        <b-button @click="$emit('save', subtaskSolution)">Speichern</b-button>
         <b-button v-show="currentSubtask.isSolutionVisible"
                   @click="$emit('compare', subtaskSolution)">
             Vergleich mit Musterlösung
@@ -52,5 +53,10 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+    .taskContainer {
+        border: 1px lightgray solid;
+        margin: 10px 0px 20px 0px;
+        padding: 5px 0px 5px 10px;
+    }
 
 </style>

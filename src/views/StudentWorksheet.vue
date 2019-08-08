@@ -2,21 +2,28 @@
 
     <div>
         <div v-show="showSheetInstructions">
+            <div class="worksheetHeader">
             <h2>{{worksheet.name}}</h2>
-            <WorksheetInstructions v-for="task in tasks"
+            </div>
+            <WorksheetInstructions class="instructionContainer"
+                                   v-for="task in tasks"
                                    :task="task"
                                    @openTask="openTask"
                 >
             </WorksheetInstructions>
-            <b-button @click="exportSheet">Bearbeitungsstand exportieren</b-button>
-            <b-button @click="importSheet">Bearbeitungsstand importieren</b-button>
+            <b-button @click="exportSheet"
+            >Bearbeitungsstand exportieren</b-button>
+            <b-button @click="importSheet"
+            >Bearbeitungsstand importieren</b-button>
         </div>
         <div>
            <TaskSolve v-show="!showSheetInstructions"
+                      :task="currentTask"
                       :currentSubtask="currentSubtask"
                       :solutions="solutions"
                       :subtaskIndex="subtaskIndex"
                       :numberOfSubtasks="numberOfSubtasks"
+                      :database="database"
                       @prevSubtask="prevSubtask"
                       @nextSubtask="nextSubtask"
                       @switchback="switchback"
@@ -25,6 +32,9 @@
                       @compare="compare"
            >
            </TaskSolve>
+        </div>
+        <div>
+            <b-button @click="exportSheetAsPDF">Lösung des Blattes als PDF exportieren</b-button>
         </div>
     </div>
 </template>
@@ -45,6 +55,10 @@ import Course from "@/dataModel/Course";
 import Solution from "@/dataModel/Solution";
 import SubtaskService from "@/services/SubtaskService";
 import SubtaskController from "@/controller/SubtaskController";
+import DataManagementService from "@/services/DataManagementService";
+import Database from "@/dataModel/Database";
+import DatabaseController from "@/controller/DatabaseController";
+import ExportPDF from "@/services/ExportPDF";
 
 @Component({
     components: {
@@ -66,6 +80,10 @@ export default class StudentWorksheet extends Vue {
     get tasks() {
       return this.taskController.all;
     }
+
+    get database() {
+      return this.databaseController.one;
+    }
     // Data
 
     // the solution maps an id of a subtask to the students solution.
@@ -80,19 +98,21 @@ export default class StudentWorksheet extends Vue {
     private numberOfSubtasks: number = 0;
 
     // Controller
-    private worksheetController: ParentService<Course, Worksheet> = new WorksheetController(this.$store.getters.api);
+    private worksheetController: ParentService<Course, Worksheet> & ExportPDF<Worksheet> = new WorksheetController(this.$store.getters.api);
     private taskController: ParentService<Worksheet, Task> = new TaskController(this.$store.getters.api);
     private subtaskController: SubtaskService = new SubtaskController(this.$store.getters.api);
+    private databaseController: DataManagementService<Database> = new DatabaseController(this.$store.getters.api);
 
 
     // methods
     public exportSheet() {
-        alert("wird noch implementiert");
-
+        alert('qird auch noch implementiert');
     }
     public importSheet() {
         alert("wird noch implementiert");
-
+    }
+    public exportSheetAsPDF() {
+      alert('auch hier folgt noch eine Implementierung');
     }
 
     public openTask(task: Task, subtasks: Subtask[]) {
@@ -121,11 +141,16 @@ export default class StudentWorksheet extends Vue {
     }
 
     public save(subtaskId: string, subtaskSolution: Solution) {
+      if(subtaskSolution === undefined) {
+        alert('Something went wrong: The solution was undefined.');
+        return;
+      }
       // There should always just be one solution per subtask.
       if (this.solutions.has(subtaskId)) {
         this.solutions.delete(subtaskId);
       }
       this.solutions.set(subtaskId, subtaskSolution);
+      alert('Speichern erfolgreich.')
     }
 
     /*
@@ -137,6 +162,7 @@ export default class StudentWorksheet extends Vue {
             this.solutions.delete(subtask.id);
           }
         }
+        this.setCurrentTask(this.currentTask, this.currentMatchingSubtasks, 0);
     }
 
 
@@ -165,10 +191,23 @@ export default class StudentWorksheet extends Vue {
       this.currentSubtask = subtasks[index];
       this.subtaskIndex = index;
       this.numberOfSubtasks = this.currentMatchingSubtasks.length;
+      this.databaseController.load(this.currentTask.databaseId);
     }
 }
 </script>
 
 <style scoped>
+    .worksheetHeader {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        margin-bottom: 35px;
+        text-align: center;
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .instructionContainer {
+        margin-bottom: 20px;
+    }
 
 </style>
