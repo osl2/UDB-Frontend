@@ -30,8 +30,17 @@ export default class Database extends DataModel {
         this._content = value;
     }
 
+    private static u8ToBase64(arr: Uint8Array): string {
+        return btoa(String.fromCharCode.apply(null, Array.from(arr)));
+    }
+
+    private static base64ToU8(base64: string): Uint8Array {
+        return new Uint8Array(atob(base64).split("").map(function(c) {
+            return c.charCodeAt(0); }));
+    }
+
     public static fromJSON(json: any): Database {
-        return new Database(json.id, json.name, json.database);
+        return new Database(json.id, json.name, this.base64ToU8(json.database));
     }
     private _name: string;
     private _content: Uint8Array;
@@ -51,7 +60,7 @@ export default class Database extends DataModel {
     public toJSON(): any {
         return {
             id: this.id,
-            database: this.content,
+            database: Database.u8ToBase64(this.content),
             name: this.name,
         };
     }
