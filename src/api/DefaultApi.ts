@@ -17,6 +17,18 @@ import Subtask from "@/dataModel/Subtask";
 import Task from "@/dataModel/Task";
 import Worksheet from '@/dataModel/Worksheet';
 import * as runtime from "@/api/BaseApi";
+import User from "@/dataModel/User";
+import Solution from "@/dataModel/Solution";
+import SqlTask from "@/dataModel/SqlTask";
+import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
+import PlainTextTask from "@/dataModel/PlainTextTask";
+import {Configuration} from "@/api/BaseApi";
+
+type Token = string;
+
+export interface CreateAccountRequest {
+    account: User;
+}
 
 export interface CreateCourseRequest {
     course: Course;
@@ -41,6 +53,15 @@ export interface CreateWorksheetRequest {
 
 export interface DeleteCourseRequest {
     courseId: string;
+}
+
+export enum ObjectType {
+    COURSE = "COURSE",
+}
+
+export interface CreateAliasRequest {
+    objectId: string;
+    objectType: ObjectType;
 }
 
 export interface DeleteDatabaseRequest {
@@ -68,6 +89,7 @@ export interface GetDatabaseRequest {
 }
 
 export interface GetSubtaskRequest {
+    taskId: string;
     subtaskId: string;
 }
 
@@ -77,6 +99,24 @@ export interface GetTaskRequest {
 
 export interface GetWorksheetRequest {
     worksheetId: string;
+}
+
+export interface GetUUIDRequest {
+    alias: string;
+}
+
+export interface GetSubtasksRequest {
+    taskId: string;
+}
+
+export interface VerifySubtaskSolutionRequest {
+    taskId: string;
+    subtaskId: string;
+    solution: Solution;
+}
+
+export interface UpdateAccountRequest {
+    account: User;
 }
 
 export interface UpdateCourseRequest {
@@ -103,6 +143,39 @@ export interface UpdateWorksheetRequest {
  * no description
  */
 export class DefaultApi extends runtime.BaseAPI {
+
+    /**
+     * Registration
+     */
+    public async createAccountRaw(requestParameters: CreateAccountRequest): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.account === null || requestParameters.account === undefined) {
+            throw new runtime.RequiredError('account',
+                'Required parameter requestParameters.account was null or undefined when calling createAccount.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/account`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.account.toJSON(),
+        });
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Registration
+     */
+    public async createAccount(requestParameters: CreateAccountRequest): Promise<void> {
+        await this.createAccountRaw(requestParameters);
+    }
 
     /**
      * Creates a new instance of a `Course`.
@@ -327,6 +400,49 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async createWorksheet(requestParameters: CreateWorksheetRequest): Promise<string> {
         const response = await this.createWorksheetRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Creates a new instance of a `Course`.
+     * Create a Course
+     */
+    public async createAliasRaw(requestParameters: CreateAliasRequest): Promise<runtime.ApiResponse<string>> {
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+            const token = this.configuration.accessToken || this.configuration.apiKey;
+            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+            if (tokenString) {
+                headerParameters.Authorization = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/alias`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: {
+                object_id: requestParameters.objectId,
+                object_type: requestParameters.objectType.toString(),
+            },
+        });
+
+        return new runtime.TextApiResponse(response);
+    }
+
+    /**
+     * Creates a new instance of a `Course`.
+     * Create a Course
+     */
+    public async createAlias(requestParameters: CreateAliasRequest): Promise<string> {
+        const response = await this.createAliasRaw(requestParameters);
         return await response.value();
     }
 
@@ -722,6 +838,65 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Gets the details of a single instance of a `Subtask`.
+     * Get a Subtask
+     */
+    public async getSubtaskRaw(requestParameters: GetSubtaskRequest): Promise<runtime.ApiResponse<Subtask>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId',
+                'Required parameter requestParameters.taskId was null or undefined when calling getSubtask.');
+        }
+
+        if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
+            throw new runtime.RequiredError('subtaskId',
+                'Required parameter requestParameters.subtaskId was null or undefined when calling getSubtask.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+            const token = this.configuration.accessToken || this.configuration.apiKey;
+            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+            if (tokenString) {
+                headerParameters.Authorization = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/tasks/{taskId}/subtasks/{subtaskId}`
+                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId)))
+                .replace(`{${"subtaskId"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => {
+            if (jsonValue.hasOwnProperty("sql")) {
+                return SqlTask.fromJSON(jsonValue);
+            }
+            if (jsonValue.hasOwnProperty("multiple_choice")) {
+                return MultipleChoiceTask.fromJSON(jsonValue);
+            }
+            if (jsonValue.hasOwnProperty("plaintext")) {
+                return PlainTextTask.fromJSON(jsonValue);
+            }
+            throw new Error("Unknown Subtask type");
+        });
+    }
+
+    /**
+     * Gets the details of a single instance of a `Subtask`.
+     * Get a Subtask
+     */
+    public async getSubtask(requestParameters: GetSubtaskRequest): Promise<Subtask> {
+        const response = await this.getSubtaskRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * Gets the details of a single instance of a `Task`.
      * Get a Task
      */
@@ -806,10 +981,105 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Gets the uuid when given alias
+     * Get a string (UUID)
+     */
+    public async getUUIDRaw(requestParameters: GetUUIDRequest): Promise<runtime.ApiResponse<string>> {
+        if (requestParameters.alias === null || requestParameters.alias === undefined) {
+            throw new runtime.RequiredError('alias', 'Required parameter ' +
+                'requestParameters.alias was null or undefined when calling getWorksheet.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+            const token = this.configuration.accessToken || this.configuration.apiKey;
+            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+            if (tokenString) {
+                headerParameters.Authorization = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/alias/{alias}`.replace(`{${"alias"}}`,
+                encodeURIComponent(String(requestParameters.alias))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.TextApiResponse(response);
+    }
+
+    /**
+     * Gets the uuid when given alias
+     * Get a string (UUID)
+     */
+    public async getUUID(requestParameters: GetUUIDRequest): Promise<string> {
+        const response = await this.getUUIDRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Gets a list of all `Subtask` entities.
+     * List All subtasks
+     */
+    public async getSubtasksRaw(requestParameters: GetSubtasksRequest): Promise<runtime.ApiResponse<Subtask[]>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId',
+                'Required parameter requestParameters.taskId was null or undefined when calling getsubtasks.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+            const token = this.configuration.accessToken || this.configuration.apiKey;
+            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+            if (tokenString) {
+                headerParameters.Authorization = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/tasks/{taskId}/subtasks`
+                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map((singleJsonValue: any) => {
+            if (singleJsonValue.hasOwnProperty("sql")) {
+                return SqlTask.fromJSON(singleJsonValue);
+            }
+            if (singleJsonValue.hasOwnProperty("multiple_choice")) {
+                return MultipleChoiceTask.fromJSON(singleJsonValue);
+            }
+            if (singleJsonValue.hasOwnProperty("plaintext")) {
+                return PlainTextTask.fromJSON(singleJsonValue);
+            }
+            throw new Error("Unknown Subtask type");
+        }));
+    }
+
+    /**
+     * Gets a list of all `Subtask` entities.
+     * List All subtasks
+     */
+    public async getSubtasks(requestParameters: GetSubtasksRequest): Promise<Subtask[]> {
+        const response = await this.getSubtasksRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * Gets a list of all `Task` entities.
      * List All tasks
      */
-    public async gettasksRaw(): Promise<runtime.ApiResponse<Task[]>> {
+    public async getTasksRaw(): Promise<runtime.ApiResponse<Task[]>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -836,8 +1106,8 @@ export class DefaultApi extends runtime.BaseAPI {
      * Gets a list of all `Task` entities.
      * List All tasks
      */
-    public async gettasks(): Promise<Task[]> {
-        const response = await this.gettasksRaw();
+    public async getTasks(): Promise<Task[]> {
+        const response = await this.getTasksRaw();
         return await response.value();
     }
 
@@ -845,7 +1115,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * Gets a list of all `Worksheet` entities.
      * List All worksheets
      */
-    public async getworksheetsRaw(): Promise<runtime.ApiResponse<Worksheet[]>> {
+    public async getWorksheetsRaw(): Promise<runtime.ApiResponse<Worksheet[]>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -872,9 +1142,108 @@ export class DefaultApi extends runtime.BaseAPI {
      * Gets a list of all `Worksheet` entities.
      * List All worksheets
      */
-    public async getworksheets(): Promise<Worksheet[]> {
-        const response = await this.getworksheetsRaw();
+    public async getWorksheets(): Promise<Worksheet[]> {
+        const response = await this.getWorksheetsRaw();
         return await response.value();
+    }
+
+    /**
+     * When logging in, you call this endpoint with http basic auth and get back a token for
+     * authentication with other endpoints.
+     * Login
+     */
+    public async loginRaw(): Promise<runtime.ApiResponse<Token>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration
+            && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+            headerParameters.Authorization = "Basic "
+                + btoa(this.configuration.username + ":" + this.configuration.password);
+        }
+        const response = await this.request({
+            path: `/account/login`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue);
+    }
+
+    /**
+     * When logging in, you call this endpoint with http basic auth and get back a token
+     * for authentication with other endpoints.
+     * Login
+     */
+    public async login(): Promise<Token> {
+        const response = await this.loginRaw();
+        return await response.value();
+    }
+
+    public setJWT(token: string | undefined): void {
+        this.configuration = new Configuration({
+            basePath: this.configuration.basePath,
+            fetchApi:  this.configuration.fetchApi,
+            middleware: this.configuration.middleware,
+            username: this.configuration.username,
+            password: this.configuration.password,
+            apiKey: this.configuration.apiKey,
+            accessToken: token,
+        });
+    }
+
+    public setBasicAuth(username: string, password: string): void {
+        this.configuration = new Configuration({
+            basePath: this.configuration.basePath,
+            fetchApi:  this.configuration.fetchApi,
+            middleware: this.configuration.middleware,
+            username: username,
+            password: password,
+            apiKey: this.configuration.apiKey,
+            accessToken: this.configuration.accessToken,
+        });
+    }
+
+    /**
+     * This endpoint requires HTTP basic auth, you cannot use the authentification token to change account details.
+     * Change username or password
+     */
+    public async updateAccountRaw(requestParameters: UpdateAccountRequest): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.account === null || requestParameters.account === undefined) {
+            throw new runtime.RequiredError('account',
+                'Required parameter requestParameters.account was null or undefined when calling updateAccount.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration
+            && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+            headerParameters.Authorization = "Basic "
+                + btoa(this.configuration.username + ":" + this.configuration.password);
+        }
+        const response = await this.request({
+            path: `/account`,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.account.toJSON(),
+        });
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * This endpoint requires HTTP basic auth, you cannot use the authentification token to change account details.
+     * Change username or password
+     */
+    public async updateAccount(requestParameters: UpdateAccountRequest): Promise<void> {
+        await this.updateAccountRaw(requestParameters);
     }
 
     /**

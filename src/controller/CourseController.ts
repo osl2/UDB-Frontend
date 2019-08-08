@@ -1,13 +1,11 @@
-import ParentService from '@/services/ParentService';
 import Course from '@/dataModel/Course';
-import Worksheet from '@/dataModel/Worksheet';
 import {
-    DefaultApi,
     CreateCourseRequest,
+    DefaultApi,
     DeleteCourseRequest,
-    GetWorksheetRequest,
-    UpdateCourseRequest,
     GetCourseRequest,
+    ObjectType,
+    UpdateCourseRequest,
 } from "@/api/DefaultApi";
 import DataManagementService from "@/services/DataManagementService";
 
@@ -47,6 +45,16 @@ export default class CourseController implements DataManagementService<Course> {
         }
     }
 
+    public loadWithAlias(alias: string): void {
+        this._course = this._courses.find((course) => course.alias === alias);
+        if (this._course === undefined) {
+            this._api.getUUID({alias: alias})
+                .then((response: string) => {
+                    this.load(response);
+                })
+        }
+    }
+
     /**
      * Create a new course and add to courses as soon as API call is successful
      *
@@ -57,6 +65,12 @@ export default class CourseController implements DataManagementService<Course> {
             .then((response: string) => {
                 course.id = response;
                 this._courses.push(course);
+
+                this._api.createAlias({ objectId: course.id, objectType: ObjectType.COURSE})
+                    .then((response: string) => {
+                        course.alias = response;
+                    })
+
             })
             .catch((error) => {
                 throw new Error("Error creating course: " + error);

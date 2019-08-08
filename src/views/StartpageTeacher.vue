@@ -90,7 +90,7 @@ export default class StartpageTeacher extends Vue {
   * Method to create a new Course with a name and description given by the user.
    */
   public addCourse(name: string, description: string) {
-      this.courseController.create(new Course("", name, description, []));
+      this.courseController.create(new Course("", name, description, "", []));
   }
 
   /*

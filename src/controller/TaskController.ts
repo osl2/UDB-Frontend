@@ -23,7 +23,7 @@ export default class TaskController implements ParentService<Worksheet, Task> {
      * Loads all tasks available
      */
     public loadAll(): void {
-        this._api.gettasks()
+        this._api.getTasks()
             .then((response: Task[]) => {
                 this._tasks = response;
             });

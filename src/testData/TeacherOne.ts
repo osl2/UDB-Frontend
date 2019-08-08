@@ -24,9 +24,9 @@ export default class TeacherOne {
   public worksheet2 = new Worksheet('456', 'Blatt 02', [], false, false);
   public worksheet3 = new Worksheet('678', 'Blatt 03', [], true, true);
   public worksheet4 = new Worksheet('93847', 'Blatt 04', [], true, false);
-  public course1 = new Course("1234", "Klasse 7b", "SJ 18/19", [this.worksheet1.id]);
-  public course2 = new Course("345", "Klasse 8a", "SJ 18/19", [this.worksheet2.id, this.worksheet3.id]);
-  public course3 = new Course("rte", "Klasse 9b", "SJ 18/19", [this.worksheet4.id]);
+  public course1 = new Course("1234", "Klasse 7b", "SJ 18/19", "", [this.worksheet1.id]);
+  public course2 = new Course("345", "Klasse 8a", "SJ 18/19", "", [this.worksheet2.id, this.worksheet3.id]);
+  public course3 = new Course("rte", "Klasse 9b", "SJ 18/19", "", [this.worksheet4.id]);
 
 
 
@@ -70,8 +70,8 @@ export default class TeacherOne {
     [this.task1W1.id, this.task2W1.id], true, true);
 
   // Course 1
-  public course1T1 = new Course('course1T1', 'Klasse 7a', 'Schuljahr 18/19',
-    [this.worksheet1T1.id]);
+  public course1T1 = new Course('course1T1', 'Klasse 7a', 'Schuljahr 18/19', "",
+      [this.worksheet1T1.id]);
 
   // Arrays
   public databaseArray = [this.musicDb, this.humanDb, this.database1, this.database2, this.database3];

@@ -1,11 +1,13 @@
 import UserService from '@/services/UserService';
-import {DefaultApi} from "@/api/DefaultApi";
+import {CreateAccountRequest, DefaultApi} from "@/api/DefaultApi";
 import {userState} from '@/globalData/UserState';
 import UserGroup from "@/dataModel/UserGroup";
 import User from "@/dataModel/User";
 
 export default class UserController implements UserService {
+
     private _api: DefaultApi;
+
     constructor(api: DefaultApi) {
         this._api = api;
     }
@@ -13,16 +15,28 @@ export default class UserController implements UserService {
     public logout(): void {
         // reset user
         userState.user = new User('', '', '', '', '', UserGroup.Unauthenticated);
-        alert('TODO: Serverseitige Logout-Methode aufrufen');
+        this._api.setJWT(undefined);
     }
     public login(username: string, password: string) {
-        throw new Error("Method not implemented.");
+        this._api.setBasicAuth(username, password);
+        this._api.login().then((response: string) => {
+            this._api.setJWT(response);
+            userState.user.token = response;
+            userState.user.name = username;
+            userState.user.userGroup = UserGroup.Teacher;
+        });
     }
     public register(username: string, password: string) {
-        throw new Error("Method not implemented.");
+        let user = new User('', username, '', '', '', UserGroup.Teacher);
+        this._api.createAccount({account: user} as CreateAccountRequest).then((_) => {
+            userState.user = user;
+        });
     }
     public delete(username: string, password: string) {
-        throw new Error("Method not implemented.");
+        this._api.setBasicAuth(username, password);
+        this._api.deleteAccount().then(() => {
+            userState.user = new User('', '', '', '', '', UserGroup.Unauthenticated);
+        });
     }
     public changePassword(username: string, password: string, newPassword: string) {
         throw new Error("Method not implemented.");

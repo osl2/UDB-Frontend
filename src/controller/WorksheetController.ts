@@ -26,7 +26,7 @@ export default class WorksheetController
 
     public loadAll() {
         this._worksheets = [];
-        this._api.getworksheets()
+        this._api.getWorksheets()
             .then((response: Worksheet[]) => {
                 this._worksheets = response;
             });
