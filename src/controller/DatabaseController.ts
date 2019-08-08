@@ -2,11 +2,11 @@ import DataManagementService from '@/services/DataManagementService';
 import Database from '@/dataModel/Database';
 import ExportImport from '@/services/ExportImport';
 import {
-    DefaultApi,
     CreateDatabaseRequest,
+    DefaultApi,
     DeleteDatabaseRequest,
-    UpdateDatabaseRequest,
     GetDatabaseRequest,
+    UpdateDatabaseRequest,
 } from "@/api/DefaultApi";
 
 export default class DatabaseController implements DataManagementService<Database>, ExportImport<Database> {
@@ -69,14 +69,15 @@ export default class DatabaseController implements DataManagementService<Databas
                 }
             });
     }
+
     public remove(object: Database): void {
         this._api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest)
-          .then((response) => {
-              const index = this._databases.indexOf(object, 0);
-              if (index > -1) {
-                  this._databases.splice(index, 1);
-              }
-          });
+            .then((response) => {
+                const index = this._databases.indexOf(object, 0);
+                if (index > -1) {
+                    this._databases.splice(index, 1);
+                }
+            });
     }
 
     /**
@@ -88,7 +89,7 @@ export default class DatabaseController implements DataManagementService<Databas
      * @param database internal database object
      */
     public exportObject(object: Database): void {
-        const blob = new Blob([object.content]);
+        const blob = new Blob([object.content!]);
         const a = document.createElement('a');
         document.body.appendChild(a);
         a.href = window.URL.createObjectURL(blob);
@@ -104,19 +105,25 @@ export default class DatabaseController implements DataManagementService<Databas
     }
 
     /**
-    * Imports an database object and returns an internal database object
+     * Imports an database object and returns an internal database object
      */
-    public importObject(file: File): Database {
+    public importObject(file: File): Promise<Database> {
         const fileReader = new FileReader();
-        let uInts = new Uint8Array();
-        fileReader.onerror = () => {
-            fileReader.abort();
-            new DOMException('Problem parsing input file.');
-        };
-        fileReader.onload = () => {
-            uInts = new Uint8Array(fileReader.result as ArrayBuffer);
-        };
-        return new Database('', file.name, uInts);
+
+        const promise: Promise<Database> = new Promise((resolve, reject) => {
+            fileReader.onerror = () => {
+                fileReader.abort();
+                reject(new DOMException('Problem parsing input file.'));
+            };
+
+            fileReader.onload = () => {
+                const uInts = new Uint8Array(fileReader.result as ArrayBuffer);
+                const db = new Database('', file.name, uInts);
+                resolve(db);
+            };
+            fileReader.readAsArrayBuffer(file);
+        });
+        return promise;
     }
 
     /**
@@ -139,8 +146,8 @@ export default class DatabaseController implements DataManagementService<Databas
      * @param name the name of the database
      */
     public static createEmptyDatabase(name: string): Database {
-            const db = new Uint8Array();
-            const dbIntern = new Database('', name, db);
-            return dbIntern;
+        const db = new Uint8Array();
+        const dbIntern = new Database('', name, db);
+        return dbIntern;
     }
 }

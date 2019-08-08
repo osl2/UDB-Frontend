@@ -43,7 +43,7 @@ export default class Database extends DataModel {
         return new Database(json.id, json.name, this.base64ToU8(json.database));
     }
     private _name: string;
-    private _content: Uint8Array;
+    private _content: Uint8Array | null;
 
     /**
      * The constructor of this class.
@@ -51,7 +51,7 @@ export default class Database extends DataModel {
      * @param name: The name the teacher can set for the database.
      * @param content: The content of the database.
      */
-    constructor(id: string, name: string, content: Uint8Array) {
+    constructor(id: string, name: string, content: Uint8Array | null) {
         super(id);
         this._name = name;
         this._content = content;
