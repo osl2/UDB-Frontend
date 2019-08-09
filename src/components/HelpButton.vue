@@ -1,23 +1,24 @@
 <template>
-    <b-button class="help-btn" v-b-modal.modal-help>
-        <b-img rounded="true" src="../../public/img/questionmark.png"></b-img>
-    </b-button>
-    <b-modal id="modal-help" busy="true" >
-        <p>{{this.helpmsg}}</p>
-    </b-modal>
+    <div>
+        <h2>
+            <b-button v-b-popover.hover="'Hier die Hilfetexte einfügen!'" class="helpBtn bg-info ">
+                <b-bagde pill variant="info">?</b-bagde>
+            </b-button>
+        </h2>
+    </div>
 </template>
 
 <script lang="ts">
 import {Component, Prop, Vue} from 'vue-property-decorator';
-export default class extends Vue {
-    @Prop() private helpmsg!: string;
+
+export default class HelpButton extends Vue {
+    public helpmsg: string = 'test';
 }
 </script>
 
 <style scoped>
-    .help-btn{
-        width: 5px;
-        height: 5px;
+    .helpBtn{
+        border-radius: 25px;
 
     }
 
