@@ -12,10 +12,11 @@ import {
     GetWorksheetRequest,
 } from "@/api/DefaultApi";
 import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
+import WorksheetSolution from "@/dataModel/WorksheetSolution";
 
 
 export default class WorksheetController extends ApiControllerAbstract
-    implements ParentService<Course, Worksheet>, ExportPDF<Worksheet>, SolutionService {
+    implements ParentService<Course, Worksheet>, ExportPDF<WorksheetSolution>, SolutionService {
 
     private _worksheets: Worksheet[] = [];
     private _worksheet?: Worksheet = undefined;
@@ -75,14 +76,79 @@ export default class WorksheetController extends ApiControllerAbstract
             });
     }
 
-    public exportPDF(object: Worksheet): Uint8Array {
+    public exportPDF(object: WorksheetSolution): Uint8Array {
         throw new Error("Method not implemented.");
     }
-    public exportObject(object: Worksheet): Uint8Array {
-        throw new Error("Method not implemented.");
+
+    /**
+     * When executed this method will prepare a file containing the description of the given
+     * Worksheet (inside the WorksheetSolution) as well as the user provided solutions.
+     * The file will then be downloaded. To archive that, it appends an <a> link element to the body and then clicks it.
+     * After the click the element is removed.
+     * The name of the file is build from the name of the given worksheet extended by the current date and time.
+     * @param WorksheetSolution internal WorksheetSolution object
+     */
+    public exportObject(object: WorksheetSolution): void {
+        /* TODO DEV
+        const textsolution: Solution = new PlainTextSolution("TEST");
+        const sol: Map<string, Solution> = new Map();
+        sol.set("1", textsolution);
+        const worksheet: Worksheet = new Worksheet("1", "TEST", ["1"], true, true);
+        const object: WorksheetSolution = new WorksheetSolution(worksheet, sol);
+*/
+        const jsonString = JSON.stringify(object, null, 4);
+        const escapedJsonString = jsonString.replace(/\\n/g, "\\n")
+                                            .replace(/\\'/g, "\\'")
+                                            .replace(/\\"/g, '\\"')
+                                            .replace(/\\&/g, "\\&")
+                                            .replace(/\\r/g, "\\r")
+                                            .replace(/\\t/g, "\\t")
+                                            .replace(/\\b/g, "\\b")
+                                            .replace(/\\f/g, "\\f");
+
+        const blob = new Blob([escapedJsonString!], {
+            type: 'text/json',
+        });
+
+        const date = new Date();
+        const datestring = date.getFullYear() + "_" + ("0" + (date.getMonth() + 1)).slice(-2) + "_" +
+            ("0" + date.getDate()).slice(-2) + "_" +
+            ("0" + date.getHours()).slice(-2) + "_" + ("0" + date.getMinutes()).slice(-2);
+
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.href = window.URL.createObjectURL(blob);
+        a.download = 'Worksheet_Export_' + object.worksheet.name.replace(" ", "_") + '_' + datestring + '.json';
+        a.onclick = () => {
+            setTimeout(() => {
+                window.URL.revokeObjectURL(a.href);
+            }, 1500);
+        };
+        a.click();
+        // ensure that the link is again removed since it wont be needed any more
+        a.parentNode!.removeChild(a);
     }
-    public importObject(file: File): Promise<Worksheet> {
-        throw new Error("Method not implemented.");
+
+    /**
+     * This method imports a previously exported database together with the exported solutions.
+     * It returns an internal WorksheetSolution.
+     */
+    public importObject(file: File): Promise<WorksheetSolution> {
+        const fileReader = new FileReader();
+
+        const promise: Promise<WorksheetSolution> = new Promise((resolve, reject) => {
+            fileReader.onerror = () => {
+                fileReader.abort();
+                reject(new DOMException('Problem parsing input file.'));
+            };
+
+            fileReader.onload = () => {
+                const worksheetsolution = WorksheetSolution.fromJSON(fileReader.result as string);
+                resolve(worksheetsolution);
+            };
+            fileReader.readAsText(file);
+        });
+        return promise;
     }
     public getSolution(sheet: Worksheet): Uint8Array {
         throw new Error("Method not implemented.");
