@@ -28,7 +28,7 @@
 
         <div v-if="tableMetaData.length > 0" class="d-flex flex-row flex-nowrap" :tableMetaData:sync="tableMetaData">
           <DatabaseTable :tableName="tableMeta.tableName" :columns="tableMeta.columns"
-                         v-for="tableMeta in tableMetaData"></DatabaseTable>
+                         v-for="tableMeta in tableMetaData" v-bind:key="tableMeta.tableName"></DatabaseTable>
 
         </div>
         <div v-else class="d-flex flex-row flex-nowrap" :tableMetaData:sync="tableMetaData">
