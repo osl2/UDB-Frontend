@@ -2,7 +2,7 @@ import SQLService from '@/services/SQLService';
 import {SqlJs} from 'sql.js/module';
 import Database from '@/dataModel/Database';
 import QueryResult from '@/dataModel/QueryResult';
-import ResultSet from '@/dataModel/ResultSet';
+import {ResultSet, ValueType} from '@/dataModel/ResultSet';
 import initSqlJs from 'sql.js';
 
 export default class SQLExecutor implements SQLService {
@@ -28,7 +28,7 @@ export default class SQLExecutor implements SQLService {
         resultSet.columns = results[0].columns;
       }
       if (results[0].values.length > 0) {
-        resultSet.values = results[0].values as unknown as string[][];
+        resultSet.values = results[0].values as unknown as ValueType[][];
       }
     }
 
