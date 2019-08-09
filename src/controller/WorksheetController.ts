@@ -80,7 +80,7 @@ export default class WorksheetController
     public exportObject(object: Worksheet): Uint8Array {
         throw new Error("Method not implemented.");
     }
-    public importObject(object: Uint8Array): Worksheet {
+    public importObject(file: File): Promise<Worksheet> {
         throw new Error("Method not implemented.");
     }
     public getSolution(sheet: Worksheet): Uint8Array {

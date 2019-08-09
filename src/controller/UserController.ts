@@ -14,7 +14,7 @@ export default class UserController implements UserService {
 
     public logout(): void {
         // reset user
-        userState.user = new User('', '', '', '', '', UserGroup.Unauthenticated);
+        userState.user = new User('', '', '', '', UserGroup.Unauthenticated);
         this._api.setJWT(undefined);
     }
     public login(username: string, password: string) {
@@ -27,7 +27,7 @@ export default class UserController implements UserService {
         });
     }
     public register(username: string, password: string) {
-        const user = new User('', username, '', '', '', UserGroup.Teacher);
+        const user = new User('', username, '', '', UserGroup.Teacher);
         this._api.createAccount({account: user} as CreateAccountRequest).then((_) => {
             userState.user = user;
         });
@@ -35,7 +35,7 @@ export default class UserController implements UserService {
     public delete(username: string, password: string) {
         this._api.setBasicAuth(username, password);
         this._api.deleteAccount().then(() => {
-            userState.user = new User('', '', '', '', '', UserGroup.Unauthenticated);
+            userState.user = new User('', '', '', '', UserGroup.Unauthenticated);
         });
     }
     public changePassword(username: string, password: string, newPassword: string) {

@@ -53,6 +53,8 @@ import QueryResultView from '@/components/QueryResult.vue';
 import PointAndClick from '@/components/PointAndClick.vue';
 import SqlSolution from "@/dataModel/SqlSolution";
 import QueryResult from "@/dataModel/QueryResult";
+import {SqlJs} from "sql.js/module";
+import ValueType = SqlJs.ValueType;
 
 export default Vue.extend({
     props: ['currentSubtask', 'solutions', 'sqlExecutor', 'databaseNumber'],
@@ -107,8 +109,19 @@ export default Vue.extend({
         },
         subtaskSolution: {
             get(): SqlSolution {
+
+                const values: string[][] = [[]];
+                let i = 0;
+                for (const row of this.queryResult.result.values) {
+                    values.push([]);
+                    for (const cell of row) {
+                        values[i].push(cell.toString());
+                    }
+                    i++;
+                }
+
                 return new SqlSolution(this.queryResult.query, this.queryResult.result.columns,
-                  this.queryResult.result.values);
+                  values);
             },
         },
     },
