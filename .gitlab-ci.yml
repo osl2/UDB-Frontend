@@ -40,10 +40,8 @@ build:
 docker-master:
   stage: docker
   image: docker:latest
-  services:
-    - docker:dind
   variables:
-    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: unix://var/run/docker.socket
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
@@ -55,10 +53,8 @@ docker-master:
 docker-develop:
   stage: docker
   image: docker:latest
-  services:
-    - docker:dind
   variables:
-    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: unix://var/run/docker.socket
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
