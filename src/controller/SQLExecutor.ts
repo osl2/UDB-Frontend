@@ -28,7 +28,7 @@ export default class SQLExecutor implements SQLService {
         resultSet.columns = results[0].columns;
       }
       if (results[0].values.length > 0) {
-        resultSet.values = results[0].values as unknown as ValueType[][];
+        resultSet.values = results[0].values as ValueType[][];
       }
     }
 

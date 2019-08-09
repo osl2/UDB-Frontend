@@ -5,4 +5,4 @@ export interface ResultSet {
     values: ValueType[][];
 }
 
-export type ValueType = number | string | Uint8Array;
+export type ValueType = number | string | Uint8Array | null;

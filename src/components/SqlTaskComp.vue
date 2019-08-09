@@ -115,7 +115,11 @@ export default Vue.extend({
                 for (const row of this.queryResult.result.values) {
                     values.push([]);
                     for (const cell of row) {
-                        values[i].push(cell.toString());
+                        if (cell != null) {
+                            values[i].push(cell.toString());
+                        } else {
+                            values[i].push("null");
+                        }
                     }
                     i++;
                 }
