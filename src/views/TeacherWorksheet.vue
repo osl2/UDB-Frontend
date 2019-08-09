@@ -11,26 +11,27 @@
 
 
 <script lang="ts">
-    import Task from "@/dataModel/Task";
-    import {Vue, Component, Prop} from 'vue-property-decorator';
-    import SubtaskCreation from "@/components/SubtaskCreation.vue";
+import Task from "@/dataModel/Task";
+import {Vue, Component, Prop} from 'vue-property-decorator';
+import SubtaskCreation from "@/components/SubtaskCreation.vue";
 
-    @Component({
-        components: {
-            SubtaskCreation
-        },
-    })
-    export default class TeacherWorksheet extends Vue{
-        data() {
-            return {
+@Component({
+    components: {
+        SubtaskCreation,
+    },
+})
+export default class TeacherWorksheet extends Vue {
+    public data() {
+        return {
 
-            };
-        }
-
-        addSubtask(){
-        }
-
+        };
     }
+
+    public addSubtask() {
+        return;
+    }
+
+}
 </script>
 
 <style scoped>

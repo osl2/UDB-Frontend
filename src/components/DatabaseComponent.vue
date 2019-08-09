@@ -75,6 +75,10 @@
   })
   export default class DatabaseComponent extends Vue {
 
+    get cursorClickable() {
+      return !this.database || !this.database.content ? 'cursorClickable' : '';
+    }
+
     public database: Database = new Database('', '', null);
     public sqlExecutor = new SQLExecutor();
     public databaseNumber: number = 0;
@@ -84,16 +88,47 @@
 
     @Prop() private elementId!: string;
 
-    get cursorClickable() {
-      return !this.database || !this.database.content ? 'cursorClickable' : '';
-    }
-
 
     private databaseController = new DatabaseController(this.$store.getters.api);
 
 
     public clickHandler(event: MouseEvent) {
       document.getElementById(this.elementId + 'dbFile')!.click();
+    }
+
+    public loadMetaData() {
+      this.tableMetaData = [];
+      const results = this.sqlExecutor.executeQuery(this.databaseNumber,
+        'SELECT name FROM sqlite_master WHERE type = \'table\' ORDER BY name;', 0);
+      for (const result of results.result.values) {
+        // its no me, its on maintainers of sql.js or typescript module generation
+        // the imported module says ValueType = number | string | Uint8Array;
+        // but debugging gives an string[]. Therefore, we need to make this unclean typecasts
+        const tableNames = result as unknown as string[];
+        for (const tableName of tableNames) {
+          const columnsResults = this.sqlExecutor.executeQuery(
+                  this.databaseNumber,
+                  'PRAGMA table_info(' + tableName + ');',
+                  0);
+          const columns: string[] = [];
+          if (columnsResults.result.values) {
+            columnsResults.result.values.forEach((row: any) => {
+              const columnName = row[1] as string;
+              const columnType = row[2] as string;
+              columns.push(columnName + ': ' + columnType);
+            });
+          }
+          this.tableMetaData.push(new TableMetaData(tableName, columns));
+        }
+      }
+    }
+
+    public updated() {
+      this.$emit('databaseExists', this.database.content !== null);
+    }
+
+    public created() {
+      return;
     }
 
 
@@ -150,14 +185,13 @@ CREATE TABLE angestellte( id          integer,  name    text,
   INSERT INTO angestellte VALUES (14,'ROOSEVELT','CPA',9,'1995-10-12',35000);
       `;
 
-      db.then(database => {
+      db.then((database) => {
         this.database = database;
         this.sqlExecutor.open(database).then((dbIndex: number) => {
           this.databaseNumber = dbIndex;
           this.sqlExecutor.executeQuery(this.databaseNumber, createTableSQL, 0);
           this.loadMetaData();
         }).catch((e) => {
-          console.log(e);
           this.errorMsg = e.message;
           this.reset();
         });
@@ -179,13 +213,12 @@ CREATE TABLE angestellte( id          integer,  name    text,
     }
 
     private postInit(db: Promise<Database>) {
-      db.then(database => {
+      db.then((database) => {
         this.database = database;
         this.sqlExecutor.open(database).then((dbIndex: number) => {
           this.databaseNumber = dbIndex;
           this.loadMetaData();
         }).catch((e) => {
-          console.log(e);
           this.errorMsg = e.message;
           this.reset();
         });
@@ -193,43 +226,11 @@ CREATE TABLE angestellte( id          integer,  name    text,
       });
     }
 
-    public loadMetaData() {
-      this.tableMetaData = [];
-      const results = this.sqlExecutor.executeQuery(this.databaseNumber,
-        'SELECT name FROM sqlite_master WHERE type = \'table\' ORDER BY name;', 0);
-      for (const result of results.result.values) {
-        // its no me, its on maintainers of sql.js or typescript module generation
-        // the imported module says ValueType = number | string | Uint8Array;
-        // but debugging gives an string[]. Therefore, we need to make this unclean typecasts
-        const tableNames = result as unknown as string[];
-        for (const tableName of tableNames) {
-          const columnsResults = this.sqlExecutor.executeQuery(this.databaseNumber, 'PRAGMA table_info(' + tableName + ');', 0);
-          const columns: string[] = [];
-          if (columnsResults.result.values) {
-            columnsResults.result.values.forEach((row: any) => {
-              const columnName = row[1] as string;
-              const columnType = row[2] as string;
-              columns.push(columnName + ': ' + columnType);
-            });
-          }
-          this.tableMetaData.push(new TableMetaData(tableName, columns));
-        }
-      }
-    }
-
     private reset() {
       this.database = new Database('', '', null);
       this.tableMetaData = [];
       this.sqlExecutor.close(this.databaseNumber);
       this.$emit('reset');
-    }
-
-    public updated() {
-      this.$emit('databaseExists', this.database.content !== null);
-    }
-
-    public created(){
-
     }
 
   }

@@ -98,7 +98,8 @@ export default class StudentWorksheet extends Vue {
     private numberOfSubtasks: number = 0;
 
     // Controller
-    private worksheetController: ParentService<Course, Worksheet> & ExportPDF<Worksheet> = new WorksheetController(this.$store.getters.api);
+    private worksheetController: ParentService<Course, Worksheet> & ExportPDF<Worksheet>
+        = new WorksheetController(this.$store.getters.api);
     private taskController: ParentService<Worksheet, Task> = new TaskController(this.$store.getters.api);
     private subtaskController: SubtaskService = new SubtaskController(this.$store.getters.api);
     private databaseController: DataManagementService<Database> = new DatabaseController(this.$store.getters.api);
@@ -141,7 +142,7 @@ export default class StudentWorksheet extends Vue {
     }
 
     public save(subtaskId: string, subtaskSolution: Solution) {
-      if(subtaskSolution === undefined) {
+      if (subtaskSolution === undefined) {
         alert('Something went wrong: The solution was undefined.');
         return;
       }
@@ -150,7 +151,7 @@ export default class StudentWorksheet extends Vue {
         this.solutions.delete(subtaskId);
       }
       this.solutions.set(subtaskId, subtaskSolution);
-      alert('Speichern erfolgreich.')
+      alert('Speichern erfolgreich.');
     }
 
     /*

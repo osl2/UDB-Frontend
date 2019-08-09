@@ -22,25 +22,28 @@ export default class Database extends DataModel {
         this._name = value;
     }
 
-    get content(): Uint8Array {
+    get content(): Uint8Array | null {
         return this._content;
     }
 
-    set content(value: Uint8Array) {
+    set content(value: Uint8Array | null) {
         this._content = value;
-    }
-
-    private static u8ToBase64(arr: Uint8Array): string {
-        return btoa(String.fromCharCode.apply(null, Array.from(arr)));
-    }
-
-    private static base64ToU8(base64: string): Uint8Array {
-        return new Uint8Array(atob(base64).split("").map(function(c) {
-            return c.charCodeAt(0); }));
     }
 
     public static fromJSON(json: any): Database {
         return new Database(json.id, json.name, this.base64ToU8(json.database));
+    }
+
+    private static u8ToBase64(arr: Uint8Array | null): string {
+        if (arr === null) {
+            return "";
+        }
+        return btoa(String.fromCharCode.apply(null, Array.from(arr)));
+    }
+
+    private static base64ToU8(base64: string): Uint8Array {
+        return new Uint8Array(atob(base64).split("").map((c) => {
+            return c.charCodeAt(0); }));
     }
     private _name: string;
     private _content: Uint8Array | null;

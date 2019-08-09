@@ -19,9 +19,6 @@ import Worksheet from '@/dataModel/Worksheet';
 import * as runtime from "@/api/BaseApi";
 import User from "@/dataModel/User";
 import Solution from "@/dataModel/Solution";
-import SqlTask from "@/dataModel/SqlTask";
-import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
-import PlainTextTask from "@/dataModel/PlainTextTask";
 import {Configuration} from "@/api/BaseApi";
 import SolutionDiff from "@/dataModel/SolutionDiff";
 import SqlTask from "@/dataModel/SqlTask";
@@ -1204,13 +1201,15 @@ export class DefaultApi extends runtime.BaseAPI {
     public setBasicAuth(username: string, password: string): void {
         this.configuration = new Configuration({
             basePath: this.configuration.basePath,
-            fetchApi:  this.configuration.fetchApi,
+            fetchApi: this.configuration.fetchApi,
             middleware: this.configuration.middleware,
-            username: username,
-            password: password,
+            username,
+            password,
             apiKey: this.configuration.apiKey,
             accessToken: this.configuration.accessToken,
         });
+    }
+
     /**
      * Checks if the given solution is correct for this subtask.
      * Verify solution

@@ -15,7 +15,7 @@ export default class SQLExecutor implements SQLService {
   }
 
   public executeQuery(database: number, query: string, step: number): QueryResult {
-    var resultSet: ResultSet = {
+    const resultSet: ResultSet = {
       status: 0,
       message: "",
       columns: [],

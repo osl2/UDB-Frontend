@@ -107,7 +107,7 @@ export default Vue.extend({
         },
         subtaskSolution: {
             get(): SqlSolution {
-                return new SqlSolution(this.queryResult.query,this.queryResult.result.columns,
+                return new SqlSolution(this.queryResult.query, this.queryResult.result.columns,
                   this.queryResult.result.values);
             },
         },

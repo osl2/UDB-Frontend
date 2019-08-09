@@ -67,20 +67,20 @@
 </template>
 
 <script lang="ts">
-  import Vue from 'vue';
-  import DatabaseComponent from "@/components/DatabaseComponent.vue";
-  import InstructionTaskComp from '@/components/InstructionTaskComp.vue';
-  import SqlTaskComp from '@/components/SqlTaskComp.vue';
-  import McTask from '@/components/McTask.vue';
-  import TextTask from '@/components/TextTask.vue';
-  import SubtaskTypes from "@/dataModel/SubtaskTypes";
-  import Solution from "@/dataModel/Solution";
-  import SQLExecutor from "@/controller/SQLExecutor";
-  import SQLService from "@/services/SQLService";
+import Vue from 'vue';
+import DatabaseComponent from "@/components/DatabaseComponent.vue";
+import InstructionTaskComp from '@/components/InstructionTaskComp.vue';
+import SqlTaskComp from '@/components/SqlTaskComp.vue';
+import McTask from '@/components/McTask.vue';
+import TextTask from '@/components/TextTask.vue';
+import SubtaskTypes from "@/dataModel/SubtaskTypes";
+import Solution from "@/dataModel/Solution";
+import SQLExecutor from "@/controller/SQLExecutor";
+import SQLService from "@/services/SQLService";
 
 
-  export default Vue.extend({
-    props: ['task','currentSubtask', 'solutions', 'subtaskIndex', 'numberOfSubtasks', 'database'],
+export default Vue.extend({
+    props: ['task', 'currentSubtask', 'solutions', 'subtaskIndex', 'numberOfSubtasks', 'database'],
     data() {
       return {
         sqlExecutor: new SQLExecutor() as SQLService,

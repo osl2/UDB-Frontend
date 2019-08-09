@@ -101,52 +101,52 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    export default Vue.extend ({
+import Vue from 'vue';
+export default Vue.extend ({
 
-        data() {
-            return {
-                allowedSqlStatements:'NoRestriction',
-                selected: [],
-                tasktype: null,
-                taskInstruction: '',
-                isPointAndClickActive: false,
-                doesRowOrderMatter: false,
-                solutionprovided: false,
-                answerOption: '' as string,
-                answerOptions: [] as object[],
-                answerOptionsText: [] as string[],
-                index : 0,
-                solution: '',
-                solutionveryfiable: false,
-                typeOptions: [
-                    {value: null, text: 'Wähle die Art der Teilaufgabe aus'},
-                    {value: 'inst', text: 'Erklärender Text, keine Bearbeitung für Schüler'},
-                    {value: 'text', text: 'Freitext Aufgabe'},
-                    {value: 'mc', text: 'Multiple-Choice Aufgabe'},
-                    {value: 'sql', text: 'Sql Aufgabe'}
-                ],
-            };
-        },
-        methods: {
-                addAnswerOption(){
-                    if(this.answerOption === ''){
-                        alert("Bitte trage eine Antwortmöglichkeit ein.");
-                        return;
-                    }
-                    this.answerOptions.push({text: this.answerOption, value: this.index});
-                    this.answerOptionsText.push(this.answerOption);
-                    this.answerOption='';
-                    this.index ++;
-
-                },
-                saveSubtask(){
-                    alert("muss noch implementiert werden");
+    data() {
+        return {
+            allowedSqlStatements: 'NoRestriction',
+            selected: [],
+            tasktype: null,
+            taskInstruction: '',
+            isPointAndClickActive: false,
+            doesRowOrderMatter: false,
+            solutionprovided: false,
+            answerOption: '' as string,
+            answerOptions: [] as object[],
+            answerOptionsText: [] as string[],
+            index : 0,
+            solution: '',
+            solutionveryfiable: false,
+            typeOptions: [
+                {value: null, text: 'Wähle die Art der Teilaufgabe aus'},
+                {value: 'inst', text: 'Erklärender Text, keine Bearbeitung für Schüler'},
+                {value: 'text', text: 'Freitext Aufgabe'},
+                {value: 'mc', text: 'Multiple-Choice Aufgabe'},
+                {value: 'sql', text: 'Sql Aufgabe'},
+            ],
+        };
+    },
+    methods: {
+            addAnswerOption() {
+                if (this.answerOption === '') {
+                    alert("Bitte trage eine Antwortmöglichkeit ein.");
+                    return;
                 }
-                }
+                this.answerOptions.push({text: this.answerOption, value: this.index});
+                this.answerOptionsText.push(this.answerOption);
+                this.answerOption = '';
+                this.index ++;
+
+            },
+            saveSubtask() {
+                alert("muss noch implementiert werden");
+            },
+            },
 
 
-    })
+});
 </script>
 
 <style scoped>

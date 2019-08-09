@@ -47,10 +47,10 @@ export default class CourseController implements DataManagementService<Course> {
     public loadWithAlias(alias: string): void {
         this._course = this._courses.find((course) => course.alias === alias);
         if (this._course === undefined) {
-            this._api.getUUID({alias: alias})
+            this._api.getUUID({alias})
                 .then((response: string) => {
                     this.load(response);
-                })
+                });
         }
     }
 
@@ -66,9 +66,9 @@ export default class CourseController implements DataManagementService<Course> {
                 this._courses.push(course);
 
                 this._api.createAlias({ objectId: course.id, objectType: ObjectType.COURSE})
-                    .then((response: string) => {
-                        course.alias = response;
-                    })
+                    .then((aliasResponse: string) => {
+                        course.alias = aliasResponse;
+                    });
 
             })
             .catch((error) => {

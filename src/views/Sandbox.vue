@@ -35,96 +35,95 @@
 
 
 <script lang="ts">
-  import {Component, Vue} from 'vue-property-decorator';
-  import Query from '@/components/Query.vue';
-  import QueryResultComp from '@/components/QueryResult.vue';
-  import PointAndClick from '@/components/PointAndClick.vue';
-  import DatabaseComponent from '@/components/DatabaseComponent.vue';
-  import QueryResult from '@/dataModel/QueryResult';
+import {Component, Vue} from 'vue-property-decorator';
+import Query from '@/components/Query.vue';
+import QueryResultComp from '@/components/QueryResult.vue';
+import PointAndClick from '@/components/PointAndClick.vue';
+import DatabaseComponent from '@/components/DatabaseComponent.vue';
+import QueryResult from '@/dataModel/QueryResult';
 
 
-  @Component({
-    components: {
-      Query,
-      QueryResultComp,
-      PointAndClick,
-      DatabaseComponent,
-    },
-  })
+@Component({
+  components: {
+    Query,
+    QueryResultComp,
+    PointAndClick,
+    DatabaseComponent,
+  },
+})
 
-  export default class Sandbox extends Vue {
+export default class Sandbox extends Vue {
 
-    // Data
-    public isPointAndClickActive: boolean = false;
-    private databaseExists: boolean = false;
-    public queryResult: QueryResult | null = null;
-
-    // Methods
-
-    private executeQuery(query: string) {
-
-      const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-      try {
-        const dbNumber = dbComponent.$data.databaseNumber;
-        this.queryResult = dbComponent.$data.sqlExecutor.executeQuery(dbNumber, query, 0);
-        const top = document.getElementById('queryRes')!.offsetTop; //Getting Y of target element
-        window.scrollTo(0, top + 200);
-        dbComponent.loadMetaData();
-      } catch (error) {
-        alert(error.message);
-        return;
-      }
-
+  /*
+   private created() {
+    if (this.database) {
+      this.databaseExists = true;
+    } else {
+      this.databaseExists = false;
     }
+  }
+   private updated(){
+      this.created();
+  }
+   */
+  get database() {
 
-    private eventDbExists(val: boolean) {
-      this.databaseExists = val;
+    const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+    if (dbComponent) {
+      return dbComponent.$data.database;
+    } else {
+      return null;
     }
+  }
 
-    private reset() {
-      this.queryResult = null;
 
+  // Computed Properties
+  private get dynamicComponent() {
+    if (this.isPointAndClickActive) {
+      return PointAndClick;
+    } else {
+      return Query;
     }
+  }
 
-    /**
-     private created() {
-      if (this.database) {
-        this.databaseExists = true;
-      } else {
-        this.databaseExists = false;
-      }
+  // Data
+  public isPointAndClickActive: boolean = false;
+  public queryResult: QueryResult | null = null;
+  private databaseExists: boolean = false;
+
+  // Methods
+
+  private executeQuery(query: string) {
+
+    const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+    try {
+      const dbNumber = dbComponent.$data.databaseNumber;
+      this.queryResult = dbComponent.$data.sqlExecutor.executeQuery(dbNumber, query, 0);
+      const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
+      window.scrollTo(0, top + 200);
+      dbComponent.loadMetaData();
+    } catch (error) {
+      alert(error.message);
+      return;
     }
-     private updated(){
-        this.created();
-    }
-     **/
-    get database() {
-
-      const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-      console.log(dbComponent);
-      if (dbComponent) {
-        return dbComponent.$data.database;
-      } else {
-        return null;
-      }
-    }
-
-    private switchComponent() {
-      this.isPointAndClickActive = !this.isPointAndClickActive;
-    }
-
-
-    // Computed Properties
-    private get dynamicComponent() {
-      if (this.isPointAndClickActive) {
-        return PointAndClick;
-      } else {
-        return Query;
-      }
-    }
-
 
   }
+
+  private eventDbExists(val: boolean) {
+    this.databaseExists = val;
+  }
+
+  private reset() {
+    this.queryResult = null;
+
+  }
+
+  private switchComponent() {
+    this.isPointAndClickActive = !this.isPointAndClickActive;
+  }
+
+
+}
 </script>
 
 <style scoped>

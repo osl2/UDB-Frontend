@@ -27,7 +27,7 @@ export default class UserController implements UserService {
         });
     }
     public register(username: string, password: string) {
-        let user = new User('', username, '', '', '', UserGroup.Teacher);
+        const user = new User('', username, '', '', '', UserGroup.Teacher);
         this._api.createAccount({account: user} as CreateAccountRequest).then((_) => {
             userState.user = user;
         });
