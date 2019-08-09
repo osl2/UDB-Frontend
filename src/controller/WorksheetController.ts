@@ -76,7 +76,7 @@ export default class WorksheetController extends ApiControllerAbstract
             });
     }
 
-    public exportPDF(object: WorksheetSolution): Uint8Array {
+    public exportPDF(object: WorksheetSolution): void {
         throw new Error("Method not implemented.");
     }
 
@@ -150,7 +150,7 @@ export default class WorksheetController extends ApiControllerAbstract
         });
         return promise;
     }
-    public getSolution(sheet: Worksheet): Uint8Array {
+    public getSolution(sheet: Worksheet): void {
         throw new Error("Method not implemented.");
     }
 
