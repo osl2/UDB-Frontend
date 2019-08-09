@@ -4,8 +4,8 @@
 
 <script>
     export default {
-        name: "TaskCreation"
-    }
+        name: "TaskCreation",
+    };
 </script>
 
 <style scoped>
