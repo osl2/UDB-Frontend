@@ -5,6 +5,9 @@ const de = {
     langEnglish: 'Englisch',
     logo: 'u<sup>DB</sup>',
     slogan: 'Du an die Macht der Datenbanken',
+    descriptionTextFreeMode: 'Hier kannst Du ganz ohne Login Datenbanken erstellen und Anfragen üben.',
+    descriptionTextCourse: 'Tritt hier einem Kurs von Deinem Lehrer bei.',
+    descriptionTextTeacher: 'Hier geht es zum Lehrerbereich.',
   },
   sandbox: {
     titleStartPage: 'Freier Modus',
