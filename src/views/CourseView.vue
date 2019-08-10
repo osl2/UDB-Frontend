@@ -9,20 +9,28 @@
             <b-button v-b-popover.hover="$t('hoverText.switchToStudentsView')"
                       @click="toggleView"
                       class="studentViewButton"
-                      v-show="checkUserState()"
+                      v-if="checkUserState()"
                       >
                 {{$t('buttonText.changeView')}}
             </b-button>
         </div>
         <div class="clear"></div>
         <div class="container">
+            <h2 class="headings">Aufgabenblätter</h2>
+            <b-button v-if="checkUserState()"
+                      @click="createNewWorksheet">
+                Aufgabenblatt erstellen
+            </b-button>
             <WorksheetList
                     :worksheets="worksheets"
                     :isStudentsViewActive="isStudentsViewActive"
                     @loadWorksheet="loadWorksheet"
+                    @deleteWorksheet="deleteWorksheet"
+                    @updateWorksheet="updateWorksheet"
             ></WorksheetList>
         </div>
         <div class="container">
+            <h2 class="headings">Lösungsblätter</h2>
             <SolutionsheetList
                     :worksheets="worksheets"
                     :isStudentsViewActive="isStudentsViewActive"
@@ -89,6 +97,18 @@ export default class CourseView extends Vue {
     this.isStudentsViewActive = !this.isStudentsViewActive;
   }
 
+  private  createNewWorksheet() {
+    router.push('/teacherWorksheet');
+  }
+
+  private deleteWorksheet(worksheet: Worksheet) {
+    // TODO: Controller aufrufen
+  }
+
+  private updateWorksheet(worksheet: Worksheet) {
+    // TODO: Daten holen und Router pushen?
+  }
+
   private checkUserState(): boolean {
     if (userState.user.userGroup === UserGroup.Teacher) {
       return true;
@@ -134,5 +154,9 @@ export default class CourseView extends Vue {
     .studentViewButton {
         margin-bottom: 15px;
         float: right;
+    }
+
+    .headings {
+        color: #333;
     }
 </style>

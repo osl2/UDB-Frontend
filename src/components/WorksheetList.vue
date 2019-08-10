@@ -3,6 +3,7 @@
         <div class="d-flex flex-row flex-nowrap">
                 <b-card
                         v-for="worksheet in worksheets"
+                        :key="worksheet.id"
                         bg-variant="light"
                         class="card"
                         v-show="showWorksheet(worksheet)"
@@ -16,6 +17,18 @@
                             @click="$emit('loadWorksheet', worksheet)"
                             v-show="isStudentsViewActive"
                     >{{$t('courseViewStudent.solveWorksheetButton')}}
+                    </b-button>
+                    <b-button v-if="!isStudentsViewActive"
+                            class="bg-danger"
+                            slot="footer"
+                            @click="$emit('deleteWorksheet', worksheet)"
+                    >Löschen
+                    </b-button>
+                    <b-button v-if="!isStudentsViewActive"
+                            class="bg-info"
+                            slot="footer"
+                            @click="$emit('updateWorksheet', worksheet)"
+                    >Bearbeiten
                     </b-button>
                     <b-card-text slot="footer"
                                  v-show="!isStudentsViewActive"
