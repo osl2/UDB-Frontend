@@ -10,7 +10,8 @@ import {
 } from "@/api/DefaultApi";
 import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
-export default class DatabaseController extends ApiControllerAbstract implements DataManagementService<Database>, ExportImport<Database> {
+export default class DatabaseController extends ApiControllerAbstract
+  implements DataManagementService<Database>, ExportImport<Database> {
 
     private _databases: Database[] = [];
     private _database?: Database = undefined;

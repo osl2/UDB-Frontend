@@ -20,7 +20,7 @@ export default class TaskController extends ApiControllerAbstract implements Par
   }
 
 
-  /**
+    /**
      * Loads all tasks available
      */
     public loadAll(): void {
