@@ -6,7 +6,7 @@
         </div>
         <div class="containerDatabase">
             <h3>Übersicht über die Datenbank:</h3>
-            <DatabaseComponent :elementId="task.id" showImportExport="false" ref="databaseComponent"></DatabaseComponent>
+            <DatabaseComponent :elementId="task.id" showExportImport="false" ref="databaseComponent"></DatabaseComponent>
         </div>
         <div v-if="typeOfSubtask()===1">
             <SqlTaskComp :currentSubtask="currentSubtask"
