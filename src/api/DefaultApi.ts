@@ -1014,7 +1014,7 @@ export class DefaultApi extends runtime.BaseAPI {
                 alias: json.alias,
                 uuid: json.object_id,
                 objectType: json.object_type,
-            } as AliasResponse
+            } as AliasResponse;
         });
     }
 
@@ -1468,14 +1468,16 @@ export class DefaultApi extends runtime.BaseAPI {
      * Updates an existing `Subtask`.
      * Update a Subtask
      */
-    async updateSubtaskRaw(requestParameters: UpdateSubtaskRequest): Promise<runtime.ApiResponse<void>> {
+    public async updateSubtaskRaw(requestParameters: UpdateSubtaskRequest): Promise<runtime.ApiResponse<void>> {
 
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
-            throw new runtime.RequiredError('subtaskId','Required parameter requestParameters.subtaskId was null or undefined when calling updateSubtask.');
+            throw new runtime.RequiredError('subtaskId',
+                'Required parameter requestParameters.subtaskId was null or undefined when calling updateSubtask');
         }
 
         if (requestParameters.subtask === null || requestParameters.subtask === undefined) {
-            throw new runtime.RequiredError('subtask','Required parameter requestParameters.subtask was null or undefined when calling updateSubtask.');
+            throw new runtime.RequiredError('subtask',
+                'Required parameter requestParameters.subtask was null or undefined when calling updateSubtask.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1489,7 +1491,7 @@ export class DefaultApi extends runtime.BaseAPI {
             const tokenString = typeof token === 'function' ? token("Token", []) : token;
 
             if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+                headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
@@ -1508,7 +1510,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * Updates an existing `Subtask`.
      * Update a Subtask
      */
-    async updateSubtask(requestParameters: UpdateSubtaskRequest): Promise<void> {
+    public async updateSubtask(requestParameters: UpdateSubtaskRequest): Promise<void> {
         await this.updateSubtaskRaw(requestParameters);
     }
 

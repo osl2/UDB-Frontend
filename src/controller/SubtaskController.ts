@@ -86,11 +86,11 @@ export default class SubtaskController implements SubtaskService {
     public save(object: Subtask): void {
         this._api.updateSubtask({subtask: object, subtaskId: object.id} as UpdateSubtaskRequest)
           .then(() => {
-              const index = this._subtasks.findIndex((subtask) => { return subtask.id === object.id; });
+              const index = this._subtasks.findIndex((subtask) => subtask.id === object.id);
               if (index > -1) {
                   this._subtasks[index] = object;
               }
-          })
+          });
     }
 
     /**

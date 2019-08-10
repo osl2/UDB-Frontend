@@ -31,7 +31,7 @@ export default class Database extends DataModel {
     }
 
     public static fromJSON(json: any): Database {
-        return new Database(json.id, json.name, this.base64ToU8(json.database));
+        return new Database(json.id, json.name, Database.base64ToU8(json.database));
     }
 
     private static u8ToBase64(arr: Uint8Array | null): string {
