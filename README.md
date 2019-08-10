@@ -74,3 +74,7 @@ yarn run test:unit
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+## License
+[AGPLv3](https://choosealicense.com/licenses/agpl-3.0/)
