@@ -10,6 +10,7 @@ export default class User extends DataModel {
     private _name: string;
     private _password: string;
     private _token: string;
+    private _loginCallback = (success: boolean) => {};
     private _userGroup: UserGroup;
 
     /**
@@ -33,6 +34,14 @@ export default class User extends DataModel {
             name: this.name,
             password: this.password,
         };
+    }
+
+    public setLoginCallback(callback: (success: boolean) => void) {
+        this._loginCallback = callback;
+    }
+
+    public login(success: boolean) {
+        this._loginCallback(success);
     }
 
     /**

@@ -1,3 +1,4 @@
+import UserGroup from "@/dataModel/UserGroup";
 <template>
         <div class="card mb-4 box-shadow">
             <div class="card-body">
@@ -69,16 +70,16 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from 'vue-property-decorator';
-import router from '@/router';
-import CourseController from "@/controller/CourseController";
-import Course from "@/dataModel/Course";
-import UserGroup from "@/dataModel/UserGroup";
-import DataManagementService from "@/services/DataManagementService";
-import UserService from "@/services/UserService";
-import UserController from "@/controller/UserController";
+    import {Component, Prop, Vue} from 'vue-property-decorator';
+    import CourseController from "@/controller/CourseController";
+    import Course from "@/dataModel/Course";
+    import UserGroup from "@/dataModel/UserGroup";
+    import DataManagementService from "@/services/DataManagementService";
+    import UserService from "@/services/UserService";
+    import UserController from "@/controller/UserController";
+    import {userState} from "@/globalData/UserState";
 
-@Component
+    @Component
 export default class StartPagePanel extends Vue {
 
   private errormsg: string = '';
@@ -103,13 +104,16 @@ export default class StartPagePanel extends Vue {
       }
         */
 
-      if (this.checkLogin(username, password)) {
-          this.$router.push(this.path);
-      } else {
-          this.errormsg = "something went wrong"; // error vom server
-      }
-      }
-
+      userState.user.setLoginCallback((success: boolean): void => {
+          if (success) {
+              this.$router.push(this.path);
+          } else {
+              this.errormsg = "something went wrong";
+          }
+          return;
+      });
+      this.userController.login(username, password);
+  }
 
   private registration(username: string, password: string, repeatedpw: string): void {
       /*if (username.length === null){
@@ -125,13 +129,7 @@ export default class StartPagePanel extends Vue {
           return
       }
       */
-      if (this.checkRegistration(username, password)) {
-          this.$router.push(this.path);
-      } else {
-          this.errormsg = "something went wrong"; // nur in genauer - hängt von serverantwort ab
-      }
-
-
+      this.userController.register(username, password);
   }
   private enterCourse(courseId: string): void {
       /*if(courseId === null){
@@ -139,12 +137,8 @@ export default class StartPagePanel extends Vue {
       }
 
        */
-    this.courseController.load(courseId);
-    if (this.checkCourseEntry(courseId)) {
-          this.$router.push(this.path + courseId);
-      } else {
-          this.errormsg = "something went wrong"; // wieder serverabhängig
-      }
+    userState.user.userGroup = UserGroup.Student;
+    this.$router.push(this.path + courseId);
   }
 
   private checkCourseEntry(courseId: string): boolean {
@@ -159,12 +153,6 @@ export default class StartPagePanel extends Vue {
     }
    this.userController.switchUserGroup(UserGroup.Student);
    return true;
-  }
-
-  private checkLogin(username: string, password: string): boolean {
-    alert('TODO: serverseitige Login Methode aufrufen.');
-    this.userController.switchUserGroup(UserGroup.Teacher);
-    return true;
   }
 
   private checkRegistration(username: string, password: string): boolean {

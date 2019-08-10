@@ -24,6 +24,10 @@ export default class UserController extends ApiControllerAbstract implements Use
             userState.user.token = response;
             userState.user.name = username;
             userState.user.userGroup = UserGroup.Teacher;
+            userState.user.login(true);
+        })
+        .catch(() => {
+            userState.user.login(false);
         });
     }
     public register(username: string, password: string) {
