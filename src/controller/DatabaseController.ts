@@ -117,8 +117,8 @@ export default class DatabaseController implements DataManagementService<Databas
             };
 
             fileReader.onload = () => {
-                const uInts = new Uint8Array(fileReader.result as ArrayBuffer);
-                const db = new Database('', file.name, uInts);
+                const byteArrayContent = new Uint8Array(fileReader.result as ArrayBuffer);
+                const db = new Database('', file.name, byteArrayContent);
                 resolve(db);
             };
             fileReader.readAsArrayBuffer(file);

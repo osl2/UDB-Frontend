@@ -3,136 +3,100 @@ import Database from "@/dataModel/Database";
 import Subtask from "@/dataModel/Subtask";
 import Task from "@/dataModel/Task";
 import Worksheet from '@/dataModel/Worksheet';
-import * as runtime from "@/api/BaseApi";
-import TeacherOne from "@/testData/TeacherOne";
-
-export interface CreateCourseRequest {
-  course: Course;
-}
-
-export interface CreateDatabaseRequest {
-  database: Database;
-}
-
-export interface CreateSubtaskRequest {
-  taskId: string;
-  subtask: Subtask;
-}
-
-export interface CreateTaskRequest {
-  task: Task;
-}
-
-export interface CreateWorksheetRequest {
-  worksheet: Worksheet;
-}
-
-export interface DeleteCourseRequest {
-  courseId: string;
-}
-
-export interface DeleteDatabaseRequest {
-  databaseId: string;
-}
-
-export interface DeleteSubtaskRequest {
-  subtaskId: string;
-}
-
-export interface DeleteTaskRequest {
-  taskId: string;
-}
-
-export interface DeleteWorksheetRequest {
-  worksheetId: string;
-}
-
-export interface GetCourseRequest {
-  courseId: string;
-}
-
-export interface GetDatabaseRequest {
-  databaseId: string;
-}
-
-export interface GetSubtaskRequest {
-  subtaskId: string;
-}
-
-export interface GetTaskRequest {
-  taskId: string;
-}
-
-export interface GetWorksheetRequest {
-  worksheetId: string;
-}
-
-export interface UpdateCourseRequest {
-  courseId: string;
-  course: Course;
-}
-
-export interface UpdateDatabaseRequest {
-  databaseId: string;
-  database: Database;
-}
-
-export interface UpdateTaskRequest {
-  taskId: string;
-  task: Task;
-}
-
-export interface UpdateWorksheetRequest {
-  worksheetId: string;
-  worksheet: Worksheet;
-}
+import TeacherData from "@/api/mockData/TeacherData";
+import {
+  CreateCourseRequest,
+  CreateDatabaseRequest,
+  DefaultApi,
+  DeleteCourseRequest,
+  DeleteDatabaseRequest,
+  GetCourseRequest,
+  GetDatabaseRequest,
+  GetSubtaskRequest,
+  GetSubtasksRequest,
+  GetTaskRequest,
+  GetWorksheetRequest,
+  UpdateCourseRequest,
+  UpdateDatabaseRequest,
+} from "@/api/DefaultApi";
+import CourseData from "@/api/mockData/CourseData";
+import DatabaseData from "@/api/mockData/DatabaseData";
 
 /**
  * A mock api for testing the views without the server.
- * For now, the data is set in 'src/testData/TeacherOne.ts'
+ * For now, the data is set in 'src/mockData/TeacherData.tss'
  */
-export class MockApi extends runtime.BaseAPI {
+export class MockApi extends DefaultApi {
 
-  private teacher: TeacherOne = new TeacherOne();
+  private teacherData: TeacherData = new TeacherData();
+  private courseData: CourseData = new CourseData();
+  private databaseData: DatabaseData = new DatabaseData();
 
-  /**
-   * getAll()
-   */
+  public async getCourse(requestParameters: GetCourseRequest): Promise<Course> {
+    const course = this.courseData.getCourse(requestParameters.courseId);
+    return Promise.resolve(course);
+  }
+
+  public async updateCourse(requestParameters: UpdateCourseRequest): Promise<void> {
+    await this.courseData.updateCourse(requestParameters.course);
+  }
+
+  public async createCourse(courseRequest: CreateCourseRequest): Promise<string> {
+    this.courseData.createCourse(courseRequest.course);
+    return Promise.resolve(courseRequest.course.id);
+  }
 
   public async getCourses(): Promise<Course[]> {
-    return new Promise<Course[]>((resolve) => {
-      resolve(this.teacher.getAllCourses());
-    });
+    return Promise.resolve(this.courseData.getAll());
+  }
+
+  public async deleteCourse(requestParameters: DeleteCourseRequest): Promise<void> {
+    await this.courseData.removeCourse(requestParameters.courseId);
   }
 
   public async getDatabases(): Promise<Database[]> {
-    return new Promise<Database[]>((resolve) => {
-      resolve(this.teacher.getAllDatabases());
+    return Promise.resolve(this.databaseData.getAll());
+  }
+
+  public async getDatabase(requestParameters: GetDatabaseRequest): Promise<Database> {
+    return Promise.resolve(this.databaseData.getDatabase(requestParameters.databaseId));
+  }
+
+  public async deleteDatabase(requestParameters: DeleteDatabaseRequest): Promise<void> {
+    await this.databaseData.removeDatabase(requestParameters.databaseId);
+  }
+
+  public async createDatabase(dbRequest: CreateDatabaseRequest): Promise<string> {
+    this.databaseData.createDatabase(dbRequest.database);
+    return Promise.resolve(dbRequest.database.id);
+  }
+
+  public async updateDatabase(requestParameters: UpdateDatabaseRequest): Promise<void> {
+    await this.databaseData.updateDatabase(requestParameters.database);
+  }
+
+  public async getSubtasks(requetParameter: GetSubtasksRequest): Promise<Subtask[]> {
+    return new Promise<Subtask[]>((resolve) => {
+      resolve(this.teacherData.getSubtasksFromTask(this.teacherData.getTaskByID(requetParameter.taskId)));
     });
   }
 
-  /**
-   * get by ID
-   */
 
-  public async getCourse(requestParameters: GetCourseRequest): Promise<Course> {
-    return new Promise<Course>((resolve) => {
-      resolve(this.teacher.getCourseByID(requestParameters.courseId));
-    });
-  }
   public async getWorksheet(requestParameters: GetWorksheetRequest): Promise<Worksheet> {
     return new Promise<Worksheet>((resolve) => {
-      resolve(this.teacher.getWorksheetByID(requestParameters.worksheetId));
+      resolve(this.teacherData.getWorksheetByID(requestParameters.worksheetId));
     });
   }
+
   public async getTask(requestParameters: GetTaskRequest): Promise<Task> {
     return new Promise<Task>((resolve) => {
-      resolve(this.teacher.getTaskByID(requestParameters.taskId));
+      resolve(this.teacherData.getTaskByID(requestParameters.taskId));
     });
   }
+
   public async getSubtask(requestParameters: GetSubtaskRequest): Promise<Subtask> {
     return new Promise<Subtask>((resolve) => {
-      resolve(this.teacher.getSubtaskByID(requestParameters.subtaskId));
+      resolve(this.teacherData.getSubtaskByID(requestParameters.subtaskId));
     });
   }
 }

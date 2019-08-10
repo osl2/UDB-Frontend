@@ -3,19 +3,22 @@ import Database from '@/dataModel/Database';
 import Worksheet from '@/dataModel/Worksheet';
 import Task from '@/dataModel/Task';
 import PlainTextTask from '@/dataModel/PlainTextTask';
-import PlainTextSolution from '@/dataModel/PlainTextSolution';
 import MultipleChoiceTask from '@/dataModel/MultipleChoiceTask';
 import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
 import SqlTask from '@/dataModel/SqlTask';
 import SqlSolution from '@/dataModel/SqlSolution';
 import InstructionTask from '@/dataModel/InstructionTask';
-import AllowedSqlStatements from '@/dataModel/allowedSqlStatements';
+import AllowedSqlStatements from '@/dataModel/AllowedSqlStatements';
 import Subtask from '@/dataModel/Subtask';
+import User from "@/dataModel/User";
 
 
-export default class TeacherOne {
+export default class TeacherData {
+
+  public teachers: Map<string, User> = new Map<string, User>();
 
   // dummyDaten
+  //
 
   public database1 = new Database("nuief", "Schule", new Uint8Array());
   public database2 = new Database("gdghrt", "Mitarbeiter", new Uint8Array());
@@ -27,10 +30,6 @@ export default class TeacherOne {
   public course1 = new Course("1234", "Klasse 7b", "SJ 18/19", "", [this.worksheet1.id]);
   public course2 = new Course("345", "Klasse 8a", "SJ 18/19", "", [this.worksheet2.id, this.worksheet3.id]);
   public course3 = new Course("rte", "Klasse 9b", "SJ 18/19", "", [this.worksheet4.id]);
-
-
-
-
 
   public musicDb = new Database('db1T1', 'Musik', new Uint8Array()); // TODO CONTENT DER DATENBANK ERGÄNZEN
   public humanDb = new Database('db2T1', 'Menschen', new Uint8Array()); // TODO CONTENT DER DATENBANK ERGÄNZEN
@@ -151,4 +150,5 @@ export default class TeacherOne {
   public getAllDatabases(): Database[] {
     return this.databaseArray;
   }
+
 }

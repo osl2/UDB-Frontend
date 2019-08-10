@@ -1,6 +1,6 @@
 import SqlSolution from '@/dataModel/SqlSolution';
 import Subtask from '@/dataModel/Subtask';
-import AllowedSqlStatements, {AllowedSqlFromJSON, AllowedSqlToJSON} from "@/dataModel/allowedSqlStatements";
+import AllowedSqlStatements, {AllowedSqlFromJSON, AllowedSqlToJSON} from "@/dataModel/AllowedSqlStatements";
 import SubtaskTypes from "@/dataModel/SubtaskTypes";
 
 /**

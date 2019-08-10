@@ -3,24 +3,24 @@ import {CreateAccountRequest, DefaultApi} from "@/api/DefaultApi";
 import {userState} from '@/globalData/UserState';
 import UserGroup from "@/dataModel/UserGroup";
 import User from "@/dataModel/User";
+import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
-export default class UserController implements UserService {
+export default class UserController extends ApiControllerAbstract implements UserService {
 
-    private _api: DefaultApi;
 
     constructor(api: DefaultApi) {
-        this._api = api;
+        super(api);
     }
 
     public logout(): void {
         // reset user
         userState.user = new User('', '', '', '', UserGroup.Unauthenticated);
-        this._api.setJWT(undefined);
+        this.api.setJWT(undefined);
     }
     public login(username: string, password: string) {
-        this._api.setBasicAuth(username, password);
-        this._api.login().then((response: string) => {
-            this._api.setJWT(response);
+        this.api.setBasicAuth(username, password);
+        this.api.login().then((response: string) => {
+            this.api.setJWT(response);
             userState.user.token = response;
             userState.user.name = username;
             userState.user.userGroup = UserGroup.Teacher;
@@ -28,13 +28,13 @@ export default class UserController implements UserService {
     }
     public register(username: string, password: string) {
         const user = new User('', username, '', '', UserGroup.Teacher);
-        this._api.createAccount({account: user} as CreateAccountRequest).then((_) => {
+        this.api.createAccount({account: user} as CreateAccountRequest).then((_) => {
             userState.user = user;
         });
     }
     public delete(username: string, password: string) {
-        this._api.setBasicAuth(username, password);
-        this._api.deleteAccount().then(() => {
+        this.api.setBasicAuth(username, password);
+        this.api.deleteAccount().then(() => {
             userState.user = new User('', '', '', '', UserGroup.Unauthenticated);
         });
     }

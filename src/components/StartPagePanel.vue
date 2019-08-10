@@ -87,7 +87,7 @@ export default class StartPagePanel extends Vue {
   @Prop() private buttonName!: string;
   @Prop() private path!: string;
   @Prop() private type!: string;
-  private courseController: DataManagementService<Course> = new CourseController(this.$store.getters.api);
+  private courseController: CourseController = new CourseController(this.$store.getters.api);
   private userController: UserService = new UserController(this.$store.getters.api);
 
 

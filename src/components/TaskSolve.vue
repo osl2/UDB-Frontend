@@ -6,7 +6,7 @@
         </div>
         <div class="containerDatabase">
             <h3>Übersicht über die Datenbank:</h3>
-            <DatabaseComponent></DatabaseComponent>
+            <DatabaseComponent :elementId="task.id" showImportExport="false" ref="databaseComponent"></DatabaseComponent>
         </div>
         <div v-if="typeOfSubtask()===1">
             <SqlTaskComp :currentSubtask="currentSubtask"
@@ -119,9 +119,11 @@ export default Vue.extend({
        * opens the database provided through props
        */
       initDatabase() {
-        this.sqlExecutor.open(this.database).then((dbNumber: number) => {
-          this.databaseNumber = dbNumber;
-        });
+          const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+          dbComponent.postInit(Promise.resolve(this.database));
+        // this.sqlExecutor.open(this.database).then((dbNumber: number) => {
+        //   this.databaseNumber = dbNumber;
+        // });
       },
 
 

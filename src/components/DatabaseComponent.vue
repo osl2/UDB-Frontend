@@ -1,6 +1,6 @@
 <template>
   <div class="top20">
-    <b-alert v-model="errorMsg" v-if="errorMsg != ''" variant="danger" dismissible>{{errorMsg}}</b-alert>
+    <b-alert v-model="errorMsg" v-if="errorMsg !== ''" variant="danger" dismissible>{{errorMsg}}</b-alert>
 
     <div :id="elementId" class="card" :class="cursorClickable">
 
@@ -21,14 +21,14 @@
 
             <p class="text-muted">{{$t('database.dropDatabase')}}</p>
           </div>
-          <input :id="elementId+'dbFile'" type="file" name="image" @change="changeHandler">
+          <input :id="elementId+'dbFile'" type="file" @change="changeHandler">
         </div>
       </div>
       <div v-else="database.content" class="card-body" :database:sync="database">
 
         <div v-if="tableMetaData.length > 0" class="d-flex flex-row flex-nowrap" :tableMetaData:sync="tableMetaData">
           <DatabaseTable :tableName="tableMeta.tableName" :columns="tableMeta.columns"
-                         v-for="tableMeta in tableMetaData" v-bind:key="tableMeta.tableName"></DatabaseTable>
+                         v-for="tableMeta in tableMetaData" :key="tableMeta.tableName"></DatabaseTable>
 
         </div>
         <div v-else class="d-flex flex-row flex-nowrap" :tableMetaData:sync="tableMetaData">
@@ -39,19 +39,22 @@
       </div>
     </div>
 
-    <div v-if="!database || !database.content" :database:sync="database">
+    <div v-if="showExportImport">
+      <div v-if="!database || !database.content" :database:sync="database">
 
-      Noch keine Datenbank zur Hand? Dann erstelle eine <a href="#" @click="createEmptyDatabase">leere
-      Datenbank</a>
-      oder starte mit einem <a href="#" @click="createExampleDatabase">Beispiel Datenbank</a>.
-
-
-    </div>
-    <div v-if="database && database.content" :database:sync="database">
-
-      <a href="#" @click="downloadDatabase">Datenbank herunterladen</a> oder <a href="#" @click="reset">Zurücksetzen</a>.
+        Noch keine Datenbank zur Hand? Dann erstelle eine <a href="#" @click="createEmptyDatabase">leere
+        Datenbank</a>
+        oder starte mit einem <a href="#" @click="createExampleDatabase">Beispiel Datenbank</a>.
 
 
+      </div>
+      <div v-if="database && database.content" :database:sync="database">
+
+        <a href="#" @click="downloadDatabase">Datenbank herunterladen</a> oder <a href="#"
+                                                                                  @click="reset">Zurücksetzen</a>.
+
+
+      </div>
     </div>
 
   </div>
@@ -80,7 +83,7 @@
     }
 
     public database: Database = new Database('', '', null);
-    public sqlExecutor = new SQLExecutor();
+    public sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
     public databaseNumber: number = 0;
 
     public tableMetaData: TableMetaData[] = [];
@@ -88,11 +91,12 @@
 
     @Prop() private elementId!: string;
 
+    @Prop() private showExportImport!: boolean;
 
     private databaseController = new DatabaseController(this.$store.getters.api);
 
 
-    public clickHandler(event: MouseEvent) {
+    public clickHandler() {
       document.getElementById(this.elementId + 'dbFile')!.click();
     }
 
@@ -107,9 +111,9 @@
         const tableNames = result as unknown as string[];
         for (const tableName of tableNames) {
           const columnsResults = this.sqlExecutor.executeQuery(
-                  this.databaseNumber,
-                  'PRAGMA table_info(' + tableName + ');',
-                  0);
+            this.databaseNumber,
+            'PRAGMA table_info(' + tableName + ');',
+            0);
           const columns: string[] = [];
           if (columnsResults.result.values) {
             columnsResults.result.values.forEach((row: any) => {
@@ -127,10 +131,19 @@
       this.$emit('databaseExists', this.database.content !== null);
     }
 
-    public created() {
-      return;
+    public postInit(db: Promise<Database>) {
+      db.then((database) => {
+        this.database = database;
+        this.sqlExecutor.open(database).then((dbIndex: number) => {
+          this.databaseNumber = dbIndex;
+          this.loadMetaData();
+        }).catch((e) => {
+          this.errorMsg = e.message;
+          this.reset();
+        });
+        this.removeBackgroundColor();
+      });
     }
-
 
     private dropHandler(event: DragEvent): void {
       const files = event.dataTransfer!.files;
@@ -212,19 +225,6 @@ CREATE TABLE angestellte( id          integer,  name    text,
       this.postInit(db);
     }
 
-    private postInit(db: Promise<Database>) {
-      db.then((database) => {
-        this.database = database;
-        this.sqlExecutor.open(database).then((dbIndex: number) => {
-          this.databaseNumber = dbIndex;
-          this.loadMetaData();
-        }).catch((e) => {
-          this.errorMsg = e.message;
-          this.reset();
-        });
-        this.removeBackgroundColor();
-      });
-    }
 
     private reset() {
       this.database = new Database('', '', null);
