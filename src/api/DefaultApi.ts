@@ -67,6 +67,12 @@ export interface CreateAliasRequest {
     objectType: ObjectType;
 }
 
+export interface AliasResponse {
+    alias: string;
+    uuid: string;
+    objectType: ObjectType;
+}
+
 export interface DeleteDatabaseRequest {
     databaseId: string;
 }
@@ -977,7 +983,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * Gets the uuid when given alias
      * Get a string (UUID)
      */
-    public async getUUIDRaw(requestParameters: GetUUIDRequest): Promise<runtime.ApiResponse<string>> {
+    public async getUUIDRaw(requestParameters: GetUUIDRequest): Promise<runtime.ApiResponse<AliasResponse>> {
         if (requestParameters.alias === null || requestParameters.alias === undefined) {
             throw new runtime.RequiredError('alias', 'Required parameter ' +
                 'requestParameters.alias was null or undefined when calling getWorksheet.');
@@ -996,21 +1002,27 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/alias/{alias}`.replace(`{${"alias"}}`,
+            path: `/alias/uuid/{alias}`.replace(`{${"alias"}}`,
                 encodeURIComponent(String(requestParameters.alias))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.TextApiResponse(response);
+        return new runtime.JSONApiResponse(response, (json: any) => {
+            return {
+                alias: json.alias,
+                uuid: json.object_id,
+                objectType: json.object_type,
+            } as AliasResponse
+        });
     }
 
     /**
      * Gets the uuid when given alias
      * Get a string (UUID)
      */
-    public async getUUID(requestParameters: GetUUIDRequest): Promise<string> {
+    public async getUUID(requestParameters: GetUUIDRequest): Promise<AliasResponse> {
         const response = await this.getUUIDRaw(requestParameters);
         return await response.value();
     }

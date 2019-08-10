@@ -1,5 +1,6 @@
 import Course from '@/dataModel/Course';
 import {
+  AliasResponse,
   CreateCourseRequest,
   DefaultApi,
   DeleteCourseRequest,
@@ -53,8 +54,10 @@ export default class CourseController extends ApiControllerAbstract implements D
     this._course = this._courses.find((course) => course.alias === alias);
     if (this._course === undefined) {
       this.api.getUUID({alias})
-        .then((response: string) => {
-          this.load(response);
+        .then((response: AliasResponse) => {
+          if (response.objectType === ObjectType.COURSE) {
+            this.load(response.uuid);
+          }
         });
     }
   }
