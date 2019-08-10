@@ -11,22 +11,23 @@ import {
     UpdateWorksheetRequest,
     GetWorksheetRequest,
 } from "@/api/DefaultApi";
+import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
 
-export default class WorksheetController
+export default class WorksheetController extends ApiControllerAbstract
     implements ParentService<Course, Worksheet>, ExportPDF<Worksheet>, SolutionService {
 
-    private _api: DefaultApi;
     private _worksheets: Worksheet[] = [];
     private _worksheet?: Worksheet = undefined;
 
     constructor(api: DefaultApi) {
-        this._api = api;
+        super(api);
     }
+
 
     public loadAll() {
         this._worksheets = [];
-        this._api.getWorksheets()
+        this.api.getWorksheets()
             .then((response: Worksheet[]) => {
                 this._worksheets = response;
             });
@@ -34,7 +35,7 @@ export default class WorksheetController
     public loadChildren(object: Course) {
         this._worksheets = [];
         object.worksheetIds.forEach((worksheetId) => {
-            this._api.getWorksheet({worksheetId} as GetWorksheetRequest)
+            this.api.getWorksheet({worksheetId} as GetWorksheetRequest)
                 .then((response: Worksheet) => {
                     this._worksheets.push(response);
                 });
@@ -42,21 +43,21 @@ export default class WorksheetController
     }
     public load(id: string) {
         this._worksheet = this._worksheets.find((worksheet) => worksheet.id === id);
-        this._api.getWorksheet({worksheetId: id} as GetWorksheetRequest)
+        this.api.getWorksheet({worksheetId: id} as GetWorksheetRequest)
             .then((response: Worksheet) => {
                 this._worksheet = response;
             });
     }
 
     public create(worksheet: Worksheet): void {
-        this._api.createWorksheet({worksheet} as CreateWorksheetRequest)
+        this.api.createWorksheet({worksheet} as CreateWorksheetRequest)
             .then((response: string) => {
                 worksheet.id = response;
                 this._worksheets.push(worksheet);
             });
     }
     public save(object: Worksheet): void {
-        this._api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest)
+        this.api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest)
           .then(() => {
               const index = this._worksheets.findIndex((worksheet) => worksheet.id === object.id);
               if (index > -1) {
@@ -65,7 +66,7 @@ export default class WorksheetController
           });
     }
     public remove(object: Worksheet): void {
-        this._api.deleteWorksheet({worksheetId: object.id} as DeleteWorksheetRequest)
+        this.api.deleteWorksheet({worksheetId: object.id} as DeleteWorksheetRequest)
             .then((response) => {
                 const index = this._worksheets.indexOf(object, 0);
                 if (index > -1) {

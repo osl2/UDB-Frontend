@@ -8,22 +8,23 @@ import {
     UpdateTaskRequest,
     GetTaskRequest,
 } from "@/api/DefaultApi";
+import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
-export default class TaskController implements ParentService<Worksheet, Task> {
+export default class TaskController extends ApiControllerAbstract implements ParentService<Worksheet, Task> {
 
-    private _api: DefaultApi;
     private _tasks: Task[] = [];
     private _task?: Task = undefined;
 
-    constructor(api: DefaultApi) {
-        this._api = api;
-    }
+  constructor(api: DefaultApi) {
+    super(api);
+  }
 
-    /**
+
+  /**
      * Loads all tasks available
      */
     public loadAll(): void {
-        this._api.getTasks()
+        this.api.getTasks()
             .then((response: Task[]) => {
                 this._tasks = response;
             });
@@ -37,7 +38,7 @@ export default class TaskController implements ParentService<Worksheet, Task> {
     public loadChildren(object: Worksheet) {
         this._tasks = [];
         object.taskIds.forEach((taskId) => {
-            this._api.getTask({taskId} as GetTaskRequest)
+            this.api.getTask({taskId} as GetTaskRequest)
                 .then((response: Task) => {
                     this._tasks.push(response);
                 });
@@ -52,7 +53,7 @@ export default class TaskController implements ParentService<Worksheet, Task> {
     public load(id: string): void {
         this._task = this._tasks.find((task) => task.id === id);
         if (this._task === undefined) {
-            this._api.getTask({taskId: id} as GetTaskRequest)
+            this.api.getTask({taskId: id} as GetTaskRequest)
                 .then((response: Task) => {
                     this._task = response;
                 });
@@ -60,7 +61,7 @@ export default class TaskController implements ParentService<Worksheet, Task> {
     }
 
     public create(task: Task): void {
-        this._api.createTask({task} as CreateTaskRequest)
+        this.api.createTask({task} as CreateTaskRequest)
           .then((response: string) => {
               task.id = response;
               this._tasks.push(task);
@@ -70,7 +71,7 @@ export default class TaskController implements ParentService<Worksheet, Task> {
           });
     }
     public remove(object: Task): void {
-        this._api.deleteTask({taskId: object.id} as DeleteTaskRequest)
+        this.api.deleteTask({taskId: object.id} as DeleteTaskRequest)
           .then((response) => {
               const index = this._tasks.indexOf(object, 0);
               if (index > -1) {
@@ -79,7 +80,7 @@ export default class TaskController implements ParentService<Worksheet, Task> {
           });
     }
     public save(object: Task): void {
-        this._api.updateTask({task: object, taskId: object.id} as UpdateTaskRequest)
+        this.api.updateTask({task: object, taskId: object.id} as UpdateTaskRequest)
           .then(() => {
               const index = this._tasks.findIndex((task) => task.id === object.id);
               if (index > -1) {

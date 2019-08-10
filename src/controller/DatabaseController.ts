@@ -8,22 +8,22 @@ import {
     GetDatabaseRequest,
     UpdateDatabaseRequest,
 } from "@/api/DefaultApi";
+import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
-export default class DatabaseController implements DataManagementService<Database>, ExportImport<Database> {
+export default class DatabaseController extends ApiControllerAbstract implements DataManagementService<Database>, ExportImport<Database> {
 
-    private _api: DefaultApi;
     private _databases: Database[] = [];
     private _database?: Database = undefined;
 
     constructor(api: DefaultApi) {
-        this._api = api;
+        super(api);
     }
 
     /**
      * Load all available databases for the authenticated user
      */
     public loadAll(): void {
-        this._api.getDatabases()
+        this.api.getDatabases()
             .then((response: Database[]) => {
                 this._databases = response;
             });
@@ -37,7 +37,7 @@ export default class DatabaseController implements DataManagementService<Databas
     public load(id: string): void {
         this._database = this._databases.find((database) => database.id === id);
         if (this._database === undefined) {
-            this._api.getDatabase({databaseId: id} as GetDatabaseRequest)
+            this.api.getDatabase({databaseId: id} as GetDatabaseRequest)
                 .then((response: Database) => {
                     this._database = response;
                 });
@@ -50,7 +50,7 @@ export default class DatabaseController implements DataManagementService<Databas
      * @param database
      */
     public create(database: Database): void {
-        this._api.createDatabase({database} as CreateDatabaseRequest)
+        this.api.createDatabase({database} as CreateDatabaseRequest)
             .then((response: string) => {
                 database.id = response;
                 this._databases.push(database);
@@ -61,7 +61,7 @@ export default class DatabaseController implements DataManagementService<Databas
     }
 
     public save(object: Database): void {
-        this._api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest)
+        this.api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest)
             .then(() => {
                 const index = this._databases.findIndex((database) => database.id === object.id);
                 if (index > -1) {
@@ -71,7 +71,7 @@ export default class DatabaseController implements DataManagementService<Databas
     }
 
     public remove(object: Database): void {
-        this._api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest)
+        this.api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest)
             .then((response) => {
                 const index = this._databases.indexOf(object, 0);
                 if (index > -1) {

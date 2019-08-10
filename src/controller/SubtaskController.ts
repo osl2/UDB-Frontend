@@ -7,22 +7,24 @@ import {
     DeleteSubtaskRequest,
     GetSubtaskRequest, UpdateSubtaskRequest,
 } from "@/api/DefaultApi";
+import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
-export default class SubtaskController implements SubtaskService {
+export default class SubtaskController extends ApiControllerAbstract implements SubtaskService {
 
-    private _api: DefaultApi;
+
     private _subtasks: Subtask[] = [];
     private _subtask?: Subtask = undefined;
 
     constructor(api: DefaultApi) {
-        this._api = api;
+        super(api);
     }
+
 
     /**
      * Loads all subtasks available
      */
     public loadAll(): void {
-        this._api.getSubtasks()
+        this.api.getSubtasks()
             .then((response: Subtask[]) => {
                 this._subtasks = response;
             });
@@ -36,7 +38,7 @@ export default class SubtaskController implements SubtaskService {
     public loadChildren(object: Task): void {
         this._subtasks = [];
         object.subtaskIds.forEach((subtaskId) => {
-            this._api.getSubtask({subtaskId} as GetSubtaskRequest)
+            this.api.getSubtask({subtaskId} as GetSubtaskRequest)
                 .then((response: Subtask) => {
                     this._subtasks.push(response);
                 });
@@ -51,7 +53,7 @@ export default class SubtaskController implements SubtaskService {
     public load(id: string): void {
         this._subtask = this._subtasks.find((subtask) => subtask.id === id);
         if (this._subtask === undefined) {
-            this._api.getSubtask({subtaskId: id} as GetSubtaskRequest)
+            this.api.getSubtask({subtaskId: id} as GetSubtaskRequest)
                 .then((response: Subtask) => {
                     this._subtask = response;
                 });
@@ -65,7 +67,7 @@ export default class SubtaskController implements SubtaskService {
      * @param subtask
      */
     public create(subtask: Subtask): void {
-        this._api.createSubtask({subtask} as CreateSubtaskRequest)
+        this.api.createSubtask({subtask} as CreateSubtaskRequest)
           .then((response: string) => {
               subtask.id = response;
               this._subtasks.push(subtask);
@@ -75,7 +77,7 @@ export default class SubtaskController implements SubtaskService {
           });
     }
     public remove(object: Subtask): void {
-        this._api.deleteSubtask({subtaskId: object.id} as DeleteSubtaskRequest)
+        this.api.deleteSubtask({subtaskId: object.id} as DeleteSubtaskRequest)
           .then((response) => {
               const index = this._subtasks.indexOf(object, 0);
               if (index > -1) {
@@ -84,7 +86,7 @@ export default class SubtaskController implements SubtaskService {
           });
     }
     public save(object: Subtask): void {
-        this._api.updateSubtask({subtask: object, subtaskId: object.id} as UpdateSubtaskRequest)
+        this.api.updateSubtask({subtask: object, subtaskId: object.id} as UpdateSubtaskRequest)
           .then(() => {
               const index = this._subtasks.findIndex((subtask) => subtask.id === object.id);
               if (index > -1) {
