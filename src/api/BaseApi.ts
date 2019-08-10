@@ -23,7 +23,7 @@ export class BaseAPI {
 
     private middleware: Middleware[];
 
-    constructor(protected configuration = new Configuration()) {
+    constructor(protected configuration = new Configuration({accessToken: "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.533vMpBwt9AQFiAz5JVxmHYCHCkjre1tb43-dp1LhGgjtHlgSdGR9hOPdPUibBsztf1BR3RsRYiXVTfztGUTcQ"})) {
         this.middleware = configuration.middleware;
     }
 

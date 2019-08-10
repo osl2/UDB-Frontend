@@ -43,7 +43,6 @@ export interface CreateDatabaseRequest {
 }
 
 export interface CreateSubtaskRequest {
-    taskId: string;
     subtask: Subtask;
 }
 
@@ -93,7 +92,6 @@ export interface GetDatabaseRequest {
 }
 
 export interface GetSubtaskRequest {
-    taskId: string;
     subtaskId: string;
 }
 
@@ -107,10 +105,6 @@ export interface GetWorksheetRequest {
 
 export interface GetUUIDRequest {
     alias: string;
-}
-
-export interface GetSubtasksRequest {
-    taskId: string;
 }
 
 export interface VerifySubtaskSolutionRequest {
@@ -136,6 +130,11 @@ export interface UpdateDatabaseRequest {
 export interface UpdateTaskRequest {
     taskId: string;
     task: Task;
+}
+
+export interface UpdateSubtaskRequest {
+    subtaskId: string;
+    subtask: Subtask;
 }
 
 export interface UpdateWorksheetRequest {
@@ -318,10 +317,6 @@ export class DefaultApi extends runtime.BaseAPI {
      * Create a Subtask
      */
     public async createSubtaskRaw(requestParameters: CreateSubtaskRequest): Promise<runtime.ApiResponse<string>> {
-        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId',
-                'Required parameter requestParameters.taskId was null or undefined when calling createSubtask.');
-        }
 
         if (requestParameters.subtask === null || requestParameters.subtask === undefined) {
             throw new runtime.RequiredError('subtask',
@@ -343,8 +338,7 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks`
-                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            path: `/subtasks`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -846,10 +840,6 @@ export class DefaultApi extends runtime.BaseAPI {
      * Get a Subtask
      */
     public async getSubtaskRaw(requestParameters: GetSubtaskRequest): Promise<runtime.ApiResponse<Subtask>> {
-        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId',
-                'Required parameter requestParameters.taskId was null or undefined when calling getSubtask.');
-        }
 
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
             throw new runtime.RequiredError('subtaskId',
@@ -869,8 +859,7 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks/{subtaskId}`
-                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId)))
+            path: `/subtasks/{subtaskId}`
                 .replace(`{${"subtaskId"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
             method: 'GET',
             headers: headerParameters,
@@ -1030,11 +1019,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * Gets a list of all `Subtask` entities.
      * List All subtasks
      */
-    public async getSubtasksRaw(requestParameters: GetSubtasksRequest): Promise<runtime.ApiResponse<Subtask[]>> {
-        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId',
-                'Required parameter requestParameters.taskId was null or undefined when calling getsubtasks.');
-        }
+    public async getSubtasksRaw(): Promise<runtime.ApiResponse<Subtask[]>> {
 
         const queryParameters: runtime.HTTPQuery = {};
 
@@ -1049,8 +1034,7 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks`
-                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            path: `/subtasks`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1074,8 +1058,8 @@ export class DefaultApi extends runtime.BaseAPI {
      * Gets a list of all `Subtask` entities.
      * List All subtasks
      */
-    public async getSubtasks(requestParameters: GetSubtasksRequest): Promise<Subtask[]> {
-        const response = await this.getSubtasksRaw(requestParameters);
+    public async getSubtasks(): Promise<Subtask[]> {
+        const response = await this.getSubtasksRaw();
         return await response.value();
     }
 
@@ -1466,6 +1450,54 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async updateTask(requestParameters: UpdateTaskRequest): Promise<void> {
         await this.updateTaskRaw(requestParameters);
+    }
+
+    /**
+     * Updates an existing `Subtask`.
+     * Update a Subtask
+     */
+    async updateSubtaskRaw(requestParameters: UpdateSubtaskRequest): Promise<runtime.ApiResponse<void>> {
+
+        if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
+            throw new runtime.RequiredError('subtaskId','Required parameter requestParameters.subtaskId was null or undefined when calling updateSubtask.');
+        }
+
+        if (requestParameters.subtask === null || requestParameters.subtask === undefined) {
+            throw new runtime.RequiredError('subtask','Required parameter requestParameters.subtask was null or undefined when calling updateSubtask.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+            const token = this.configuration.accessToken || this.configuration.apiKey;
+            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/subtasks/{subtaskId}`
+                .replace(`{${"subtaskId"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.subtask.toJSON(),
+        });
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Updates an existing `Subtask`.
+     * Update a Subtask
+     */
+    async updateSubtask(requestParameters: UpdateSubtaskRequest): Promise<void> {
+        await this.updateSubtaskRaw(requestParameters);
     }
 
     /**

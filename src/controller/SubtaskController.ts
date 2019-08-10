@@ -5,7 +5,7 @@ import {
     CreateSubtaskRequest,
     DefaultApi,
     DeleteSubtaskRequest,
-    GetSubtaskRequest,
+    GetSubtaskRequest, UpdateSubtaskRequest,
 } from "@/api/DefaultApi";
 
 export default class SubtaskController implements SubtaskService {
@@ -22,13 +22,10 @@ export default class SubtaskController implements SubtaskService {
      * Loads all subtasks available
      */
     public loadAll(): void {
-        /* TODO Kommentare entfernen wenn in DefaultApi implementiert.
         this._api.getSubtasks()
             .then((response: Subtask[]) => {
                 this._subtasks = response;
             });
-         */
-        throw new Error("Method not implemented in DefaultApi.");
     }
 
     /**
@@ -39,9 +36,9 @@ export default class SubtaskController implements SubtaskService {
     public loadChildren(object: Task): void {
         this._subtasks = [];
         object.subtaskIds.forEach((subtaskId) => {
-            this._api.getSubtasks({taskId: object.id, subtaskId} as GetSubtaskRequest)
-                .then((response: Subtask[]) => {
-                    this._subtasks = response;
+            this._api.getSubtask({subtaskId} as GetSubtaskRequest)
+                .then((response: Subtask) => {
+                    this._subtasks.push(response);
                 });
         });
     }
@@ -52,7 +49,6 @@ export default class SubtaskController implements SubtaskService {
      * @param id
      */
     public load(id: string): void {
-        /* TODO Kommentare entfernen wenn in DefaultApi implementiert.
         this._subtask = this._subtasks.find((subtask) => subtask.id === id);
         if (this._subtask === undefined) {
             this._api.getSubtask({subtaskId: id} as GetSubtaskRequest)
@@ -60,7 +56,6 @@ export default class SubtaskController implements SubtaskService {
                     this._subtask = response;
                 });
         }
-         */
         throw new Error("Method not implemented in DefaultApi.");
     }
 
@@ -89,7 +84,6 @@ export default class SubtaskController implements SubtaskService {
           });
     }
     public save(object: Subtask): void {
-        /* TODO Kommentare entfernen wenn in DefaultApi implementiert.
         this._api.updateSubtask({subtask: object, subtaskId: object.id} as UpdateSubtaskRequest)
           .then(() => {
               const index = this._subtasks.findIndex((subtask) => { return subtask.id === object.id; });
@@ -97,8 +91,6 @@ export default class SubtaskController implements SubtaskService {
                   this._subtasks[index] = object;
               }
           })
-         */
-        throw new Error("Method not implemented in DefaultApi.");
     }
 
     /**
