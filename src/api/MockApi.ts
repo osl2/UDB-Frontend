@@ -13,7 +13,6 @@ import {
   GetCourseRequest,
   GetDatabaseRequest,
   GetSubtaskRequest,
-  GetSubtasksRequest,
   GetTaskRequest,
   GetWorksheetRequest,
   UpdateCourseRequest,
@@ -75,9 +74,9 @@ export class MockApi extends DefaultApi {
     await this.databaseData.updateDatabase(requestParameters.database);
   }
 
-  public async getSubtasks(requetParameter: GetSubtasksRequest): Promise<Subtask[]> {
+  public async getSubtasks(): Promise<Subtask[]> {
     return new Promise<Subtask[]>((resolve) => {
-      resolve(this.teacherData.getSubtasksFromTask(this.teacherData.getTaskByID(requetParameter.taskId)));
+      resolve(this.teacherData.getAllSubtasks());
     });
   }
 

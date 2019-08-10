@@ -134,6 +134,10 @@ export default class TeacherData {
     return subtasks;
   }
 
+  public  getAllSubtasks() {
+    return this.subTaskArray;
+  }
+
   public getTasksFromWorksheet(worksheet: Worksheet): Task[] {
     const tasks: Task[] = [];
     for (const taskId of worksheet.taskIds) {
