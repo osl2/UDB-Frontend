@@ -35,18 +35,6 @@ export default class User extends DataModel {
         };
     }
 
-    public setLoginCallback(callback: (success: boolean) => void) {
-        this._loginCallback = callback;
-    }
-
-    public login(success: boolean) {
-        this._loginCallback(success);
-    }
-
-    private _loginCallback(success: boolean) {
-        return;
-    }
-
     /**
      * The following methods are getter and setter for each attribute in this class.
      */

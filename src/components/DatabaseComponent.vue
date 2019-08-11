@@ -71,6 +71,7 @@
   import TableMetaData from '@/dataModel/TableDataModel';
   import SQLExecutor from "@/controller/SQLExecutor";
   import DatabaseController from "@/controller/DatabaseController";
+  import LocalStorageController from "@/controller/LocalStorageController";
 
 
   @Component({
@@ -90,10 +91,13 @@
     private errorMsg: string = '';
 
     @Prop() private elementId!: string;
-
     @Prop() private showExportImport!: boolean;
+    @Prop() private loadSandboxLocalStorageDb!: boolean;
+
+    private readonly storageDBKeyName: string = "SandBox-DB";
 
     private databaseController = new DatabaseController(this.$store.getters.api);
+    private localStorageController = new LocalStorageController();
 
 
     public clickHandler() {
@@ -131,9 +135,19 @@
       this.$emit('databaseExists', this.database.content !== null);
     }
 
+    public created() {
+      if (this.loadSandboxLocalStorageDb) {
+        const db: Database | undefined = this.localStorageController.get(this.storageDBKeyName);
+        if (db) {
+          this.postInit(Promise.resolve(db));
+        }
+      }
+    }
+
     public postInit(db: Promise<Database>) {
       db.then((database) => {
         this.database = database;
+        this.localStorageController.set(this.storageDBKeyName, database, false, false);
         this.sqlExecutor.open(database).then((dbIndex: number) => {
           this.databaseNumber = dbIndex;
           this.loadMetaData();
@@ -230,6 +244,7 @@ CREATE TABLE angestellte( id          integer,  name    text,
       this.database = new Database('', '', null);
       this.tableMetaData = [];
       this.sqlExecutor.close(this.databaseNumber);
+      this.localStorageController.set(this.storageDBKeyName, undefined, false, false);
       this.$emit('reset');
     }
 

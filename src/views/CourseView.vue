@@ -54,6 +54,7 @@ import {userState} from '@/globalData/UserState';
 import UserGroup from "@/dataModel/UserGroup";
 import router from '@/router';
 import DataManagementService from "@/services/DataManagementService";
+import UserController from "@/controller/UserController";
 
 
 @Component({
@@ -70,6 +71,7 @@ export default class CourseView extends Vue {
   private solutionsheet!: Uint8Array;
   private courseController: DataManagementService<Course> = new CourseController(this.$store.getters.api);
   private worksheetController: WorksheetController = new WorksheetController(this.$store.getters.api);
+  private userController: UserController = new UserController(this.$store.getters.api);
   private isStudentsViewActive: boolean = false;
 
   // Functions
@@ -80,12 +82,12 @@ export default class CourseView extends Vue {
 
   public generateSolutionsheet(worksheet: Worksheet) {
     alert('TODO: PDF anzeigen zu: ' + worksheet.name);
-    this.solutionsheet = this.worksheetController.getSolution(worksheet);
+    this.worksheetController.getSolution(worksheet);
   }
 
 
     public created() {
-      if (userState.user.userGroup === UserGroup.Unauthenticated) {
+      if (this.userController.userState!.userGroup === UserGroup.Unauthenticated) {
         alert('Kein Zugriff auf diese Seite. Bitte Anmelden.');
         router.push('/');
       }
@@ -110,7 +112,7 @@ export default class CourseView extends Vue {
   }
 
   private checkUserState(): boolean {
-    if (userState.user.userGroup === UserGroup.Teacher) {
+    if (this.userController.userState!.userGroup === UserGroup.Teacher) {
       return true;
     } else {
       return false;

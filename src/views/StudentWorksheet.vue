@@ -98,8 +98,7 @@ export default class StudentWorksheet extends Vue {
     private numberOfSubtasks: number = 0;
 
     // Controller
-    private worksheetController: ParentService<Course, Worksheet> & ExportPDF<Worksheet>
-        = new WorksheetController(this.$store.getters.api);
+    private worksheetController = new WorksheetController(this.$store.getters.api);
     private taskController: ParentService<Worksheet, Task> = new TaskController(this.$store.getters.api);
     private subtaskController: SubtaskService = new SubtaskController(this.$store.getters.api);
     private databaseController: DataManagementService<Database> = new DatabaseController(this.$store.getters.api);

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <DatabaseComponent elementId="sandbox-dropzone-db" showExportImport="true" ref="databaseComponent"
-                       @databaseExists="eventDbExists" @reset="reset"></DatabaseComponent>
+    <DatabaseComponent elementId="sandbox-dropzone-db" showExportImport="true" loadSandboxLocalStorageDb="true" ref="databaseComponent"
+                       @databaseExists="eventDbExists" @reset="reset" ></DatabaseComponent>
     <div v-if="databaseExists" :databaseExists:sync="databaseExists">
       <div class="switchButton">
         <b-button v-on:click="switchComponent"
