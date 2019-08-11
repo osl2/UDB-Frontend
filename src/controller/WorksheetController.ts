@@ -30,61 +30,60 @@ import Solution from "@/dataModel/Solution";
 export default class WorksheetController extends ApiControllerAbstract
     implements ParentService<Course, Worksheet>, SolutionService {
 
-    private _worksheets: Worksheet[] = [];
-    private _worksheet?: Worksheet = undefined;
+    private _worksheets: Map<string, Worksheet>;
 
     constructor(api: DefaultApi) {
         super(api);
+        this._worksheets = new Map<string, Worksheet>();
     }
 
 
     public loadAll() {
-        this._worksheets = [];
         this.api.getWorksheets()
             .then((response: Worksheet[]) => {
-                this._worksheets = response;
+                response.forEach((worksheet: Worksheet) => {
+                    this._worksheets = new Map<string, Worksheet>(this._worksheets.set(worksheet.id, worksheet));
+                });
             });
     }
     public loadChildren(object: Course) {
-        this._worksheets = [];
         object.worksheetIds.forEach((worksheetId) => {
             this.api.getWorksheet({worksheetId} as GetWorksheetRequest)
                 .then((response: Worksheet) => {
-                    this._worksheets.push(response);
+                    this._worksheets = new Map<string, Worksheet>(this._worksheets.set(response.id, response));
                 });
         });
     }
     public load(id: string) {
-        this._worksheet = this._worksheets.find((worksheet) => worksheet.id === id);
-        this.api.getWorksheet({worksheetId: id} as GetWorksheetRequest)
-            .then((response: Worksheet) => {
-                this._worksheet = response;
-            });
+        const worksheet = this._worksheets.get(id);
+        if (worksheet === undefined) {
+            this.api.getWorksheet({worksheetId: id} as GetWorksheetRequest)
+                .then((response: Worksheet) => {
+                    this._worksheets = new Map<string, Worksheet>(this._worksheets.set(response.id, response));
+                });
+        }
     }
 
     public create(worksheet: Worksheet): void {
         this.api.createWorksheet({worksheet} as CreateWorksheetRequest)
             .then((response: string) => {
                 worksheet.id = response;
-                this._worksheets.push(worksheet);
+                this._worksheets = new Map<string, Worksheet>(this._worksheets.set(worksheet.id, worksheet));
             });
     }
     public save(object: Worksheet): void {
         this.api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest)
           .then(() => {
-              const index = this._worksheets.findIndex((worksheet) => worksheet.id === object.id);
-              if (index > -1) {
-                  this._worksheets[index] = object;
+              if (this._worksheets.get(object.id) !== undefined) {
+                  this._worksheets = new Map<string, Worksheet>(this._worksheets.set(object.id, object));
               }
           });
     }
     public remove(object: Worksheet): void {
         this.api.deleteWorksheet({worksheetId: object.id} as DeleteWorksheetRequest)
             .then((response) => {
-                const index = this._worksheets.indexOf(object, 0);
-                if (index > -1) {
-                    this._worksheets.splice(index, 1);
-                }
+                this._worksheets.delete(object.id);
+                this._worksheets = new Map<string, Worksheet>(this._worksheets);
             });
     }
 
@@ -440,10 +439,27 @@ export default class WorksheetController extends ApiControllerAbstract
         throw new Error("Method not implemented.");
     }
 
-    get all() {
-        return this._worksheets;
+    public get(id: string): Worksheet {
+        const worksheet = this._worksheets.get(id);
+        if (worksheet === undefined) {
+            throw new Error("Worksheet not found");
+        }
+        return worksheet;
     }
-    get one(): Worksheet | undefined {
-        return this._worksheet;
+
+    public getChildren(course: Course): Worksheet[] {
+        const worksheets: Worksheet[] = [];
+        course.worksheetIds.map((worksheetId: string) => {
+            return this._worksheets.get(worksheetId);
+        }).forEach((worksheet: Worksheet | undefined) => {
+            if (worksheet !== undefined) {
+                worksheets.push(worksheet);
+            }
+        });
+        return worksheets;
+    }
+
+    get all(): Worksheet[] {
+        return Array.from(this._worksheets.values());
     }
 }

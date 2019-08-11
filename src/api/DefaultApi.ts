@@ -27,8 +27,12 @@ import PlainTextTask from "@/dataModel/PlainTextTask";
 import SqlSolutionDiff from "@/dataModel/SqlSolutionDiff";
 import MultipleChoiceSolutionDiff from "@/dataModel/MultipleChoiceSolutionDiff";
 import PlainTextSolutionDiff from "@/dataModel/PlainTextSolutionDiff";
+import {userState} from "@/globalData/UserState";
+import LocalStorageController from "@/controller/LocalStorageController";
 
-type Token = string;
+export interface Token {
+    token: string;
+}
 
 export interface CreateAccountRequest {
     account: User;
@@ -114,7 +118,6 @@ export interface GetUUIDRequest {
 }
 
 export interface VerifySubtaskSolutionRequest {
-    taskId: string;
     subtaskId: string;
     solution: Solution;
 }
@@ -153,6 +156,16 @@ export interface UpdateWorksheetRequest {
  */
 export class DefaultApi extends runtime.BaseAPI {
 
+    constructor() {
+      const ls = new LocalStorageController();
+      const currentUser: User | undefined = Object.setPrototypeOf(ls.get("userState"), User.prototype);
+      if (currentUser !== undefined) {
+        super(new Configuration({accessToken: currentUser.token}));
+      } else {
+        super(new Configuration());
+      }
+    }
+
     /**
      * Registration
      */
@@ -168,8 +181,9 @@ export class DefaultApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
         const response = await this.request({
-            path: `/account`,
+            path: `/account/register`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -210,6 +224,7 @@ export class DefaultApi extends runtime.BaseAPI {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
+
         const response = await this.request({
             path: `/courses`,
             method: 'POST',
@@ -1053,7 +1068,7 @@ export class DefaultApi extends runtime.BaseAPI {
         });
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map((singleJsonValue: any) => {
-            if (singleJsonValue.hasOwnProperty("sql")) {
+            if (singleJsonValue.hasOwnProperty("sql")) {  // TODO: sql ist unterkategorie
                 return SqlTask.fromJSON(singleJsonValue);
             }
             if (singleJsonValue.hasOwnProperty("multiple_choice")) {
@@ -1164,7 +1179,7 @@ export class DefaultApi extends runtime.BaseAPI {
         }
         const response = await this.request({
             path: `/account/login`,
-            method: 'GET',
+            method: 'POST',
             headers: headerParameters,
             query: queryParameters,
         });
@@ -1212,11 +1227,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async verifySubtaskSolutionRaw(requestParameters: VerifySubtaskSolutionRequest)
         : Promise<runtime.ApiResponse<SolutionDiff>> {
-        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId',
-                'Required parameter requestParameters.taskId was' +
-                ' null or undefined when calling verifySubtaskSolution.');
-        }
 
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
             throw new runtime.RequiredError('subtaskid',
@@ -1245,8 +1255,7 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks/{subtaskid}/verify`
-                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId)))
+            path: `/subtasks/{subtaskid}/verify`
                 .replace(`{${"subtaskid"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
             method: 'POST',
             headers: headerParameters,

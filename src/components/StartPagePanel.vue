@@ -105,6 +105,7 @@ import UserGroup from "@/dataModel/UserGroup";
           return;
       }
         */
+      this.path = "/startPageTeacher";
 
       this.userController.login(username, password).then((success) => {
         if (success) {
@@ -148,7 +149,7 @@ import UserGroup from "@/dataModel/UserGroup";
     }
 
     private checkCourseEntry(courseId: string): boolean {
-      if (this.courseController.one === undefined) {
+      if (this.courseController.get(courseId) === undefined) {
         alert('Laden des Kurses ist fehlgeschlagen: Es wurde kein Kurs mit der eingegebenen ID gefunden. ' +
           'Bitte versuche es erneut.');
         return false;

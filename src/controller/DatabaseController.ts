@@ -13,11 +13,11 @@ import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 export default class DatabaseController extends ApiControllerAbstract
   implements DataManagementService<Database>, ExportImport<Database> {
 
-    private _databases: Database[] = [];
-    private _database?: Database = undefined;
+    private _databases: Map<string, Database>;
 
     constructor(api: DefaultApi) {
         super(api);
+        this._databases = new Map<string, Database>();
     }
 
     /**
@@ -26,7 +26,9 @@ export default class DatabaseController extends ApiControllerAbstract
     public loadAll(): void {
         this.api.getDatabases()
             .then((response: Database[]) => {
-                this._databases = response;
+                response.forEach((database: Database) => {
+                    this._databases = new Map<string, Database>(this._databases.set(database.id, database));
+                });
             });
     }
 
@@ -36,11 +38,10 @@ export default class DatabaseController extends ApiControllerAbstract
      * @param id
      */
     public load(id: string): void {
-        this._database = this._databases.find((database) => database.id === id);
-        if (this._database === undefined) {
+        if (this._databases.get(id) === undefined) {
             this.api.getDatabase({databaseId: id} as GetDatabaseRequest)
                 .then((response: Database) => {
-                    this._database = response;
+                    this._databases = new Map<string, Database>(this._databases.set(response.id, response));
                 });
         }
     }
@@ -54,7 +55,7 @@ export default class DatabaseController extends ApiControllerAbstract
         this.api.createDatabase({database} as CreateDatabaseRequest)
             .then((response: string) => {
                 database.id = response;
-                this._databases.push(database);
+                this._databases = new Map<string, Database>(this._databases.set(database.id, database));
             })
             .catch((error) => {
                 throw new Error("Error creating database: " + error);
@@ -64,9 +65,8 @@ export default class DatabaseController extends ApiControllerAbstract
     public save(object: Database): void {
         this.api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest)
             .then(() => {
-                const index = this._databases.findIndex((database) => database.id === object.id);
-                if (index > -1) {
-                    this._databases[index] = object;
+                if (this._databases.get(object.id) !== undefined) {
+                    this._databases = new Map<string, Database>(this._databases.set(object.id, object));
                 }
             });
     }
@@ -74,11 +74,17 @@ export default class DatabaseController extends ApiControllerAbstract
     public remove(object: Database): void {
         this.api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest)
             .then((response) => {
-                const index = this._databases.indexOf(object, 0);
-                if (index > -1) {
-                    this._databases.splice(index, 1);
-                }
+                this._databases.delete(object.id);
+                this._databases = new Map<string, Database>(this._databases);
             });
+    }
+
+    public get(id: string): Database {
+        const db = this._databases.get(id);
+        if (db === undefined) {
+            throw new Error("Database not found: " + id);
+        }
+        return db;
     }
 
     /**
@@ -131,14 +137,7 @@ export default class DatabaseController extends ApiControllerAbstract
      * Getter for all loaded databases.
      */
     get all(): Database[] {
-        return this._databases;
-    }
-
-    /**
-     * Getter for single loaded database.
-     */
-    get one(): Database | undefined {
-        return this._database;
+        return Array.from(this._databases.values());
     }
 
     /**

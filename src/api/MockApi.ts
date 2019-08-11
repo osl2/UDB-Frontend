@@ -24,7 +24,9 @@ import {
 import User from "@/dataModel/User";
 import MockData from "@/api/mockData/MockData";
 
-type Token = string;
+export interface Token {
+  token: string;
+}
 
 /**
  * A mock api for testing the views without the server.
@@ -136,7 +138,7 @@ export class MockApi extends DefaultApi {
       }
     });
     if (user) {
-      return await 'dummyToken';
+      return await { token: 'dummyToken' };
     } else {
       return Promise.reject("User does not exist");
     }

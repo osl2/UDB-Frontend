@@ -14,7 +14,7 @@
                     <b-button
                             class="bg-info"
                             slot="footer"
-                            @click="$emit('loadWorksheet', worksheet)"
+                            @click="$emit('loadWorksheet', worksheet, false)"
                             v-show="isStudentsViewActive"
                     >{{$t('courseViewStudent.solveWorksheetButton')}}
                     </b-button>
@@ -41,6 +41,20 @@
                     > {{$t('worksheetList.worksheetOffline')}}
                     </b-card-text>
                 </b-card>
+            <b-card>
+                <b-card-title>
+                    Neues Arbeitsblatt
+                </b-card-title>
+                <b-card-body>
+                    <b-form-input v-model="name" placeholder="Name"></b-form-input>
+                </b-card-body>
+                <b-button
+                        class="bg-info"
+                        slot="footer"
+                        @click="$emit('addWorksheet', name)"
+                >Hinzufügen
+                </b-button>
+            </b-card>
         </div>
     </div>
 </template>

@@ -13,11 +13,11 @@ import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
 export default class CourseController extends ApiControllerAbstract implements DataManagementService<Course> {
 
-  private _courses: Course[] = [];
-  private _course?: Course = undefined;
+  private _courses: Map<string, Course>;  // THe Map is not reactive, so needs to be reassigned on change
 
   constructor(api: DefaultApi) {
     super(api);
+    this._courses = new Map<string, Course>();
   }
 
   /**
@@ -26,7 +26,9 @@ export default class CourseController extends ApiControllerAbstract implements D
   public loadAll(): void {
     this.api.getCourses()
       .then((response: Course[]) => {
-        this._courses = response;
+        response.forEach((course: Course) => {
+            this._courses = new Map<string, Course>(this._courses.set(course.id, course));
+        });
       });
   }
 
@@ -36,23 +38,23 @@ export default class CourseController extends ApiControllerAbstract implements D
    * @param id
    */
   public load(id: string): void {
-    if (this._course && this._course.id === id) {
-      return;
-    }
-    const courseTemp = this._courses.find((course) => course.id === id);
-    if (courseTemp === undefined) {
+    const courseTemp = this._courses.get(id);
+    if (courseTemp === undefined && id !== undefined) {
       this.api.getCourse({courseId: id} as GetCourseRequest)
         .then((response: Course) => {
-          this._course = response;
+          this._courses = new Map<string, Course>(this._courses.set(response.id, response));
         });
-    } else {
-      this._course = courseTemp;
     }
   }
 
+  /**
+   * Load a course when given the alias
+   * @param alias
+   */
   public loadWithAlias(alias: string): void {
-    this._course = this._courses.find((course) => course.alias === alias);
-    if (this._course === undefined) {
+    const tmpCourse = Array.from(this._courses.values()).find((course) => course.alias === alias);
+
+    if (tmpCourse === undefined) {
       this.api.getUUID({alias})
         .then((response: AliasResponse) => {
           if (response.objectType === ObjectType.COURSE) {
@@ -71,11 +73,12 @@ export default class CourseController extends ApiControllerAbstract implements D
     this.api.createCourse({course} as CreateCourseRequest)
       .then((response: string) => {
         course.id = response;
-        this._courses.push(course);
+        this._courses = new Map<string, Course>(this._courses.set(course.id, course));
 
         this.api.createAlias({objectId: course.id, objectType: ObjectType.COURSE})
           .then((aliasResponse: string) => {
             course.alias = aliasResponse;
+            this._courses = new Map<string, Course>(this._courses);
           });
 
       })
@@ -87,34 +90,49 @@ export default class CourseController extends ApiControllerAbstract implements D
   public save(object: Course): void {
     this.api.updateCourse({course: object, courseId: object.id} as UpdateCourseRequest)
       .then(() => {
-        const index = this._courses.findIndex((course) => course.id === object.id);
-        if (index > -1) {
-          this._courses[index] = object;
+        if (this._courses.get(object.id) !== undefined) {
+            this._courses = new Map<string, Course>(this._courses.set(object.id, object));
         }
       });
   }
 
-  public remove(object: Course): void {   // hier reicht vielleicht auch UUID?
+  /**
+   * Delete course and sync with backend.
+   * @param object
+   */
+  public remove(object: Course): void {
     this.api.deleteCourse({courseId: object.id} as DeleteCourseRequest)
       .then((response) => {
-        const index = this._courses.indexOf(object, 0);
-        if (index > -1) {
-          this._courses.splice(index, 1);
-        }
+          this._courses.delete(object.id);
+          this._courses = new Map<string, Course>(this._courses);
       });
   }
 
-  /**
-   * Getter for loaded courses.
-   */
-  get all(): Course[] {
-    return this._courses;
+  public get(id: string): Course {
+      const course = this._courses.get(id);
+      if (course === undefined) {
+          throw Error("Course not found");
+      }
+      return course;
   }
 
-  /**
-   * Getter for single loaded course.
-   */
-  get one(): Course | undefined {
-    return this._course;
+  public getWithAlias(alias: string): Course {
+      const tempCourse = Array.from(this._courses.values()).find((course) => course.alias === alias);
+      if (tempCourse === undefined) {
+          throw Error("Course not found");
+      }
+      return tempCourse;
+  }
+
+  public getAll(): Course[] {
+      return Array.from(this._courses.values());
+  }
+
+  get all(): Course[] {
+      return Array.from(this._courses.values());
+  }
+
+  get courses(): Map<string, Course> {
+      return this._courses;
   }
 }

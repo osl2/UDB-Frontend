@@ -71,10 +71,10 @@ export default class StudentWorksheet extends Vue {
 
     // computed methods
     get worksheet() {
-      if (this.worksheetController.one !== undefined) {
-        this.taskController.loadChildren(this.worksheetController.one);
+      if (this.worksheetController.get(this.worksheetId) !== undefined) {
+        this.taskController.loadChildren(this.worksheetController.get(this.worksheetId));
       }
-      return this.worksheetController.one;
+      return this.worksheetController.get(this.worksheetId);
     }
 
     get tasks() {
@@ -82,9 +82,11 @@ export default class StudentWorksheet extends Vue {
     }
 
     get database() {
-      return this.databaseController.one;
+      return this.databaseController.get(this.currentTask.databaseId);
     }
     // Data
+
+    private worksheetId: string = "";
 
     // the solution maps an id of a subtask to the students solution.
     private solutions: Map<string, Solution> = new Map<string, Solution>();
@@ -183,6 +185,7 @@ export default class StudentWorksheet extends Vue {
 
     public created() {
       this.worksheetController.load(this.$route.params.worksheetId);
+      this.worksheetId = this.$route.params.worksheetId;
     }
 
     private setCurrentTask(task: Task, subtasks: Subtask[], index: number) {

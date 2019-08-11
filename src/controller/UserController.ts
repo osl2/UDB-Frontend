@@ -13,7 +13,7 @@ export default class UserController extends ApiControllerAbstract implements Use
   }
 
   get userState(): User | undefined {
-    return this.localStorageController.get("userState");
+    return Object.setPrototypeOf(this.localStorageController.get("userState"), User.prototype);
   }
 
   set userState(user: User | undefined) {
@@ -30,9 +30,9 @@ export default class UserController extends ApiControllerAbstract implements Use
 
   public login(username: string, password: string): Promise<boolean> {
     this.api.setBasicAuth(username, password);
-    return this.api.login().then((response: string) => {
-      this.api.setJWT(response);
-      const user = new User('', username, '', response, UserGroup.Teacher);
+    return this.api.login().then((response: {token: string}) => {
+      this.api.setJWT(response.token);
+      const user = new User('', username, '', response.token, UserGroup.Teacher);
       this.userState = user;
       return true;
     }).catch(() => {

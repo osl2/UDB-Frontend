@@ -14,6 +14,7 @@ export default class User extends DataModel {
 
     /**
      * The constructor of the class.
+     * @param id
      * @param name: The username of the user.
      * @param password: The password of the user. //TODO in Client speichern??
      * @param token: The JSON Web Token for authentication.
@@ -30,7 +31,7 @@ export default class User extends DataModel {
 
     public toJSON(): any {
         return {
-            name: this.name,
+            username: this.name,
             password: this.password,
         };
     }

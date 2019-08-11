@@ -10,6 +10,12 @@
         <b-card-title>
           {{course.name}}
         </b-card-title>
+        <b-card-text>
+          {{course.description}}
+        </b-card-text>
+        <b-card-text>
+          Kurs-ID:<br />{{course.alias}}
+        </b-card-text>
         <b-button
             class="bg-danger"
             slot="footer"

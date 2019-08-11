@@ -69,10 +69,11 @@ export default class CourseView extends Vue {
 
   // Data
   private solutionsheet!: Uint8Array;
-  private courseController: DataManagementService<Course> = new CourseController(this.$store.getters.api);
+  private courseController: CourseController = new CourseController(this.$store.getters.api);
   private worksheetController: WorksheetController = new WorksheetController(this.$store.getters.api);
   private userController: UserController = new UserController(this.$store.getters.api);
   private isStudentsViewActive: boolean = false;
+  private courseId: string = this.$route.params.courseId;
 
   // Functions
 
@@ -92,7 +93,8 @@ export default class CourseView extends Vue {
         router.push('/');
       }
       this.setIsStudentsViewActive();
-      this.courseController.load(this.$route.params.courseId);
+      this.$store.getters.courseController.load(this.$route.params.courseId);
+      this.courseId = this.$route.params.courseId;
     }
 
     private toggleView() {
@@ -127,14 +129,17 @@ export default class CourseView extends Vue {
   }
 
   get course() {
-      if (this.courseController.one !== undefined) {
-          this.worksheetController.loadChildren(this.courseController.one);
+      let course;
+      try {
+          course = this.$store.getters.courseController.get(this.courseId);
+      } catch (e) {
+          return new Course("", "", "", "", []);
       }
-      return this.courseController.one;
+      return course;
   }
 
   get worksheets() {
-      return this.worksheetController.all;
+      return this.$store.getters.worksheetController.all;
   }
 }
 </script>
