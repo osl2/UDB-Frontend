@@ -28,7 +28,7 @@ import Solution from "@/dataModel/Solution";
 
 
 export default class WorksheetController extends ApiControllerAbstract
-    implements ParentService<Course, Worksheet>, ExportPDF<WorksheetSolution>, SolutionService {
+    implements ParentService<Course, Worksheet>, ExportPDF<Worksheet>, SolutionService {
 
     private _worksheets: Worksheet[] = [];
     private _worksheet?: Worksheet = undefined;
@@ -221,29 +221,39 @@ export default class WorksheetController extends ApiControllerAbstract
 
     /**
      * When executed this method will prepare a file containing the description of the given
-     * Worksheet (inside the WorksheetSolution) as well as the user provided solutions.
+     * Worksheet as well as the user provided solutions.
      * The file will then be downloaded. To archive that, it appends an <a> link element to the body and then clicks it.
      * After the click the element is removed.
      * The name of the file is build from the name of the given worksheet extended by the current date and time.
-     * @param WorksheetSolution internal WorksheetSolution object
+     * @param object of type Worksheet represents internal Worksheet object
+     * @param solutions map SubtaskId to corresponding Solution
      */
-    public exportObject(object: WorksheetSolution): void {
-        /* TODO DEV
-        const textsolution: Solution = new PlainTextSolution("TEST");
-        const sol: Map<string, Solution> = new Map();
-        sol.set("1", textsolution);
-        const worksheet: Worksheet = new Worksheet("1", "TEST", ["1"], true, true);
-        const object: WorksheetSolution = new WorksheetSolution(worksheet, sol);
-*/
-        const jsonString = JSON.stringify(object, null, 4);
+    public exportObject(object: Worksheet, solutions: Map<string, Solution>): void {
+        const exportobject = {worksheet: {id: object.id}, solutions: [] as object[]};
+
+        for (const [key, solution] of solutions.entries()) {
+            const tempobject = {id: "", type: 0 as SubtaskTypes, data: {}};
+            tempobject.id = key;
+            if (solution.hasOwnProperty("text")) {
+                tempobject.type = SubtaskTypes.PlainText;
+            } else if (solution.hasOwnProperty("choices")) {
+                tempobject.type = SubtaskTypes.MultipleChoice;
+            } else if (solution.hasOwnProperty("querySolution")) {
+                tempobject.type = SubtaskTypes.Sql;
+            }
+            tempobject.data = solution;
+            exportobject.solutions.push(tempobject);
+        }
+
+        const jsonString = JSON.stringify(exportobject, null, 4);
         const escapedJsonString = jsonString.replace(/\\n/g, "\\n")
-                                            .replace(/\\'/g, "\\'")
-                                            .replace(/\\"/g, '\\"')
-                                            .replace(/\\&/g, "\\&")
-                                            .replace(/\\r/g, "\\r")
-                                            .replace(/\\t/g, "\\t")
-                                            .replace(/\\b/g, "\\b")
-                                            .replace(/\\f/g, "\\f");
+            .replace(/\\'/g, "\\'")
+            .replace(/\\"/g, '\\"')
+            .replace(/\\&/g, "\\&")
+            .replace(/\\r/g, "\\r")
+            .replace(/\\t/g, "\\t")
+            .replace(/\\b/g, "\\b")
+            .replace(/\\f/g, "\\f");
 
         const blob = new Blob([escapedJsonString!], {
             type: 'text/json',
@@ -257,7 +267,7 @@ export default class WorksheetController extends ApiControllerAbstract
         const a = document.createElement('a');
         document.body.appendChild(a);
         a.href = window.URL.createObjectURL(blob);
-        a.download = 'Worksheet_Export_' + object.worksheet.name.replace(" ", "_") + '_' + datestring + '.json';
+        a.download = 'Worksheet_Export_' + object.name.replace(" ", "_") + '_' + datestring + '.json';
         a.onclick = () => {
             setTimeout(() => {
                 window.URL.revokeObjectURL(a.href);
