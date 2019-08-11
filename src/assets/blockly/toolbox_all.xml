@@ -1,7 +1,19 @@
 <xml id="toolbox" style="display: none">
     <category name="SELECT">
-        <block type="block_select"></block>
-        <block type="block_subselect"></block>
+        <block type="block_select">
+            <value name="COLUMN">
+                <shadow type="entity_column_statement">
+                    <field name="column">*</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="block_subselect">
+            <value name="COLUMN">
+                <shadow type="entity_column_statement">
+                    <field name="column">*</field>
+                </shadow>
+            </value>
+        </block>
         <block type="select_join"></block>
         <block type="select_where"></block>
         <block type="select_group"></block>
