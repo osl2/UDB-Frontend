@@ -24,6 +24,7 @@ import SqlSolution from "@/dataModel/SqlSolution";
 import SubtaskTypes from "@/dataModel/SubtaskTypes";
 import TaskController from "@/controller/TaskController";
 import SubtaskController from "@/controller/SubtaskController";
+import Solution from "@/dataModel/Solution";
 
 
 export default class WorksheetController extends ApiControllerAbstract
@@ -94,9 +95,10 @@ export default class WorksheetController extends ApiControllerAbstract
      * corresponding solutions to the file. The file will then automatically be downloaded.
      * The name of the file is build from the name of the given worksheet extended by the current date and time.
      * This method uses the current application store to get additionally needed controllers.
-     * @param Worksheet internal Worksheet object
+     * @param object of type Worksheet represents internal Worksheet object
+     * @param solutions map SubtaskId to corresponding Solution
      */
-    public exportPDF(object: Worksheet): void {
+    public exportPDF(object: Worksheet, solutions: Map<string, Solution>): void {
         // TODO Texte auslagern sodass diese übersetzt werden können!
         /* TODO Uncomment when store is implemented
         let taskController: TaskController = this.$store.getters.taskController;
@@ -161,16 +163,16 @@ export default class WorksheetController extends ApiControllerAbstract
                 }
                 if (subtask.type === SubtaskTypes.PlainText) {
                     const typedSubtask = subtask as PlainTextTask;
-                    if (typedSubtask.solution !== undefined) {
-                        const solution = typedSubtask.solution as PlainTextSolution;
+                    if (solutions.has(subtaskId)) {
+                        const solution = solutions.get(subtaskId) as PlainTextSolution;
                         docDefinition.content.push({text: solution.text, style: 'solution'});
                     } else {
                         docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
                     }
                 } else if (subtask.type === SubtaskTypes.MultipleChoice) {
                     const typedSubtask = subtask as MultipleChoiceTask;
-                    if (typedSubtask.solution !== undefined) {
-                        const solution = typedSubtask.solution as MultipleChoiceSolution;
+                    if (solutions.has(subtaskId)) {
+                        const solution = solutions.get(subtaskId) as MultipleChoiceSolution;
                         let content: string | undefined;
                         for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
                             if (content !== undefined) {
@@ -188,8 +190,8 @@ export default class WorksheetController extends ApiControllerAbstract
                     }
                 } else if (subtask.type === SubtaskTypes.Sql) {
                     const typedSubtask = subtask as SqlTask;
-                    if (typedSubtask.solution !== undefined) {
-                        const solution = typedSubtask.solution as SqlSolution;
+                    if (solutions.has(subtaskId)) {
+                        const solution = solutions.get(subtaskId) as SqlSolution;
                         const tablequery = {widths: ['*'], body: [
                                 [{text: 'Query:', fillColor: '#eeeeee',
                                     border: [true, true, true, false], style: {bold: true}}],
