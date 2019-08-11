@@ -12,7 +12,16 @@ import {
     GetWorksheetRequest,
 } from "@/api/DefaultApi";
 import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
-import WorksheetSolution from "@/dataModel/WorksheetSolution";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import Subtask from "@/dataModel/Subtask";
+import PlainTextTask from "@/dataModel/PlainTextTask";
+import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
+import SqlTask from "@/dataModel/SqlTask";
+import PlainTextSolution from "@/dataModel/PlainTextSolution";
+import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
+import SqlSolution from "@/dataModel/SqlSolution";
+import SubtaskTypes from "@/dataModel/SubtaskTypes";
 
 
 export default class WorksheetController extends ApiControllerAbstract
@@ -76,7 +85,111 @@ export default class WorksheetController extends ApiControllerAbstract
             });
     }
 
-    public exportPDF(object: WorksheetSolution): void {
+    /**
+     * When executed this method will prepare a PDF file containing the tasks of the given Worksheet
+     * as well as the user provided solutions.
+     * It iterates over the available tasks of the worksheet and prepends all subtasks and
+     * corresponding solutions to the file. The file will then automatically be downloaded.
+     * The name of the file is build from the name of the given worksheet extended by the current date and time.
+     * This method uses the current application store to get additionally needed information.
+     * @param Worksheet internal Worksheet object
+     */
+    public exportPDF(object: Worksheet): void {
+        /* TODO Uncomment when store is implemented
+        if (pdfMake.vfs === undefined) {
+            pdfMake.vfs = pdfFonts.pdfMake.vfs;
+        }
+
+        const date = new Date();
+        const datestring = date.getFullYear() + "_" + ("0" + (date.getMonth() + 1)).slice(-2) + "_" +
+            ("0" + date.getDate()).slice(-2) + "_" +
+            ("0" + date.getHours()).slice(-2) + "_" + ("0" + date.getMinutes()).slice(-2);
+
+        const docDefinition = {
+            content: [
+                {
+                    stack: [
+                        'Aufgabenblatt - ' + object.name,
+                        {text: 'Exportiert am: ' + datestring, style: 'subheader'},
+                    ],
+                    style: 'header',
+                },
+            ] as any,
+            styles: {
+                header: {
+                    fontSize: 18,
+                    bold: true,
+                    alignment: 'center',
+                },
+                subheader: {
+                    fontSize: 6,
+                },
+                taskheader: {
+                    bold: true,
+                    margin: [0, 10, 0, 5],
+                },
+                taskdescription: {
+                    fontSize: 10,
+                },
+                solutionheader: {
+                    bold: true,
+                    margin: [0, 10, 0, 5],
+                },
+                solution: {
+                    fontSize: 10,
+                },
+                solutionTable: {
+                    fontSize: 10,
+                },
+            },
+        };
+
+        for (const taskId of object.taskIds) {
+            const task: Task = this.$store.task.getters.byId(taskId);
+            for (const subtaskId of task.subtaskIds) {
+                const subtask: Subtask = this.$store.subtask.getters.byId(subtaskId);
+                docDefinition.content.push({text: 'Aufgabe ' + taskId + '-' + subtaskId + ': ', style: 'taskheader'});
+                docDefinition.content.push({text: subtask.instruction, style: 'taskdescription'});
+                if (subtask.type !== SubtaskTypes.Instruction) {
+                    docDefinition.content.push({text: 'Lösungsvorschlag:', style: 'solutionheader'});
+                }
+                if (subtask.type === SubtaskTypes.PlainText) {
+                    const typedSubtask = subtask as PlainTextTask;
+                    const solution = typedSubtask.solution as PlainTextSolution;
+                    docDefinition.content.push({text: solution.text, style: 'solution'});
+                } else if (subtask.type === SubtaskTypes.MultipleChoice) {
+                    const typedSubtask = subtask as MultipleChoiceTask;
+                    const solution = typedSubtask.solution as MultipleChoiceSolution;
+                    let content: string | undefined;
+                    for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
+                        if (content !== undefined) {
+                            content += "\n";
+                        }
+                        if (solution.choices.indexOf(index) > 0) {
+                            content += "[X] " + answerOption;
+                        } else {
+                            content += "[ ]" + answerOption;
+                        }
+                    }
+                    docDefinition.content.push({text: content, style: 'solution'});
+                } else if (subtask.type === SubtaskTypes.Sql) {
+                    const typedSubtask = subtask as SqlTask;
+                    const solution = typedSubtask.solution as SqlSolution;
+                    const tabledata = {widths: [] as string[], body: [] as string[][] };
+                    // Set all table widths to star
+                    for (const column of solution.columns) {
+                        tabledata.widths.push('*');
+                    }
+                    tabledata.body = solution.values;
+                    tabledata.body.unshift(solution.columns);
+                    docDefinition.content.push({table: tabledata, style: 'solutionTable'});
+                }
+            }
+        }
+
+        pdfMake.createPdf(docDefinition)
+            .download('Print' + object.name.replace(' ', '_') + '_' + datestring + '.pdf');
+         */
         throw new Error("Method not implemented.");
     }
 
