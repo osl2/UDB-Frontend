@@ -161,34 +161,52 @@ export default class WorksheetController extends ApiControllerAbstract
                 }
                 if (subtask.type === SubtaskTypes.PlainText) {
                     const typedSubtask = subtask as PlainTextTask;
-                    const solution = typedSubtask.solution as PlainTextSolution;
-                    docDefinition.content.push({text: solution.text, style: 'solution'});
+                    if (typedSubtask.solution !== undefined) {
+                        const solution = typedSubtask.solution as PlainTextSolution;
+                        docDefinition.content.push({text: solution.text, style: 'solution'});
+                    } else {
+                        docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
+                    }
                 } else if (subtask.type === SubtaskTypes.MultipleChoice) {
                     const typedSubtask = subtask as MultipleChoiceTask;
-                    const solution = typedSubtask.solution as MultipleChoiceSolution;
-                    let content: string | undefined;
-                    for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
-                        if (content !== undefined) {
-                            content += "\n";
+                    if (typedSubtask.solution !== undefined) {
+                        const solution = typedSubtask.solution as MultipleChoiceSolution;
+                        let content: string | undefined;
+                        for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
+                            if (content !== undefined) {
+                                content += "\n";
+                            }
+                            if (solution.choices.indexOf(index) > 0) {
+                                content += "[X] " + answerOption;
+                            } else {
+                                content += "[ ]" + answerOption;
+                            }
                         }
-                        if (solution.choices.indexOf(index) > 0) {
-                            content += "[X] " + answerOption;
-                        } else {
-                            content += "[ ]" + answerOption;
-                        }
+                        docDefinition.content.push({text: content, style: 'solution'});
+                    } else {
+                        docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
                     }
-                    docDefinition.content.push({text: content, style: 'solution'});
                 } else if (subtask.type === SubtaskTypes.Sql) {
                     const typedSubtask = subtask as SqlTask;
-                    const solution = typedSubtask.solution as SqlSolution;
-                    const tabledata = {widths: [] as string[], body: [] as string[][] };
-                    // Set all table widths to star
-                    for (const column of solution.columns) {
-                        tabledata.widths.push('*');
+                    if (typedSubtask.solution !== undefined) {
+                        const solution = typedSubtask.solution as SqlSolution;
+                        const tablequery = {widths: ['*'], body: [
+                                [{text: 'Query:', fillColor: '#eeeeee',
+                                    border: [true, true, true, false], style: {bold: true}}],
+                                [{text: solution.querySolution, fillColor: '#eeeeee',
+                                    border: [true, false, true, true]}]]};
+                        docDefinition.content.push({table: tablequery, style: 'solutionQuery'});
+                        const tabledata = {widths: [] as string[], body: [] as string[][]};
+                        // Set all table widths to star
+                        for (const column of solution.columns) {
+                            tabledata.widths.push('*');
+                        }
+                        tabledata.body = solution.values;
+                        tabledata.body.unshift(solution.columns);
+                        docDefinition.content.push({table: tabledata, style: 'solutionTable'});
+                    } else {
+                        docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
                     }
-                    tabledata.body = solution.values;
-                    tabledata.body.unshift(solution.columns);
-                    docDefinition.content.push({table: tabledata, style: 'solutionTable'});
                 }
             }
         }
