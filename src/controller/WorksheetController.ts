@@ -282,18 +282,28 @@ export default class WorksheetController extends ApiControllerAbstract
      * This method imports a previously exported database together with the exported solutions.
      * It returns an internal WorksheetSolution.
      */
-    public importObject(file: File): Promise<WorksheetSolution> {
+    public importObject(file: File): Promise<[string, Map<string, Solution>]> {
         const fileReader = new FileReader();
 
-        const promise: Promise<WorksheetSolution> = new Promise((resolve, reject) => {
+        const promise: Promise<[string, Map<string, Solution>]> = new Promise((resolve, reject) => {
             fileReader.onerror = () => {
                 fileReader.abort();
                 reject(new DOMException('Problem parsing input file.'));
             };
 
             fileReader.onload = () => {
-                const worksheetsolution = WorksheetSolution.fromJSON(fileReader.result as string);
-                resolve(worksheetsolution);
+                const obj = JSON.parse(fileReader.result as string);
+                const solutions: Map<string, Solution> = new Map();
+                for (const solution of obj.solutions) {
+                    if (solution.type === SubtaskTypes.PlainText) {
+                        solutions.set(solution.id, PlainTextSolution.fromJSON(solution.data));
+                    } else if (solution.type === SubtaskTypes.MultipleChoice) {
+                        solutions.set(solution.id, MultipleChoiceSolution.fromJSON(solution.data));
+                    } else if (solution.type === SubtaskTypes.Sql) {
+                        solutions.set(solution.id, SqlSolution.fromJSON(solution.data));
+                    }
+                }
+                resolve([obj.worksheet.id, solutions]);
             };
             fileReader.readAsText(file);
         });
