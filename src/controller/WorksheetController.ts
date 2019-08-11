@@ -28,7 +28,7 @@ import Solution from "@/dataModel/Solution";
 
 
 export default class WorksheetController extends ApiControllerAbstract
-    implements ParentService<Course, Worksheet>, ExportPDF<Worksheet>, SolutionService {
+    implements ParentService<Course, Worksheet>, SolutionService {
 
     private _worksheets: Worksheet[] = [];
     private _worksheet?: Worksheet = undefined;
