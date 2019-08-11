@@ -93,11 +93,15 @@ export default class WorksheetController extends ApiControllerAbstract
      * It iterates over the available tasks of the worksheet and prepends all subtasks and
      * corresponding solutions to the file. The file will then automatically be downloaded.
      * The name of the file is build from the name of the given worksheet extended by the current date and time.
-     * This method uses the current application store to get additionally needed information.
+     * This method uses the current application store to get additionally needed controllers.
      * @param Worksheet internal Worksheet object
      */
     public exportPDF(object: Worksheet): void {
+        // TODO Texte auslagern sodass diese übersetzt werden können!
         /* TODO Uncomment when store is implemented
+        let taskController: TaskController = this.$store.getters.taskController;
+        let subtaskController: SubtaskController = this.$store.getters.subtaskController;
+
         if (pdfMake.vfs === undefined) {
             pdfMake.vfs = pdfFonts.pdfMake.vfs;
         }
@@ -147,9 +151,9 @@ export default class WorksheetController extends ApiControllerAbstract
         };
 
         for (const taskId of object.taskIds) {
-            const task: Task = this.$store.task.getters.byId(taskId);
+            const task: Task = taskController.get(taskId);
             for (const subtaskId of task.subtaskIds) {
-                const subtask: Subtask = this.$store.subtask.getters.byId(subtaskId);
+                const subtask: Subtask = subtaskController.get(subtaskId);
                 docDefinition.content.push({text: 'Aufgabe ' + taskId + '-' + subtaskId + ': ', style: 'taskheader'});
                 docDefinition.content.push({text: subtask.instruction, style: 'taskdescription'});
                 if (subtask.type !== SubtaskTypes.Instruction) {
