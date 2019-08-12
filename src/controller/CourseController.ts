@@ -13,11 +13,13 @@ import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
 export default class CourseController extends ApiControllerAbstract implements DataManagementService<Course> {
 
-  private _courses: Map<string, Course>;  // THe Map is not reactive, so needs to be reassigned on change
+  private _courses: Map<string, Course>;  // The Map is not reactive, so needs to be reassigned on change
+  private _aliases: Map<string, string>;
 
   constructor(api: DefaultApi) {
     super(api);
     this._courses = new Map<string, Course>();
+    this._aliases = new Map<string, string>();
   }
 
   /**
@@ -30,6 +32,7 @@ export default class CourseController extends ApiControllerAbstract implements D
           this.api.getAlias({uuid: course.id} as GetAliasRequest)
             .then((aliasResponse: AliasResponse) => {
               course.alias = aliasResponse.alias;
+              this._aliases = new Map<string, string>(this._aliases.set(course.alias, course.id));
               this._courses = new Map<string, Course>(this._courses.set(course.id, course));
             });
         });
@@ -49,6 +52,7 @@ export default class CourseController extends ApiControllerAbstract implements D
           this.api.getAlias({uuid: course.id} as GetAliasRequest)
             .then((response: AliasResponse) => {
               course.alias = response.alias;
+              this._aliases = new Map<string, string>(this._aliases.set(course.alias, course.id));
               this._courses = new Map<string, Course>(this._courses.set(course.id, course));
             });
         });
@@ -66,6 +70,7 @@ export default class CourseController extends ApiControllerAbstract implements D
       this.api.getUUID({alias})
         .then((response: AliasResponse) => {
           if (response.objectType === ObjectType.COURSE) {
+            this._aliases = new Map<string, string>(this._aliases.set(alias, response.uuid));
             this.api.getCourse({courseId: response.uuid} as GetCourseRequest)
               .then((course: Course) => {
                 this._courses = new Map<string, Course>(this._courses.set(course.id, course));
@@ -89,7 +94,11 @@ export default class CourseController extends ApiControllerAbstract implements D
         this.api.createAlias({objectId: course.id, objectType: ObjectType.COURSE})
           .then((aliasResponse: string) => {
             course.alias = aliasResponse;
+            this._aliases = new Map<string, string>(this._aliases.set(course.alias, course.id));
             this._courses = new Map<string, Course>(this._courses);
+          })
+          .catch((error) => {
+            throw new Error("Error creating alias for course " + course.id + ": " + error);
           });
 
       })
@@ -115,6 +124,8 @@ export default class CourseController extends ApiControllerAbstract implements D
     this.api.deleteCourse({courseId: object.id} as DeleteCourseRequest)
       .then((response) => {
           this._courses.delete(object.id);
+          this._aliases.delete(object.alias);
+          this._aliases = new Map<string, string>(this._aliases);
           this._courses = new Map<string, Course>(this._courses);
       });
   }
@@ -135,15 +146,15 @@ export default class CourseController extends ApiControllerAbstract implements D
       return tempCourse;
   }
 
-  public getAll(): Course[] {
-      return Array.from(this._courses.values());
-  }
-
   get all(): Course[] {
       return Array.from(this._courses.values());
   }
 
   get courses(): Map<string, Course> {
       return this._courses;
+  }
+
+  get aliases(): Map<string, string> {
+    return this._aliases;
   }
 }

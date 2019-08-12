@@ -1,6 +1,17 @@
 <template>
     <div class="container-fluid bg-secondary mb-2">
         <div class="d-flex flex-row flex-nowrap">
+                <b-card v-if="areWorksheetsEmpty"
+                        bg-variant="light"
+                        class="card-custom"
+                    >
+                    <b-card-title>Dieser Kurs enthält noch keine Aufgabenblätter.</b-card-title>
+                    <b-button slot="footer"
+                              @click="$emit('loadWorksheets')"
+                        >
+                         Neu laden
+                    </b-button>
+                </b-card>
                 <b-card
                         v-for="worksheet in worksheets"
                         :key="worksheet.id"
@@ -11,10 +22,16 @@
                     <b-card-title>
                         {{worksheet.name}}
                     </b-card-title>
+                    <b-checkbox v-if="!isStudentsViewActive"
+                                class="custom-switch"
+                                v-on:change="updateWorksheetOnline(worksheet)"
+                                v-model="worksheet.isOnline"
+                    >Aufgabenblatt online
+                    </b-checkbox>
                     <b-button
                             class="bg-info"
                             slot="footer"
-                            @click="$emit('loadWorksheet', worksheet, false)"
+                            @click="$emit('openWorksheet', worksheet, false)"
                             v-show="isStudentsViewActive"
                     >{{$t('courseViewStudent.solveWorksheetButton')}}
                     </b-button>
@@ -27,21 +44,11 @@
                     <b-button v-if="!isStudentsViewActive"
                             class="bg-info"
                             slot="footer"
-                            @click="$emit('updateWorksheet', worksheet)"
+                            @click="$emit('openWorksheet', worksheet)"
                     >Bearbeiten
                     </b-button>
-                    <b-card-text slot="footer"
-                                 v-show="!isStudentsViewActive"
-                                 v-if="worksheet.isOnline"
-                                 >{{$t('worksheetList.worksheetOnline')}}
-                    </b-card-text>
-                    <b-card-text slot="footer"
-                                 v-show="!isStudentsViewActive"
-                                 v-else
-                    > {{$t('worksheetList.worksheetOffline')}}
-                    </b-card-text>
                 </b-card>
-            <b-card>
+            <b-card v-if="hasUserWritePermission && !isStudentsViewActive">
                 <b-card-title>
                     Neues Arbeitsblatt
                 </b-card-title>
@@ -51,7 +58,7 @@
                 <b-button
                         class="bg-info"
                         slot="footer"
-                        @click="$emit('addWorksheet', name)"
+                        @click="$emit('createWorksheet', name)"
                 >Hinzufügen
                 </b-button>
             </b-card>
@@ -63,7 +70,7 @@
 import Vue from 'vue';
 import Worksheet from "@/dataModel/Worksheet";
 export default Vue.extend({
-    props: ['worksheets', 'isStudentsViewActive'],
+    props: ['worksheets', 'isStudentsViewActive', 'hasUserWritePermission'],
   methods: {
       showWorksheet(sheet: Worksheet): boolean {
         if (this.isStudentsViewActive) {
@@ -72,6 +79,21 @@ export default Vue.extend({
           return true;
         }
       },
+        updateWorksheetOnline(sheet: Worksheet): void {
+          // we need to wait for v-model of worksheet.isOnline to catch up
+          Vue.nextTick(() => {
+              this.$emit('updateWorksheet', sheet);
+            });
+        },
+  },
+  computed: {
+    areWorksheetsEmpty(): boolean {
+      if (this.isStudentsViewActive) {
+        return this.worksheets.every((worksheet: Worksheet) => !worksheet.isOnline);
+      } else {
+        return this.worksheets.length === 0;
+      }
+    },
   },
 });
 </script>
@@ -83,10 +105,8 @@ export default Vue.extend({
     }
     .card {
         text-align: center;
-        min-width: 12rem;
-        min-height: 10rem;
-        max-width: 12rem;
-        max-height: 10rem;
-        margin: 10px 20px 10px 10px;
+        min-width: 14rem;
+        max-width: 14rem;
+        margin: 0 10px 0 0;
     }
 </style>

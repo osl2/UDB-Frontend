@@ -5,6 +5,7 @@ import User from "@/dataModel/User";
 import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 import LocalStorageController from "@/controller/LocalStorageController";
 
+
 export default class UserController extends ApiControllerAbstract implements UserService {
   private localStorageController = new LocalStorageController();
 

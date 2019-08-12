@@ -1006,7 +1006,7 @@ export class DefaultApi extends runtime.BaseAPI {
     public async getUUIDRaw(requestParameters: GetUUIDRequest): Promise<runtime.ApiResponse<AliasResponse>> {
         if (requestParameters.alias === null || requestParameters.alias === undefined) {
             throw new runtime.RequiredError('alias', 'Required parameter ' +
-                'requestParameters.alias was null or undefined when calling getWorksheet.');
+                'requestParameters.alias was null or undefined when calling getUUIDRaw.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};

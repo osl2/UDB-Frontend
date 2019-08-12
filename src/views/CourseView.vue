@@ -1,7 +1,7 @@
+import UserGroup from "@/dataModel/UserGroup";
 import UserGroup from "../dataModel/UserGroup";
 <template>
     <div>
-        help
         <div class="head">
             <h1>{{course.name}}</h1>
             <h2>{{course.description}}</h2>
@@ -11,7 +11,7 @@ import UserGroup from "../dataModel/UserGroup";
             <b-button v-b-popover.hover="$t('hoverText.switchToStudentsView')"
                       @click="toggleView"
                       class="studentViewButton"
-                      v-if="checkUserState()"
+                      v-if="hasUserWritePermission"
                       >
                 {{$t('buttonText.changeView')}}
             </b-button>
@@ -19,19 +19,18 @@ import UserGroup from "../dataModel/UserGroup";
         <div class="clear"></div>
         <div class="container">
             <h2 class="headings">Aufgabenblätter</h2>
-            <b-button v-if="checkUserState()"
-                      @click="createNewWorksheet">
-                Aufgabenblatt erstellen
-            </b-button>
             <WorksheetList
                     :worksheets="worksheets"
                     :isStudentsViewActive="isStudentsViewActive"
-                    @loadWorksheet="loadWorksheet"
+                    :hasUserWritePermission="hasUserWritePermission"
+                    @openWorksheet="openWorksheet"
+                    @loadWorksheets="loadWorksheets"
                     @deleteWorksheet="deleteWorksheet"
                     @updateWorksheet="updateWorksheet"
+                    @createWorksheet="createWorksheet"
             ></WorksheetList>
         </div>
-        <div class="container">
+        <div class="container" v-if="(worksheets.length !== 0)">
             <h2 class="headings">Lösungsblätter</h2>
             <SolutionsheetList
                     :worksheets="worksheets"
@@ -43,14 +42,13 @@ import UserGroup from "../dataModel/UserGroup";
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component, Vue, Watch} from "vue-property-decorator";
 import WorksheetList from "@/components/WorksheetList.vue";
 import SolutionsheetList from "@/components/SolutionsheetList.vue";
 import Course from "@/dataModel/Course.ts";
 import Worksheet from "@/dataModel/Worksheet.ts";
 import WorksheetController from "@/controller/WorksheetController";
 import CourseController from "@/controller/CourseController";
-import {userState} from "@/globalData/UserState";
 import UserGroup from "@/dataModel/UserGroup";
 import router from "@/router";
 import UserController from "@/controller/UserController";
@@ -71,13 +69,12 @@ export default class CourseView extends Vue {
   private worksheetController: WorksheetController = this.$store.getters.worksheetController;
   private userController: UserController = this.$store.getters.userController;
   private isStudentsViewActive: boolean = false;
-  private courseAlias!: string;
-  private courseId: string = "";
+  private worksheetsChanged: boolean = false;
 
   // Functions
 
-  public loadWorksheet(worksheet: Worksheet) {
-      if (this.userController.userState!.userGroup === UserGroup.Student) {
+  public openWorksheet(worksheet: Worksheet) {
+      if (this.isStudentsViewActive) {
           router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
       } else {
           router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
@@ -90,33 +87,38 @@ export default class CourseView extends Vue {
   }
 
 
-    public created() {
-      if (this.userController.userState!.userGroup === UserGroup.Unauthenticated) {
-        alert('Kein Zugriff auf diese Seite. Bitte Anmelden.');
-        router.push('/');
-      }
-      this.setIsStudentsViewActive();
-      this.courseController.load(this.$route.params.courseId);
-      this.courseAlias = this.$route.params.courseId;
-    }
+  public created() {
+    this.userController = this.$store.getters.userController;
+    this.courseController = this.$store.getters.courseController;
+    this.worksheetController = this.$store.getters.worksheetController;
 
-    private toggleView() {
+    if (this.userController.userState!.userGroup === UserGroup.Unauthenticated) {
+        this.userController.userState!.userGroup = UserGroup.Student;
+    }
+    this.setIsStudentsViewActive();
+    this.courseController.loadWithAlias(this.$route.params.courseId);
+  }
+
+  public toggleView() {
     this.isStudentsViewActive = !this.isStudentsViewActive;
   }
 
-  private  createNewWorksheet() {
-    router.push('/courseView/' + this.courseAlias + '/' + '');
+  public createWorksheet(name: string) {
+    this.worksheetController.create(new Worksheet("", name, [], false, false));
+    this.worksheetsChanged = true;
   }
 
-  private deleteWorksheet(worksheet: Worksheet) {
-    try {
-      this.worksheetController.remove(worksheet);
-    } catch (e) {
-      alert(e.message);
+  public deleteWorksheet(worksheet: Worksheet) {
+    if (confirm("Arbeitsblatt wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden!")) {
+      try {
+        this.worksheetController.remove(worksheet);
+      } catch (e) {
+        alert(e.message);
+      }
     }
   }
 
-  private updateWorksheet(worksheet: Worksheet) {
+  public updateWorksheet(worksheet: Worksheet) {
     try {
       this.worksheetController.save(worksheet);
     } catch (e) {
@@ -124,39 +126,68 @@ export default class CourseView extends Vue {
     }
   }
 
-  private checkUserState(): boolean {
-    if (this.userController.userState!.userGroup === UserGroup.Teacher) {
-      return true;
-    } else {
-      return false;
+  public loadWorksheets() {
+    const course = this.courseController.courses.get(this.courseId);
+    if (course !== undefined) {
+      this.worksheetController.loadChildren(course);
     }
   }
+
   private setIsStudentsViewActive() {
-    if (userState.user.userGroup === UserGroup.Teacher) {
-      this.isStudentsViewActive = false;
-    } else if (userState.user.userGroup === UserGroup.Student) {
+    if (this.userController.userState !== undefined) {
+      if (this.userController.userState.userGroup === UserGroup.Teacher) {
+        this.isStudentsViewActive = false;
+      } else if (this.userController.userState.userGroup === UserGroup.Student) {
+        this.isStudentsViewActive = true;
+      }
+    } else {
       this.isStudentsViewActive = true;
     }
   }
 
+  get hasUserWritePermission() {
+    return (this.userController.userState!.userGroup === UserGroup.Teacher);
+  }
+
+  get courseAlias() {
+    return this.$route.params.courseId;
+  }
+
+  get courseId() {
+    return this.courseController.aliases.get(this.courseAlias) || "";
+  }
+
   get course() {
-      let course;
-      try {
-          if (this.courseId === "") {
-            // id not known
-            course = this.courseController.getWithAlias(this.courseAlias);
-            this.courseId = course.id;
-          }
-          course = this.courseController.get(this.courseId);
-      } catch (e) {
-          return new Course("", "", "", "", []);
-      }
-      this.worksheetController.loadChildren(course);
-      return course;
+    return this.courseController.courses.get(this.courseId) || new Course("", "", "", "", []);
+  }
+
+  @Watch('course')
+  private onCourseChanged(value: Course, oldValue: Course) {
+    if (value === undefined || value.id === "") {
+      // course not yet loaded
+      return;
+    } else if (oldValue === undefined || oldValue.id === "" || value.id !== oldValue.id) {
+        // course loaded or changed, load worksheets of this course
+        this.loadWorksheets();
+    }
   }
 
   get worksheets() {
-      return this.worksheetController.all;
+    return this.worksheetController.all;
+  }
+
+  @Watch('worksheets')
+  private onWorksheetsChanged(value: Worksheet[], oldValue: Worksheet[]) {
+    if (!value.every((worksheet: Worksheet) => oldValue.includes(worksheet))) {
+      // if value and oldValue are different
+      this.courseController.save(new Course(
+        this.course.id,
+        this.course.name,
+        this.course.description,
+        this.course.alias,
+        value.map((worksheet: Worksheet) => worksheet.id),
+      ));
+    }
   }
 }
 </script>
