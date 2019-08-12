@@ -1,3 +1,4 @@
+import UserGroup from "../dataModel/UserGroup";
 <template>
     <div>
         <div class="head">
@@ -41,19 +42,16 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import WorksheetList from '@/components/WorksheetList.vue';
-import SolutionsheetList from '@/components/SolutionsheetList.vue';
-import Course from '@/dataModel/Course.ts';
-import Worksheet from '@/dataModel/Worksheet.ts';
-import ParentService from '@/services/ParentService';
-import SolutionService from '@/services/SolutionService';
-import WorksheetController from '@/controller/WorksheetController';
-import CourseController from '@/controller/CourseController';
-import {userState} from '@/globalData/UserState';
+import {Component, Vue} from "vue-property-decorator";
+import WorksheetList from "@/components/WorksheetList.vue";
+import SolutionsheetList from "@/components/SolutionsheetList.vue";
+import Course from "@/dataModel/Course.ts";
+import Worksheet from "@/dataModel/Worksheet.ts";
+import WorksheetController from "@/controller/WorksheetController";
+import CourseController from "@/controller/CourseController";
+import {userState} from "@/globalData/UserState";
 import UserGroup from "@/dataModel/UserGroup";
-import router from '@/router';
-import DataManagementService from "@/services/DataManagementService";
+import router from "@/router";
 import UserController from "@/controller/UserController";
 
 
@@ -68,7 +66,6 @@ import UserController from "@/controller/UserController";
 export default class CourseView extends Vue {
 
   // Data
-  private solutionsheet!: Uint8Array;
   private courseController: CourseController = new CourseController(this.$store.getters.api);
   private worksheetController: WorksheetController = new WorksheetController(this.$store.getters.api);
   private userController: UserController = new UserController(this.$store.getters.api);
@@ -78,7 +75,11 @@ export default class CourseView extends Vue {
   // Functions
 
   public loadWorksheet(worksheet: Worksheet) {
-      router.push('/studentWorksheet/' + worksheet.id);
+      if (this.userController.userState!.userGroup === UserGroup.Student) {
+          router.push('/studentCourseView/' + this.$route.params.courseId + '/' + worksheet.id);
+      } else {
+          router.push('/courseView/' + this.$route.params.courseId + '/' + worksheet.id);
+      }
   }
 
   public generateSolutionsheet(worksheet: Worksheet) {
@@ -102,7 +103,7 @@ export default class CourseView extends Vue {
   }
 
   private  createNewWorksheet() {
-    router.push('/teacherWorksheet');
+    router.push('/courseView/' + this.$route.params.courseId + '/' + '');
   }
 
   private deleteWorksheet(worksheet: Worksheet) {
