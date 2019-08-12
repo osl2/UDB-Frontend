@@ -15,7 +15,7 @@
             <div v-else-if="this.tasktype ==='text'" class="bg-secondary text-light">
                 Freitext Aufgabe
             </div>
-            <div v--else-if="this.tasktype ==='mc'" class="bg-secondary text-light">
+            <div v-else-if="this.tasktype ==='mc'" class="bg-secondary text-light">
                Multiple-Choice Aufgabe
             </div>
             <div v-else-if="this.tasktype ==='sql'" class="bg-secondary text-light">
