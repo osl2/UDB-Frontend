@@ -92,10 +92,10 @@
      */
     public addCourse(name: string, description: string) {
       try {
-        this.courseController.create(new Course("", name, description, "", []))
+        this.courseController.create(new Course("", name, description, "", []));
       } catch (e) {
         alert(e.message);
-      };
+      }
     }
 
     /*

@@ -71,15 +71,16 @@ export default class CourseView extends Vue {
   private worksheetController: WorksheetController = this.$store.getters.worksheetController;
   private userController: UserController = this.$store.getters.userController;
   private isStudentsViewActive: boolean = false;
-  private courseId!: string;
+  private courseAlias: string = this.$route.params.courseId;
+  private courseId: string = "";
 
   // Functions
 
   public loadWorksheet(worksheet: Worksheet) {
       if (this.userController.userState!.userGroup === UserGroup.Student) {
-          router.push('/studentCourseView/' + this.courseId + '/' + worksheet.id);
+          router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
       } else {
-          router.push('/courseView/' + this.courseId + '/' + worksheet.id);
+          router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
       }
   }
 
@@ -96,7 +97,7 @@ export default class CourseView extends Vue {
       }
       this.setIsStudentsViewActive();
       this.courseController.load(this.$route.params.courseId);
-      this.courseId = this.$route.params.courseId;
+      this.courseAlias = this.$route.params.courseId;
     }
 
     private toggleView() {
@@ -104,7 +105,7 @@ export default class CourseView extends Vue {
   }
 
   private  createNewWorksheet() {
-    router.push('/courseView/' + this.courseId + '/' + '');
+    router.push('/courseView/' + this.courseAlias + '/' + '');
   }
 
   private deleteWorksheet(worksheet: Worksheet) {
@@ -141,10 +142,16 @@ export default class CourseView extends Vue {
   get course() {
       let course;
       try {
+          if (this.courseId === "") {
+            // id not known
+            course = this.courseController.getWithAlias(this.courseAlias);
+            this.courseId = course.id;
+          }
           course = this.courseController.get(this.courseId);
       } catch (e) {
           return new Course("", "", "", "", []);
       }
+      this.worksheetController.loadChildren(course);
       return course;
   }
 
