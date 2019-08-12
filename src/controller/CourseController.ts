@@ -28,8 +28,8 @@ export default class CourseController extends ApiControllerAbstract implements D
       .then((response: Course[]) => {
         response.forEach((course: Course) => {
           this.api.getAlias({uuid: course.id} as GetAliasRequest)
-            .then((response: AliasResponse) => {
-              course.alias = response.alias;
+            .then((aliasResponse: AliasResponse) => {
+              course.alias = aliasResponse.alias;
               this._courses = new Map<string, Course>(this._courses.set(course.id, course));
             });
         });
