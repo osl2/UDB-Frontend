@@ -109,13 +109,27 @@ export default class StudentWorksheet extends Vue {
 
     // methods
     public exportSheet() {
-        alert('qird auch noch implementiert');
+        this.worksheetController.exportObject(this.worksheet, this.solutions);
     }
-    public importSheet() {
-        alert("wird noch implementiert");
+
+    public importSheet(event: Event) {
+        const target = event.target as (HTMLInputElement & Event);
+        const files = target!.files!;
+        this.worksheetController.importObject(files.item(0)!)
+            .then((sheetData: [string, Map<string, Solution>]) => {
+                if (this.worksheet.id === sheetData[0]) {
+                    this.solutions = sheetData[1];
+                    alert("Wenn Aufgaben durch deinen Lehrer verändert wurden, " +
+                        "ist deine bisherige Lösung nicht mehr verfügbar!");
+                } else {
+                    alert("Lösung passt nicht zum aktuellen Aufgabenblatt!");
+                }
+            },
+        );
     }
+
     public exportSheetAsPDF() {
-      alert('auch hier folgt noch eine Implementierung');
+        this.worksheetController.exportPDF(this.worksheet, this.solutions);
     }
 
     public openTask(task: Task, subtasks: Subtask[]) {
