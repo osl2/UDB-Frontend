@@ -7,6 +7,7 @@
             </div>
             <WorksheetInstructions class="instructionContainer"
                                    v-for="task in tasks"
+                                   :key="task.id"
                                    :task="task"
                                    @openTask="openTask"
                 >

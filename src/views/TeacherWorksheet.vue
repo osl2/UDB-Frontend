@@ -13,11 +13,13 @@
         </b-form-group>
     </div>
         <div>
-            <TaskCreation v-for="task in tasks" :databases="databases"
-                                                :taskIndex="index"
-                                                :taskId="task.id"
-                                                @save="save"
-                                                @delete="deleteTask"
+            <TaskCreation v-for="task in tasks"
+                          :key="task.index"
+                          :databases="databases"
+                          :taskIndex="index"
+                          :taskId="task.id"
+                          @save="save"
+                          @delete="deleteTask"
             ></TaskCreation>
         </div>
         <b-button @click="newTask"> Teilaufgabe erstellen</b-button>

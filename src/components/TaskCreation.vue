@@ -15,11 +15,13 @@
             <b-form-select v-model="dbId" :options="dbOptions"></b-form-select>
         </div>
         <div v-if="dbOptions !== null">
-            <SubtaskCreation v-for="subtask in subtasks"    :subindex="subtask.index"
-                                                            :dbId="dbId"
-                                                            :subTaskId="subtask.id"
-                                                            @save="save"
-                                                            @deleteSubtask="deleteSubtask"
+            <SubtaskCreation v-for="subtask in subtasks"
+                             :key="subtask.index"
+                             :subindex="subtask.index"
+                             :dbId="dbId"
+                             :subTaskId="subtask.id"
+                             @save="save"
+                             @deleteSubtask="deleteSubtask"
             ></SubtaskCreation>
         </div>
         <b-button @click="newSubtask"> Teilaufgabe erstellen</b-button>

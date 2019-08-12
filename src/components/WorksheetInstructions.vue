@@ -4,7 +4,9 @@
             <h3>{{task.name}}</h3>
             <b-button @click="$emit('openTask', task, subtasks)">Bearbeiten</b-button>
 
-            <b-list-group-item v-for="subtask in subtasks">
+            <b-list-group-item v-for="subtask in subtasks"
+                               :key="subtask.id"
+            >
             {{subtask.instruction}}
             </b-list-group-item>
         </b-list-group>

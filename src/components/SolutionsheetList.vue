@@ -3,6 +3,7 @@
         <div class="d-flex flex-row flex-nowrap">
                 <b-card
                         v-for="worksheet in worksheets"
+                        :key="worksheet.id"
                         bg-variant="light"
                         class="card"
                         v-show="showWorksheet(worksheet)"

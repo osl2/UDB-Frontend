@@ -7,6 +7,7 @@
                 <b-navbar-nav>
                     <b-nav-item-dropdown :text="$t('navbar.courseDropdown')">
                         <b-dropdown-item v-for="course in courses"
+                                         :key="course.id"
                                          @click="$emit('loadCourse', course)">
                             {{course.name}}
                         </b-dropdown-item>
@@ -16,6 +17,7 @@
                 <b-navbar-nav>
                     <b-nav-item-dropdown :text="$t('navbar.databaseDropdown')">
                         <b-dropdown-item v-for="database in databases"
+                                         :key="database.id"
                                          @click="$emit('showDatabase', database)">
                             {{database.name}}
                         </b-dropdown-item>
