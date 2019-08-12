@@ -158,9 +158,10 @@ export class DefaultApi extends runtime.BaseAPI {
 
     constructor() {
       const ls = new LocalStorageController();
-      const currentUser: User | undefined = Object.setPrototypeOf(ls.get("userState"), User.prototype);
+      const currentUser: User | undefined = ls.get("userState");
       if (currentUser !== undefined) {
-        super(new Configuration({accessToken: currentUser.token}));
+          const user: User = Object.setPrototypeOf(currentUser, User.prototype);
+          super(new Configuration({accessToken: user.token}));
       } else {
         super(new Configuration());
       }
