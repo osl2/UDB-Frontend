@@ -48,7 +48,7 @@ export default new Router({
       component: StudentWorksheet,
     },
     {
-      path: '/teacherWorksheet',
+      path: '/teacherWorksheet/:worksheetId',
       name: 'teacherWorksheet',
       component: TeacherWorksheet,
     },
