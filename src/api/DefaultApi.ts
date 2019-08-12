@@ -117,6 +117,10 @@ export interface GetUUIDRequest {
     alias: string;
 }
 
+export interface GetAliasRequest {
+    uuid: string;
+}
+
 export interface VerifySubtaskSolutionRequest {
     subtaskId: string;
     solution: Solution;
@@ -1042,6 +1046,54 @@ export class DefaultApi extends runtime.BaseAPI {
         const response = await this.getUUIDRaw(requestParameters);
         return await response.value();
     }
+
+  /**
+   * Gets the alias when given uuid
+   * Get a string (UUID)
+   */
+  public async getAliasRaw(requestParameters: GetAliasRequest): Promise<runtime.ApiResponse<AliasResponse>> {
+    if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
+      throw new runtime.RequiredError('uuid', 'Required parameter ' +
+        'requestParameters.uuid was null or undefined when calling getWorksheet.');
+    }
+
+    const queryParameters: runtime.HTTPQuery = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+      const token = this.configuration.accessToken || this.configuration.apiKey;
+      const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+      if (tokenString) {
+        headerParameters.Authorization = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request({
+      path: `/alias/{uuid}`.replace(`{${"uuid"}}`,
+        encodeURIComponent(String(requestParameters.uuid))),
+      method: 'GET',
+      headers: headerParameters,
+      query: queryParameters,
+    });
+
+    return new runtime.JSONApiResponse(response, (json: any) => {
+      return {
+        alias: json.alias,
+        uuid: json.object_id,
+        objectType: json.object_type,
+      } as AliasResponse;
+    });
+  }
+
+  /**
+   * Gets the uuid when given alias
+   * Get a string (UUID)
+   */
+  public async getAlias(requestParameters: GetAliasRequest): Promise<AliasResponse> {
+    const response = await this.getAliasRaw(requestParameters);
+    return await response.value();
+  }
 
     /**
      * Gets a list of all `Subtask` entities.

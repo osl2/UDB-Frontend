@@ -3,7 +3,7 @@ import {
   AliasResponse,
   CreateCourseRequest,
   DefaultApi,
-  DeleteCourseRequest,
+  DeleteCourseRequest, GetAliasRequest,
   GetCourseRequest,
   ObjectType,
   UpdateCourseRequest,
@@ -27,7 +27,11 @@ export default class CourseController extends ApiControllerAbstract implements D
     this.api.getCourses()
       .then((response: Course[]) => {
         response.forEach((course: Course) => {
-            this._courses = new Map<string, Course>(this._courses.set(course.id, course));
+          this.api.getAlias({uuid: course.id} as GetAliasRequest)
+            .then((response: AliasResponse) => {
+              course.alias = response.alias;
+              this._courses = new Map<string, Course>(this._courses.set(course.id, course));
+            });
         });
       });
   }
@@ -41,8 +45,12 @@ export default class CourseController extends ApiControllerAbstract implements D
     const courseTemp = this._courses.get(id);
     if (courseTemp === undefined && id !== undefined) {
       this.api.getCourse({courseId: id} as GetCourseRequest)
-        .then((response: Course) => {
-          this._courses = new Map<string, Course>(this._courses.set(response.id, response));
+        .then((course: Course) => {
+          this.api.getAlias({uuid: course.id} as GetAliasRequest)
+            .then((response: AliasResponse) => {
+              course.alias = response.alias;
+              this._courses = new Map<string, Course>(this._courses.set(course.id, course));
+            });
         });
     }
   }
@@ -58,7 +66,10 @@ export default class CourseController extends ApiControllerAbstract implements D
       this.api.getUUID({alias})
         .then((response: AliasResponse) => {
           if (response.objectType === ObjectType.COURSE) {
-            this.load(response.uuid);
+            this.api.getCourse({courseId: response.uuid} as GetCourseRequest)
+              .then((course: Course) => {
+                this._courses = new Map<string, Course>(this._courses.set(course.id, course));
+              });
           }
         });
     }
