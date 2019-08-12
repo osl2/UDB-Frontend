@@ -1,5 +1,6 @@
 <template>
   <div>
+    <HelpButton helpmsg="Hier können SQLite Datenbanken hochgeladen werden."></HelpButton>
     <DatabaseComponent elementId="sandbox-dropzone-db" showExportImport="true" loadSandboxLocalStorageDb="true" ref="databaseComponent"
                        @databaseExists="eventDbExists" @reset="reset" ></DatabaseComponent>
     <div v-if="databaseExists" :databaseExists:sync="databaseExists">
@@ -42,6 +43,7 @@
   import DatabaseComponent from '@/components/DatabaseComponent.vue';
   import QueryResult from '@/dataModel/QueryResult';
   import SQLExecutor from "@/controller/SQLExecutor";
+  import HelpButton from "@/components/HelpButton.vue";
 
 
   @Component({
@@ -50,6 +52,7 @@
       QueryResultComp,
       PointAndClick,
       DatabaseComponent,
+      HelpButton
     },
   })
 
