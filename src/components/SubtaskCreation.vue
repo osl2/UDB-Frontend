@@ -29,7 +29,7 @@
         <!-- selects the subtask type -->
         <b-form-select v-model="tasktype" :options="typeOptions"></b-form-select>
 
-        <!-- displays options to creat a subtask of the type instruction task.
+        <!-- displays options to create or update a subtask of the type instruction task.
             it has an area to input the task instruction-->
 
         <div v-if="tasktype === 'inst'">
@@ -37,7 +37,7 @@
         </div>
 
 
-        <!-- displays options to create a subtask of the type PlainTextTask.
+        <!-- displays options to create or update a subtask of the type PlainTextTask.
         it has an area to input the task instructions,
         a radio to choose whether a teachersolution should exists.
         if a teacher solution should exist it also has:
@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <!-- displays options to create a subtask of the type MultipleChoiceTask.
+        <!-- displays options to create or update a subtask of the type MultipleChoiceTask.
        includes an area to input the task instructions,
        an area to input all possible answers for the multiple choice task
        a radio to choose whether a teachersolution should exists
@@ -101,7 +101,7 @@
             </div>
         </div>
 
-        <!-- displays options to create a subtask of the type SqlTask.
+        <!-- displays options to create or update a subtask of the type SqlTask.
                includes an area to input the task instructions
                 a radio to choose which kind of sql statements can be used (no restrictions
                     or statements that can only select from, but not alter, the database )
@@ -150,7 +150,6 @@
         </div>
 
         <b-button @click="saveSubtask"> Teilaufgabe speichern</b-button>
-        <b-button class="btn btn-lg btn-block" v-b-modal.modal-deleteSubtask>Teilaufgabe löschen</b-button>
         <b-button @click="deleteSubtask"> Teilaufgabe löschen</b-button>
         <b-button @click="changeSize">Teilaufgabe minimieren</b-button>
 
@@ -174,9 +173,9 @@ import SubtaskTypes from '@/dataModel/SubtaskTypes';
 
 export default Vue.extend ({
     /*
-     *  subtask: either null (if a subtask is created) or a subtask if an existing subtask is edited
-     *  subindex: indicates the index of the subtask in context of the task it belongs to
-     *  dbId: the Id of the database assigned to the task, It's needed to create a solution for a sql subtask
+     subtask: either null (if a subtask is created) or a subtask if an existing subtask is edited
+     subindex: indicates the index of the subtask in context of the task it belongs to
+     dbId: the Id of the database assigned to the task, It's needed to create a solution for a sql subtask
      */
     props: ['subtaskId', 'subindex', 'dbId'],
 
@@ -219,9 +218,9 @@ export default Vue.extend ({
     },
 
     /*
-     * the created method does nothing if an empty subtask(Instruction task without id or instruction)
-     * is passed to the component. otherwise it updates the variables of
-     * the component to match the task it has been passed
+     the created method does nothing if an empty subtask(Instruction task without id or instruction)
+     is passed to the component. otherwise it updates the variables of
+     the component to match the task it has been passed
      */
     created() {
         if (this.subtaskId === '') {
@@ -231,6 +230,7 @@ export default Vue.extend ({
         }
 
     },
+
     computed: {
         subtask: {
             get(): Subtask {
@@ -241,8 +241,15 @@ export default Vue.extend ({
             },
         },
     },
+
     methods: {
+        /*
+        sets the variables of the component to match the contents of the given subtask.
+        depending on the type of the subtask different variables are updated
+        subtask: the subtask that should be displayed in this component
+        */
         setSubVars( subtask: Subtask) {
+
             if (subtask.type === SubtaskTypes.Instruction) {
                 this.tasktype = 'inst';
                 this.createdSubtaskId = subtask.id;
@@ -290,10 +297,10 @@ export default Vue.extend ({
         },
 
         /*
-         * method used in the creation of a multiple choice task
-         * adds the last entered answer of a multiple choice task to its array of all possible answers
-         * withText: determines whether answerOptionsText is updated as well. It needs to be updaten when a new
-         *              answer option is added but not when loading an existing subtask
+         method used in the creation of a multiple choice task
+         adds the last entered answer of a multiple choice task to its array of all possible answers
+         withText: determines whether answerOptionsText is updated as well. It needs to be updaten when a new
+                      answer option is added but not when loading an existing subtask
          */
         addAnswerOption(withText: boolean) {
             if (this.answerOption === '') {
@@ -308,15 +315,16 @@ export default Vue.extend ({
             this.index ++;
 
         },
+
         /*
-         * changes the value of the showfull variable. the method is used to minimize or maximize the subtask
+         changes the value of the showfull variable. the method is used to minimize or maximize the subtask
          */
         changeSize() {
             this.showfull = !this.showfull;
         },
 
         /*
-         * creates a subtask based on the options the user selected and emits it to the TaskCreationComponent
+         creates a subtask based on the options the user selected and emits it to the TaskCreationComponent
          */
         saveSubtask() {
             let createdSubtask: Subtask;
@@ -361,6 +369,10 @@ export default Vue.extend ({
             }
             },
 
+        /*
+        sends a request to delete the subtask to the server and emits the delete function to the task
+        to delete the reference of the subtask
+         */
         deleteSubtask() {
             if (confirm('Teilaufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
                 if (this.createdSubtaskId !== '') {

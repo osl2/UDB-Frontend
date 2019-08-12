@@ -1,6 +1,7 @@
 <template>
     <div>
         {{worksheet.name}}
+        <!--Section to set options needed for a worksheet -->
     <div>
         <b-form-input v-model="worksheetName" placeholder="Name des Worksheets"></b-form-input>
         <b-form-group label="Ist das Worksheet für Schüler online?">
@@ -13,6 +14,8 @@
             <b-form-radio v-model="isSolutionOnline" :value="false">nein</b-form-radio>
         </b-form-group>
     </div>
+
+        <!--Displays a TaskCreation Component for every Task in the worksheet -->
         <div>
             <TaskCreation v-for="task in tasks"
                           :key="task.index"
@@ -23,7 +26,7 @@
                           @delete="deleteTask"
             ></TaskCreation>
         </div>
-
+        <!--buttons to create a new Task assigned to the worksheet and to return to the course view -->
         <b-button @click="newTask"> Aufgabe erstellen</b-button>
         <b-button @click="toCourseView"> zurück zur Übersicht</b-button>
     </div>
@@ -54,13 +57,26 @@ export default class TeacherWorksheet extends Vue {
     private databaseController = this.$store.getters.databaseController();
     private worksheetController = this.$store.getters.worksheetController();
     private courseController = this.$store.getters.courseController();
+
+    /*
+    adds an empty task to the tasks assigned to the worksheet.
+    Once a subtaskof the task is saved the entry will be updated
+     */
     public newTask() {
         this.tasks.push({taskId: '', index: this.index});
         this.index++;
     }
+    /*
+    returns all databases of the teacher
+     */
     get databases() {
         return this.databaseController.all;
     }
+
+    /*
+    returns a worksheet and calls the setVar method to update the variables to match the worksheet.
+    this is used when an existing worksheet is loaded not when a new one is created
+     */
     get worksheet(): Worksheet {
         const tempWorksheet = this.worksheetController.get(this.$route.params.worksheetId);
         this.setSheetVars(tempWorksheet);
@@ -68,6 +84,10 @@ export default class TeacherWorksheet extends Vue {
 
     }
 
+    /*
+    updates the taskid in the array of taskids assigned to the worksheet. this is used when a new task was
+    created and saved as it had no id at that point
+     */
     public addTask(index: number, taskid: string) {
 
         for (const task of this.tasks) {
@@ -78,6 +98,10 @@ export default class TeacherWorksheet extends Vue {
             }
         }
     }
+
+    /*
+    created method, called when the component is created. loads contents of a worksheed if needed
+     */
     public created() {
         this.courseController.load(this.$route.params.courseId);
         if (this.$route.params.worksheetId === '') {
@@ -87,6 +111,12 @@ export default class TeacherWorksheet extends Vue {
 
         }
     }
+
+    /*
+    saves the worksheet and sends an update request to the server
+    index: index where tha task should be found in array. this is needed to ensure that the order of the tasks stays
+            the same and is not influenced by the order in which the tasks call the save function
+     */
     public save(index: number, taskid: string) {
         let tempWs: Worksheet;
         this.addTask(index, taskid);
@@ -104,9 +134,12 @@ export default class TeacherWorksheet extends Vue {
         } else {
             this.worksheetController.save(tempWs);
         }
-
-
     }
+
+    /*
+     deletes the reference of the task in the array of tasks
+     taskIndex: the index of the task that should be deleted
+     */
     public deleteTask(taskIndex: number) {
         const tempTasks: object[] = [];
         let tempindex: number = 0;
@@ -118,6 +151,11 @@ export default class TeacherWorksheet extends Vue {
         }
 
     }
+
+    /*
+    sets the variables of the component to match  the content of the worksheet
+    worksheet: the worksheet that should be loaded in the component
+     */
     private setSheetVars( worksheet: Worksheet) {
         this.index = 1;
         this.worksheetName = worksheet.name;
@@ -129,11 +167,14 @@ export default class TeacherWorksheet extends Vue {
             this.tasks.push({taskId: taskid, index: this.index});
             this.index++;
         }
-
     }
-    toCourseView(){
-        if (confirm('zurück zu Übersicht? Stelle sicher, dass alle Teilaufgaben gespeichert wurden, ansonsten sind sie ' +
-            'nicht im Aufgabenblatt enthalten')) {
+
+    /*
+    method to leave the teacherworksheet view and return to the courseview
+     */
+    private toCourseView() {
+        if (confirm('zurück zu Übersicht? Stelle sicher, dass alle Teilaufgaben gespeichert wurden,' +
+            ' ansonsten sind sie nicht im Aufgabenblatt enthalten')) {
             this.$router.push('/courseView/' + this.$route.params.courseId);
         }
     }
