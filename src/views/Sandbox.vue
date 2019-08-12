@@ -36,87 +36,87 @@
 
 
 <script lang="ts">
-  import {Component, Vue} from 'vue-property-decorator';
-  import Query from '@/components/Query.vue';
-  import QueryResultComp from '@/components/QueryResult.vue';
-  import PointAndClick from '@/components/PointAndClick.vue';
-  import DatabaseComponent from '@/components/DatabaseComponent.vue';
-  import QueryResult from '@/dataModel/QueryResult';
-  import SQLExecutor from "@/controller/SQLExecutor";
-  import HelpButton from "@/components/HelpButton.vue";
+import {Component, Vue} from 'vue-property-decorator';
+import Query from '@/components/Query.vue';
+import QueryResultComp from '@/components/QueryResult.vue';
+import PointAndClick from '@/components/PointAndClick.vue';
+import DatabaseComponent from '@/components/DatabaseComponent.vue';
+import QueryResult from '@/dataModel/QueryResult';
+import SQLExecutor from "@/controller/SQLExecutor";
+import HelpButton from "@/components/HelpButton.vue";
 
 
-  @Component({
-    components: {
-      Query,
-      QueryResultComp,
-      PointAndClick,
-      DatabaseComponent,
-      HelpButton
-    },
-  })
+@Component({
+  components: {
+    Query,
+    QueryResultComp,
+    PointAndClick,
+    DatabaseComponent,
+    HelpButton,
+  },
+})
 
-  export default class Sandbox extends Vue {
+export default class Sandbox extends Vue {
 
-    // Data
-    public isPointAndClickActive: boolean = false;
-    public queryResult: QueryResult | null = null;
-    private databaseExists: boolean = false;
-    private sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
+  // Data
+  public isPointAndClickActive: boolean = false;
+  public queryResult: QueryResult | null = null;
+  private databaseExists: boolean = false;
+  private sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
 
-    get database() {
+  get database() {
 
-      const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-      if (dbComponent) {
-        return dbComponent.$data.database;
-      } else {
-        return null;
-      }
+    const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+    if (dbComponent) {
+      return dbComponent.$data.database;
+    } else {
+      return null;
     }
+  }
 
 
-    // Computed Properties
-    private get dynamicComponent() {
-      if (this.isPointAndClickActive) {
-        return PointAndClick;
-      } else {
-        return Query;
-      }
+  // Computed Properties
+  private get dynamicComponent() {
+    if (this.isPointAndClickActive) {
+      return PointAndClick;
+    } else {
+      return Query;
     }
+  }
 
-    // Methods
+  // Methods
 
-    private executeQuery(query: string) {
+  private executeQuery(query: string) {
 
-      const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-      try {
-        const dbNumber = dbComponent.$data.databaseNumber;
-        this.queryResult = this.sqlExecutor.executeQuery(dbNumber, query, 0);
-        const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
-        window.scrollTo(0, top + 200);
-        dbComponent.loadMetaData();
-      } catch (error) {
-        alert(error.message);
-        return;
-      }
-
+    const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+    try {
+      const dbNumber = dbComponent.$data.databaseNumber;
+      this.queryResult = this.sqlExecutor.executeQuery(dbNumber, query, 0);
+      const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
+      window.scrollTo(0, top + 200);
+      dbComponent.loadMetaData();
+    } catch (error) {
+      alert(error.message);
+      return;
     }
-
-    private eventDbExists(val: boolean) {
-      this.databaseExists = val;
-    }
-
-    private reset() {
-      this.queryResult = null;
-
-    }
-
-    private switchComponent() {
-      this.isPointAndClickActive = !this.isPointAndClickActive;
-    }
-
 
   }
+
+  private eventDbExists(val: boolean) {
+    this.databaseExists = val;
+  }
+
+  private reset() {
+    this.queryResult = null;
+
+  }
+
+  private switchComponent() {
+    this.isPointAndClickActive = !this.isPointAndClickActive;
+  }
+
+
+}
 </script>
 
 <style scoped>
