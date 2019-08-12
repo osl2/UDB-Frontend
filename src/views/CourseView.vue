@@ -71,7 +71,7 @@ export default class CourseView extends Vue {
   private worksheetController: WorksheetController = this.$store.getters.worksheetController;
   private userController: UserController = this.$store.getters.userController;
   private isStudentsViewActive: boolean = false;
-  private courseAlias: string = this.$route.params.courseId;
+  private courseAlias!: string;
   private courseId: string = "";
 
   // Functions
