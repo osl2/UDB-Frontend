@@ -25,7 +25,6 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
 import TaskController from "@/controller/TaskController";
 import SubtaskController from "@/controller/SubtaskController";
 import Solution from "@/dataModel/Solution";
-import store from "@/store/index.ts";
 
 
 export default class WorksheetController extends ApiControllerAbstract
@@ -100,6 +99,7 @@ export default class WorksheetController extends ApiControllerAbstract
      */
     public exportPDF(object: Worksheet, solutions: Map<string, Solution>): void {
         // TODO Texte auslagern sodass diese übersetzt werden können!
+        const store = require('@/store').default;
         const taskController: TaskController = store.getters.taskController;
         const subtaskController: SubtaskController = store.getters.subtaskController;
 
@@ -318,6 +318,7 @@ export default class WorksheetController extends ApiControllerAbstract
      */
     public getSolution(sheet: Worksheet): void {
         // TODO Texte auslagern sodass diese übersetzt werden können!
+        const store = require('@/store').default;
         const taskController: TaskController = store.getters.taskController;
         const subtaskController: SubtaskController = store.getters.subtaskController;
 
