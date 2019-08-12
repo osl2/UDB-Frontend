@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "preserve": "cp node_modules/sql.js/dist/sql-wasm.wasm public/static/wasm/sql-wasm.wasm",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "postbuild": "mkdir -p dist/static/wasm/; cp node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm",
@@ -16,7 +15,8 @@
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "@fortawesome/vue-fontawesome": "^0.1.6",
     "@types/sql.js": "^1.0.2",
-    "@types/pdfmake": "^0.1.8",    "bootstrap": "^4.3.1",
+    "@types/pdfmake": "^0.1.8",
+    "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.0.0-rc.26",
     "core-js": "^2.6.5",
     "font-awesome": "^4.7.0",

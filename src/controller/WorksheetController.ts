@@ -25,6 +25,7 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
 import TaskController from "@/controller/TaskController";
 import SubtaskController from "@/controller/SubtaskController";
 import Solution from "@/dataModel/Solution";
+import store from "@/store/index.ts";
 
 
 export default class WorksheetController extends ApiControllerAbstract
@@ -99,9 +100,8 @@ export default class WorksheetController extends ApiControllerAbstract
      */
     public exportPDF(object: Worksheet, solutions: Map<string, Solution>): void {
         // TODO Texte auslagern sodass diese übersetzt werden können!
-        /* TODO Uncomment when store is implemented
-        let taskController: TaskController = this.$store.getters.taskController;
-        let subtaskController: SubtaskController = this.$store.getters.subtaskController;
+        const taskController: TaskController = store.getters.taskController;
+        const subtaskController: SubtaskController = store.getters.subtaskController;
 
         if (pdfMake.vfs === undefined) {
             pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -214,8 +214,6 @@ export default class WorksheetController extends ApiControllerAbstract
 
         pdfMake.createPdf(docDefinition)
             .download('Print' + object.name.replace(' ', '_') + '_' + datestring + '.pdf');
-         */
-        throw new Error("Method not implemented.");
     }
 
     /**
@@ -320,9 +318,8 @@ export default class WorksheetController extends ApiControllerAbstract
      */
     public getSolution(sheet: Worksheet): void {
         // TODO Texte auslagern sodass diese übersetzt werden können!
-        /* TODO Uncomment when store is implemented
-        let taskController: TaskController = this.$store.getters.taskController;
-        let subtaskController: SubtaskController = this.$store.getters.subtaskController;
+        const taskController: TaskController = store.getters.taskController;
+        const subtaskController: SubtaskController = store.getters.subtaskController;
 
         if (pdfMake.vfs === undefined) {
             pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -435,8 +432,6 @@ export default class WorksheetController extends ApiControllerAbstract
 
         pdfMake.createPdf(docDefinition)
             .download('Solution_' + sheet.name.replace(' ', '_') + '.pdf');
-        */
-        throw new Error("Method not implemented.");
     }
 
     public get(id: string): Worksheet {
