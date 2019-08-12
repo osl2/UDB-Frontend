@@ -142,7 +142,9 @@
     }
 
     private deleteDatabase(database: Database) {
-      this.databaseController.remove(database);
+      if (confirm('Datenbank wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
+        this.databaseController.remove(database);
+      }
     }
 
   }

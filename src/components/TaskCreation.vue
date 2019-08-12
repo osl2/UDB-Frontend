@@ -33,10 +33,7 @@
 <script lang ="ts" >
 import Vue from 'vue';
 import SubtaskCreation from '@/components/SubtaskCreation.vue';
-import Subtask from "@/dataModel/Subtask";
-import InstructionTask from "@/dataModel/InstructionTask";
 import Task from '@/dataModel/Task';
-import TaskController from "@/controller/TaskController";
 
 export default Vue.extend({
     props: ['databases', 'taskindex', 'taskId'],
@@ -51,7 +48,7 @@ export default Vue.extend({
             index: 1,
             subtasks: [{subtaskId: '', index: 0}],
             subtaskIds: [] as string[],
-            taskController: new TaskController(this.$store.getters.api),
+            taskController: this.$store.getters.taskController(),
 
         };
     },
@@ -141,12 +138,15 @@ export default Vue.extend({
         },
 
         deleteTask() {
-            if (this.taskId !== '') {
-                this.taskController.remove(this.task);
-            }
-            this.$emit('delete', this.taskindex);
-
+            if (confirm('Aufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
+                if (this.taskId !== '') {
+                    this.taskController.remove(this.task);
+                }
+                this.$emit('delete', this.taskindex);
             },
+
+            }
+
         },
 
 

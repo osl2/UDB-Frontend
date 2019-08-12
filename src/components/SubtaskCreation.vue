@@ -150,6 +150,7 @@
         </div>
 
         <b-button @click="saveSubtask"> Teilaufgabe speichern</b-button>
+        <b-button class="btn btn-lg btn-block" v-b-modal.modal-deleteSubtask>Teilaufgabe löschen</b-button>
         <b-button @click="deleteSubtask"> Teilaufgabe löschen</b-button>
         <b-button @click="changeSize">Teilaufgabe minimieren</b-button>
 
@@ -170,7 +171,6 @@ import SqlSolution from '@/dataModel/SqlSolution';
 import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 import {ResultSet} from "@/dataModel/ResultSet";
 import SubtaskTypes from '@/dataModel/SubtaskTypes';
-import SubtaskController from "@/controller/SubtaskController";
 
 export default Vue.extend ({
     /*
@@ -195,7 +195,7 @@ export default Vue.extend ({
                 {value: 'mc', text: 'Multiple-Choice Aufgabe'},
                 {value: 'sql', text: 'Sql Aufgabe'},
             ],
-            subtaskController: new SubtaskController(this.$store.getters.api),
+            subtaskController: this.$store.getters.subtask,
 
             // variables needed for a subtask with a solution
             solutionverifyable: false,
@@ -353,7 +353,6 @@ export default Vue.extend ({
                     this.doesRowOrderMatter, this.solutionvisible, this.allowedSqlStatements);
             }
             if (this.subtaskId === '') {
-            // TO-DO warten einbauen
                 this.subtaskController.create(createdSubtask);
 
                 this.$emit('save', this.subindex, createdSubtask.id);
@@ -363,10 +362,13 @@ export default Vue.extend ({
             },
 
         deleteSubtask() {
-            if (this.createdSubtaskId !== '') {
-                this.subtaskController.remove(this.subtask);
+            if (confirm('Teilaufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
+                if (this.createdSubtaskId !== '') {
+                    this.subtaskController.remove('');
+                }
+                this.$emit('delete', this.subindex);
             }
-            this.$emit('delete', this.subindex);
+
         },
 
 

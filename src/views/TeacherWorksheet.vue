@@ -7,6 +7,7 @@
             <b-form-radio v-model="isOnline" :value="true">ja</b-form-radio>
             <b-form-radio v-model="isOnline" :value="false">nein</b-form-radio>
         </b-form-group>
+
         <b-form-group label="Ist das Lösungsblatt für Schüler einsehbar?">
             <b-form-radio v-model="isSolutionOnline" :value="true">ja</b-form-radio>
             <b-form-radio v-model="isSolutionOnline" :value="false">nein</b-form-radio>
@@ -22,7 +23,9 @@
                           @delete="deleteTask"
             ></TaskCreation>
         </div>
-        <b-button @click="newTask"> Teilaufgabe erstellen</b-button>
+
+        <b-button @click="newTask"> Aufgabe erstellen</b-button>
+        <b-button @click="toCourseView"> zurück zur Übersicht</b-button>
     </div>
 </template>
 
@@ -30,10 +33,7 @@
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-property-decorator';
 import TaskCreation from '@/components/TaskCreation.vue';
-import DatabaseController from "@/controller/DatabaseController";
-import WorksheetController from "@/controller/WorksheetController";
 import Worksheet from '@/dataModel/Worksheet';
-import CourseController from "@/controller/CourseController";
 
 
 
@@ -44,6 +44,20 @@ import CourseController from "@/controller/CourseController";
 })
 export default class TeacherWorksheet extends Vue {
 
+
+    public worksheetName!: string;
+    public isOnline: boolean = false;
+    public isSolutionOnline: boolean = false;
+    public index: number = 1;
+    public tasks = [{taskId: '', index: 0}];
+    public taskIds: string[] = [];
+    private databaseController = this.$store.getters.databaseController();
+    private worksheetController = this.$store.getters.worksheetController();
+    private courseController = this.$store.getters.courseController();
+    public newTask() {
+        this.tasks.push({taskId: '', index: this.index});
+        this.index++;
+    }
     get databases() {
         return this.databaseController.all;
     }
@@ -52,19 +66,6 @@ export default class TeacherWorksheet extends Vue {
         this.setSheetVars(tempWorksheet);
         return tempWorksheet;
 
-    }
-    public worksheetName!: string;
-    public isOnline: boolean = false;
-    public isSolutionOnline: boolean = false;
-    public index: number = 1;
-    public tasks = [{taskId: '', index: 0}];
-    public taskIds: string[] = [];
-    private databaseController: DatabaseController = new DatabaseController(this.$store.getters.api);
-    private worksheetController: WorksheetController = new WorksheetController(this.$store.getters.api);
-    private courseController: CourseController = new CourseController(this.$store.getters.api);
-    public newTask() {
-        this.tasks.push({taskId: '', index: this.index});
-        this.index++;
     }
 
     public addTask(index: number, taskid: string) {
@@ -129,6 +130,12 @@ export default class TeacherWorksheet extends Vue {
             this.index++;
         }
 
+    }
+    toCourseView(){
+        if (confirm('zurück zu Übersicht? Stelle sicher, dass alle Teilaufgaben gespeichert wurden, ansonsten sind sie ' +
+            'nicht im Aufgabenblatt enthalten')) {
+            this.$router.push('/courseView/' + this.$route.params.courseId);
+        }
     }
 
 
