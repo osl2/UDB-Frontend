@@ -61,8 +61,9 @@
 
     // Data
     public messages: string[] = [];
-    private databaseController: DatabaseController = new DatabaseController(this.$store.getters.api);
-    private userController: UserService = new UserController(this.$store.getters.api);
+    private databaseController: DatabaseController = this.$store.getters.databaseController;
+    private userController: UserService = this.$store.getters.userController;
+    private courseController: CourseController = this.$store.getters.courseController;
 
     /*
     * This method sets the route to the requested course.
@@ -90,7 +91,11 @@
     * Method to create a new Course with a name and description given by the user.
      */
     public addCourse(name: string, description: string) {
-      this.$store.getters.courseController.create(new Course("", name, description, "", []));
+      try {
+        this.courseController.create(new Course("", name, description, "", []))
+      } catch (e) {
+        alert(e.message);
+      };
     }
 
     /*
@@ -98,20 +103,20 @@
      */
     public removeCourse(course: Course) {
       if (confirm('Kurs ' + course.name + ' wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
-        this.$store.getters.courseController.remove(course);
+        this.courseController.remove(course);
       }
     }
 
 
     public created() {
-      this.$store.getters.courseController.loadAll();
+      this.courseController.loadAll();
       this.databaseController.loadAll();
     }
 
     // Computed methods
 
     get courses() {
-      return this.$store.getters.courseController.all;
+      return this.courseController.all;
     }
 
     get databases() {

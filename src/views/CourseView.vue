@@ -1,6 +1,7 @@
 import UserGroup from "../dataModel/UserGroup";
 <template>
     <div>
+        help
         <div class="head">
             <h1>{{course.name}}</h1>
             <h2>{{course.description}}</h2>
@@ -66,19 +67,19 @@ import UserController from "@/controller/UserController";
 export default class CourseView extends Vue {
 
   // Data
-  private courseController: CourseController = new CourseController(this.$store.getters.api);
-  private worksheetController: WorksheetController = new WorksheetController(this.$store.getters.api);
-  private userController: UserController = new UserController(this.$store.getters.api);
+  private courseController: CourseController = this.$store.getters.courseController;
+  private worksheetController: WorksheetController = this.$store.getters.worksheetController;
+  private userController: UserController = this.$store.getters.userController;
   private isStudentsViewActive: boolean = false;
-  private courseId: string = this.$route.params.courseId;
+  private courseId!: string;
 
   // Functions
 
   public loadWorksheet(worksheet: Worksheet) {
       if (this.userController.userState!.userGroup === UserGroup.Student) {
-          router.push('/studentCourseView/' + this.$route.params.courseId + '/' + worksheet.id);
+          router.push('/studentCourseView/' + this.courseId + '/' + worksheet.id);
       } else {
-          router.push('/courseView/' + this.$route.params.courseId + '/' + worksheet.id);
+          router.push('/courseView/' + this.courseId + '/' + worksheet.id);
       }
   }
 
@@ -94,7 +95,7 @@ export default class CourseView extends Vue {
         router.push('/');
       }
       this.setIsStudentsViewActive();
-      this.$store.getters.courseController.load(this.$route.params.courseId);
+      this.courseController.load(this.$route.params.courseId);
       this.courseId = this.$route.params.courseId;
     }
 
@@ -103,15 +104,23 @@ export default class CourseView extends Vue {
   }
 
   private  createNewWorksheet() {
-    router.push('/courseView/' + this.$route.params.courseId + '/' + '');
+    router.push('/courseView/' + this.courseId + '/' + '');
   }
 
   private deleteWorksheet(worksheet: Worksheet) {
-    // TODO: Controller aufrufen
+    try {
+      this.worksheetController.remove(worksheet);
+    } catch (e) {
+      alert(e.message);
+    }
   }
 
   private updateWorksheet(worksheet: Worksheet) {
-    // TODO: Daten holen und Router pushen?
+    try {
+      this.worksheetController.save(worksheet);
+    } catch (e) {
+      alert(e.message);
+    }
   }
 
   private checkUserState(): boolean {
@@ -132,7 +141,7 @@ export default class CourseView extends Vue {
   get course() {
       let course;
       try {
-          course = this.$store.getters.courseController.get(this.courseId);
+          course = this.courseController.get(this.courseId);
       } catch (e) {
           return new Course("", "", "", "", []);
       }
@@ -140,7 +149,7 @@ export default class CourseView extends Vue {
   }
 
   get worksheets() {
-      return this.$store.getters.worksheetController.all;
+      return this.worksheetController.all;
   }
 }
 </script>
