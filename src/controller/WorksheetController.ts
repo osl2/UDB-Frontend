@@ -325,11 +325,6 @@ export default class WorksheetController extends ApiControllerAbstract
             pdfMake.vfs = pdfFonts.pdfMake.vfs;
         }
 
-        const date = new Date();
-        const datestring = date.getFullYear() + "_" + ("0" + (date.getMonth() + 1)).slice(-2) + "_" +
-            ("0" + date.getDate()).slice(-2) + "_" +
-            ("0" + date.getHours()).slice(-2) + "_" + ("0" + date.getMinutes()).slice(-2);
-
         const docDefinition = {
             content: [
                 {
