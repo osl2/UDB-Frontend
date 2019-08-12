@@ -52,14 +52,13 @@ import Subtask from '@/dataModel/Subtask';
 import TaskController from "@/controller/TaskController";
 import TaskSolve from '@/components/TaskSolve.vue';
 import InstructionTask from '@/dataModel/InstructionTask';
-import Course from "@/dataModel/Course";
 import Solution from "@/dataModel/Solution";
 import SubtaskService from "@/services/SubtaskService";
 import SubtaskController from "@/controller/SubtaskController";
 import DataManagementService from "@/services/DataManagementService";
 import Database from "@/dataModel/Database";
 import DatabaseController from "@/controller/DatabaseController";
-import ExportPDF from "@/services/ExportPDF";
+import SolutionDiff from "@/dataModel/SolutionDiff";
 
 @Component({
     components: {
@@ -101,10 +100,10 @@ export default class StudentWorksheet extends Vue {
     private numberOfSubtasks: number = 0;
 
     // Controller
-    private worksheetController = new WorksheetController(this.$store.getters.api);
-    private taskController: ParentService<Worksheet, Task> = new TaskController(this.$store.getters.api);
-    private subtaskController: SubtaskService = new SubtaskController(this.$store.getters.api);
-    private databaseController: DataManagementService<Database> = new DatabaseController(this.$store.getters.api);
+    private worksheetController: WorksheetController = this.$store.getters.worksheetController;
+    private taskController: ParentService<Worksheet, Task> = this.$store.getters.taskController;
+    private subtaskController: SubtaskService = this.$store.getters.subtaskController;
+    private databaseController: DataManagementService<Database> = this.$store.getters.databaseController;
 
 
     // methods
@@ -171,7 +170,7 @@ export default class StudentWorksheet extends Vue {
     }
 
     /*
-    * This Method deletes the saved solutions in the solution map for the current Task.
+     * This Method deletes the saved solutions in the solution map for the current Task.
      */
     public reset() {
         for (const subtask of this.currentMatchingSubtasks) {
@@ -186,9 +185,16 @@ export default class StudentWorksheet extends Vue {
     public compare(subtaskSolution: Solution) {
         this.currentSubtask.solution = subtaskSolution;
         this.save(this.currentSubtask.id, subtaskSolution);
-        alert('return Wert von compareSolution setzen und abfragen');
-        this.subtaskController.compareSolution(this.currentSubtask);
+        this.subtaskController.compareSolution(this.currentSubtask).then((feedback: SolutionDiff) => {
+            if (feedback.same === true) {
+              alert("Deine Lösung stimmt mit der von Deinem Lehrer angegebenen Lösung überein");
+            } else {
+              alert(feedback.getFeedbackString());
+            }
+          },
+        );
     }
+
 
 
     // method so the worksheet instructions component gets shown.

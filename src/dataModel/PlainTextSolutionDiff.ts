@@ -22,4 +22,7 @@ export default class PlainTextSolutionDiff extends SolutionDiff {
         super(same);
         this._correctAnswer = correctAnswer;
     }
+     public getFeedbackString(): string {
+         return "Die folgende Antwort wurde von Deinem Lehrer erwartet: " + this._correctAnswer;
+     }
 }
