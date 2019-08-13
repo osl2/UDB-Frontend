@@ -2,7 +2,7 @@
     <div>
         <b-list-group>
             <h3>{{task.name}}</h3>
-            <b-button @click="$emit('openTask', task, subtasks)">Bearbeiten</b-button>
+            <b-button @click="$emit('openTask', task, subtasks)">{{$t('studentWorksheet.exportPdf')}}</b-button>
 
             <b-list-group-item v-for="subtask in subtasks"
                                :key="subtask.id"

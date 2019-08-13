@@ -2,12 +2,13 @@
     <div>
         <div class="taskHeader">
             <h2>{{task.name}}</h2>
-            <h3>Teilaufgabe {{subtaskIndex+1}} von {{numberOfSubtasks}}</h3>
+            <h3>{{$t('taskSolve.subtask')}} {{subtaskIndex+1}} {{$t('taskSolve.of')}} {{numberOfSubtasks}}</h3>
         </div>
         <div class="containerDatabase">
-            <h3>Übersicht über die Datenbank:</h3>
+            <h3>{{$t('taskSolve.dbOverview')}}</h3>
             <DatabaseComponent :elementId="task.id" showExportImport="false" ref="databaseComponent"></DatabaseComponent>
         </div>
+        <!--Loads the component that matches the type of the current Subtask -->
         <div v-if="typeOfSubtask()===1">
             <SqlTaskComp :currentSubtask="currentSubtask"
                          :solutions="solutions"
@@ -39,28 +40,15 @@
 
         <!-- Buttons to navigate through one task-->
         <div>
-            <b-button @click="$emit('prevSubtask')">Vorherige Aufgabe</b-button>
-            <b-button @click="$emit('nextSubtask')">nächste Aufgabe</b-button>
+            <b-button @click="$emit('prevSubtask')">{{$t('taskSolve.prevSubtask')}}</b-button>
+            <b-button @click="$emit('nextSubtask')">{{$t('taskSolve.nextSubtask')}}</b-button>
         </div>
         <div class="clear"></div>
 
         <div>
-            <b-button @click="$emit('switchback')">Zurück zur Übersicht</b-button>
+            <b-button @click="$emit('switchback')">{{$t('taskSolve.toOverview')}}</b-button>
 
-            <b-button class="btn" v-b-modal.modal-reset>Aufgabe zurücksetzen</b-button>
-            <b-modal id="modal-reset">
-                <p>Wenn Du die Aufgabe zurücksetzt, geht Dein bisheriger Fortschritt aller zugehörigen Teilaufgaben
-                    verloren. Du kannst diesen Vorgang nicht rückgängig machen.</p>
-                <template slot="modal-footer">
-                    <b-button size="sm" @click="$emit('reset'),$bvModal.hide('modal-reset')">
-                        Aufgabe neu starten
-                    </b-button>
-                    <b-button size="sm" @click="$bvModal.hide('modal-reset')">
-                        Abbrechen
-                    </b-button>
-                </template>
-            </b-modal>
-
+            <b-button class="btn" @click="$emit('reset')">{{$t('taskSolve.resetTask')}}</b-button>
         </div>
     </div>
 </template>
@@ -88,6 +76,9 @@ export default Vue.extend({
         DatabaseComponent,
     },
     methods: {
+        /*
+        checks what type a subtask has
+        */
       typeOfSubtask(): number {
           if (this.currentSubtask.type === SubtaskTypes.Sql) {
               return 1;
@@ -108,14 +99,14 @@ export default Vue.extend({
         },
       },
 
-      /**
+      /*
        * Calls the methods save in StudentWorksheet.vue
        */
       saveSubtask(solution: Solution): void {
         this.$emit('save', this.currentSubtask.id, solution);
       },
 
-      /**
+      /*
        * opens the database provided through props
        */
       initDatabase() {

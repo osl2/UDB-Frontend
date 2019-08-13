@@ -1,6 +1,6 @@
 <template>
-
     <div>
+        <!--Shows an Overview  of all Tasks with their Instructions-->
         <div v-show="showSheetInstructions">
             <div class="worksheetHeader">
             <h2>{{worksheet.name}}</h2>
@@ -12,11 +12,17 @@
                                    @openTask="openTask"
                 >
             </WorksheetInstructions>
+
+            <!--Buttons to import and export the solutions the student created. This is used to be able to work
+             on the same worksheet on different occasions while not loosing the progress made-->
             <b-button @click="exportSheet"
-            >Bearbeitungsstand exportieren</b-button>
+            >{{$t('studentWorksheet.exportSolution')}}</b-button>
+
             <b-button @click="importSheet"
-            >Bearbeitungsstand importieren</b-button>
+            >{{$t('studentWorksheet.importSolution')}}}</b-button>
         </div>
+
+        <!-- Renders a TaskSolve Component for the current task that can be solved by the student -->
         <div>
            <TaskSolve v-show="!showSheetInstructions"
                       :task="currentTask"
@@ -35,7 +41,7 @@
            </TaskSolve>
         </div>
         <div>
-            <b-button @click="exportSheetAsPDF">Lösung des Blattes als PDF exportieren</b-button>
+            <b-button @click="exportSheetAsPDF">{{$t('studentWorksheet.exportPdf')}}</b-button>
         </div>
     </div>
 </template>
@@ -67,6 +73,8 @@ export default class StudentWorksheet extends Vue {
 
 
     // computed methods
+
+    // returns the worksheet that matches the WorksheetId saved in the component
     get worksheet() {
       if (this.worksheetController.get(this.worksheetId) !== undefined) {
         this.taskController.loadChildren(this.worksheetController.get(this.worksheetId));
@@ -74,10 +82,12 @@ export default class StudentWorksheet extends Vue {
       return this.worksheetController.get(this.worksheetId);
     }
 
+    // returns all tasks that are assigned to the worksheet saved in the component
     get tasks() {
       return this.taskController.all;
     }
 
+    // returns the database of the task that can currently be solved
     get database() {
       return this.databaseController.get(this.currentTask.databaseId);
     }
@@ -104,10 +114,16 @@ export default class StudentWorksheet extends Vue {
 
 
     // methods
+    /*
+    Exports the solutions the student created for the worksheet
+    */
     public exportSheet() {
         this.worksheetController.exportObject(this.worksheet, this.solutions);
     }
 
+    /*
+    imports a previously exported solution
+    */
     public importSheet(event: Event) {
         const target = event.target as (HTMLInputElement & Event);
         const files = target!.files!;
@@ -115,24 +131,32 @@ export default class StudentWorksheet extends Vue {
             .then((sheetData: [string, Map<string, Solution>]) => {
                 if (this.worksheet.id === sheetData[0]) {
                     this.solutions = sheetData[1];
-                    alert("Wenn Aufgaben durch deinen Lehrer verändert wurden, " +
-                        "ist deine bisherige Lösung nicht mehr verfügbar!");
+                    alert(this.$t('studentWorksheet.alertSolutionChange') as string);
                 } else {
-                    alert("Lösung passt nicht zum aktuellen Aufgabenblatt!");
+                    alert(this.$t('studentWorksheet.alertSolutionWrong') as string);
                 }
             },
         );
     }
 
+    /*
+    exports the solutions the student created for the worksheet as a pdf
+    */
     public exportSheetAsPDF() {
         this.worksheetController.exportPDF(this.worksheet, this.solutions);
     }
 
+    /*
+    changes the Component to display the task that should be solved
+    */
     public openTask(task: Task, subtasks: Subtask[]) {
         this.showSheetInstructions = false;
         this.setCurrentTask(task, subtasks, 0);
     }
 
+    /*
+    loads the subtask that is placed before the current task in the array of subtasks assigned to the task
+    */
     public prevSubtask() {
         if (this.subtaskIndex === 0) {
             return;
@@ -142,6 +166,10 @@ export default class StudentWorksheet extends Vue {
         }
 
     }
+
+    /*
+   loads the subtask that is placed after the current task in the array of subtasks assigned to the task
+   */
     public nextSubtask() {
 
         if (this.subtaskIndex === this.currentMatchingSubtasks.length - 1) {
@@ -153,9 +181,12 @@ export default class StudentWorksheet extends Vue {
 
     }
 
+    /*
+    saves the solution the student created
+    */
     public save(subtaskId: string, subtaskSolution: Solution) {
       if (subtaskSolution === undefined) {
-        alert('Something went wrong: The solution was undefined.');
+        alert(this.$t('studentWorksheet.alertSolutionUndefined') as string);
         return;
       }
       // There should always just be one solution per subtask.
@@ -163,28 +194,34 @@ export default class StudentWorksheet extends Vue {
         this.solutions.delete(subtaskId);
       }
       this.solutions.set(subtaskId, subtaskSolution);
-      alert('Speichern erfolgreich.');
+      alert(this.$t('studentWorksheet.alertSave') as string);
     }
 
     /*
      * This Method deletes the saved solutions in the solution map for the current Task.
      */
     public reset() {
-        for (const subtask of this.currentMatchingSubtasks) {
-          if (this.solutions.has(subtask.id)) {
-            this.solutions.delete(subtask.id);
-          }
+        if (confirm(this.$t('studentWorksheet.alertReset') as string)) {
+
+            for (const subtask of this.currentMatchingSubtasks) {
+                if (this.solutions.has(subtask.id)) {
+                    this.solutions.delete(subtask.id);
+                }
+            }
+            this.setCurrentTask(this.currentTask, this.currentMatchingSubtasks, 0);
         }
-        this.setCurrentTask(this.currentTask, this.currentMatchingSubtasks, 0);
     }
 
+    /*
+    compares the solution of the subtask created by the student with the solution the teacher provided
 
+     */
     public compare(subtaskSolution: Solution) {
         this.currentSubtask.solution = subtaskSolution;
         this.save(this.currentSubtask.id, subtaskSolution);
         this.subtaskController.compareSolution(this.currentSubtask).then((feedback: SolutionDiff) => {
             if (feedback.same === true) {
-              alert("Deine Lösung stimmt mit der von Deinem Lehrer angegebenen Lösung überein");
+              alert(this.$t('studentWorksheet.alertSolutionCorrect') as string);
             } else {
               alert(feedback.getFeedbackString());
             }
@@ -210,6 +247,9 @@ export default class StudentWorksheet extends Vue {
       this.worksheetId = this.$route.params.worksheetId;
     }
 
+    /* sets the current Task to the task provided. Also sets the current subtask to the subtask that can be found at
+    the provided index in the array of subtasks provided.
+    */
     private setCurrentTask(task: Task, subtasks: Subtask[], index: number) {
       this.currentTask = task;
       this.currentMatchingSubtasks = subtasks;

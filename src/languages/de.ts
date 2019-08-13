@@ -71,9 +71,11 @@ const de = {
   },
   subtaskCreation: {
     typeInstruction: 'Erklärender Text',
+    typeInstructionExtra: 'Erklärender Text, keine Bearbeitung für Schüler',
     typePlainText: 'Freitext Aufgabe',
     typeMultipleChoice: 'Multiple-Choice Aufgabe',
     typeSql: 'Sql Aufgabe',
+    chooseType: 'Wähle die Art der Teilaufgabe aus',
     maximize: 'Optionen ausklappen',
     minimize: 'Optionen einklappen',
     instruction: 'Aufgabentext hier eingeben',
@@ -92,12 +94,16 @@ const de = {
     rowOrder: 'Ist die Reihenfolge der Reihen beim Vergleichen wichtig?',
     save: 'Teilaufgabe speichern',
     delete: 'Teilaufgabe löschen',
+    alertAnswerOption: 'Bitte trage eine Antwortmöglichkeit ein',
+    alertDelete: 'Teilaufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.',
   },
   taskCreation: {
     maximize: 'Aufgabe ausklappen',
     minimize: 'Aufgabe einklappen',
     name: 'Name der Aufgabe',
     new: 'Neue Teilaufgabe erstellen',
+    chooseDb: 'Wähle eine Datenbank aus',
+    alertDelete: 'Aufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.',
   },
   teacherWorksheet: {
     name: 'Name des Aufgabenblatts',
@@ -107,10 +113,49 @@ const de = {
     no: 'Nein',
     new: 'Neue Aufgabe erstellen',
     toOverview: 'Zurück zur Kursübersicht',
+    alertReturn: 'zurück zu Übersicht? Stelle sicher, dass alle Teilaufgaben gespeichert wurden,' +
+          ' ansonsten sind sie nicht im Aufgabenblatt enthalten',
   },
-  studentWorkshhet: {
+  studentWorksheet: {
+      importSolution: 'Bearbeitungsstand importieren',
+      exportSolution: 'Bearbeitungsstand exportieren',
+      exportPdf: 'Lösung des Blattes als PDF exportieren',
+      alertSolutionChange: "Wenn Aufgaben durch deinen Lehrer verändert wurden, " +
+          'ist deine bisherige Lösung nicht mehr verfügbar!',
+      alertSolutionWrong: 'Lösung passt nicht zum aktuellen Aufgabenblatt!',
+      alertSolutionUndefined: 'Etwas ist schiefgelaufen, die Lösung ist nicht definiert',
+      alertSave: 'Speichern erfolgreich',
+      alertSolutionCorrect: 'Deine Lösung stimmt mit der von deinem Lehrer angegebenen Lösung überein',
+      alertReset: 'Die Aufgabe wirklich zurücksetzen? Dieser Vorgang kann nicht rückgängig gemacht werden',
+  },
+  workSheetInstruction: {
+      edit: 'Bearbeiten',
+  },
+  taskSolve: {
+      subtask: 'Teilaufgabe',
+      of: 'von',
+      dbOverview: 'Übersicht über die Datenbanken:',
+      prevSubtask: 'Vorherige Teilaufgabe',
+      nextSubtask: 'Nächste Teilaufgabe',
+      toOverview: 'Zurück zur Übersicht',
+      resetTask: 'Aufgabe zurücksetzen',
+  },
+  taskComp: {
+      instruction: 'Aufgabenstellung:',
+      save: 'Speichern',
+      compare: 'Vergleich mit der Musterlösung',
+    },
+  sqlTaskComp: {
 
-  }
+      hover: 'Wenn Du diesen Knopf drückst, wird die zuletzt ausgeführte Query gespeichert.' +
+          ' Achte darauf, dass Du die Anfrage, die Du speichern willst, auch noch einmal ausführst.',
+      select: 'Es dürfen nur Select Statements verwendet werden.',
+      alertStatement: 'Du hast einen SQL-Befehl verwendet, der für diese Aufgabe nicht erlaubt war.' +
+          'Bitte versuche erneut die Aufgabe zu lösen.',
+  },
+  mcTask: {
+      anwserOptions: 'Antwortmöglichkeiten: ',
+  },
 };
 export default de;
 

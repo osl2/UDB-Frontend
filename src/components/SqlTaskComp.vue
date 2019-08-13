@@ -1,9 +1,12 @@
 <template>
     <div>
-        <h3>Aufgabenstellung:</h3>
+        <h3>{{$t('taskComp.instruction')}}</h3>
         <div class="taskContainer">
             {{currentSubtask.instruction}}
          </div>
+        <div v-if ="currentSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements">
+            {{$t('sqlTaskComp.select')}}
+        </div>
         <div>
             <div v-if="currentSubtask.isPointAndClickAllowed" class="taskSwitchButton">
                 <b-button v-on:click="switchComponent"
@@ -34,14 +37,13 @@
 
             </div>
 
-            <b-button v-b-popover.hover="'Wenn Du diesen Knopf drückst, wird die zuletzt ausgeführte Query gespeichert.'+
-            ' Achte darauf, dass Du die Anfrage, die Du speichern willst, auch noch einmal ausführst.'"
+            <b-button v-b-popover.hover="this.$t('sqlTaskComp.hover') as string"
                       @click="$emit('save', subtaskSolution)"
             >
-                Speichern</b-button>
+                {{$t('taskComp.save')}}</b-button>
             <b-button v-show="currentSubtask.isSolutionVisible"
                       @click="$emit('compare', subtaskSolution)">
-                Vergleich mit Musterlösung
+                {{$t('taskComp.compare')}}
             </b-button>
         </div>
     </div>
@@ -76,6 +78,9 @@ export default Vue.extend({
         };
     },
     methods: {
+        /*
+        method executes the query created by the student and checks if only allowed Statements are used
+        */
         executeQuery(query: string) {
           if (this.checkAllowedSqlStatements(query)) {
             const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
@@ -92,11 +97,13 @@ export default Vue.extend({
               return;
             }
           } else {
-            alert("Du hast einen SQL-Befehl verwendet, der für diese Aufgabe nicht erlaubt war. " +
-              "Bitte versuche erneut die Aufgabe zu lösen.");
+            alert(this.$t('sqlTaskComp.alertStatement') as string);
           }
         },
 
+        /*
+        checks if the query the student created only uses sql statements that are allowed to use in the subtask
+         */
         checkAllowedSqlStatements(query: string): boolean {
           const tempSubtask = this.currentSubtask as SqlTask;
           if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.NoRestriction) {
@@ -112,6 +119,7 @@ export default Vue.extend({
             this.isPointAndClickActive = !this.isPointAndClickActive;
         },
     },
+
     created() {
         if (this.solutions.has(this.currentSubtask.id)) {
             this.executeQuery(this.solutions.get(this.currentSubtask.id).querySolution);
@@ -123,6 +131,7 @@ export default Vue.extend({
             this.allowedSqlToolbox = 'toolbox_all.xml';
         }
     },
+
     computed: {
         sqlTaskDynamicComponent() {
             if (this.isPointAndClickActive) {
@@ -131,9 +140,9 @@ export default Vue.extend({
                 return Query;
             }
         },
+
         subtaskSolution: {
             get(): SqlSolution {
-
                 const values: string[][] = [[]];
                 let i = 0;
                 for (const row of this.queryResult.result.values) {
