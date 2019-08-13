@@ -13,7 +13,7 @@
         </b-form-textarea>
 
         <b-button @click="$emit('save', subtaskSolution)">{{$t('taskComp.save')}}</b-button>
-        <b-button v-show="currentSubtask.isSolutionVisible"
+        <b-button v-if="currentSubtask.isSolutionVisible"
                   @click="$emit('compare', subtaskSolution)">
             {{$t('taskComp.compare')}}
         </b-button>

@@ -1,10 +1,10 @@
 <template>
     <div>
+        <div class="worksheetHeader">
+            <h2>{{worksheet.name}}</h2>
+        </div>
         <!--Shows an Overview  of all Tasks with their Instructions-->
-        <div v-show="showSheetInstructions">
-            <div class="worksheetHeader">
-                <h2>{{worksheet.name}}</h2>
-            </div>
+        <div v-if="showSheetInstructions">
             <WorksheetInstructions class="instructionContainer"
                                    v-for="task in tasks"
                                    :key="task.id"
@@ -26,7 +26,7 @@
 
         <!-- Renders a TaskSolve Component for the current task that can be solved by the student -->
         <div>
-            <TaskSolve v-show="!showSheetInstructions"
+            <TaskSolve v-if="!showSheetInstructions"
                        :task="currentTask"
                        :currentSubtask="currentSubtask"
                        :solutions="solutions"
