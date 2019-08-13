@@ -48,6 +48,11 @@ const de = {
     createEmptyDB: 'leere Datenbank',
     orStartWith: 'oder starte mit einem',
     createExampleDB: 'Beispiel-Datenbank',
+    emptyDatabaseMsg: 'Die Datenbank beinhaltet noch keine Tabellen.',
+    downloadDB: 'Datenbank herunterladen',
+    or: 'oder',
+    reset: 'Zurücksetzen',
+
   },
   worksheetList: {
     worksheetOnline: 'Aufgabenblatt ist online',
