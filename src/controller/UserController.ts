@@ -71,12 +71,10 @@ export default class UserController extends ApiControllerAbstract implements Use
         return this.userState!.userGroup;
     }
 
-    public switchUserGroup(group: import("../dataModel/UserGroup").default): boolean {
+    public switchUserGroup(group: import("../dataModel/UserGroup").default): void {
         const user = this.userState;
         user!.userGroup = group;
         this.userState = user;
-        alert('return void (UserController.switchUserGroup())?');
-        return true;
     }
 
     public availableUserGroups(): Array<import("../dataModel/UserGroup").default> {

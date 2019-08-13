@@ -40,18 +40,18 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 
 <script lang ="ts">
 import Vue from 'vue';
-  import SubtaskCreation from '@/components/SubtaskCreation.vue';
-  import Subtask from "@/dataModel/Subtask";
-  import SqlTask from "@/dataModel/SqlTask";
-  import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
-  import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
-  import PlainTextTask from "@/dataModel/PlainTextTask";
-  import InstructionTask from "@/dataModel/InstructionTask";
-  import SqlSolution from "@/dataModel/SqlSolution";
-  import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
-  import PlainTextSolution from "@/dataModel/PlainTextSolution";
+import SubtaskCreation from '@/components/SubtaskCreation.vue';
+import Subtask from "@/dataModel/Subtask";
+import SqlTask from "@/dataModel/SqlTask";
+import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
+import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
+import PlainTextTask from "@/dataModel/PlainTextTask";
+import InstructionTask from "@/dataModel/InstructionTask";
+import SqlSolution from "@/dataModel/SqlSolution";
+import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
+import PlainTextSolution from "@/dataModel/PlainTextSolution";
 
-  export default Vue.extend({
+export default Vue.extend({
     props: ['databases', 'task'],
     components: {SubtaskCreation},
     data() {
