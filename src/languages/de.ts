@@ -5,15 +5,26 @@ const de = {
     langEnglish: 'Englisch',
     logo: 'u<sup>DB</sup>',
     slogan: 'Du an die Macht der Datenbanken',
-    descriptionTextFreeMode: 'Hier kannst Du ganz ohne Login Datenbanken erstellen und Anfragen üben.',
+    descriptionTextFreeMode: 'Hier kannst Du ganz ohne Anmelden, Datenbanken erstellen und Anfragen üben.',
     descriptionTextCourse: 'Tritt hier einem Kurs von Deinem Lehrer bei.',
-    descriptionTextTeacher: 'Hier geht es zum Lehrerbereich.',
+    descriptionTextTeacher: 'Lehrerbreich ermöglicht Kurse für die Schüler zu erstellen.',
+    login: 'Anmelden',
+    register: 'Registrieren',
+    enter: 'Beitreten',
+    enterCourse: 'Kurs beitreten',
+    alreadyLoggedIn: 'Beitreten als <strong>{userName}</strong>',
   },
   sandbox: {
     titleStartPage: 'Freier Modus',
     resultText: 'Ergebnis des zuletzt ausgeführten SQL-Befehls',
     switchToPointAndClick: 'Point-and-Click Feature aktivieren',
     switchToPlainSQL: 'Zurück zum Textfeld',
+  },
+  teacher: {
+    titleStartPage: 'Lehrerbeirech',
+  },
+  course: {
+    titleStartPage: 'Kursbereich',
   },
   courseViewStudent: {
     solveWorksheetButton: 'Blatt bearbeiten',

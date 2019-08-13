@@ -2,12 +2,12 @@
     <div class="startpage">
         <div class="card-deck mb-3 text-center">
             <StartPagePanel :title="$t('sandbox.titleStartPage')" path="/sandbox"
-                            :description="$t('home.descriptionTextFreeMode')" buttonName="Go"></StartPagePanel>
-            <StartPagePanel title="Lehrerbereich" type="teacher"  path="/startPageTeacher"
+                            :description="$t('home.descriptionTextFreeMode')" :buttonName="$t('home.enter')"></StartPagePanel>
+            <StartPagePanel :title="$t('teacher.titleStartPage')" type="teacher"  path="/startPageTeacher"
                             :description="$t('home.descriptionTextTeacher')" buttonName="Anmelden"></StartPagePanel>
-            <StartPagePanel title="Kursbereich" type="student" path="/courseView/"
+            <StartPagePanel :title="$t('course.titleStartPage')" type="student" path="/courseView/"
                             :description="$t('home.descriptionTextCourse')"
-                            buttonName="Kurs beitreten"></StartPagePanel>
+                            :buttonName="$t('home.enterCourse')"></StartPagePanel>
         </div>
     </div>
 </template>

@@ -27,7 +27,6 @@ import PlainTextTask from "@/dataModel/PlainTextTask";
 import SqlSolutionDiff from "@/dataModel/SqlSolutionDiff";
 import MultipleChoiceSolutionDiff from "@/dataModel/MultipleChoiceSolutionDiff";
 import PlainTextSolutionDiff from "@/dataModel/PlainTextSolutionDiff";
-import {userState} from "@/globalData/UserState";
 import LocalStorageController from "@/controller/LocalStorageController";
 
 export interface Token {
