@@ -19,6 +19,14 @@ const de = {
     repeatedpw: 'Passwort wiederholen',
     cancel: 'Abbrechen',
     join: 'Beitreten',
+    alertNoCourse: 'Laden des Kurses ist fehlgeschlagen: Es wurde kein Kurs mit der eingegebenen ID gefunden. ' +
+        'Bitte versuche es erneut.',
+    errorCourseId: 'Gib eine KursId ein',
+    errorUser: 'Gib einen Nutzernamen ein',
+    errorPw: 'Gib ein Passwort ein',
+    error2Pw: 'Gib beide Passwörter ein',
+    errorPwEqual: 'Die Passwörter stimmen nicht überein',
+    errorLogin: 'Anmeldung fehlgeschlagen',
   },
   sandbox: {
     titleStartPage: 'Freier Modus',

@@ -107,11 +107,11 @@ export default class StartPagePanel extends Vue {
   // methods
   private loginTeacher(username: string, password: string, mmsg: string): void {
     if (!username) {
-      this.errorMsg = 'Gib einen Nutzernamen ein';
+      this.errorMsg = this.$t('home.errorUser') as string;;
       return;
     }
     if (!password) {
-      this.errorMsg = "Gib ein Passwort ein";
+      this.errorMsg = this.$t('home.errorPw') as string;
       return;
     }
     this.path = "/startPageTeacher";
@@ -120,7 +120,7 @@ export default class StartPagePanel extends Vue {
       if (success) {
         this.$router.push(this.path);
       } else {
-        this.errorMsg = "Anmeldung fehlgeschlagen";
+        this.errorMsg = this.$t('home.errorLogin') as string;
         return;
       }
     });
@@ -129,15 +129,15 @@ export default class StartPagePanel extends Vue {
   private registration(username: string, password: string, repeatedpw: string): void {
 
     if (!username) {
-      this.errorMsg = "Gib einen Nutzernamen ein";
+      this.errorMsg = this.$t('home.errorUser') as string;
       return;
     }
     if (!password || !repeatedpw) {
-      this.errorMsg = "Gib beide Passwörter ein";
+      this.errorMsg = this.$t('home.error2Pw') as string;
       return;
     }
     if (password !== repeatedpw) {
-      this.errorMsg = "Die Passwörter stimmen nicht überein";
+      this.errorMsg = this.$t('home.errorPwEqual') as string;
       return;
     }
 
@@ -148,7 +148,7 @@ export default class StartPagePanel extends Vue {
 
   private enterCourse(courseId: string): void {
     if (!courseId) {
-      this.errorMsg = "gib eine KursId ein";
+      this.errorMsg = this.$t('home.errorCourseId') as string;
     }
     this.userController.userState!.userGroup = UserGroup.Student;
     this.$router.push(this.path + courseId);
@@ -156,8 +156,7 @@ export default class StartPagePanel extends Vue {
 
   private checkCourseEntry(courseId: string): boolean {
     if (this.courseController.get(courseId) === undefined) {
-      alert('Laden des Kurses ist fehlgeschlagen: Es wurde kein Kurs mit der eingegebenen ID gefunden. ' +
-        'Bitte versuche es erneut.');
+      alert(this.$t('home.alertNoCourse') as string);
       return false;
     }
     // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
