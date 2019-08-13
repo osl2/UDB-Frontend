@@ -184,15 +184,17 @@ export default class CourseView extends Vue {
 
     @Watch('worksheets')
     private onWorksheetsChanged(value: Worksheet[], oldValue: Worksheet[]) {
-        if (!value.every((worksheet: Worksheet) => oldValue.includes(worksheet))) {
-            // if value and oldValue are different
-            this.courseController.save(new Course(
-                this.course.id,
-                this.course.name,
-                this.course.description,
-                this.course.alias,
-                value.map((worksheet: Worksheet) => worksheet.id),
-            ));
+        if (this.userController.userState!.userGroup === UserGroup.Teacher) {
+            if (!value.every((worksheet: Worksheet) => oldValue.includes(worksheet))) {
+                // if value and oldValue are different
+                this.courseController.save(new Course(
+                    this.course.id,
+                    this.course.name,
+                    this.course.description,
+                    this.course.alias,
+                    value.map((worksheet: Worksheet) => worksheet.id),
+                ));
+            }
         }
     }
 }
