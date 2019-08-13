@@ -44,6 +44,10 @@ const de = {
   database: {
     dropDatabase: 'Ziehe eine Datenbank Datei in dieses Feld oder klicke um eine Datei auszuwählen.',
     createDatabase: 'Falls Du noch keine Datenbank Datei hast, dann erstelle hier eine.',
+    noDBYetCreateOne: 'Noch keine Datenbank zur Hand? Dann erstelle eine',
+    createEmptyDB: 'leere Datenbank',
+    orStartWith: 'oder starte mit einem',
+    createExampleDB: 'Beispiel-Datenbank',
   },
   worksheetList: {
     worksheetOnline: 'Aufgabenblatt ist online',

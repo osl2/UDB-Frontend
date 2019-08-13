@@ -33,7 +33,7 @@
 
                 </div>
                 <div v-else class="d-flex flex-row flex-nowrap" :tableMetaData:sync="tableMetaData">
-                    <p class="text-muted">Datenbank enthält noch keine Tabellen</p>
+                    <p class="text-muted">{{$t('database.emptyDatabaseMsg')}}</p>
 
                 </div>
 
@@ -43,16 +43,15 @@
         <div v-if="showExportImport">
             <div v-if="!database || !database.content" :database:sync="database">
 
-                Noch keine Datenbank zur Hand? Dann erstelle eine <a href="#" @click="createEmptyDatabase">leere
-                Datenbank</a>
-                oder starte mit einem <a href="#" @click="createExampleDatabase">Beispiel Datenbank</a>.
+                {{$t('database.noDBYetCreateOne')}} <a href="#" @click="createEmptyDatabase">{{$t('database.createEmptyDB')}}</a>
+                {{$t('database.orStartWith')}} <a href="#" @click="createExampleDatabase">{{$t('database.createExampleDB')}}</a>.
 
 
             </div>
             <div v-if="database && database.content" :database:sync="database">
 
-                <a href="#" @click="downloadDatabase">Datenbank herunterladen</a> oder
-                <a href="#" @click="reset">Zurücksetzen</a>.
+                <a href="#" @click="downloadDatabase">{{$t('database.downloadDB')}}</a> {{$t('database.or')}}
+                <a href="#" @click="reset">{{$t('database.reset')}}</a>.
 
 
             </div>
