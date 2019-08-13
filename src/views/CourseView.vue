@@ -118,7 +118,7 @@ export default class CourseView extends Vue {
         } catch (e) {
             alert(e.message);
         }
-            this.worksheetsChanged = true;
+        this.worksheetsChanged = true;
         }
     }
     public deleteWorksheet(worksheet: Worksheet) {
