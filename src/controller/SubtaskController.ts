@@ -66,11 +66,12 @@ export default class SubtaskController extends ApiControllerAbstract implements 
      *
      * @param subtask
      */
-    public create(subtask: Subtask): void {
-        this.api.createSubtask({subtask} as CreateSubtaskRequest)
+    public create(subtask: Subtask): Promise<string> {
+        return this.api.createSubtask({subtask} as CreateSubtaskRequest)
           .then((response: string) => {
               subtask.id = response;
               this._subtasks.set(subtask.id, subtask);
+              return subtask.id;
           })
           .catch((error) => {
               throw new Error("Error creating subtask: " + error);

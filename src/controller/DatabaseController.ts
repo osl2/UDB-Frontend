@@ -51,11 +51,12 @@ export default class DatabaseController extends ApiControllerAbstract
      *
      * @param database
      */
-    public create(database: Database): void {
-        this.api.createDatabase({database} as CreateDatabaseRequest)
+    public create(database: Database): Promise<string> {
+        return this.api.createDatabase({database} as CreateDatabaseRequest)
             .then((response: string) => {
                 database.id = response;
                 this._databases = new Map<string, Database>(this._databases.set(database.id, database));
+                return database.id;
             })
             .catch((error) => {
                 throw new Error("Error creating database: " + error);

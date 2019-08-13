@@ -76,6 +76,9 @@ export default class CourseController extends ApiControllerAbstract implements D
                 this._courses = new Map<string, Course>(this._courses.set(course.id, course));
               });
           }
+        })
+        .catch((response) => {
+          throw new Error("Error: " + response.status + " " + response.statusText);
         });
     }
   }
@@ -85,8 +88,8 @@ export default class CourseController extends ApiControllerAbstract implements D
    *
    * @param course
    */
-  public create(course: Course): void {
-    this.api.createCourse({course} as CreateCourseRequest)
+  public create(course: Course): Promise<string> {
+    return this.api.createCourse({course} as CreateCourseRequest)
       .then((response: string) => {
         course.id = response;
         this._courses = new Map<string, Course>(this._courses.set(course.id, course));
@@ -100,7 +103,7 @@ export default class CourseController extends ApiControllerAbstract implements D
           .catch((error) => {
             throw new Error("Error creating alias for course " + course.id + ": " + error);
           });
-
+        return course.id;
       })
       .catch((error) => {
         throw new Error("Error creating course: " + error);

@@ -64,11 +64,12 @@ export default class WorksheetController extends ApiControllerAbstract
         }
     }
 
-    public create(worksheet: Worksheet): void {
-        this.api.createWorksheet({worksheet} as CreateWorksheetRequest)
+    public create(worksheet: Worksheet): Promise<string> {
+        return this.api.createWorksheet({worksheet} as CreateWorksheetRequest)
             .then((response: string) => {
                 worksheet.id = response;
                 this._worksheets = new Map<string, Worksheet>(this._worksheets.set(worksheet.id, worksheet));
+                return worksheet.id;
             });
     }
     public save(object: Worksheet): void {

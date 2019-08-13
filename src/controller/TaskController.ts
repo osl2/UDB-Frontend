@@ -66,11 +66,12 @@ export default class TaskController extends ApiControllerAbstract implements Par
      *
      * @param task
      */
-    public create(task: Task): void {
-        this.api.createTask({task} as CreateTaskRequest)
+    public create(task: Task): Promise<string> {
+        return this.api.createTask({task} as CreateTaskRequest)
           .then((response: string) => {
               task.id = response;
               this._tasks = new Map<string, Task>(this._tasks.set(task.id, task));
+              return task.id;
           })
           .catch((error) => {
               throw new Error("Error creating task: " + error);
