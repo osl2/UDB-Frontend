@@ -37,17 +37,17 @@
 
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import Query from '@/components/Query.vue';
-import QueryResultComp from '@/components/QueryResult.vue';
-import PointAndClick from '@/components/PointAndClick.vue';
-import DatabaseComponent from '@/components/DatabaseComponent.vue';
-import QueryResult from '@/dataModel/QueryResult';
-import SQLExecutor from "@/controller/SQLExecutor";
-import HelpButton from "@/components/HelpButton.vue";
+  import {Component, Vue} from 'vue-property-decorator';
+  import Query from '@/components/Query.vue';
+  import QueryResultComp from '@/components/QueryResult.vue';
+  import PointAndClick from '@/components/PointAndClick.vue';
+  import DatabaseComponent from '@/components/DatabaseComponent.vue';
+  import QueryResult from '@/dataModel/QueryResult';
+  import SQLExecutor from "@/controller/SQLExecutor";
+  import HelpButton from "@/components/HelpButton.vue";
 
 
-@Component({
+  @Component({
   components: {
     Query,
     QueryResultComp,
@@ -90,9 +90,9 @@ export default class Sandbox extends Vue {
   private executeQuery(query: string) {
 
     const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-    try {
-      const dbNumber = dbComponent.$data.databaseNumber;
-      this.queryResult = this.sqlExecutor.executeQuery(dbNumber, query, 0);
+    const dbNumber = dbComponent.$data.databaseNumber;
+    this.sqlExecutor.executeQuery(dbNumber, query, 0).then((queryResult) => {
+      this.queryResult = queryResult;
       const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
       window.scrollTo(0, top + 200);
 
@@ -100,10 +100,9 @@ export default class Sandbox extends Vue {
       // fix by implementing the logic by detecting query type (select, update or delete)
       dbComponent.loadMetaData();
       dbComponent.replaceStorage();
-    } catch (error) {
+    }).catch((error) => {
       alert(error.message);
-      return;
-    }
+    });
 
   }
 

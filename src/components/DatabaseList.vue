@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <b-modal id="modal-showdb" size="xl" ok-only  @change="showDatabase()">
-      <DatabaseComponent elementId="db-meta-data" ref="databaseComponent"></DatabaseComponent>
+      <DatabaseComponent elementId="db-meta-data-list" ref="databaseComponent"></DatabaseComponent>
     </b-modal>
 
     <b-list-group>

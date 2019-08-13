@@ -14,7 +14,7 @@ export default class SQLExecutor implements SQLService {
         this.sqlJs = initSqlJs(config);
     }
 
-    public executeQuery(database: number, query: string, step: number): QueryResult {
+    public executeQuery(database: number, query: string, step: number): Promise<QueryResult> {
         const resultSet: ResultSet = {
             status: 0,
             message: "",
@@ -22,20 +22,30 @@ export default class SQLExecutor implements SQLService {
             values: [[]],
         };
         const sqlDb = this.databaseSnapshots.get(database)![step];
-        const results: SqlJs.QueryResults[] = sqlDb.exec(query);
-        if (results.length > 0) {
-            if (results[0].columns.length > 0) {
-                resultSet.columns = results[0].columns;
-            }
-            if (results[0].values.length > 0) {
-                resultSet.values = results[0].values as ValueType[][];
-            }
-        }
 
-        return {
-            query,
-            result: resultSet,
-        };
+        const queryResultSqlDb = new Promise<SqlJs.QueryResults[]>((resolve, reject) => {
+            try {
+                resolve(sqlDb.exec(query));
+            } catch (e) {
+                reject(e);
+            }
+        });
+        return this.dbResultTimed(15000, queryResultSqlDb,
+            "Query took longer that 15 sec").then((results) => {
+            if (results.length > 0) {
+                if (results[0].columns.length > 0) {
+                    resultSet.columns = results[0].columns;
+                }
+                if (results[0].values.length > 0) {
+                    resultSet.values = results[0].values as ValueType[][];
+                }
+            }
+            return {
+                query,
+                result: resultSet,
+            };
+        });
+
     }
 
     public open(database: Database): Promise<number> {
@@ -74,12 +84,32 @@ export default class SQLExecutor implements SQLService {
      */
     public close(dbNumber: number): Uint8Array {
         const dbArray = this.databaseSnapshots.get(dbNumber)!;
+        if (!dbArray) {
+            throw new Error("Database with " + dbNumber + " does not exist");
+        }
         const retVal = dbArray[dbArray.length - 1].export();
         dbArray.forEach((element) => {
             element.close();
         });
         this.databaseSnapshots.delete(dbNumber);
         return retVal;
+    }
+
+    private dbResultTimed<T>(duration: number, promise: Promise<T>, rejectReason: string): Promise<T> {
+
+        // Create a promise that rejects in <ms> milliseconds
+        const timeout = new Promise<T>((resolve, reject) => {
+            const id = setTimeout(() => {
+                clearTimeout(id);
+                reject(new Error(rejectReason));
+            }, duration);
+        });
+
+        // Returns a race between our timeout and the passed in promise
+        return Promise.race<T>([
+            promise,
+            timeout,
+        ]);
     }
 
 

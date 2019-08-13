@@ -110,7 +110,7 @@ export default Vue.extend({
           const tempSubtask = this.currentSubtask as SqlTask;
           if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
             // check if the input contains a statement which is NOT allowed
-            const regexSelect = new RegExp('(drop)|(alter)|(create)|(join)|(update)|(insert)|(delete)', 'i');
+            const regexSelect = new RegExp('^/(drop)|(alter)|(create)|(update)|(insert)|(delete)/', 'i');
             if (query.match(regexSelect) === null) {
               return true;
             } else {

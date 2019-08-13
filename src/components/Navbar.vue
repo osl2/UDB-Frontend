@@ -18,7 +18,8 @@
                     <b-nav-item-dropdown :text="$t('navbar.databaseDropdown')">
                         <b-dropdown-item v-for="database in databases"
                                          :key="database.id"
-                                         @click="$emit('showDatabase', database)">
+                                         v-b-modal.modal-showdb-navbar
+                                         @click="choosenDB = database">
                             {{database.name}}
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
@@ -37,15 +38,35 @@
 
             </b-collapse>
         </b-navbar>
+        <b-modal id="modal-showdb-navbar" size="xl" ok-only  @change="showDatabase()">
+            <DatabaseComponent elementId="db-meta-data-navbar" ref="databaseComponent"></DatabaseComponent>
+        </b-modal>
     </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {Component, Prop, Vue} from 'vue-property-decorator';
+import Database from "@/dataModel/Database";
+import DatabaseComponent from "@/components/DatabaseComponent.vue";
+import Course from "@/dataModel/Course";
 
-export default Vue.extend( {
-  props: ['courses', 'databases'],
-});
+@Component({
+    components: {DatabaseComponent},
+})
+export default class NavBar extends Vue {
+    private errorMsg: string = '';
+    @Prop() private databases!: Database[];
+    @Prop() private courses!: Course[];
+    private choosenDB!: Database;
+
+
+    public showDatabase() {
+        const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+        dbComponent.postInit(Promise.resolve(this.choosenDB));
+    }
+
+
+}
 </script>
 
 <style scoped>
