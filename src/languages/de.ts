@@ -7,7 +7,7 @@ const de = {
     slogan: 'Du an die Macht der Datenbanken',
     descriptionTextFreeMode: 'Hier kannst Du ganz ohne Anmelden, Datenbanken erstellen und Anfragen üben.',
     descriptionTextCourse: 'Tritt hier einem Kurs von Deinem Lehrer bei.',
-    descriptionTextTeacher: 'Lehrerbreich ermöglicht Kurse für die Schüler zu erstellen.',
+    descriptionTextTeacher: 'Lehrerbereich ermöglicht Kurse für die Schüler zu erstellen.',
     login: 'Anmelden',
     register: 'Registrieren',
     enter: 'Beitreten',
@@ -21,7 +21,7 @@ const de = {
     switchToPlainSQL: 'Zurück zum Textfeld',
   },
   teacher: {
-    titleStartPage: 'Lehrerbeirech',
+    titleStartPage: 'Lehrerbereich',
   },
   course: {
     titleStartPage: 'Kursbereich',
