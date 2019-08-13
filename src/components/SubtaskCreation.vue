@@ -221,13 +221,12 @@ export default Vue.extend ({
     },
 
     /*
-     * the created method does nothing if an empty subtask(Instruction task without id or instruction)
-     * is passed to the component. otherwise it updates the variables of
-     * the component to match the task it has been passed
+     the created method does nothing if an empty subtask(Instruction task without id or instruction)
+     is passed to the component. otherwise it updates the variables of
+     the component to match the task it has been passed
      */
     created() {
         if (this.subtaskId === '') {
-
             return;
         } else {
             this.subtaskController.load(this.subtaskId);
@@ -253,6 +252,7 @@ export default Vue.extend ({
         subtask: the subtask that should be displayed in this component
         */
         setSubVars( subtask: Subtask) {
+
             if (subtask.type === SubtaskTypes.Instruction) {
                 this.tasktype = 'inst';
                 this.createdSubtaskId = subtask.id;
@@ -273,7 +273,7 @@ export default Vue.extend ({
                 this.tasktype = 'mc';
                 this.createdSubtaskId = mcSubtask.id;
                 this.taskInstruction = mcSubtask.instruction;
-                this.solutionverifyable = mcSubtask.isSolutionVeryfiable;
+                this.solutionverifiable = mcSubtask.isSolutionVeryfiable;
                 this.solutionvisible = mcSubtask.isSolutionVisible;
                 this.answerOptionsText = mcSubtask.answerOptions;
                 for (const option of this.answerOptionsText) {
@@ -289,7 +289,7 @@ export default Vue.extend ({
                 this.tasktype = 'sql';
                 this.createdSubtaskId = sqlSubtask.id;
                 this.taskInstruction = sqlSubtask.instruction;
-                this.solutionverifyable = sqlSubtask.isSolutionVeryfiable;
+                this.solutionverifiable = sqlSubtask.isSolutionVeryfiable;
                 this.solutionvisible = sqlSubtask.isSolutionVisible;
                 this.isPointAndClickAllowed = sqlSubtask.isPointAndClickAllowed;
                 this.doesRowOrderMatter = sqlSubtask.doesRowOrderMatter;
@@ -336,11 +336,11 @@ export default Vue.extend ({
 
             } else if (this.tasktype === 'text') {
                 createdSubtask = new PlainTextTask(this.subtaskId, new PlainTextSolution(this.solution)
-                    , this.taskInstruction, this.solutionverifyable, this.solutionvisible);
+                    , this.taskInstruction, this.solutionverifiable, this.solutionvisible);
 
             } else if (this.tasktype === 'mc') {
                 createdSubtask = new MultipleChoiceTask(this.subtaskId,
-                    new MultipleChoiceSolution(this.selected), this.taskInstruction, this.solutionverifyable,
+                    new MultipleChoiceSolution(this.selected), this.taskInstruction, this.solutionverifiable,
                     this.solutionvisible, this.answerOptionsText);
 
             } else {
@@ -360,7 +360,7 @@ export default Vue.extend ({
                 }
                 createdSubtask = new SqlTask(this.subtaskId,
                     new SqlSolution(this.solution, this.queryResult.columns, values),
-                    this.taskInstruction, this.solutionverifyable, this.isPointAndClickAllowed,
+                    this.taskInstruction, this.solutionverifiable, this.isPointAndClickAllowed,
                     this.doesRowOrderMatter, this.solutionvisible, this.allowedSqlStatements);
             }
             if (this.subtaskId === '') {
