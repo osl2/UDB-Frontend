@@ -18,7 +18,7 @@ import UserGroup from "../dataModel/UserGroup";
         </div>
         <div class="clear"></div>
         <div class="container">
-            <h2 class="headings">{{$t('course.alertSave')}}</h2>
+            <h2 class="headings">{{$t('course.worksheets')}}</h2>
             <WorksheetList
                     :worksheets="worksheets"
                     :isStudentsViewActive="isStudentsViewActive"

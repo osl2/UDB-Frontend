@@ -28,7 +28,7 @@
         </div>
         <!--buttons to create a new Task assigned to the worksheet and to return to the course view -->
         <b-button @click="newTask">{{$t('teacherWorksheet.new')}}</b-button>
-        <b-button @click="toCourseView"> {{$t('teacherWorksheet.toOverview')}}</b-button>
+        <b-button @click="toCourseView">{{$t('teacherWorksheet.toOverview')}}</b-button>
     </div>
 </template>
 
