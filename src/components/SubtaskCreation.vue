@@ -26,7 +26,7 @@
                 {{$t('subtaskCreation.typeSql')}}
 
             </div>
-            <b-button @click="changeSize">  {{$t('subtaskCreation.maximize')}}</b-button>
+            <b-button @click="changeSize()">{{$t('subtaskCreation.maximize')}}</b-button>
         </b-card>
     </div>
 
@@ -191,12 +191,12 @@ export default class SubtaskCreation extends Vue {
     @Prop() private dbId!: string;
     @Prop() private initialSubtask!: Subtask;
 
-    private subtask = this.initialSubtask;
+    public subtask = new InstructionTask("", "Error");
 
             // variables needed for the user interface or all tasks
-    private showfull: boolean = true;
+    public showfull: boolean = true;
     private index: number = 0;
-    private taskType: string = '';
+    public tasktype: string = '';
     private typeOptions = [
                 {value: '', text: this.$t('subtaskCreation.chooseType') as string},
                 {value: 'inst', text: this.$t('subtaskCreation.typeInstructionExtra') as string},
@@ -234,7 +234,6 @@ export default class SubtaskCreation extends Vue {
         this.subtask = this.initialSubtask;
     }
 
-
         /*
          method used in the creation of a multiple choice task
          adds the last entered answer of a multiple choice task to its array of all possible answers
@@ -259,13 +258,12 @@ export default class SubtaskCreation extends Vue {
         this.subtaskController.save(this.subtask);
     }
 
-        /*
-         changes the value of the showfull variable. the method is used to minimize or maximize the subtask
-         */
+    /*
+     changes the value of the showfull variable. the method is used to minimize or maximize the subtask
+     */
     public changeSize() {
         this.showfull = !this.showfull;
     }
-
 
         /*
         sends a request to delete the subtask to the server and emits the delete function to the task

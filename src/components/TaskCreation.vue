@@ -21,7 +21,7 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
             <SubtaskCreation :sync:subtasks="subtasks" v-for="subtask in subtasks"
                              :key="subtask.id"
                              :dbId="dbId"
-                             :subtask="subtask"
+                             :initialSubtask="subtask"
                              @save="save"
                              @deleteSubtask="deleteSubtask"
                              @createSubtask="createSubtask"
