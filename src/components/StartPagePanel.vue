@@ -1,5 +1,3 @@
-import UserGroup from "@/dataModel/UserGroup";
-import UserGroup from "@/dataModel/UserGroup";
 <template>
   <div class="card mb-4 box-shadow">
     <div class="card-body">
@@ -11,23 +9,23 @@ import UserGroup from "@/dataModel/UserGroup";
               teacher: two modal buttons, one for login with two input fields and one for registration with 3input fields
               student: A modal button to enter a course-id-->
       <template v-if="type === 'teacher'">
-        <b-button v-if='!loggedIn' class="btn btn-lg" v-b-modal.modal-login style="margin-left: 10px;">{{
-          $t('home.login') }}
+        <b-button v-if='!loggedIn' class="btn btn-lg" v-b-modal.modal-login style="margin-left: 10px;">
+          {{$t('home.login')}}
         </b-button>
         <b-modal id="modal-login">
           <p class=error>
             {{errorMsg}}
           </p>
           <div>
-            <b-form-input class="inputfield" v-model="username" placeholder="Nutzername"></b-form-input>
+            <b-form-input class="inputfield" v-model="username" :placeholder= "$t('home.name')"></b-form-input>
           </div>
           <div>
-            <b-form-input class="inputfield" v-model="password" type="password" placeholder="Passwort"></b-form-input>
+            <b-form-input class="inputfield" v-model="password" type="password" :placeholder="$t('home.pw')"></b-form-input>
           </div>
 
           <template slot="modal-footer">
             <b-button size="sm" @click="loginTeacher(username, password)">
-              Anmelden
+              $t('home.login')}}
             </b-button>
           </template>
         </b-modal>
@@ -38,18 +36,18 @@ import UserGroup from "@/dataModel/UserGroup";
             {{errorMsg}}
           </p>
           <div>
-            <b-form-input class="inputfield" v-model="username" placeholder="Nutzername"></b-form-input>
+            <b-form-input class="inputfield" v-model="username" :placeholder=" $t('home.name')"></b-form-input>
           </div>
           <div>
-            <b-form-input class="inputfield" v-model="password" type="password" placeholder="Passwort"></b-form-input>
+            <b-form-input class="inputfield" v-model="password" type="password" :placeholder= "$t('home.pw')"></b-form-input>
           </div>
           <div>
             <b-form-input class="inputfield" v-model="repeatedpw" type="password"
-                          placeholder="Passwort wiederholen"></b-form-input>
+                          :placeholder= "$t('home.repeatedpw')"></b-form-input>
           </div>
           <template slot="modal-footer">
             <b-button size="sm" @click="registration(username, password, repeatedpw)">
-              Registrieren
+              {{$t('home.register')}}
             </b-button>
           </template>
         </b-modal>
@@ -62,13 +60,13 @@ import UserGroup from "@/dataModel/UserGroup";
 
       <template v-else-if="type === 'student'">
         <b-button class="btn btn-lg btn-block" v-b-modal.modal-joinCourse>{{buttonName}}</b-button>
-        <b-modal id="modal-joinCourse" ok-title="Beitreten" cancel-title="Abbrechen">
+        <b-modal id="modal-joinCourse" :ok-title="$t('home.join')" :cancel-title="$t('home.cancel')">
           <div>
-            <b-form-input class="inputfield" v-model="courseId" placeholder="Kurs-ID"></b-form-input>
+            <b-form-input class="inputfield" v-model="courseId" :placeholder="$t('home.courseId')"></b-form-input>
           </div>
           <template slot="modal-footer">
             <b-button size="sm" @click="enterCourse(courseId)">
-              Beitreten
+              {{$t('home.join')}}
             </b-button>
           </template>
         </b-modal>

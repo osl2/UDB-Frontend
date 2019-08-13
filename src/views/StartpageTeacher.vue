@@ -24,7 +24,7 @@
 
     <div class="container">
       <h2 class="headings">{{$t('navbar.databaseDropdown')}}:</h2>
-      <b-button @click="uploadTrigger">Datenbanken hochladen</b-button>
+      <b-button @click="uploadTrigger">{{$t('teacher.uploadDb')}}</b-button>
       <input id="fileUpload" type="file" style="display:none;" multiple accept=".db" @change="databaseUploadHandler">
 
       <DatabaseList class="d-flex flex-column"
@@ -42,12 +42,10 @@
   import DatabaseList from "@/components/DatabaseList.vue";
   import Course from "@/dataModel/Course.ts";
   import Database from "@/dataModel/Database.ts";
-  import DataManagementService from '@/services/DataManagementService';
   import DatabaseController from '@/controller/DatabaseController';
   import CourseController from '@/controller/CourseController';
   import router from '@/router';
   import UserService from "@/services/UserService";
-  import UserController from "@/controller/UserController";
 
 
   @Component({
@@ -102,7 +100,7 @@
     * Method to permanently remove a course.
      */
     public removeCourse(course: Course) {
-      if (confirm('Kurs ' + course.name + ' wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
+      if (confirm(this.$t('teacher.alertCourse') as string + course.name + this.$t('teacher.alertDelete') as string)) {
         this.courseController.remove(course);
       }
     }

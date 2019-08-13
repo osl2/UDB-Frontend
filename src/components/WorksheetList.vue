@@ -5,11 +5,11 @@
                         bg-variant="light"
                         class="card-custom"
                     >
-                    <b-card-title>Dieser Kurs enthält noch keine Aufgabenblätter.</b-card-title>
+                    <b-card-title>{{$t('worksheetList.noSheets')}}</b-card-title>
                     <b-button slot="footer"
                               @click="$emit('loadWorksheets')"
                         >
-                         Neu laden
+                        {{$t('worksheetList.loadNew')}}
                     </b-button>
                 </b-card>
                 <b-card
@@ -26,7 +26,7 @@
                                 class="custom-switch"
                                 v-on:change="updateWorksheetOnline(worksheet)"
                                 v-model="worksheet.isOnline"
-                    >Aufgabenblatt online
+                    >{{$t('worksheetList.worksheetOnline')}}
                     </b-checkbox>
                     <b-button
                             class="bg-info"
@@ -39,18 +39,18 @@
                             class="bg-danger"
                             slot="footer"
                             @click="$emit('deleteWorksheet', worksheet)"
-                    >Löschen
+                    >{{$t('worksheetList.delete')}}
                     </b-button>
                     <b-button v-if="!isStudentsViewActive"
                             class="bg-info"
                             slot="footer"
                             @click="$emit('openWorksheet', worksheet)"
-                    >Bearbeiten
+                    >{{$t('worksheetList.edit')}}
                     </b-button>
                 </b-card>
             <b-card v-if="hasUserWritePermission && !isStudentsViewActive">
                 <b-card-title>
-                    Neues Arbeitsblatt
+                    {{$t('worksheetList.newSheet')}}
                 </b-card-title>
                 <b-card-body>
                     <b-form-input v-model="name" placeholder="Name"></b-form-input>
@@ -59,7 +59,7 @@
                         class="bg-info"
                         slot="footer"
                         @click="$emit('createWorksheet', name)"
-                >Hinzufügen
+                >{{$t('worksheetList.add')}}
                 </b-button>
             </b-card>
         </div>

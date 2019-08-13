@@ -5,14 +5,19 @@ const de = {
     langEnglish: 'Englisch',
     logo: 'u<sup>DB</sup>',
     slogan: 'Du an die Macht der Datenbanken',
-    descriptionTextFreeMode: 'Hier kannst Du ganz ohne Anmelden, Datenbanken erstellen und Anfragen üben.',
-    descriptionTextCourse: 'Tritt hier einem Kurs von Deinem Lehrer bei.',
+    descriptionTextFreeMode: 'Hier kannst du ganz ohne Anmelden, Datenbanken erstellen und Anfragen üben.',
+    descriptionTextCourse: 'Tritt hier einem Kurs von deinem Lehrer bei.',
     descriptionTextTeacher: 'Lehrerbereich ermöglicht Kurse für die Schüler zu erstellen.',
     login: 'Anmelden',
     register: 'Registrieren',
     enter: 'Beitreten',
     enterCourse: 'Kurs beitreten',
     alreadyLoggedIn: 'Beitreten als <strong>{userName}</strong>',
+    name: 'Nutzername',
+    pw: 'Passwort',
+    repeatedpw: 'Passwort wiederholen',
+    cancel: 'Abbrechen',
+    join: 'Beitreten',
   },
   sandbox: {
     titleStartPage: 'Freier Modus',
@@ -22,9 +27,15 @@ const de = {
   },
   teacher: {
     titleStartPage: 'Lehrerbereich',
+    uploadDb: 'Datenbanken hochladen',
+    alertCourse: 'Kurs',
+    alertDelete: 'wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden',
   },
   course: {
     titleStartPage: 'Kursbereich',
+    worksheets:'Aufgabenblätter',
+    solutionsheets: 'Lösungsblätter',
+    alertDelete: 'Arbeitsblatt wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden!',
   },
   courseViewStudent: {
     solveWorksheetButton: 'Blatt bearbeiten',
@@ -52,11 +63,20 @@ const de = {
     downloadDB: 'Datenbank herunterladen',
     or: 'oder',
     reset: 'Zurücksetzen',
-
+    courseId:'Kurs-Id',
+  },
+  helpMessage:{
+    sanbox:'Hier können SQLite Datenbanken hochgeladen werden.',
   },
   worksheetList: {
     worksheetOnline: 'Aufgabenblatt ist online',
     worksheetOffline: 'Aufgabenblatt ist offline',
+    noSheets: 'Dieser Kurs enthält noch keine Aufgabenblätter.',
+    loadNew:'Neu laden',
+    delete: 'Löschen',
+    edit:'Bearbeiten',
+    newSheet:'neues Aufgabenblatt',
+    add:'Hinzufügen',
   },
   solutionsheetList: {
     solutionsheetOnline: 'Lösungsblatt ist online',
@@ -155,6 +175,15 @@ const de = {
   },
   mcTask: {
       anwserOptions: 'Antwortmöglichkeiten: ',
+  },
+  courseList:{
+    name: 'Name',
+    description: 'Beschreibung',
+    add: 'Hinzufügen',
+    id: 'Kurs-ID:',
+    delete: 'Löschen',
+    open: 'Kurs öffnen',
+    new: 'Neuer Kurs',
   },
 };
 export default de;

@@ -14,34 +14,34 @@
           {{course.description}}
         </b-card-text>
         <b-card-text>
-          Kurs-ID:<br />{{course.alias}}
+          {{$t('courseList.name')}} <br />{{course.alias}}
         </b-card-text>
         <b-button
             class="bg-danger"
             slot="footer"
             @click="$emit('removeCourse', course)"
-        >Löschen
+        >{{$t('courseList.delete')}}
         </b-button>
         <b-button
             class="bg-info"
             slot="footer"
             @click="$emit('loadCourse', course)"
-        >Kurs öffnen
+        >{{$t('courseList.open')}}
         </b-button>
       </b-card>
       <b-card>
         <b-card-title>
-          Neuer Kurs
+          {{$t('courseList.new')}}
         </b-card-title>
         <b-card-body>
-          <b-form-input v-model="name" placeholder="Name"></b-form-input>
-          <b-form-input v-model="description" placeholder="Beschreibung"></b-form-input>
+          <b-form-input v-model="name" placeholder={{$t('courseList.name')}}></b-form-input>
+          <b-form-input v-model="description" placeholder={{$t('courseList.description')}}></b-form-input>
         </b-card-body>
         <b-button
             class="bg-info"
             slot="footer"
             @click="$emit('addCourse', name, description)"
-        >Hinzufügen
+        >{{$t('courseList.add')}}
         </b-button>
       </b-card>
     </div>

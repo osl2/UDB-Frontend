@@ -18,7 +18,7 @@ import UserGroup from "../dataModel/UserGroup";
         </div>
         <div class="clear"></div>
         <div class="container">
-            <h2 class="headings">Aufgabenblätter</h2>
+            <h2 class="headings">{{$t('course.alertSave')}}</h2>
             <WorksheetList
                     :worksheets="worksheets"
                     :isStudentsViewActive="isStudentsViewActive"
@@ -31,7 +31,7 @@ import UserGroup from "../dataModel/UserGroup";
             ></WorksheetList>
         </div>
         <div class="container" v-if="(worksheets.length !== 0)">
-            <h2 class="headings">Lösungsblätter</h2>
+            <h2 class="headings">{{$t('course.solutionsheets')}}</h2>
             <SolutionsheetList
                     :worksheets="worksheets"
                     :isStudentsViewActive="isStudentsViewActive"
@@ -109,7 +109,7 @@ export default class CourseView extends Vue {
   }
 
   public deleteWorksheet(worksheet: Worksheet) {
-    if (confirm("Arbeitsblatt wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden!")) {
+    if (confirm(this.$t('course.alertDelete') as string)) {
       try {
         this.worksheetController.remove(worksheet);
       } catch (e) {

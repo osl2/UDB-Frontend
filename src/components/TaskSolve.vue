@@ -63,7 +63,6 @@ import TextTask from '@/components/TextTask.vue';
 import SubtaskTypes from "@/dataModel/SubtaskTypes";
 import Solution from "@/dataModel/Solution";
 import SQLExecutor from "@/controller/SQLExecutor";
-import SQLService from "@/services/SQLService";
 
 
 export default Vue.extend({

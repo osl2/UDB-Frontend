@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HelpButton helpmsg="Hier können SQLite Datenbanken hochgeladen werden."></HelpButton>
+    <HelpButton :helpmsg="$t('helpMessages.sandbox')"></HelpButton>
     <DatabaseComponent elementId="sandbox-dropzone-db" showExportImport="true" loadSandboxLocalStorageDb="true" ref="databaseComponent"
                        @databaseExists="eventDbExists" @reset="reset" ></DatabaseComponent>
     <div v-if="databaseExists" :databaseExists:sync="databaseExists">
