@@ -34,9 +34,14 @@ export default class CourseController extends ApiControllerAbstract implements D
               course.alias = aliasResponse.alias;
               this._aliases = new Map<string, string>(this._aliases.set(course.alias, course.id));
               this._courses = new Map<string, Course>(this._courses.set(course.id, course));
-            });
+            })
+            .catch((response) => {
+            throw new Error("Error getting course alias: " + response.status + " " + response.statusText);
+          });
         });
-      });
+      }).catch((response) => {
+      throw new Error("Error loading coursses: " + response.status + " " + response.statusText);
+    });
   }
 
   /**
@@ -54,7 +59,12 @@ export default class CourseController extends ApiControllerAbstract implements D
               course.alias = response.alias;
               this._aliases = new Map<string, string>(this._aliases.set(course.alias, course.id));
               this._courses = new Map<string, Course>(this._courses.set(course.id, course));
-            });
+            }).catch((response) => {
+            throw new Error("Error loading course alias: " + response.status + " " + response.statusText);
+          });
+        })
+        .catch((response) => {
+          throw new Error("Error loading course: " + response.status + " " + response.statusText);
         });
     }
   }
@@ -74,11 +84,13 @@ export default class CourseController extends ApiControllerAbstract implements D
             this.api.getCourse({courseId: response.uuid} as GetCourseRequest)
               .then((course: Course) => {
                 this._courses = new Map<string, Course>(this._courses.set(course.id, course));
-              });
+              }).catch((response) => {
+              throw new Error("Error getting course: " + response.status + " " + response.statusText);
+            });
           }
         })
         .catch((response) => {
-          throw new Error("Error: " + response.status + " " + response.statusText);
+          throw new Error("Error loading course: " + response.status + " " + response.statusText);
         });
     }
   }
@@ -116,7 +128,9 @@ export default class CourseController extends ApiControllerAbstract implements D
         if (this._courses.get(object.id) !== undefined) {
             this._courses = new Map<string, Course>(this._courses.set(object.id, object));
         }
-      });
+      }).catch((response) => {
+      throw new Error("Error saving course: " + response.status + " " + response.statusText);
+    });
   }
 
   /**
@@ -130,7 +144,9 @@ export default class CourseController extends ApiControllerAbstract implements D
           this._aliases.delete(object.alias);
           this._aliases = new Map<string, string>(this._aliases);
           this._courses = new Map<string, Course>(this._courses);
-      });
+      }).catch((response) => {
+      throw new Error("Error deleting course: " + response.status + " " + response.statusText);
+    });
   }
 
   public get(id: string): Course {

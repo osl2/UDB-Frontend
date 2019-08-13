@@ -33,18 +33,18 @@
 
 
 <script lang="ts">
-  import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
-import TaskCreation from '@/components/TaskCreation.vue';
-import DatabaseController from "@/controller/DatabaseController";
-import WorksheetController from "@/controller/WorksheetController";
-import Worksheet from '@/dataModel/Worksheet';
-import CourseController from "@/controller/CourseController";
-import Task from "@/dataModel/Task";
-import TaskController from "@/controller/TaskController";
+import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
+  import TaskCreation from '@/components/TaskCreation.vue';
+  import DatabaseController from "@/controller/DatabaseController";
+  import WorksheetController from "@/controller/WorksheetController";
+  import Worksheet from '@/dataModel/Worksheet';
+  import CourseController from "@/controller/CourseController";
+  import Task from "@/dataModel/Task";
+  import TaskController from "@/controller/TaskController";
 
 
 
-@Component({
+  @Component({
     components: {
         TaskCreation,
     },
@@ -68,6 +68,16 @@ export default class TeacherWorksheet extends Vue {
       }
       return tempWorksheet;
     }
+
+    get tasks(): Task[] {
+      return this.taskController.all && this.taskController.getChildren(this.worksheet);
+    }
+
+    public index: number = 1;
+    private databaseController: DatabaseController = this.$store.getters.databaseController;
+    private worksheetController: WorksheetController = this.$store.getters.worksheetController;
+    private courseController: CourseController = this.$store.getters.courseController;
+    private taskController: TaskController = this.$store.getters.taskController;
     @Watch('worksheet')
     public onWorksheetChange(value: Worksheet, oldValue: Worksheet) {
       if (value === undefined) {
@@ -76,10 +86,6 @@ export default class TeacherWorksheet extends Vue {
       if (oldValue === undefined || value.id !== oldValue.id) {
         this.taskController.loadChildren(value);
       }
-    }
-
-    get tasks(): Task[] {
-      return this.taskController.all && this.taskController.getChildren(this.worksheet);
     }
     @Watch('tasks')
     public onTasksChange(value: Task[], oldValue: Task[]) {
@@ -94,12 +100,6 @@ export default class TeacherWorksheet extends Vue {
         this.taskController.loadChildren(this.worksheet);
       }
     }
-
-    public index: number = 1;
-    private databaseController: DatabaseController = this.$store.getters.databaseController;
-    private worksheetController: WorksheetController = this.$store.getters.worksheetController;
-    private courseController: CourseController = this.$store.getters.courseController;
-    private taskController: TaskController = this.$store.getters.taskController;
 
     public created() {
       this.databaseController = this.$store.getters.databaseController;

@@ -30,7 +30,9 @@ export default class TaskController extends ApiControllerAbstract implements Par
                 response.forEach((task: Task) => {
                     this._tasks = new Map<string, Task>(this._tasks.set(task.id, task));
                 });
-            });
+            }).catch((response) => {
+          throw new Error("Error loading tasks: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -43,7 +45,9 @@ export default class TaskController extends ApiControllerAbstract implements Par
             this.api.getTask({taskId} as GetTaskRequest)
                 .then((response: Task) => {
                     this._tasks = new Map<string, Task>(this._tasks.set(response.id, response));
-                });
+                }).catch((response) => {
+              throw new Error("Error getting tasks from worksheet: " + response.status + " " + response.statusText);
+            });
         });
     }
 
@@ -57,7 +61,9 @@ export default class TaskController extends ApiControllerAbstract implements Par
             this.api.getTask({taskId: id} as GetTaskRequest)
                 .then((response: Task) => {
                     this._tasks = new Map<string, Task>(this._tasks.set(response.id, response));
-                });
+                }).catch((response) => {
+              throw new Error("Error loading task: " + response.status + " " + response.statusText);
+            });
         }
     }
 
@@ -88,7 +94,9 @@ export default class TaskController extends ApiControllerAbstract implements Par
           .then((response) => {
               this._tasks.delete(object.id);
               this._tasks = new Map<string, Task>(this._tasks);
-          });
+          }).catch((response) => {
+          throw new Error("Error deleting task: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -102,7 +110,9 @@ export default class TaskController extends ApiControllerAbstract implements Par
               if (this._tasks.get(object.id) !== undefined) {
                   this._tasks = new Map<string, Task>(this._tasks.set(object.id, object));
               }
-          });
+          }).catch((response) => {
+          throw new Error("Error saving task: " + response.status + " " + response.statusText);
+        });
     }
 
     /**

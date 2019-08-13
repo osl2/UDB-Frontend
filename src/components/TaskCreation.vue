@@ -39,7 +39,7 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 </template>
 
 <script lang ="ts">
-  import Vue from 'vue';
+import Vue from 'vue';
   import SubtaskCreation from '@/components/SubtaskCreation.vue';
   import Subtask from "@/dataModel/Subtask";
   import SqlTask from "@/dataModel/SqlTask";
@@ -87,7 +87,7 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
          */
         subtasks: {
             get(): Subtask[] {
-              return this.subtaskController.all && this.subtaskController.loadChildren(this.task)
+              return this.subtaskController.all && this.subtaskController.loadChildren(this.task);
             },
         },
     },
@@ -112,7 +112,7 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
         },
         newSqlTask() {
             this.subtaskController.create(
-              new SqlTask('', new SqlSolution('', [], [[]]), '', false, false, false, false, AllowedSqlStatements.NoRestriction)
+              new SqlTask('', new SqlSolution('', [], [[]]), '', false, false, false, false, AllowedSqlStatements.NoRestriction),
             ).then((subtaskId: string) => {
               this.task.subtaskIds.push(subtaskId);
               this.save();
@@ -120,7 +120,7 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
         },
         newMCTask() {
           this.subtaskController.create(
-            new MultipleChoiceTask('', new MultipleChoiceSolution([]), '', false, false, [])
+            new MultipleChoiceTask('', new MultipleChoiceSolution([]), '', false, false, []),
           ).then((subtaskId: string) => {
             this.task.subtaskIds.push(subtaskId);
             this.save();
@@ -128,7 +128,7 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
         },
         newTextTask() {
           this.subtaskController.create(
-            new PlainTextTask('', new PlainTextSolution(''), '', false, false)
+            new PlainTextTask('', new PlainTextSolution(''), '', false, false),
           ).then((subtaskId: string) => {
             this.task.subtaskIds.push(subtaskId);
             this.save();
@@ -136,7 +136,7 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
         },
         newInstructionTask() {
           this.subtaskController.create(
-            new InstructionTask('', '')
+            new InstructionTask('', ''),
           ).then((subtaskId: string) => {
             this.task.subtaskIds.push(subtaskId);
             this.save();

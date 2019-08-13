@@ -30,7 +30,9 @@ export default class SubtaskController extends ApiControllerAbstract implements 
                 response.forEach((subtask: Subtask) => {
                     this._subtasks.set(subtask.id, subtask);
                 });
-            });
+            }).catch((response) => {
+            throw new Error("Error loading subtasks: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -43,6 +45,9 @@ export default class SubtaskController extends ApiControllerAbstract implements 
             this.api.getSubtask({subtaskId} as GetSubtaskRequest)
                 .then((response: Subtask) => {
                     this._subtasks.set(response.id, response);
+                })
+                .catch((response) => {
+                    throw new Error("Error loading subtasks: " + response.status + " " + response.statusText);
                 });
         });
     }
@@ -57,7 +62,9 @@ export default class SubtaskController extends ApiControllerAbstract implements 
             this.api.getSubtask({subtaskId: id} as GetSubtaskRequest)
                 .then((response: Subtask) => {
                     this._subtasks.set(response.id, response);
-                });
+                }).catch((response) => {
+                throw new Error("Error loading subtask: " + response.status + " " + response.statusText);
+            });
         }
     }
 
@@ -87,7 +94,9 @@ export default class SubtaskController extends ApiControllerAbstract implements 
         this.api.deleteSubtask({subtaskId: object.id} as DeleteSubtaskRequest)
           .then((response) => {
               this._subtasks.delete(object.id);
-          });
+          }).catch((response) => {
+            throw new Error("Error deleting subtask: " + response.status + " " + response.statusText);
+        });
     }
     public save(object: Subtask): void {
         this.api.updateSubtask({subtask: object, subtaskId: object.id} as UpdateSubtaskRequest)
@@ -95,7 +104,9 @@ export default class SubtaskController extends ApiControllerAbstract implements 
               if (this._subtasks.get(object.id) !== undefined) {
                   this._subtasks.set(object.id, object);
               }
-          });
+          }).catch((response) => {
+            throw new Error("Error saving subtask: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -108,7 +119,9 @@ export default class SubtaskController extends ApiControllerAbstract implements 
                     subtask.solution = undefined;
                     this._subtasks.set(subtask.id, subtask);
                 });
-            });
+            }).catch((response) => {
+            throw new Error("Error loading subtasks: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -122,7 +135,9 @@ export default class SubtaskController extends ApiControllerAbstract implements 
                 .then((response: Subtask) => {
                     response.solution = undefined;
                     this._subtasks.set(response.id, response);
-                });
+                }).catch((response) => {
+                throw new Error("Error loading subtasks: " + response.status + " " + response.statusText);
+            });
         });
     }
 
@@ -137,7 +152,9 @@ export default class SubtaskController extends ApiControllerAbstract implements 
                 .then((response: Subtask) => {
                     response.solution = undefined;
                     this._subtasks.set(response.id, response);
-                });
+                }).catch((response) => {
+                throw new Error("Error loading subtask: " + response.status + " " + response.statusText);
+            });
         }
     }
 

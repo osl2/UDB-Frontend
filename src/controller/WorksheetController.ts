@@ -44,14 +44,21 @@ export default class WorksheetController extends ApiControllerAbstract
                 response.forEach((worksheet: Worksheet) => {
                     this._worksheets = new Map<string, Worksheet>(this._worksheets.set(worksheet.id, worksheet));
                 });
-            });
+            })
+            .catch((response) => {
+                throw new Error("Error getting worksheets: " + response.status + " " + response.statusText);
+        });
     }
     public loadChildren(object: Course) {
         object.worksheetIds.forEach((worksheetId) => {
             this.api.getWorksheet({worksheetId} as GetWorksheetRequest)
                 .then((response: Worksheet) => {
                     this._worksheets = new Map<string, Worksheet>(this._worksheets.set(response.id, response));
-                });
+                })
+                .catch((response) => {
+                    throw new Error("Error getting worksheets from course: " + response.status
+                      + " " + response.statusText);
+            });
         });
     }
     public load(id: string) {
@@ -60,7 +67,10 @@ export default class WorksheetController extends ApiControllerAbstract
             this.api.getWorksheet({worksheetId: id} as GetWorksheetRequest)
                 .then((response: Worksheet) => {
                     this._worksheets = new Map<string, Worksheet>(this._worksheets.set(response.id, response));
-                });
+                })
+                .catch((response) => {
+                throw new Error("Error loading workshee: " + response.status + " " + response.statusText);
+            });
         }
     }
 
@@ -70,7 +80,9 @@ export default class WorksheetController extends ApiControllerAbstract
                 worksheet.id = response;
                 this._worksheets = new Map<string, Worksheet>(this._worksheets.set(worksheet.id, worksheet));
                 return worksheet.id;
-            });
+            }).catch((response) => {
+              throw new Error("Error creating worksheet: " + response.status + " " + response.statusText);
+          });
     }
     public save(object: Worksheet): void {
         this.api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest)
@@ -78,14 +90,18 @@ export default class WorksheetController extends ApiControllerAbstract
               if (this._worksheets.get(object.id) !== undefined) {
                   this._worksheets = new Map<string, Worksheet>(this._worksheets.set(object.id, object));
               }
-          });
+          }).catch((response) => {
+            throw new Error("Error saving worksheet: " + response.status + " " + response.statusText);
+        });
     }
     public remove(object: Worksheet): void {
         this.api.deleteWorksheet({worksheetId: object.id} as DeleteWorksheetRequest)
             .then((response) => {
                 this._worksheets.delete(object.id);
                 this._worksheets = new Map<string, Worksheet>(this._worksheets);
-            });
+            }).catch((response) => {
+            throw new Error("Error deleting worksheet: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -214,7 +230,8 @@ export default class WorksheetController extends ApiControllerAbstract
         }
 
         pdfMake.createPdf(docDefinition)
-            .download('Print' + object.name.replace(' ', '_') + '_' + datestring + '.pdf');
+            .download('Print' + object.name.replace(' ', '_') + '_'
+              + datestring + '.pdf');
     }
 
     /**
@@ -265,7 +282,8 @@ export default class WorksheetController extends ApiControllerAbstract
         const a = document.createElement('a');
         document.body.appendChild(a);
         a.href = window.URL.createObjectURL(blob);
-        a.download = 'Worksheet_Export_' + object.name.replace(" ", "_") + '_' + datestring + '.json';
+        a.download = 'Worksheet_Export_' + object.name.replace(" ", "_") + '_'
+          + datestring + '.json';
         a.onclick = () => {
             setTimeout(() => {
                 window.URL.revokeObjectURL(a.href);

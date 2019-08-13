@@ -29,7 +29,9 @@ export default class DatabaseController extends ApiControllerAbstract
                 response.forEach((database: Database) => {
                     this._databases = new Map<string, Database>(this._databases.set(database.id, database));
                 });
-            });
+            }).catch((response) => {
+            throw new Error("Error loading databases: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -42,7 +44,9 @@ export default class DatabaseController extends ApiControllerAbstract
             this.api.getDatabase({databaseId: id} as GetDatabaseRequest)
                 .then((response: Database) => {
                     this._databases = new Map<string, Database>(this._databases.set(response.id, response));
-                });
+                }).catch((response) => {
+                throw new Error("Error loading database: " + response.status + " " + response.statusText);
+            });
         }
     }
 
@@ -69,7 +73,9 @@ export default class DatabaseController extends ApiControllerAbstract
                 if (this._databases.get(object.id) !== undefined) {
                     this._databases = new Map<string, Database>(this._databases.set(object.id, object));
                 }
-            });
+            }).catch((response) => {
+            throw new Error("Error saving database: " + response.status + " " + response.statusText);
+        });
     }
 
     public remove(object: Database): void {
@@ -77,7 +83,9 @@ export default class DatabaseController extends ApiControllerAbstract
             .then((response) => {
                 this._databases.delete(object.id);
                 this._databases = new Map<string, Database>(this._databases);
-            });
+            }).catch((response) => {
+            throw new Error("Error deleting database: " + response.status + " " + response.statusText);
+        });
     }
 
     public get(id: string): Database {
