@@ -34,17 +34,17 @@
 
 <script lang="ts">
 import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
-  import TaskCreation from '@/components/TaskCreation.vue';
-  import DatabaseController from "@/controller/DatabaseController";
-  import WorksheetController from "@/controller/WorksheetController";
-  import Worksheet from '@/dataModel/Worksheet';
-  import CourseController from "@/controller/CourseController";
-  import Task from "@/dataModel/Task";
-  import TaskController from "@/controller/TaskController";
+import TaskCreation from '@/components/TaskCreation.vue';
+import DatabaseController from "@/controller/DatabaseController";
+import WorksheetController from "@/controller/WorksheetController";
+import Worksheet from '@/dataModel/Worksheet';
+import CourseController from "@/controller/CourseController";
+import Task from "@/dataModel/Task";
+import TaskController from "@/controller/TaskController";
 
 
 
-  @Component({
+@Component({
     components: {
         TaskCreation,
     },
@@ -92,11 +92,10 @@ export default class TeacherWorksheet extends Vue {
       if (value === undefined) {
         return;
       }
-      console.log(value, oldValue);
-      if (value.length !== oldValue.length || !value.every((task: Task, index: number) => oldValue[index].id === task.id)) {
+      if (value.length !== oldValue.length || !value.every((task: Task, index: number) =>
+          oldValue[index].id === task.id)) {
         this.worksheet.taskIds = value.map((task: Task) => task.id);
         this.worksheetController.save(this.worksheet);
-        console.log(this.worksheet.taskIds);
         this.taskController.loadChildren(this.worksheet);
       }
     }
