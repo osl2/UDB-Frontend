@@ -3,7 +3,7 @@
         {{worksheet.name}}
         <!--Section to set options needed for a worksheet -->
     <div>
-        <b-form-input v-model="worksheetName" :placeholder="$t('teacherWorksheet.name')"></b-form-input>
+        <b-form-input v-model="worksheet.name" :placeholder="$t('teacherWorksheet.name')"></b-form-input>
         <b-form-group :label="$t('teacherWorksheet.sheetOnline')">
             <b-form-radio v-model="worksheet.isOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
             <b-form-radio v-model="worksheet.isOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
@@ -20,13 +20,13 @@
             <TaskCreation v-for="task in tasks"
                           :key="task.id"
                           :databases="databases"
-                          :task="task"
+                          :initialTask="task"
                           @save="save"
                           @delete="deleteTask"
             ></TaskCreation>
         </div>
         <!--buttons to create a new Task assigned to the worksheet and to return to the course view -->
-        <b-button @click="newTask">{{$t('teacherWorksheet.new')}}</b-button>
+        <b-button @click="createTask">{{$t('teacherWorksheet.new')}}</b-button>
         <b-button @click="toCourseView"> {{$t('teacherWorksheet.toOverview')}}</b-button>
     </div>
 </template>
@@ -51,54 +51,10 @@ import TaskController from "@/controller/TaskController";
 })
 export default class TeacherWorksheet extends Vue {
 
-    get databases() {
-        return this.databaseController.all;
-    }
-
-    /*
-    returns a worksheet and calls the setVar method to update the variables to match the worksheet.
-    this is used when an existing worksheet is loaded not when a new one is created
-     */
-    get worksheet(): Worksheet {
-      let tempWorksheet = new Worksheet('', '', [], false, false);
-      try {
-        tempWorksheet = this.worksheetController.get(this.$route.params.worksheetId);
-      } catch (e) {
-        return tempWorksheet;
-      }
-      return tempWorksheet;
-    }
-
-    get tasks(): Task[] {
-      return this.taskController.all && this.taskController.getChildren(this.worksheet);
-    }
-
-    public index: number = 1;
     private databaseController: DatabaseController = this.$store.getters.databaseController;
     private worksheetController: WorksheetController = this.$store.getters.worksheetController;
     private courseController: CourseController = this.$store.getters.courseController;
     private taskController: TaskController = this.$store.getters.taskController;
-    @Watch('worksheet')
-    public onWorksheetChange(value: Worksheet, oldValue: Worksheet) {
-      if (value === undefined) {
-        return;
-      }
-      if (oldValue === undefined || value.id !== oldValue.id) {
-        this.taskController.loadChildren(value);
-      }
-    }
-    @Watch('tasks')
-    public onTasksChange(value: Task[], oldValue: Task[]) {
-      if (value === undefined) {
-        return;
-      }
-      if (value.length !== oldValue.length || !value.every((task: Task, index: number) =>
-          oldValue[index].id === task.id)) {
-        this.worksheet.taskIds = value.map((task: Task) => task.id);
-        this.worksheetController.save(this.worksheet);
-        this.taskController.loadChildren(this.worksheet);
-      }
-    }
 
     public created() {
       this.databaseController = this.$store.getters.databaseController;
@@ -122,6 +78,58 @@ export default class TeacherWorksheet extends Vue {
         this.worksheet.taskIds = this.worksheet.taskIds.filter((id: string) => id !== task.id);
         this.worksheetController.save(this.worksheet);
     }
+
+    public save() {
+      this.worksheetController.save(this.worksheet);
+    }
+
+    public toCourseView() {
+      this.save();
+      this.$router.push('/courseView');
+    }
+
+  get databases() {
+    return this.databaseController.all;
+  }
+
+  /*
+  returns a worksheet and calls the setVar method to update the variables to match the worksheet.
+  this is used when an existing worksheet is loaded not when a new one is created
+   */
+  get worksheet(): Worksheet {
+    let tempWorksheet = new Worksheet('', '', [], false, false);
+    try {
+      tempWorksheet = this.worksheetController.get(this.$route.params.worksheetId);
+    } catch (e) {
+      return tempWorksheet;
+    }
+    return tempWorksheet;
+  }
+  @Watch('worksheet')
+  public onWorksheetChange(value: Worksheet, oldValue: Worksheet) {
+    if (value === undefined) {
+      return;
+    }
+    if (oldValue === undefined || value.id !== oldValue.id) {
+      this.taskController.loadChildren(value);
+    }
+  }
+
+  get tasks(): Task[] {
+    return this.taskController.all && this.taskController.getChildren(this.worksheet);
+  }
+  @Watch('tasks')
+  public onTasksChange(value: Task[], oldValue: Task[]) {
+    if (value === undefined) {
+      return;
+    }
+    if (value.length !== oldValue.length
+      || !value.every((task: Task, index: number) => oldValue[index].id === task.id)) {
+      this.worksheet.taskIds = value.map((task: Task) => task.id);
+      this.worksheetController.save(this.worksheet);
+      this.taskController.loadChildren(this.worksheet);
+    }
+  }
 }
 </script>
 
