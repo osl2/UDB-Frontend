@@ -33,7 +33,7 @@ const de = {
   },
   course: {
     titleStartPage: 'Kursbereich',
-    worksheets:'Aufgabenblätter',
+    worksheets: 'Aufgabenblätter',
     solutionsheets: 'Lösungsblätter',
     alertDelete: 'Arbeitsblatt wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden!',
   },
@@ -63,10 +63,10 @@ const de = {
     downloadDB: 'Datenbank herunterladen',
     or: 'oder',
     reset: 'Zurücksetzen',
-    courseId:'Kurs-Id',
+    courseId: 'Kurs-Id',
   },
-  helpMessage:{
-    sanbox:'Hier können SQLite Datenbanken hochgeladen werden.',
+  helpMessage: {
+    sanbox: 'Hier können SQLite Datenbanken hochgeladen werden.',
   },
   worksheetList: {
     worksheetOnline: 'Aufgabenblatt ist online',
@@ -177,7 +177,7 @@ const de = {
   mcTask: {
       anwserOptions: 'Antwortmöglichkeiten: ',
   },
-  courseList:{
+  courseList: {
     name: 'Name',
     description: 'Beschreibung',
     add: 'Hinzufügen',
