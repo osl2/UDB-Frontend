@@ -12,7 +12,6 @@
             <SqlTaskComp :currentSubtask="currentSubtask"
                          :solutions="solutions"
                          :sqlExecutor="sqlExecutor"
-                         :databaseNumber="databaseNumber"
                          @save="saveSubtask"
                          @compare="$emit('compare', subtaskSolution)"
             >
@@ -81,12 +80,6 @@ import SQLService from "@/services/SQLService";
 
 export default Vue.extend({
     props: ['task', 'currentSubtask', 'solutions', 'subtaskIndex', 'numberOfSubtasks', 'database'],
-    data() {
-      return {
-        sqlExecutor: new SQLExecutor() as SQLService,
-        databaseNumber: 0 as number,
-        };
-    },
     components: {
         SqlTaskComp,
         TextTask,
@@ -107,6 +100,13 @@ export default Vue.extend({
           }
 
       },
+      computed: {
+        sqlExecutor: {
+          get(): SQLExecutor {
+            return this.$store.getters.sqlExecutor;
+          },
+        },
+      },
 
       /**
        * Calls the methods save in StudentWorksheet.vue
@@ -121,9 +121,6 @@ export default Vue.extend({
       initDatabase() {
           const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
           dbComponent.postInit(Promise.resolve(this.database));
-        // this.sqlExecutor.open(this.database).then((dbNumber: number) => {
-        //   this.databaseNumber = dbNumber;
-        // });
       },
 
 

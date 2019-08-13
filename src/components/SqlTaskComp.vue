@@ -2,7 +2,7 @@
     <div>
         <h3>Aufgabenstellung:</h3>
         <div class="taskContainer">
-            {{this.currentSubtask.instruction}}
+            {{currentSubtask.instruction}}
          </div>
         <div>
             <div v-if="currentSubtask.isPointAndClickAllowed" class="taskSwitchButton">
@@ -23,13 +23,13 @@
                 ></component>
             </div>
 
-            <div>
-                <p v-show="gotFirstQueryExecuted">
+            <div v-if="gotFirstQueryExecuted">
+                <p>
                     {{$t('sandbox.resultText')}}({{lastQueryExecuted}}):
                 </p>
-                <QueryResultView :showResult="showResult"
-                             v-show="gotFirstQueryExecuted"
-                ></QueryResultView>
+                <QueryResultComp :columns="queryResult.result.columns"
+                                 :rows="queryResult.result.values"
+                ></QueryResultComp>
 
             </div>
 
@@ -49,19 +49,20 @@
 <script lang="ts">
 import Vue from 'vue';
 import Query from '@/components/Query.vue';
-import QueryResultView from '@/components/QueryResult.vue';
+import QueryResultComp from '@/components/QueryResult.vue';
 import PointAndClick from '@/components/PointAndClick.vue';
 import SqlSolution from "@/dataModel/SqlSolution";
 import QueryResult from "@/dataModel/QueryResult";
-import {SqlJs} from "sql.js/module";
-import ValueType = SqlJs.ValueType;
+import SqlTask from "@/dataModel/SqlTask";
+import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
+import DatabaseComponent from "@/components/DatabaseComponent.vue";
 
 export default Vue.extend({
-    props: ['currentSubtask', 'solutions', 'sqlExecutor', 'databaseNumber'],
+    props: ['currentSubtask', 'solutions', 'sqlExecutor'],
     components: {
         Query,
         PointAndClick,
-        QueryResultView,
+        QueryResultComp,
     },
 
     data() {
@@ -70,24 +71,39 @@ export default Vue.extend({
             gotFirstQueryExecuted: false,
             lastQueryExecuted: '',
             queryResult: {} as QueryResult,
-
-            // TODO Array nicht hard coden
-            showResult: [
-                 {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
-                {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
-            ],
-
         };
     },
     methods: {
         executeQuery(query: string) {
-            this.sqlExecutor.executeQuery(this.databaseNumber, query, 0).then((res: QueryResult) => {
-              this.queryResult = res;
+          if (this.checkAllowedSqlStatements(query)) {
+            const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+            try {
+              const dbNumber = dbComponent.$data.databaseNumber;
+              this.queryResult = this.sqlExecutor.executeQuery(dbNumber, query, 0);
+              const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
+              window.scrollTo(0, top + 200);
+              dbComponent.loadMetaData();
               this.gotFirstQueryExecuted = true;
               this.lastQueryExecuted = query;
-            }).catch((message: string) => {
-              alert(message);
-            });
+            } catch (error) {
+              alert(error.message);
+              return;
+            }
+          } else {
+            alert("Du hast einen SQL-Befehl verwendet, der für diese Aufgabe nicht erlaubt war. " +
+              "Bitte versuche erneut die Aufgabe zu lösen.");
+          }
+        },
+
+        checkAllowedSqlStatements(query: string): boolean {
+          const tempSubtask = this.currentSubtask as SqlTask;
+          if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.NoRestriction) {
+            return true;
+          } else if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
+            return true; // TODO: Regex Prüfung
+          } else {
+            return false; // TODO: Weitere Regex Prüfung
+          }
         },
 
         switchComponent() {
@@ -123,7 +139,6 @@ export default Vue.extend({
                     }
                     i++;
                 }
-
                 return new SqlSolution(this.queryResult.query, this.queryResult.result.columns,
                   values);
             },

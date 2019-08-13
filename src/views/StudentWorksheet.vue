@@ -49,15 +49,12 @@ import WorksheetController from "@/controller/WorksheetController";
 import ParentService from '@/services/ParentService';
 import WorksheetInstructions from '@/components/WorksheetInstructions.vue';
 import Subtask from '@/dataModel/Subtask';
-import TaskController from "@/controller/TaskController";
 import TaskSolve from '@/components/TaskSolve.vue';
 import InstructionTask from '@/dataModel/InstructionTask';
 import Solution from "@/dataModel/Solution";
 import SubtaskService from "@/services/SubtaskService";
-import SubtaskController from "@/controller/SubtaskController";
 import DataManagementService from "@/services/DataManagementService";
 import Database from "@/dataModel/Database";
-import DatabaseController from "@/controller/DatabaseController";
 import SolutionDiff from "@/dataModel/SolutionDiff";
 
 @Component({
@@ -205,6 +202,10 @@ export default class StudentWorksheet extends Vue {
     // lifecycle methods
 
     public created() {
+      this.worksheetController = this.$store.getters.worksheetController;
+      this.taskController = this.$store.getters.taskController;
+      this.subtaskController = this.$store.getters.subtaskController;
+      this.databaseController = this.$store.getters.databaseController;
       this.worksheetController.load(this.$route.params.worksheetId);
       this.worksheetId = this.$route.params.worksheetId;
     }
