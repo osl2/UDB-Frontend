@@ -174,7 +174,7 @@ export default class CourseView extends Vue {
   }
 
   get worksheets() {
-    return this.worksheetController.all && this.worksheetController.getChildren(this.course);
+    return this.worksheetController.all; // && this.worksheetController.getChildren(this.course);
   }
 
   @Watch('worksheets')

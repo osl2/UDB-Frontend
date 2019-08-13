@@ -28,7 +28,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
         this.api.getSubtasks()
             .then((response: Subtask[]) => {
                 response.forEach((subtask: Subtask) => {
-                    this._subtasks.set(subtask.id, subtask);
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(subtask.id, subtask));
                 });
             });
     }
@@ -42,7 +42,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
         object.subtaskIds.forEach((subtaskId) => {
             this.api.getSubtask({subtaskId} as GetSubtaskRequest)
                 .then((response: Subtask) => {
-                    this._subtasks.set(response.id, response);
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(response.id, response));
                 });
         });
     }
@@ -56,7 +56,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
         if (this._subtasks.get(id) === undefined) {
             this.api.getSubtask({subtaskId: id} as GetSubtaskRequest)
                 .then((response: Subtask) => {
-                    this._subtasks.set(response.id, response);
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(response.id, response));
                 });
         }
     }
@@ -70,7 +70,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
         return this.api.createSubtask({subtask} as CreateSubtaskRequest)
           .then((response: string) => {
               subtask.id = response;
-              this._subtasks.set(subtask.id, subtask);
+              this._subtasks = new Map<string, Subtask>(this._subtasks.set(subtask.id, subtask));
               return subtask.id;
           })
           .catch((error) => {
@@ -87,13 +87,14 @@ export default class SubtaskController extends ApiControllerAbstract implements 
         this.api.deleteSubtask({subtaskId: object.id} as DeleteSubtaskRequest)
           .then((response) => {
               this._subtasks.delete(object.id);
+              this._subtasks = new Map<string, Subtask>(this._subtasks);
           });
     }
     public save(object: Subtask): void {
         this.api.updateSubtask({subtask: object, subtaskId: object.id} as UpdateSubtaskRequest)
           .then(() => {
               if (this._subtasks.get(object.id) !== undefined) {
-                  this._subtasks.set(object.id, object);
+                  this._subtasks = new Map<string, Subtask>(this._subtasks.set(object.id, object));
               }
           });
     }
@@ -106,7 +107,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
             .then((response: Subtask[]) => {
                 response.forEach((subtask: Subtask) => {
                     subtask.solution = undefined;
-                    this._subtasks.set(subtask.id, subtask);
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(subtask.id, subtask));
                 });
             });
     }
@@ -121,7 +122,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
             this.api.getSubtask({subtaskId} as GetSubtaskRequest)
                 .then((response: Subtask) => {
                     response.solution = undefined;
-                    this._subtasks.set(response.id, response);
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(response.id, response));
                 });
         });
     }
@@ -136,7 +137,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
             this.api.getSubtask({subtaskId: id} as GetSubtaskRequest)
                 .then((response: Subtask) => {
                     response.solution = undefined;
-                    this._subtasks.set(response.id, response);
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(response.id, response));
                 });
         }
     }

@@ -5,6 +5,7 @@
         <div v-show="false">
             {{subtask.type}}
         </div>
+        {{subtask}}
         <!--Minimized variant, showing only the type of the subtask
          to make the site less cluttered when creating or editing several subtasks -->
     <div v-if="!showfull">
@@ -37,7 +38,7 @@
             it has an area to input the task instruction-->
 
         <div v-if="tasktype === 'inst'">
-            <b-form-input v-model="taskInstruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
+            <b-form-input v-model="subtask.instruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
         </div>
 
 
@@ -175,129 +176,64 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 import {ResultSet} from "@/dataModel/ResultSet";
 import SubtaskTypes from '@/dataModel/SubtaskTypes';
 import SubtaskController from "@/controller/SubtaskController";
+import {Prop, Component} from "vue-property-decorator";
+import SQLExecutor from "@/controller/SQLExecutor";
 
-export default Vue.extend ({
+@Component({
+
+})
+export default class SubtaskCreation extends Vue {
     /*
      subtask: either null (if a subtask is created) or a subtask if an existing subtask is edited
      subindex: indicates the index of the subtask in context of the task it belongs to
      dbId: the Id of the database assigned to the task, It's needed to create a solution for a sql subtask
      */
-    props: ['subtaskId', 'subindex', 'dbId'],
+    @Prop() private dbId!: string;
+    @Prop() private initialSubtask!: Subtask;
 
-    data() {
-        return {
+    private subtask = this.initialSubtask;
+
             // variables needed for the user interface or all tasks
-            showfull: true,
-            _subtask: Subtask,
-            index : 0,
-            typeOptions: [
+    private showfull: boolean = true;
+    private index: number = 0;
+    private taskType: string = '';
+    private typeOptions = [
                 {value: '', text: this.$t('subtaskCreation.chooseType') as string},
                 {value: 'inst', text: this.$t('subtaskCreation.typeInstructionExtra') as string},
                 {value: 'text', text: this.$t('subtaskCreation.typePlainText') as string},
                 {value: 'mc', text: this.$t('subtaskCreation.typeMultipleChoice') as string},
                 {value: 'sql', text: this.$t('subtaskCreation.typeSql') as string},
-            ],
-            subtaskController: this.$store.getters.subtaskController,
+            ];
+    private subtaskController: SubtaskController = this.$store.getters.subtaskController;
 
             // variables needed for a subtask with a solution
-            solutionverifyable: false,
-            solutionvisible: false,
+    private solutionverifyable: boolean = false;
+    private solutionvisible: boolean = false;
 
             // variables needed for a sql subtask or plaintexttask
-            queryResult: null as unknown as ResultSet,
-            sqlExecutor: this.$store.getters.sqlExecutor,
-            allowedSqlStatements: AllowedSqlStatements.NoRestriction,
-            isPointAndClickAllowed: false,
-            doesRowOrderMatter: false,
-            solution: '',
+    private queryResult: ResultSet = null as unknown as ResultSet;
+    private sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
+    private allowedSqlStatements: AllowedSqlStatements = AllowedSqlStatements.NoRestriction;
+    private isPointAndClickAllowed: boolean = false;
+    private doesRowOrderMatter: boolean = false;
+    private solution: string = '';
 
             // variables specifically for a multiple choice subtask
-            selected: [] as number[],
-            answerOption: '' as string,
-            answerOptions: [] as object[],
-            answerOptionsText: [] as string[],
-
-        };
-    },
+    private selected: number[] = [];
+    private answerOption: string =  '';
+    private answerOptions: object[] = [];
+    private answerOptionsText: string[]  = [];
 
     /*
      the created method does nothing if an empty subtask(Instruction task without id or instruction)
      is passed to the component. otherwise it updates the variables of
      the component to match the task it has been passed
      */
-    created() {
-        if (this.subtaskId === '') {
-            return;
-        } else {
-            this.subtaskController.load(this.subtaskId);
-        }
+    public created() {
+        this.subtaskController = this.$store.getters.subtaskController;
+        this.subtask = this.initialSubtask;
+    }
 
-    },
-
-    computed: {
-        subtask: {
-            get(): Subtask {
-                const tempSubtask = this.subtaskController.get(this.subtaskId);
-                this.setSubVars(tempSubtask);
-                return tempSubtask;
-
-            },
-        },
-    },
-
-    methods: {
-        /*
-        sets the variables of the component to match the contents of the given subtask.
-        depending on the type of the subtask different variables are updated
-        subtask: the subtask that should be displayed in this component
-        */
-        setSubVars( subtask: Subtask) {
-
-            if (subtask.type === SubtaskTypes.Instruction) {
-                this.tasktype = 'inst';
-                this.createdSubtaskId = subtask.id;
-                this.taskInstruction = subtask.instruction;
-
-            } else if (subtask.type === SubtaskTypes.PlainText) {
-                const textSolution: PlainTextSolution  = subtask.solution as PlainTextSolution;
-                this.tasktype = 'text';
-                this.createdSubtaskId = subtask.id;
-                this.taskInstruction = subtask.instruction;
-                this.solution = textSolution.text;
-                this.solutionverifyable = subtask.isSolutionVeryfiable;
-                this.solutionvisible = subtask.isSolutionVisible;
-
-            } else if (subtask.type === SubtaskTypes.MultipleChoice) {
-                const mcSubtask = subtask as MultipleChoiceTask;
-                const mcSolution: MultipleChoiceSolution = mcSubtask.solution as MultipleChoiceSolution;
-                this.tasktype = 'mc';
-                this.createdSubtaskId = mcSubtask.id;
-                this.taskInstruction = mcSubtask.instruction;
-                this.solutionverifiable = mcSubtask.isSolutionVeryfiable;
-                this.solutionvisible = mcSubtask.isSolutionVisible;
-                this.answerOptionsText = mcSubtask.answerOptions;
-                for (const option of this.answerOptionsText) {
-                    this.answerOption = option;
-                    this.addAnswerOption(false);
-                }
-                this.selected = mcSolution.choices;
-
-            } else if (subtask.type === SubtaskTypes.Sql) {
-
-                const sqlSubtask = subtask as SqlTask;
-                const sqlSolution: SqlSolution = sqlSubtask.solution as SqlSolution;
-                this.tasktype = 'sql';
-                this.createdSubtaskId = sqlSubtask.id;
-                this.taskInstruction = sqlSubtask.instruction;
-                this.solutionverifiable = sqlSubtask.isSolutionVeryfiable;
-                this.solutionvisible = sqlSubtask.isSolutionVisible;
-                this.isPointAndClickAllowed = sqlSubtask.isPointAndClickAllowed;
-                this.doesRowOrderMatter = sqlSubtask.doesRowOrderMatter;
-                this.solution = sqlSolution.querySolution;
-            }
-
-
-        },
 
         /*
          method used in the creation of a multiple choice task
@@ -305,7 +241,7 @@ export default Vue.extend ({
          withText: determines whether answerOptionsText is updated as well. It needs to be updaten when a new
                       answer option is added but not when loading an existing subtask
          */
-        addAnswerOption(withText: boolean) {
+    public addAnswerOption(withText: boolean) {
             if (this.answerOption === '') {
                 alert(this.$t('subtaskCreation.alertAnswerOption') as string);
                 return;
@@ -317,78 +253,31 @@ export default Vue.extend ({
             this.answerOption = '';
             this.index ++;
 
-        },
+    }
+
+    public saveSubtask() {
+        this.subtaskController.save(this.subtask);
+    }
 
         /*
          changes the value of the showfull variable. the method is used to minimize or maximize the subtask
          */
-        changeSize() {
-            this.showfull = !this.showfull;
-        },
+    public changeSize() {
+        this.showfull = !this.showfull;
+    }
 
-        /*
-         creates a subtask based on the options the user selected and emits it to the TaskCreationComponent
-         */
-        saveSubtask() {
-            let createdSubtask: Subtask;
-            if (this.tasktype === 'inst') {
-                createdSubtask = new InstructionTask(this.subtaskId, this.taskInstruction);
-
-            } else if (this.tasktype === 'text') {
-                createdSubtask = new PlainTextTask(this.subtaskId, new PlainTextSolution(this.solution)
-                    , this.taskInstruction, this.solutionverifiable, this.solutionvisible);
-
-            } else if (this.tasktype === 'mc') {
-                createdSubtask = new MultipleChoiceTask(this.subtaskId,
-                    new MultipleChoiceSolution(this.selected), this.taskInstruction, this.solutionverifiable,
-                    this.solutionvisible, this.answerOptionsText);
-
-            } else {
-                this.queryResult = this.sqlExecutor.executeQuery(this.dbId, this.solution, 0);
-                const values: string[][] = [[]];
-                let i = 0;
-                for (const row of this.queryResult.values) {
-                    values.push([]);
-                    for (const cell of row) {
-                        if (cell != null) {
-                            values[i].push(cell.toString());
-                        } else {
-                            values[i].push("null");
-                        }
-                    }
-                    i++;
-                }
-                createdSubtask = new SqlTask(this.subtaskId,
-                    new SqlSolution(this.solution, this.queryResult.columns, values),
-                    this.taskInstruction, this.solutionverifiable, this.isPointAndClickAllowed,
-                    this.doesRowOrderMatter, this.solutionvisible, this.allowedSqlStatements);
-            }
-            if (this.subtaskId === '') {
-            // TO-DO warten einbauen
-                this.subtaskController.create(createdSubtask);
-
-                this.$emit('save', this.subindex, createdSubtask.id);
-            } else {
-                this.subtaskController.save(createdSubtask);
-            }
-            },
 
         /*
         sends a request to delete the subtask to the server and emits the delete function to the task
         to delete the reference of the subtask
          */
-        deleteSubtask() {
-            if (confirm(this.$t('subtaskCreation.alertDelete') as string)) {
-                this.$emit('delete', this.subindex);
-            }
+    public deleteSubtask() {
+        if (confirm(this.$t('subtaskCreation.alertDelete') as string)) {
+            this.subtaskController.remove(this.subtask);
+        }
 
-        },
-
-
-    },
-
-
-});
+    }
+}
 </script>
 
 <style scoped>

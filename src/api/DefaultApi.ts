@@ -892,13 +892,13 @@ export class DefaultApi extends runtime.BaseAPI {
         });
 
         return new runtime.JSONApiResponse(response, (jsonValue) => {
-            if (jsonValue.hasOwnProperty("sql")) {
+            if (jsonValue.content.hasOwnProperty("sql")) {
                 return SqlTask.fromJSON(jsonValue);
             }
-            if (jsonValue.hasOwnProperty("multiple_choice")) {
+            if (jsonValue.content.hasOwnProperty("multiple_choice")) {
                 return MultipleChoiceTask.fromJSON(jsonValue);
             }
-            if (jsonValue.hasOwnProperty("plaintext")) {
+            if (jsonValue.content.hasOwnProperty("plaintext")) {
                 return PlainTextTask.fromJSON(jsonValue);
             }
             throw new Error("Unknown Subtask type");
