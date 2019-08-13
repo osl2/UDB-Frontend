@@ -7,6 +7,7 @@ import DatabaseController from "@/controller/DatabaseController";
 import SubtaskController from "@/controller/SubtaskController";
 import UserController from "@/controller/UserController";
 import User from "@/dataModel/User";
+import LocalStorageController from "@/controller/LocalStorageController";
 
 export interface RootState {
     api: DefaultApi;
@@ -18,4 +19,5 @@ export interface RootState {
     databaseController: DatabaseController;
     subtaskController: SubtaskController;
     userController: UserController;
+    localStorageController: LocalStorageController;
 }

@@ -94,7 +94,11 @@ export default class Sandbox extends Vue {
       this.queryResult = this.sqlExecutor.executeQuery(dbNumber, query, 0);
       const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
       window.scrollTo(0, top + 200);
+
+      // this is not optimal because select requests does not need to replace database in storage neither metadata
+      // fix by implementing the logic by detecting query type (select, update or delete)
       dbComponent.loadMetaData();
+      dbComponent.replaceStorage();
     } catch (error) {
       alert(error.message);
       return;

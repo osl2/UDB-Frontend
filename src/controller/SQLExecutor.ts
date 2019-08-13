@@ -6,69 +6,81 @@ import {ResultSet, ValueType} from '@/dataModel/ResultSet';
 import initSqlJs from 'sql.js';
 
 export default class SQLExecutor implements SQLService {
-  public databaseSnapshots!: Map<number, SqlJs.Database[]>;
-  public sqlJs: Promise<SqlJs.SqlJsStatic>;
+    public databaseSnapshots!: Map<number, SqlJs.Database[]>;
+    public sqlJs: Promise<SqlJs.SqlJsStatic>;
 
-  constructor() {
-    this.databaseSnapshots = new Map();
-    this.sqlJs = initSqlJs(config);
-  }
-
-  public executeQuery(database: number, query: string, step: number): QueryResult {
-    const resultSet: ResultSet = {
-      status: 0,
-      message: "",
-      columns: [],
-      values: [[]],
-    };
-    const sqlDb = this.databaseSnapshots.get(database)![step];
-    const results: SqlJs.QueryResults[] = sqlDb.exec(query);
-    if (results.length > 0) {
-      if (results[0].columns.length > 0) {
-        resultSet.columns = results[0].columns;
-      }
-      if (results[0].values.length > 0) {
-        resultSet.values = results[0].values as ValueType[][];
-      }
+    constructor() {
+        this.databaseSnapshots = new Map();
+        this.sqlJs = initSqlJs(config);
     }
 
-    return {
-      query,
-      result: resultSet,
-    };
-  }
+    public executeQuery(database: number, query: string, step: number): QueryResult {
+        const resultSet: ResultSet = {
+            status: 0,
+            message: "",
+            columns: [],
+            values: [[]],
+        };
+        const sqlDb = this.databaseSnapshots.get(database)![step];
+        const results: SqlJs.QueryResults[] = sqlDb.exec(query);
+        if (results.length > 0) {
+            if (results[0].columns.length > 0) {
+                resultSet.columns = results[0].columns;
+            }
+            if (results[0].values.length > 0) {
+                resultSet.values = results[0].values as ValueType[][];
+            }
+        }
 
-  public open(database: Database): Promise<number> {
-    return this.sqlJs.then((SQL: SqlJs.SqlJsStatic) => {
-      let dbIndex = Math.random();
-      while (this.databaseSnapshots.has(dbIndex)) {
-        dbIndex = Math.random();
-      }
-      this.databaseSnapshots.set(dbIndex, [new SQL.Database(database.content)]);
-      return dbIndex;
-    });
-  }
+        return {
+            query,
+            result: resultSet,
+        };
+    }
 
-  public snapshot(database: number, step: number): Promise<Uint8Array> {
-    return this.sqlJs.then((SQL: SqlJs.SqlJsStatic) => {
-      return this.databaseSnapshots.get(database)![step].export();
-    });
-  }
+    public open(database: Database): Promise<number> {
+        return this.sqlJs.then((SQL: SqlJs.SqlJsStatic) => {
+            let dbIndex = Math.random();
+            while (this.databaseSnapshots.has(dbIndex)) {
+                dbIndex = Math.random();
+            }
+            this.databaseSnapshots.set(dbIndex, [new SQL.Database(database.content)]);
+            return dbIndex;
+        });
+    }
 
-  /**
-   * Return the last snapshot of the database with [[dbNumber]] and closes all other snapshots and removes from memory
-   * @param dbNumber the index of the database
-   * @return the last snapshot of the database
-   */
-  public close(dbNumber: number): Uint8Array {
-    const dbArray = this.databaseSnapshots.get(dbNumber)!;
-    const retVal = dbArray[dbArray.length - 1].export();
-    dbArray.forEach((element) => {
-      element.close();
-    });
-    this.databaseSnapshots.delete(dbNumber);
-    return retVal;
-  }
+    public snapshot(database: number, step: number): Uint8Array | null {
+        const databases: SqlJs.Database[] = this.databaseSnapshots.get(database)!;
+        if (databases) {
+            return databases[step].export();
+        } else {
+            return null;
+        }
+    }
+
+    public latestSnapshot(database: number): Uint8Array | null {
+        const databases: SqlJs.Database[] = this.databaseSnapshots.get(database)!;
+        if (databases) {
+            return databases[databases.length - 1].export();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return the last snapshot of the database with [[dbNumber]] and closes all other snapshots and removes from memory
+     * @param dbNumber the index of the database
+     * @return the last snapshot of the database
+     */
+    public close(dbNumber: number): Uint8Array {
+        const dbArray = this.databaseSnapshots.get(dbNumber)!;
+        const retVal = dbArray[dbArray.length - 1].export();
+        dbArray.forEach((element) => {
+            element.close();
+        });
+        this.databaseSnapshots.delete(dbNumber);
+        return retVal;
+    }
 
 
 }
@@ -79,6 +91,6 @@ export default class SQLExecutor implements SQLService {
  * https://github.com/kripken/sql.js/issues/282
  */
 const config = {
-  locateFile: (filename: string) => `/static/wasm/${filename}`,
+    locateFile: (filename: string) => `/static/wasm/${filename}`,
 };
 

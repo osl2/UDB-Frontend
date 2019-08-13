@@ -11,6 +11,7 @@ import SubtaskController from "@/controller/SubtaskController";
 import UserController from "@/controller/UserController";
 import User from "@/dataModel/User";
 import UserGroup from "@/dataModel/UserGroup";
+import LocalStorageController from "@/controller/LocalStorageController";
 
 
 Vue.use(Vuex);
@@ -28,6 +29,7 @@ const store: StoreOptions<RootState> = {
         databaseController: new DatabaseController(api),
         subtaskController: new SubtaskController(api),
         userController: new UserController(api),
+        localStorageController: new LocalStorageController(),
     },
     getters: {
         api: (state) => {
@@ -53,6 +55,9 @@ const store: StoreOptions<RootState> = {
         },
         userController: (state) => {
             return state.userController;
+        },
+        localStorageController: (state) => {
+            return state.localStorageController;
         },
     },
 };
