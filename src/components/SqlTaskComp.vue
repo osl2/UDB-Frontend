@@ -37,7 +37,7 @@
 
             </div>
 
-            <b-button v-b-popover.hover="this.$t('sqlTaskComp.hover') as string"
+            <b-button v-b-popover.hover="this.$t('sqlTaskComp.hover')" as string
                       @click="$emit('save', subtaskSolution)"
             >
                 {{$t('taskComp.save')}}</b-button>

@@ -37,7 +37,7 @@
             it has an area to input the task instruction-->
 
         <div v-if="tasktype === 'inst'">
-            <b-form-input v-model="taskInstruction" placeholder=" {{$t('subtaskCreation.instruction')}}"></b-form-input>
+            <b-form-input v-model="taskInstruction" placeholder={{$t('subtaskCreation.instruction')}}></b-form-input>
         </div>
 
 
@@ -49,16 +49,16 @@
         a radio to choose whether a student can compare its solution to the teacher solution-->
 
         <div v-else-if="tasktype === 'text'">
-            <b-form-input v-model="taskInstruction" placeholder="{{$t('subtaskCreation.instruction')}}"></b-form-input>
-            <b-form-group label="{{$t('subtaskCreation.verifiable')}}">
+            <b-form-input v-model="taskInstruction" placeholder={{$t('subtaskCreation.instruction')}}></b-form-input>
+            <b-form-group label={{$t('subtaskCreation.verifiable')}}>
                 <b-form-radio v-model="solutionverifiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                 <b-form-radio v-model="solutionverifiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
             </b-form-group>
 
             <div v-if="solutionverifiable">
-                <b-form-input v-model="solution" placeholder="{{$t('subtaskCreation.solution')}}"></b-form-input>
+                <b-form-input v-model="solution" placeholder={{$t('subtaskCreation.solution')}}></b-form-input>
 
-                <b-form-group label="{{$t('subtaskCreation.visible')}}">
+                <b-form-group label={{$t('subtaskCreation.visible')}}>
                     <b-form-radio v-model="solutionvisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                     <b-form-radio v-model="solutionvisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                 </b-form-group>
@@ -74,15 +74,15 @@
        a radio to choose whether a student can compare its solution to the teacher solution-->
 
         <div v-else-if="tasktype === 'mc'">
-            <b-form-input v-model="taskInstruction" placeholder="{{$t('subtaskCreation.instruction')}}"></b-form-input>
-            <b-form-input v-model="answerOption" placeholder="{{$t('subtaskCreation.answerOption')}}"></b-form-input>
+            <b-form-input v-model="taskInstruction" placeholder={{$t('subtaskCreation.instruction')}}></b-form-input>
+            <b-form-input v-model="answerOption" placeholder={{$t('subtaskCreation.answerOption')}}></b-form-input>
             <b-button @click="addAnswerOption(true)">{{$t('subtaskCreation.addAnswer')}} </b-button>
 
             <div>
                 Antwortmöglichkeiten: {{answerOptionsText}}
             </div>
 
-            <b-form-group label="{{$t('subtaskCreation.verifiable')}}">
+            <b-form-group label={{$t('subtaskCreation.verifiable')}}>
                 <b-form-radio v-model="solutionverifiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                 <b-form-radio v-model="solutionverifiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
             </b-form-group>
@@ -98,7 +98,7 @@
                 </b-form-group>
 
 
-                <b-form-group label="{{$t('subtaskCreation.solution')}}">
+                <b-form-group label={{$t('subtaskCreation.solution')}}>
                     <b-form-radio v-model="solutionvisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                     <b-form-radio v-model="solutionvisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                 </b-form-group>
@@ -118,34 +118,34 @@
                     to the teacher solution-->
 
         <div v-else-if="tasktype === 'sql'">
-            <b-form-input v-model="taskInstruction" placeholder="{{$t('subtaskCreation.instruction')}}"></b-form-input>
+            <b-form-input v-model="taskInstruction" placeholder={{$t('subtaskCreation.instruction')}}></b-form-input>
 
-            <b-form-group label="{{$t('subtaskCreation.allowedSql')}}">
+            <b-form-group label={{$t('subtaskCreation.allowedSql')}}>
                 <b-form-radio v-model="allowedSqlStatements"  :value='AllowedSqlStatements.NoRestriction'
                 >{{$t('subtaskCreation.noRestriction')}}</b-form-radio>
                 <b-form-radio v-model="allowedSqlStatements"  :value="AllowedSqlStatements.SelectStatements"
                 >{{$t('subtaskCreation.select')}}</b-form-radio>
             </b-form-group>
 
-            <b-form-group label="{{$t('subtaskCreation.PandC')}}">
+            <b-form-group label={{$t('subtaskCreation.PandC')}}>
                 <b-form-radio v-model="isPointAndClickAllowed" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                 <b-form-radio v-model="isPointAndClickAllowed"  :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
             </b-form-group>
 
-            <b-form-group label="{{$t('subtaskCreation.verifiable')}}">
+            <b-form-group label={{$t('subtaskCreation.verifiable')}}>
                 <b-form-radio v-model="solutionverifiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                 <b-form-radio v-model="solutionverifiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
             </b-form-group>
 
             <div v-if="solutionverifiable">
-                <b-form-input v-model="solution" placeholder="{{$t('subtaskCreation.solution')}}"></b-form-input>
+                <b-form-input v-model="solution" placeholder={{$t('subtaskCreation.solution')}}></b-form-input>
 
-                <b-form-group label="{{$t('subtaskCreation.solution')}}">
+                <b-form-group label={{$t('subtaskCreation.solution')}}>
                     <b-form-radio v-model="solutionvisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                     <b-form-radio v-model="solutionvisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                 </b-form-group>
 
-                <b-form-group v-if="solutionvisible" label="{{$t('subtaskCreation.rowOrder')}}">
+                <b-form-group v-if="solutionvisible" label={{$t('subtaskCreation.rowOrder')}}>
                     <b-form-radio v-model="doesRowOrderMatter"  :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                     <b-form-radio v-model="doesRowOrderMatter"  :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                 </b-form-group>
