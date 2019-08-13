@@ -1,3 +1,4 @@
+import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 <template>
     <div>
         <!-- A minimized version of the task that doesn't show the options to make the page
@@ -13,7 +14,7 @@
         <div v-if="showfull">
             {{task.name}}
         <div>
-            <b-form-input v-model="taskName" :placeholder="$t('taskCreation.name')"></b-form-input>
+            <b-form-input v-model="task.name" :placeholder="$t('taskCreation.name')"></b-form-input>
         </div>
         <div>
             <b-form-select v-model="dbId" :options="dbOptions"></b-form-select>
@@ -21,13 +22,15 @@
             <!--Displays a SubtaskCreation component for every subtask in the subtasks array -->
         <div v-if="dbOptions !== null">
             <SubtaskCreation v-for="subtask in subtasks"
-                             :key="subtask.index"
-                             :subindex="subtask.index"
+                             :key="subtask.id"
                              :dbId="dbId"
-                             :subTaskId="subtask.id"
+                             :subtask="subtask"
                              @save="save"
                              @deleteSubtask="deleteSubtask"
             ></SubtaskCreation>
+        </div>
+        <div>
+            <b-form-select v-model="subtaskType" v-on:change="createSubtask" :options="subtaskTypes"></b-form-select>
         </div>
         <b-button @click="newSubtask">{{$t('taskCreation.new')}}</b-button>
             <b-button @click="changeSize"> {{$t('taskCreation.minimize')}}</b-button>
@@ -35,25 +38,31 @@
     </div>
 </template>
 
-<script lang ="ts" >
-import Vue from 'vue';
-import SubtaskCreation from '@/components/SubtaskCreation.vue';
-import Task from '@/dataModel/Task';
+<script lang ="ts">
+  import Vue from 'vue';
+  import SubtaskCreation from '@/components/SubtaskCreation.vue';
+  import Subtask from "@/dataModel/Subtask";
+  import SqlTask from "@/dataModel/SqlTask";
+  import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
+  import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
+  import PlainTextTask from "@/dataModel/PlainTextTask";
+  import InstructionTask from "@/dataModel/InstructionTask";
+  import SqlSolution from "@/dataModel/SqlSolution";
+  import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
+  import PlainTextSolution from "@/dataModel/PlainTextSolution";
 
-export default Vue.extend({
-    props: ['databases', 'taskindex', 'taskId'],
+  export default Vue.extend({
+    props: ['databases', 'task'],
     components: {SubtaskCreation},
     data() {
         return {
             showfull: true,
-            taskName: '',
-            dbId: '',
-            createdTaskId: '',
-            dbOptions: [{text: this.$t('taskCreation.chooseDb') as string, value: null}],
-            index: 1,
-            subtasks: [{subtaskId: '', index: 0}],
-            subtaskIds: [] as string[],
-            taskController: this.$store.getters.taskController(),
+            dbOptions: [{text: "Wähle eine Datenbank aus", value: null}],
+            subtasks: [],
+            subtaskType: "",
+            subtaskTypes: ["SQL", "Multiple-Choice", "Text", "Instruction"],
+            taskController: this.$store.getters.taskController,
+            subtaskController: this.$store.getters.subtaskController,
         };
     },
 
@@ -62,16 +71,12 @@ export default Vue.extend({
     if one was given
      */
     created() {
+        this.subtaskController = this.$store.getters.subtaskController;
+        this.taskController = this.$store.getters.taskController;
         for (const database of this.databases) {
             this.dbOptions.push({text: database.name, value: database.id});
         }
-        if (this.taskId === '') {
-            return;
-        } else {
-            this.taskController.load(this.taskId);
-
-
-        }
+        this.subtaskController.loadChildren(this.task);
     },
 
 
@@ -80,55 +85,62 @@ export default Vue.extend({
         /*
         returns a task and calls a function that updates the variables of the component
          */
-        task: {
-            get(): Task {
-                const tempTask = this.taskController.get(this.taskId);
-                this.setTaskVars(tempTask);
-                return tempTask;
-
+        subtasks: {
+            get(): Subtask[] {
+              return this.subtaskController.all && this.subtaskController.loadChildren(this.task)
             },
         },
     },
 
     methods: {
-        /*
-        updates the variables of the component to match the contents of the given task
-        task: a task that was passed to the component and should be updated
-         */
-        setTaskVars(task: Task) {
-            this.taskName = task.name;
-            this.createdTaskId = task.id;
-            this.dbId = task.databaseId;
-            this.subtaskIds = task.subtaskIds;
-            let tempIndex = 0;
-            for (const subtask of this.subtaskIds) {
-                this.subtasks.push({subtaskId: subtask, index: tempIndex});
-                tempIndex++;
-            }
-
+        // creates a new entry in the subtask array
+        createSubtask() {
+          switch (this.subtaskType) {
+            case "SQL":
+              this.newSqlTask();
+              break;
+            case "Multiple-Choice":
+              this.newMCTask();
+              break;
+            case "Text":
+              this.newTextTask();
+              break;
+            case "Instruction":
+              this.newInstructionTask();
+              break;
+          }
         },
-
-        /*
-         creates a new entry with an empty id in the subtask array
-         */
-        newSubtask() {
-            this.subtasks.push({subtaskId: '', index: this.index});
-            this.index++;
+        newSqlTask() {
+            this.subtaskController.create(
+              new SqlTask('', new SqlSolution('', [], [[]]), '', false, false, false, false, AllowedSqlStatements.NoRestriction)
+            ).then((subtaskId: string) => {
+              this.task.subtaskIds.push(subtaskId);
+              this.save();
+            });
         },
-
-        /*
-        updates the content of the subtask array when a newly created subtask is saved
-        index: index of the subtask array where the subtask should be saved
-        subtaskId: the id of the subtask that should be added to the subtasks array
-         */
-        addSubtask(index: number, subtaskId: string) {
-
-            for (const subtask of this.subtasks) {
-                if (subtask.index === index) {
-                    subtask.subtaskId = subtaskId;
-                    return;
-                }
-            }
+        newMCTask() {
+          this.subtaskController.create(
+            new MultipleChoiceTask('', new MultipleChoiceSolution([]), '', false, false, [])
+          ).then((subtaskId: string) => {
+            this.task.subtaskIds.push(subtaskId);
+            this.save();
+          });
+        },
+        newTextTask() {
+          this.subtaskController.create(
+            new PlainTextTask('', new PlainTextSolution(''), '', false, false)
+          ).then((subtaskId: string) => {
+            this.task.subtaskIds.push(subtaskId);
+            this.save();
+          });
+        },
+        newInstructionTask() {
+          this.subtaskController.create(
+            new InstructionTask('', '')
+          ).then((subtaskId: string) => {
+            this.task.subtaskIds.push(subtaskId);
+            this.save();
+          });
         },
 
         /*
@@ -140,22 +152,8 @@ export default Vue.extend({
             index: the index where the subtask can be found that was saved and started the save call
             subtaskId: id of the subtask that was changed
          */
-        save(index: number, subtaskId: string) {
-            let tempTask: Task;
-            this.addSubtask(index, subtaskId);
-            this.subtaskIds = [];
-            for (const subtask of this.subtasks) {
-                this.subtaskIds.push(subtask.subtaskId);
-            }
-            tempTask = new Task(this.taskId, this.taskName, this.dbId, this.subtaskIds);
-
-            if (this.taskId === '') {
-                this.taskController.create(tempTask);
-                this.$emit('save', this.taskindex, tempTask.id);
-            } else {
-                this.taskController.save(tempTask);
-            }
-
+        save() {
+            this.taskController.save(this.task);
         },
 
         /*

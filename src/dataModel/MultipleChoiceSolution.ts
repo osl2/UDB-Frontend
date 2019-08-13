@@ -26,7 +26,7 @@ export default class MultipleChoiceSolution extends Solution {
 
     public toJSON(): any {
         return {
-            choices: this.choices,
+            correct_positions: this.choices,
         };
     }
 

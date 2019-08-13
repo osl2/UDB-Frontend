@@ -97,6 +97,7 @@ export default class CourseView extends Vue {
     }
     this.setIsStudentsViewActive();
     this.courseController.loadWithAlias(this.$route.params.courseId);
+    this.courseController.loadWithAlias("yay");
   }
 
   public toggleView() {
@@ -173,7 +174,7 @@ export default class CourseView extends Vue {
   }
 
   get worksheets() {
-    return this.worksheetController.all;
+    return this.worksheetController.all && this.worksheetController.getChildren(this.course);
   }
 
   @Watch('worksheets')

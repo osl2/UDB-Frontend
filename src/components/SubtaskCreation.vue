@@ -174,6 +174,7 @@ import SqlSolution from '@/dataModel/SqlSolution';
 import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 import {ResultSet} from "@/dataModel/ResultSet";
 import SubtaskTypes from '@/dataModel/SubtaskTypes';
+import SubtaskController from "@/controller/SubtaskController";
 
 export default Vue.extend ({
     /*
@@ -187,9 +188,7 @@ export default Vue.extend ({
         return {
             // variables needed for the user interface or all tasks
             showfull: true,
-            createdSubtaskId: '',
-            tasktype: '',
-            taskInstruction: '',
+            _subtask: Subtask,
             index : 0,
             typeOptions: [
                 {value: '', text: this.$t('subtaskCreation.chooseType') as string},
@@ -198,10 +197,10 @@ export default Vue.extend ({
                 {value: 'mc', text: this.$t('subtaskCreation.typeMultipleChoice') as string},
                 {value: 'sql', text: this.$t('subtaskCreation.typeSql') as string},
             ],
-            subtaskController: this.$store.getters.subtask,
+            subtaskController: this.$store.getters.subtaskController,
 
             // variables needed for a subtask with a solution
-            solutionverifiable: false,
+            solutionverifyable: false,
             solutionvisible: false,
 
             // variables needed for a sql subtask or plaintexttask
@@ -222,12 +221,13 @@ export default Vue.extend ({
     },
 
     /*
-     the created method does nothing if an empty subtask(Instruction task without id or instruction)
-     is passed to the component. otherwise it updates the variables of
-     the component to match the task it has been passed
+     * the created method does nothing if an empty subtask(Instruction task without id or instruction)
+     * is passed to the component. otherwise it updates the variables of
+     * the component to match the task it has been passed
      */
     created() {
         if (this.subtaskId === '') {
+
             return;
         } else {
             this.subtaskController.load(this.subtaskId);
@@ -253,7 +253,6 @@ export default Vue.extend ({
         subtask: the subtask that should be displayed in this component
         */
         setSubVars( subtask: Subtask) {
-
             if (subtask.type === SubtaskTypes.Instruction) {
                 this.tasktype = 'inst';
                 this.createdSubtaskId = subtask.id;
@@ -265,7 +264,7 @@ export default Vue.extend ({
                 this.createdSubtaskId = subtask.id;
                 this.taskInstruction = subtask.instruction;
                 this.solution = textSolution.text;
-                this.solutionverifiable = subtask.isSolutionVeryfiable;
+                this.solutionverifyable = subtask.isSolutionVeryfiable;
                 this.solutionvisible = subtask.isSolutionVisible;
 
             } else if (subtask.type === SubtaskTypes.MultipleChoice) {
@@ -274,7 +273,7 @@ export default Vue.extend ({
                 this.tasktype = 'mc';
                 this.createdSubtaskId = mcSubtask.id;
                 this.taskInstruction = mcSubtask.instruction;
-                this.solutionverifiable = mcSubtask.isSolutionVeryfiable;
+                this.solutionverifyable = mcSubtask.isSolutionVeryfiable;
                 this.solutionvisible = mcSubtask.isSolutionVisible;
                 this.answerOptionsText = mcSubtask.answerOptions;
                 for (const option of this.answerOptionsText) {
@@ -290,7 +289,7 @@ export default Vue.extend ({
                 this.tasktype = 'sql';
                 this.createdSubtaskId = sqlSubtask.id;
                 this.taskInstruction = sqlSubtask.instruction;
-                this.solutionverifiable = sqlSubtask.isSolutionVeryfiable;
+                this.solutionverifyable = sqlSubtask.isSolutionVeryfiable;
                 this.solutionvisible = sqlSubtask.isSolutionVisible;
                 this.isPointAndClickAllowed = sqlSubtask.isPointAndClickAllowed;
                 this.doesRowOrderMatter = sqlSubtask.doesRowOrderMatter;
@@ -337,11 +336,11 @@ export default Vue.extend ({
 
             } else if (this.tasktype === 'text') {
                 createdSubtask = new PlainTextTask(this.subtaskId, new PlainTextSolution(this.solution)
-                    , this.taskInstruction, this.solutionverifiable, this.solutionvisible);
+                    , this.taskInstruction, this.solutionverifyable, this.solutionvisible);
 
             } else if (this.tasktype === 'mc') {
                 createdSubtask = new MultipleChoiceTask(this.subtaskId,
-                    new MultipleChoiceSolution(this.selected), this.taskInstruction, this.solutionverifiable,
+                    new MultipleChoiceSolution(this.selected), this.taskInstruction, this.solutionverifyable,
                     this.solutionvisible, this.answerOptionsText);
 
             } else {
@@ -361,10 +360,11 @@ export default Vue.extend ({
                 }
                 createdSubtask = new SqlTask(this.subtaskId,
                     new SqlSolution(this.solution, this.queryResult.columns, values),
-                    this.taskInstruction, this.solutionverifiable, this.isPointAndClickAllowed,
+                    this.taskInstruction, this.solutionverifyable, this.isPointAndClickAllowed,
                     this.doesRowOrderMatter, this.solutionvisible, this.allowedSqlStatements);
             }
             if (this.subtaskId === '') {
+            // TO-DO warten einbauen
                 this.subtaskController.create(createdSubtask);
 
                 this.$emit('save', this.subindex, createdSubtask.id);
@@ -379,9 +379,6 @@ export default Vue.extend ({
          */
         deleteSubtask() {
             if (confirm(this.$t('subtaskCreation.alertDelete') as string)) {
-                if (this.createdSubtaskId !== '') {
-                    this.subtaskController.remove('');
-                }
                 this.$emit('delete', this.subindex);
             }
 
