@@ -23,7 +23,7 @@ export default class PlainTextSolution extends Solution {
         this._text = text;
     }
 
-    public toJSON(): any {
+    get toJSON(): any {
         return {
             text: this.text,
         };

@@ -1,3 +1,4 @@
+import SubtaskTypes from "@/dataModel/SubtaskTypes";
 <template>
     <div>
         <!--Div is never shown as the subtask type doesn't need to be displayed here but a use of subtask is needed
@@ -5,108 +6,94 @@
         <div v-show="false">
             {{subtask.type}}
         </div>
-        {{subtask}}
         <!--Minimized variant, showing only the type of the subtask
          to make the site less cluttered when creating or editing several subtasks -->
-    <div v-if="!showfull">
+    <div>
         <b-card>
-            <div v-if="this.tasktype ==='inst'" class="bg-secondary text-light">
-                {{$t('subtaskCreation.typeInstruction')}}
+            <div v-if="subtask.type === 3" class="border-dark">
+                <!-- displays options to create or update a subtask of the type instruction task.
+                     it has an area to input the task instruction-->
+                <p>{{$t('subtaskCreation.typeInstruction')}}
+                <b-button @click="changeSize()">{{$t('subtaskCreation.maximize')}}</b-button></p>
 
+                <div v-if="showfull">
+                    <b-form-input v-model="subtask.instruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
+                </div>
             </div>
-            <div v-else-if="this.tasktype ==='text'" class="bg-secondary text-light">
-                {{$t('subtaskCreation.typePlainText')}}
+            <div v-else-if="subtask.type === 2" class="border-dark">
+                <!-- displays options to create or update a subtask of the type PlainTextTask.
+                    it has an area to input the task instructions,
+                    a radio to choose whether a teachersolution should exists.
+                    if a teacher solution should exist it also has:
+                    an area to input the teacher solution, can be a simple text or a regex
+                    a radio to choose whether a student can compare its solution to the teacher solution-->
+                <p>{{$t('subtaskCreation.typePlainText')}}
+                <b-button @click="changeSize()">{{$t('subtaskCreation.maximize')}}</b-button></p>
 
+                <div v-if="showfull">
+                    <b-form-input v-model="subtask.instruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
+                    <b-form-group :label="$t('subtaskCreation.verifiable')">
+                        <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                        <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
+                    </b-form-group>
+
+                    <div v-if="subtask.isSolutionVeryfiable">
+                        <b-form-input v-model="subtask.solution.text" :placeholder="$t('subtaskCreation.solution')"></b-form-input>
+
+                        <b-form-group :label="$t('subtaskCreation.visible')">
+                            <b-form-radio v-model="subtask.isSolutionVisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                            <b-form-radio v-model="subtask.isSolutionVisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
+                        </b-form-group>
+                    </div>
+                </div>
             </div>
-            <div v-else-if="this.tasktype ==='mc'" class="bg-secondary text-light">
-                {{$t('subtaskCreation.typeMultipleChoice')}}
+            <div v-else-if="subtask.type === 1" class="border-dark p-2">
+                <!-- displays options to create or update a subtask of the type MultipleChoiceTask.
+                   includes an area to input the task instructions,
+                   an area to input all possible answers for the multiple choice task
+                   a radio to choose whether a teachersolution should exists
+                   if a teacher solution should exist it also has:
+                   a display with all possible answers where the teacher can select the correct answers
+                   a radio to choose whether a student can compare its solution to the teacher solution-->
+                <p>{{$t('subtaskCreation.typeMultipleChoice')}}
+                <b-button @click="changeSize()">{{$t('subtaskCreation.maximize')}}</b-button></p>
 
+                <div v-if="showfull">
+                    <b-form-input v-model="subtask.instruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
+                    <b-form-input v-model="answerOption" :placeholder="$t('subtaskCreation.answerOption')"></b-form-input>
+                    <b-button @click="addAnswerOption(true)">{{$t('subtaskCreation.addAnswer')}} </b-button>
+
+                    <div>
+                        <p v-for="answerOption in answerOptions" class="bg-secondary text-light p-1 m-1 w-50">
+                            {{answerOption.text}}
+                            <b-button @click="removeAnswerOption(answerOption.index)" class="bg-light text-dark">x</b-button>
+                        </p>
+                    </div>
+
+                    <b-form-group :label="$t('subtaskCreation.verifiable')">
+                        <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                        <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
+                    </b-form-group>
+
+                    <div v-if="subtask.isSolutionVeryfiable">
+                        {{$t('subtaskCreation.rightAnswers')}}
+                        <b-form-group>
+                            <b-form-checkbox-group
+                                    v-model="selected"
+                                    :options="answerOptions"
+                                    stacked
+                            ></b-form-checkbox-group>
+                        </b-form-group>
+
+
+                        <b-form-group :label="$t('subtaskCreation.solution')">
+                            <b-form-radio v-model="subtask.isSolutionVisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                            <b-form-radio v-model="subtask.isSolutionVisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
+                        </b-form-group>
+                    </div>
+                </div>
             </div>
-            <div v-else-if="this.tasktype ==='sql'" class="bg-secondary text-light">
-                {{$t('subtaskCreation.typeSql')}}
-
-            </div>
-            <b-button @click="changeSize()">{{$t('subtaskCreation.maximize')}}</b-button>
-        </b-card>
-    </div>
-
-    <div v-else-if="showfull">
-        <!-- selects the subtask type -->
-        <b-form-select v-model="tasktype" :options="typeOptions"></b-form-select>
-
-        <!-- displays options to create or update a subtask of the type instruction task.
-            it has an area to input the task instruction-->
-
-        <div v-if="tasktype === 'inst'">
-            <b-form-input v-model="subtask.instruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
-        </div>
-
-
-        <!-- displays options to create or update a subtask of the type PlainTextTask.
-        it has an area to input the task instructions,
-        a radio to choose whether a teachersolution should exists.
-        if a teacher solution should exist it also has:
-        an area to input the teacher solution, can be a simple text or a regex
-        a radio to choose whether a student can compare its solution to the teacher solution-->
-
-        <div v-else-if="tasktype === 'text'">
-            <b-form-input v-model="taskInstruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
-            <b-form-group :label="$t('subtaskCreation.verifiable')">
-                <b-form-radio v-model="solutionverifiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
-                <b-form-radio v-model="solutionverifiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
-            </b-form-group>
-
-            <div v-if="solutionverifiable">
-                <b-form-input v-model="solution" :placeholder="$t('subtaskCreation.solution')"></b-form-input>
-
-                <b-form-group :label="$t('subtaskCreation.visible')">
-                    <b-form-radio v-model="solutionvisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
-                    <b-form-radio v-model="solutionvisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
-                </b-form-group>
-            </div>
-        </div>
-
-        <!-- displays options to create or update a subtask of the type MultipleChoiceTask.
-       includes an area to input the task instructions,
-       an area to input all possible answers for the multiple choice task
-       a radio to choose whether a teachersolution should exists
-       if a teacher solution should exist it also has:
-       a display with all possible answers where the teacher can select the correct answers
-       a radio to choose whether a student can compare its solution to the teacher solution-->
-
-        <div v-else-if="tasktype === 'mc'">
-            <b-form-input v-model="taskInstruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
-            <b-form-input v-model="answerOption" :placeholder="$t('subtaskCreation.answerOption')"></b-form-input>
-            <b-button @click="addAnswerOption(true)">{{$t('subtaskCreation.addAnswer')}} </b-button>
-
-            <div>
-                Antwortmöglichkeiten: {{answerOptionsText}}
-            </div>
-
-            <b-form-group :label="$t('subtaskCreation.verifiable')">
-                <b-form-radio v-model="solutionverifiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
-                <b-form-radio v-model="solutionverifiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
-            </b-form-group>
-
-            <div v-if="solutionverifiable">
-                {{$t('subtaskCreation.rightAnswers')}}
-                <b-form-group>
-                    <b-form-checkbox-group
-                            v-model="selected"
-                            :options="answerOptions"
-                            stacked
-                    ></b-form-checkbox-group>
-                </b-form-group>
-
-
-                <b-form-group :label="$t('subtaskCreation.solution')">
-                    <b-form-radio v-model="solutionvisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
-                    <b-form-radio v-model="solutionvisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
-                </b-form-group>
-            </div>
-        </div>
-
-        <!-- displays options to create or update a subtask of the type SqlTask.
+            <!-- displays options to create or update a subtask of the type SqlTask.
                includes an area to input the task instructions
                 a radio to choose which kind of sql statements can be used (no restrictions
                     or statements that can only select from, but not alter, the database )
@@ -117,69 +104,68 @@
                a radio to choose whether a student can compare its solution to the teacher solution
                a radio to choose if the row oder of the student solution matters when it's compared
                     to the teacher solution-->
+            <div v-else-if="subtask.type === 0"  class="border-dark p-2">
+                <p>{{$t('subtaskCreation.typeSql')}}
+                <b-button @click="changeSize">{{$t('subtaskCreation.maximize')}}</b-button></p>
 
-        <div v-else-if="tasktype === 'sql'">
-            <b-form-input v-model="taskInstruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
+                <div v-if="showfull">
+                    <b-form-input v-model="subtask.instruction" :placeholder="$t('subtaskCreation.instruction')"></b-form-input>
 
-            <b-form-group :label="$t('subtaskCreation.allowedSql')">
-                <b-form-radio v-model="allowedSqlStatements"  :value='AllowedSqlStatements.NoRestriction'
-                >{{$t('subtaskCreation.noRestriction')}}</b-form-radio>
-                <b-form-radio v-model="allowedSqlStatements"  :value="AllowedSqlStatements.SelectStatements"
-                >{{$t('subtaskCreation.select')}}</b-form-radio>
-            </b-form-group>
+                    <b-form-group :label="$t('subtaskCreation.allowedSql')">
+                        <b-form-radio v-model="subtask.allowedSqlStatements" :value='0'
+                        >{{$t('subtaskCreation.noRestriction')}}</b-form-radio>
+                        <b-form-radio v-model="subtask.allowedSqlStatements" :value="1"
+                        >{{$t('subtaskCreation.select')}}</b-form-radio>
+                    </b-form-group>
 
-            <b-form-group :label="$t('subtaskCreation.PandC')">
-                <b-form-radio v-model="isPointAndClickAllowed" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
-                <b-form-radio v-model="isPointAndClickAllowed"  :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
-            </b-form-group>
+                    <b-form-group :label="$t('subtaskCreation.PandC')">
+                        <b-form-radio v-model="subtask.isPointAndClickAllowed" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                        <b-form-radio v-model="subtask.isPointAndClickAllowed"  :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
+                    </b-form-group>
 
-            <b-form-group :label="$t('subtaskCreation.verifiable')">
-                <b-form-radio v-model="solutionverifiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
-                <b-form-radio v-model="solutionverifiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
-            </b-form-group>
+                    <b-form-group :label="$t('subtaskCreation.verifiable')">
+                        <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                        <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
+                    </b-form-group>
 
-            <div v-if="solutionverifiable">
-                <b-form-input v-model="solution" :placeholder="$t('subtaskCreation.solution')"></b-form-input>
+                    <div v-if="subtask.isSolutionVeryfiable">
+                        <b-form-input v-model="subtask.solution.querySolution" :placeholder="$t('subtaskCreation.solution')"></b-form-input>
 
-                <b-form-group :label="$t('subtaskCreation.solution')">
-                    <b-form-radio v-model="solutionvisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
-                    <b-form-radio v-model="solutionvisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
-                </b-form-group>
+                        <b-form-group :label="$t('subtaskCreation.solution')">
+                            <b-form-radio v-model="subtask.isSolutionVisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                            <b-form-radio v-model="subtask.isSolutionVisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
+                        </b-form-group>
 
-                <b-form-group v-if="solutionvisible" :label="$t('subtaskCreation.rowOrder')">
-                    <b-form-radio v-model="doesRowOrderMatter"  :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
-                    <b-form-radio v-model="doesRowOrderMatter"  :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
-                </b-form-group>
+                        <b-form-group v-if="subtask.isSolutionVisible" :label="$t('subtaskCreation.rowOrder')">
+                            <b-form-radio v-model="subtask.doesRowOrderMatter" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                            <b-form-radio v-model="subtask.doesRowOrderMatter" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
+                        </b-form-group>
+                    </div>
+                </div>
             </div>
-
-        </div>
-
-        <b-button @click="saveSubtask">{{$t('subtaskCreation.save')}}</b-button>
-        <b-button @click="deleteSubtask"> {{$t('subtaskCreation.delete')}}</b-button>
-        <b-button @click="changeSize">{{$t('subtaskCreation.minimize')}}</b-button>
-
+            <div>
+                <b-button @click="saveSubtask" class="bg-info">{{$t('subtaskCreation.save')}}</b-button>
+                <b-button @click="deleteSubtask" class="bg-danger"> {{$t('subtaskCreation.delete')}}</b-button>
+            </div>
+        </b-card>
     </div>
-    </div>
+</div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import InstructionTask from "@/dataModel/InstructionTask";
-import Subtask from '@/dataModel/Subtask';
-import PlainTextTask from "@/dataModel/PlainTextTask";
-import PlainTextSolution from "@/dataModel/PlainTextSolution";
-import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
-import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
-import SqlTask from "@/dataModel/SqlTask";
-import SqlSolution from '@/dataModel/SqlSolution';
-import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
-import {ResultSet} from "@/dataModel/ResultSet";
-import SubtaskTypes from '@/dataModel/SubtaskTypes';
-import SubtaskController from "@/controller/SubtaskController";
-import {Prop, Component} from "vue-property-decorator";
-import SQLExecutor from "@/controller/SQLExecutor";
+  import Vue from 'vue';
+  import InstructionTask from "@/dataModel/InstructionTask";
+  import Subtask from '@/dataModel/Subtask';
+  import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
+  import {ResultSet} from "@/dataModel/ResultSet";
+  import SubtaskTypes from '@/dataModel/SubtaskTypes';
+  import SubtaskController from "@/controller/SubtaskController";
+  import {Component, Prop} from "vue-property-decorator";
+  import SQLExecutor from "@/controller/SQLExecutor";
+  import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
+  import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
 
-@Component({
+  @Component({
 
 })
 export default class SubtaskCreation extends Vue {
@@ -191,19 +177,11 @@ export default class SubtaskCreation extends Vue {
     @Prop() private dbId!: string;
     @Prop() private initialSubtask!: Subtask;
 
-    public subtask = new InstructionTask("", "Error");
+    private subtask = new InstructionTask("", "Error");
 
             // variables needed for the user interface or all tasks
-    public showfull: boolean = true;
+    private showfull = true;
     private index: number = 0;
-    public tasktype: string = '';
-    private typeOptions = [
-                {value: '', text: this.$t('subtaskCreation.chooseType') as string},
-                {value: 'inst', text: this.$t('subtaskCreation.typeInstructionExtra') as string},
-                {value: 'text', text: this.$t('subtaskCreation.typePlainText') as string},
-                {value: 'mc', text: this.$t('subtaskCreation.typeMultipleChoice') as string},
-                {value: 'sql', text: this.$t('subtaskCreation.typeSql') as string},
-            ];
     private subtaskController: SubtaskController = this.$store.getters.subtaskController;
 
             // variables needed for a subtask with a solution
@@ -222,7 +200,16 @@ export default class SubtaskCreation extends Vue {
     private selected: number[] = [];
     private answerOption: string =  '';
     private answerOptions: object[] = [];
-    private answerOptionsText: string[]  = [];
+
+    get typeOptions() {
+      return [
+        {value: '', text: this.$t('subtaskCreation.chooseType') as string},
+        {value: 'inst', text: this.$t('subtaskCreation.typeInstructionExtra') as string},
+        {value: 'text', text: this.$t('subtaskCreation.typePlainText') as string},
+        {value: 'mc', text: this.$t('subtaskCreation.typeMultipleChoice') as string},
+        {value: 'sql', text: this.$t('subtaskCreation.typeSql') as string},
+      ];
+    }
 
     /*
      the created method does nothing if an empty subtask(Instruction task without id or instruction)
@@ -245,17 +232,27 @@ export default class SubtaskCreation extends Vue {
                 alert(this.$t('subtaskCreation.alertAnswerOption') as string);
                 return;
             }
-            this.answerOptions.push({text: this.answerOption, value: this.index});
-            if (withText) {
-                this.answerOptionsText.push(this.answerOption);
-            }
+            this.answerOptions.push({text: this.answerOption, index: this.index});
             this.answerOption = '';
             this.index ++;
+    }
 
+    public removeAnswerOption(index: number) {
+      this.answerOptions.filter((answerOption: any) => {
+        return answerOption.index !== index;
+      });
     }
 
     public saveSubtask() {
+      Vue.nextTick(() => {
+        if (this.subtask.type === SubtaskTypes.MultipleChoice) {
+          (this.subtask as MultipleChoiceTask).answerOptions = this.answerOptions
+            .map((answerOption: any) => answerOption.text);
+          ((this.subtask as MultipleChoiceTask).solution as MultipleChoiceSolution).choices = this.selected;
+        }
+        this.$emit('save');
         this.subtaskController.save(this.subtask);
+      });
     }
 
     /*

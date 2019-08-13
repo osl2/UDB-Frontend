@@ -23,7 +23,6 @@ export default class InstructionTask extends Subtask {
             instruction: this.instruction,
             solution_verifiable: this.isSolutionVeryfiable,
             solution_visible: this.isSolutionVisible,
-            allowed_sql: "ALL",
         };
     }
 }

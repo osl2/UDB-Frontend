@@ -28,6 +28,7 @@ import SqlSolutionDiff from "@/dataModel/SqlSolutionDiff";
 import MultipleChoiceSolutionDiff from "@/dataModel/MultipleChoiceSolutionDiff";
 import PlainTextSolutionDiff from "@/dataModel/PlainTextSolutionDiff";
 import LocalStorageController from "@/controller/LocalStorageController";
+import InstructionTask from "@/dataModel/InstructionTask";
 
 export interface Token {
     token: string;
@@ -901,6 +902,9 @@ export class DefaultApi extends runtime.BaseAPI {
             if (jsonValue.content.hasOwnProperty("plaintext")) {
                 return PlainTextTask.fromJSON(jsonValue);
             }
+            if (jsonValue.content === "instruction") {
+                return InstructionTask.fromJSON(jsonValue);
+            }
             throw new Error("Unknown Subtask type");
         });
     }
@@ -1120,14 +1124,17 @@ export class DefaultApi extends runtime.BaseAPI {
         });
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map((singleJsonValue: any) => {
-            if (singleJsonValue.hasOwnProperty("sql")) {  // TODO: sql ist unterkategorie
+            if (singleJsonValue.content.hasOwnProperty("sql")) {
                 return SqlTask.fromJSON(singleJsonValue);
             }
-            if (singleJsonValue.hasOwnProperty("multiple_choice")) {
+            if (singleJsonValue.content.hasOwnProperty("multiple_choice")) {
                 return MultipleChoiceTask.fromJSON(singleJsonValue);
             }
-            if (singleJsonValue.hasOwnProperty("plaintext")) {
+            if (singleJsonValue.content.hasOwnProperty("plaintext")) {
                 return PlainTextTask.fromJSON(singleJsonValue);
+            }
+            if (singleJsonValue.content === "instruction") {
+                return InstructionTask.fromJSON(singleJsonValue);
             }
             throw new Error("Unknown Subtask type");
         }));

@@ -1,4 +1,3 @@
-import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 <template>
     <div>
         <!-- A minimized version of the task that doesn't show the options to make the page
@@ -15,12 +14,13 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
             {{task.name}}
         <div>
             <b-form-input v-model="task.name" :placeholder="$t('taskCreation.name')"></b-form-input>
+            <b-form-select v-model="task.databaseId" :options="dbOptions"></b-form-select>
         </div>
             <!--Displays a SubtaskCreation component for every subtask in the subtasks array -->
         <div v-if="dbOptions !== null">
-            <SubtaskCreation :sync:subtasks="subtasks" v-for="subtask in subtasks"
+            <SubtaskCreation v-for="subtask in subtasks"
                              :key="subtask.id"
-                             :dbId="dbId"
+                             :dbId="task.databaseId"
                              :initialSubtask="subtask"
                              @save="save"
                              @deleteSubtask="deleteSubtask"
@@ -66,11 +66,11 @@ import SubtaskController from "@/controller/SubtaskController";
 export default class TaskCreation extends Vue {
 
   @Prop() private databases!: Database[];
-  @Prop() private task!: Task;
+  @Prop() private initialTask!: Task;
 
-
+  private task: Task = new Task('', '', '', []);
   private showfull: boolean = true;
-  private dbOptions = [{text: "Wähle eine Datenbank aus", value: null}];
+  private dbOptions: Array<{text: string, value: string}> = [{text: "Wähle eine Datenbank aus", value: ''}];
   private subtaskType: string = "";
   private subtaskTypes: string[] = ["SQL", "Multiple-Choice", "Text", "Instruction"];
   private taskController: TaskController = this.$store.getters.taskController;
@@ -81,7 +81,8 @@ export default class TaskCreation extends Vue {
     method is called when the component is created. it loads the databases connected to the user and loads a task
     if one was given
      */
-   private created() {
+   public created() {
+        this.task = this.initialTask;
         this.subtaskController = this.$store.getters.subtaskController;
         this.taskController = this.$store.getters.taskController;
         for (const database of this.databases) {
@@ -91,15 +92,9 @@ export default class TaskCreation extends Vue {
     }
 
    get subtasks(): Subtask[] {
-     const subtasks = this.subtaskController.getChildren(this.task)
-     console.log(subtasks);
+     const subtasks = this.subtaskController.getChildren(this.task);
      return this.subtaskController.all && subtasks;
    }
-
-   @Watch('subtasks')
-   public onSubtasksChange(value: Subtask[], oldValue: Subtask[]) {
-
-    }
 
       // creates a new entry in the subtask array
    public createSubtask() {
@@ -121,7 +116,8 @@ export default class TaskCreation extends Vue {
 
    public newSqlTask() {
         this.subtaskController.create(
-          new SqlTask('', new SqlSolution('', [], [[]]), '', false, false, false, false, AllowedSqlStatements.NoRestriction)
+          new SqlTask('', new SqlSolution('', [], [[]]), '',
+            false, false, false, false, AllowedSqlStatements.NoRestriction),
         ).then((subtaskId: string) => {
           this.task.subtaskIds.push(subtaskId);
           this.save();
@@ -129,7 +125,7 @@ export default class TaskCreation extends Vue {
     }
    public newMCTask() {
         this.subtaskController.create(
-          new MultipleChoiceTask('', new MultipleChoiceSolution([]), '', false, false, [])
+          new MultipleChoiceTask('', new MultipleChoiceSolution([]), '', false, false, []),
         ).then((subtaskId: string) => {
           this.task.subtaskIds.push(subtaskId);
           this.save();
@@ -137,7 +133,7 @@ export default class TaskCreation extends Vue {
       }
    public newTextTask() {
         this.subtaskController.create(
-          new PlainTextTask('', new PlainTextSolution(''), '', false, false)
+          new PlainTextTask('', new PlainTextSolution(''), '', false, false),
         ).then((subtaskId: string) => {
           this.task.subtaskIds.push(subtaskId);
           this.save();
@@ -145,7 +141,7 @@ export default class TaskCreation extends Vue {
       }
    public newInstructionTask() {
         this.subtaskController.create(
-          new InstructionTask('', '')
+          new InstructionTask('', ''),
         ).then((subtaskId: string) => {
           this.task.subtaskIds.push(subtaskId);
           this.save();
@@ -170,14 +166,6 @@ export default class TaskCreation extends Vue {
      */
   public changeSize() {
     this.showfull = !this.showfull;
-  }
-
-  /*
-    deletes a subtask from the array of subtasks assigned to the task
-    index: the index where the subtask can be found in the array of subtasks
-     */
-  public deleteSubtask(index: number) {
-
   }
 
   /*

@@ -33,7 +33,7 @@ export default class SqlSolution extends Solution {
         this._values = values;
     }
 
-    public toJSON(): any {
+    get toJSON(): any {
         return {
             query: this.querySolution,
             columns: this.columns,

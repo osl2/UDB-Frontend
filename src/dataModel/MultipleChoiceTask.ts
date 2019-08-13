@@ -44,11 +44,10 @@ export default class MultipleChoiceTask extends Subtask {
             instruction: this.instruction,
             solution_verifiable: this.isSolutionVeryfiable,
             solution_visible: this.isSolutionVisible,
-            allowed_sql: "ALL",
             content: {
                 multiple_choice: {
                     answer_options: this.answerOptions,
-                    solution: this.solution ? this.solution.toJSON() : {},
+                    solution: this.solution ? this.solution.toJSON : {},
                 },
             },
         };
