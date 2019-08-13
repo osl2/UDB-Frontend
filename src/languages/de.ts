@@ -12,6 +12,7 @@ const de = {
     register: 'Registrieren',
     enter: 'Beitreten',
     enterCourse: 'Kurs beitreten',
+    courseId: 'Kurs-Id',
     alreadyLoggedIn: 'Beitreten als <strong>{userName}</strong>',
     name: 'Nutzername',
     pw: 'Passwort',
@@ -65,8 +66,8 @@ const de = {
     reset: 'Zurücksetzen',
     courseId: 'Kurs-Id',
   },
-  helpMessage: {
-    sanbox: 'Hier können SQLite Datenbanken hochgeladen werden.',
+  helpMessages: {
+    sandbox: 'Hier können SQLite Datenbanken hochgeladen werden.',
   },
   worksheetList: {
     worksheetOnline: 'Aufgabenblatt ist online',

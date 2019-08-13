@@ -17,7 +17,7 @@
             {{errorMsg}}
           </p>
           <div>
-            <b-form-input class="inputfield" v-model="username" :placeholder= "$t('home.name')"></b-form-input>
+            <b-form-input class="inputfield" v-model="username" :placeholder="$t('home.name')"></b-form-input>
           </div>
           <div>
             <b-form-input class="inputfield" v-model="password" type="password" :placeholder="$t('home.pw')"></b-form-input>
@@ -25,7 +25,7 @@
 
           <template slot="modal-footer">
             <b-button size="sm" @click="loginTeacher(username, password)">
-              $t('home.login')}}
+              {{$t('home.login')}}
             </b-button>
           </template>
         </b-modal>
@@ -36,7 +36,7 @@
             {{errorMsg}}
           </p>
           <div>
-            <b-form-input class="inputfield" v-model="username" :placeholder=" $t('home.name')"></b-form-input>
+            <b-form-input class="inputfield" v-model="username" :placeholder="$t('home.name')"></b-form-input>
           </div>
           <div>
             <b-form-input class="inputfield" v-model="password" type="password" :placeholder= "$t('home.pw')"></b-form-input>
