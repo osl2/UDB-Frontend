@@ -80,110 +80,114 @@
 </template>
 
 <script lang="ts">
-  import {Component, Prop, Vue} from 'vue-property-decorator';
-  import CourseController from "@/controller/CourseController";
-  import UserGroup from "@/dataModel/UserGroup";
-  import UserController from "@/controller/UserController";
+import {Component, Prop, Vue} from 'vue-property-decorator';
+import CourseController from "@/controller/CourseController";
+import UserGroup from "@/dataModel/UserGroup";
+import UserController from "@/controller/UserController";
+import User from '@/dataModel/User';
 
-  @Component
-  export default class StartPagePanel extends Vue {
+@Component
+export default class StartPagePanel extends Vue {
 
-    private errorMsg: string = '';
-    @Prop() private title!: string;
-    @Prop() private description!: string;
-    @Prop() private buttonName!: string;
-    @Prop() private path!: string;
-    @Prop() private type!: string;
-    private loggedIn: boolean = false;
-    private username: string = '';
-    private password: string = '';
-    private repeatedpw: string = '';
-    private courseId: string = '';
-    private courseController: CourseController = this.$store.getters.courseController;
-    private userController: UserController = this.$store.getters.userController;
+  private errorMsg: string = '';
+  @Prop() private title!: string;
+  @Prop() private description!: string;
+  @Prop() private buttonName!: string;
+  @Prop() private path!: string;
+  @Prop() private type!: string;
+  private loggedIn: boolean = false;
+  private username: string = '';
+  private password: string = '';
+  private repeatedpw: string = '';
+  private courseId: string = '';
+  private courseController: CourseController = this.$store.getters.courseController;
+  private userController: UserController = this.$store.getters.userController;
 
 
-    // methods
-    private loginTeacher(username: string, password: string, mmsg: string): void {
-      if (!username) {
-        this.errorMsg = 'Gib einen Nutzernamen ein';
+  // methods
+  private loginTeacher(username: string, password: string, mmsg: string): void {
+    if (!username) {
+      this.errorMsg = 'Gib einen Nutzernamen ein';
+      return;
+    }
+    if (!password) {
+      this.errorMsg = "Gib ein Passwort ein";
+      return;
+    }
+    this.path = "/startPageTeacher";
+
+    this.userController.login(username, password).then((success) => {
+      if (success) {
+        this.$router.push(this.path);
+      } else {
+        this.errorMsg = "Anmeldung fehlgeschlagen";
         return;
       }
-      if (!password) {
-        this.errorMsg = "Gib ein Passwort ein";
-        return;
-      }
-      this.path = "/startPageTeacher";
+    });
+  }
 
-      this.userController.login(username, password).then((success) => {
-        if (success) {
-          this.$router.push(this.path);
-        } else {
-          this.errorMsg = "Anmeldung fehlgeschlagen";
-          return;
-        }
-      });
+  private registration(username: string, password: string, repeatedpw: string): void {
+
+    if (!username) {
+      this.errorMsg = "Gib einen Nutzernamen ein";
+      return;
+    }
+    if (!password || !repeatedpw) {
+      this.errorMsg = "Gib beide Passwörter ein";
+      return;
+    }
+    if (password !== repeatedpw) {
+      this.errorMsg = "Die Passwörter stimmen nicht überein";
+      return;
     }
 
-    private registration(username: string, password: string, repeatedpw: string): void {
 
-      if (!username) {
-        this.errorMsg = "Gib einen Nutzernamen ein";
-        return;
-      }
-      if (!password || !repeatedpw) {
-        this.errorMsg = "Gib beide Passwörter ein";
-        return;
-      }
-      if (password !== repeatedpw) {
-        this.errorMsg = "Die Passwörter stimmen nicht überein";
-        return;
-      }
+    this.userController.register(username, password);
+    this.$router.push(this.path);
+  }
 
-
-      this.userController.register(username, password);
-      this.$router.push(this.path);
+  private enterCourse(courseId: string): void {
+    if (!courseId) {
+      this.errorMsg = "gib eine KursId ein";
     }
+    this.userController.userState!.userGroup = UserGroup.Student;
+    this.$router.push(this.path + courseId);
+  }
 
-    private enterCourse(courseId: string): void {
-      if (!courseId) {
-        this.errorMsg = "gib eine KursId ein";
-      }
-      this.userController.userState!.userGroup = UserGroup.Student;
-      this.$router.push(this.path + courseId);
+  private checkCourseEntry(courseId: string): boolean {
+    if (this.courseController.get(courseId) === undefined) {
+      alert('Laden des Kurses ist fehlgeschlagen: Es wurde kein Kurs mit der eingegebenen ID gefunden. ' +
+        'Bitte versuche es erneut.');
+      return false;
     }
-
-    private checkCourseEntry(courseId: string): boolean {
-      if (this.courseController.get(courseId) === undefined) {
-        alert('Laden des Kurses ist fehlgeschlagen: Es wurde kein Kurs mit der eingegebenen ID gefunden. ' +
-          'Bitte versuche es erneut.');
-        return false;
-      }
-      // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
-      if (this.userController.getCurrentUserGroup() === UserGroup.Teacher) {
-        return true;
-      }
-      this.userController.switchUserGroup(UserGroup.Student);
+    // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
+    if (this.userController.getCurrentUserGroup() === UserGroup.Teacher) {
       return true;
     }
+    this.userController.switchUserGroup(UserGroup.Student);
+    return true;
+  }
 
-    private checkRegistration(username: string, password: string): boolean {
-      alert('TODO: serverseitige Registrierungsmethode aufrufen.');
-      this.userController.switchUserGroup(UserGroup.Teacher);
-      return true;
-    }
+  private checkRegistration(username: string, password: string): boolean {
+    alert('TODO: serverseitige Registrierungsmethode aufrufen.');
+    this.userController.switchUserGroup(UserGroup.Teacher);
+    return true;
+  }
 
-    private created() {
+  private created() {
+      if (this.userController.userState === undefined) {
+          this.userController.userState = new User('', '', '', '', UserGroup.Unauthenticated);
+      }
       const user = this.userController.userState!;
       if (user && user.name && user.token && user.userGroup === UserGroup.Teacher) {
-        this.loggedIn = true;
-      } else {
-        this.loggedIn = false;
-      }
+      this.loggedIn = true;
+    } else {
+      this.loggedIn = false;
     }
-
-
   }
+
+
+}
 </script>
 
 <style scoped lang="scss">

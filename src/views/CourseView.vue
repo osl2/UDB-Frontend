@@ -52,6 +52,7 @@ import CourseController from "@/controller/CourseController";
 import UserGroup from "@/dataModel/UserGroup";
 import router from "@/router";
 import UserController from "@/controller/UserController";
+import User from '@/dataModel/User';
 
 
 @Component({
@@ -91,6 +92,10 @@ export default class CourseView extends Vue {
     this.userController = this.$store.getters.userController;
     this.courseController = this.$store.getters.courseController;
     this.worksheetController = this.$store.getters.worksheetController;
+
+    if (this.userController.userState === undefined) {
+        this.userController.userState = new User('', '', '', '', UserGroup.Unauthenticated);
+    }
 
     if (this.userController.userState!.userGroup === UserGroup.Unauthenticated) {
         this.userController.userState!.userGroup = UserGroup.Student;
