@@ -39,7 +39,7 @@
     private choosenDB!: Database;
 
 
-    public showDatabase(){
+    public showDatabase() {
       const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
       dbComponent.postInit(Promise.resolve(this.choosenDB));
     }

@@ -107,7 +107,7 @@ export default class StartPagePanel extends Vue {
   // methods
   private loginTeacher(username: string, password: string, mmsg: string): void {
     if (!username) {
-      this.errorMsg = this.$t('home.errorUser') as string;;
+      this.errorMsg = this.$t('home.errorUser') as string;
       return;
     }
     if (!password) {

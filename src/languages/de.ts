@@ -97,7 +97,7 @@ const de = {
   buttonText: {
     delete: 'Löschen',
     changeView: 'Wechsel',
-    showDatabase: 'Anzeigen'
+    showDatabase: 'Anzeigen',
   },
   hoverText: {
     switchToStudentsView: 'Hier klicken, um anzuzeigen, was die Schüler vom Kurs sehen werden.',

@@ -64,33 +64,32 @@ import User from '@/dataModel/User';
 
 export default class CourseView extends Vue {
 
-  // Data
-  private courseController: CourseController = this.$store.getters.courseController;
-  private worksheetController: WorksheetController = this.$store.getters.worksheetController;
-  private userController: UserController = this.$store.getters.userController;
-  private isStudentsViewActive: boolean = false;
-  private worksheetsChanged: boolean = false;
+    // Data
+    private courseController: CourseController = this.$store.getters.courseController;
+    private worksheetController: WorksheetController = this.$store.getters.worksheetController;
+    private userController: UserController = this.$store.getters.userController;
+    private _isStudentsViewActive: boolean = false;
+    private worksheetsChanged: boolean = false;
 
     // Functions
 
-  public openWorksheet(worksheet: Worksheet) {
-      if (this.isStudentsViewActive) {
+    public openWorksheet(worksheet: Worksheet) {
+        if (this.isStudentsViewActive) {
           router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
-      } else {
+        } else {
           router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
-      }
-  }
+        }
+    }
 
-  public generateSolutionsheet(worksheet: Worksheet) {
-    alert('TODO: PDF anzeigen zu: ' + worksheet.name);
-    this.worksheetController.getSolution(worksheet);
-  }
+    public generateSolutionsheet(worksheet: Worksheet) {
+        alert('TODO: PDF anzeigen zu: ' + worksheet.name);
+        this.worksheetController.getSolution(worksheet);
+    }
 
-
-  public created() {
-    this.userController = this.$store.getters.userController;
-    this.courseController = this.$store.getters.courseController;
-    this.worksheetController = this.$store.getters.worksheetController;
+    public created() {
+        this.userController = this.$store.getters.userController;
+        this.courseController = this.$store.getters.courseController;
+        this.worksheetController = this.$store.getters.worksheetController;
 
         if (this.userController.userState === undefined) {
             this.userController.userState = new User('', '', '', '', UserGroup.Unauthenticated);
