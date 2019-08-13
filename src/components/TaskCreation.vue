@@ -112,7 +112,8 @@ export default Vue.extend({
         },
         newSqlTask() {
             this.subtaskController.create(
-              new SqlTask('', new SqlSolution('', [], [[]]), '', false, false, false, false, AllowedSqlStatements.NoRestriction),
+              new SqlTask('', new SqlSolution('', [], [[]]), '', false, false, false, false,
+                  AllowedSqlStatements.NoRestriction),
             ).then((subtaskId: string) => {
               this.task.subtaskIds.push(subtaskId);
               this.save();

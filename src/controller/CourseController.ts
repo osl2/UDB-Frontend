@@ -35,8 +35,8 @@ export default class CourseController extends ApiControllerAbstract implements D
               this._aliases = new Map<string, string>(this._aliases.set(course.alias, course.id));
               this._courses = new Map<string, Course>(this._courses.set(course.id, course));
             })
-            .catch((response) => {
-            throw new Error("Error getting course alias: " + response.status + " " + response.statusText);
+            .catch((errorResponse) => {
+            throw new Error("Error getting course alias: " + errorResponse.status + " " + errorResponse.statusText);
           });
         });
       }).catch((response) => {
@@ -84,8 +84,8 @@ export default class CourseController extends ApiControllerAbstract implements D
             this.api.getCourse({courseId: response.uuid} as GetCourseRequest)
               .then((course: Course) => {
                 this._courses = new Map<string, Course>(this._courses.set(course.id, course));
-              }).catch((response) => {
-              throw new Error("Error getting course: " + response.status + " " + response.statusText);
+              }).catch((errorResponse) => {
+              throw new Error("Error getting course: " + errorResponse.status + " " + errorResponse.statusText);
             });
           }
         })
