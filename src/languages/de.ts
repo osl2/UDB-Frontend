@@ -37,6 +37,8 @@ const de = {
     worksheets: 'Aufgabenblätter',
     solutionsheets: 'Lösungsblätter',
     alertDelete: 'Arbeitsblatt wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden!',
+    alertEditWorksheet: 'Aufgabenblatt wirklich bearbeiten? Schüler können ihren aktuellen Bearbeitungsstand ' +
+      'eventuell nicht mehr importieren, da die Aufgaben dann eventuell nicht mehr kompatibel sind.',
   },
   courseViewStudent: {
     solveWorksheetButton: 'Blatt bearbeiten',

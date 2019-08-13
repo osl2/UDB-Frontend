@@ -112,14 +112,15 @@ export default class CourseView extends Vue {
     }
 
     public createWorksheet(name: string) {
+      if (confirm(this.$t('course.alertEditWorksheet') as string)) {
         try {
             this.worksheetController.create(new Worksheet('', name, [], false, false));
         } catch (e) {
             alert(e.message);
         }
-        this.worksheetsChanged = true;
+            this.worksheetsChanged = true;
+        }
     }
-
     public deleteWorksheet(worksheet: Worksheet) {
         if (confirm(this.$t('course.alertDelete') as string)) {
             try {
