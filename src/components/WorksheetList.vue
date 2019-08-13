@@ -53,7 +53,7 @@
                     {{$t('worksheetList.newSheet')}}
                 </b-card-title>
                 <b-card-body>
-                    <b-form-input v-model="name" placeholder="Name"></b-form-input>
+                    <b-form-input v-model="name" :placeholder="$t('worksheetList.name')"></b-form-input>
                 </b-card-body>
                 <b-button
                         class="bg-info"

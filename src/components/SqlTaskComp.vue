@@ -4,9 +4,11 @@
         <div class="taskContainer">
             {{currentSubtask.instruction}}
          </div>
+
         <div v-if ="currentSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements">
             {{$t('sqlTaskComp.select')}}
         </div>
+
         <div>
             <div v-if="currentSubtask.isPointAndClickAllowed" class="taskSwitchButton">
                 <b-button v-on:click="switchComponent"

@@ -13,7 +13,7 @@
         <div v-if="showfull">
             {{task.name}}
         <div>
-            <b-form-input v-model="taskName" placeholder={{$t('taskCreation.name')}}></b-form-input>
+            <b-form-input v-model="taskName" :placeholder="$t('taskCreation.name')"></b-form-input>
         </div>
         <div>
             <b-form-select v-model="dbId" :options="dbOptions"></b-form-select>

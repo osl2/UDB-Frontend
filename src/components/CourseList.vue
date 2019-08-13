@@ -34,8 +34,8 @@
           {{$t('courseList.new')}}
         </b-card-title>
         <b-card-body>
-          <b-form-input v-model="name" placeholder={{$t('courseList.name')}}></b-form-input>
-          <b-form-input v-model="description" placeholder={{$t('courseList.description')}}></b-form-input>
+          <b-form-input v-model="name" :placeholder="$t('courseList.name')"></b-form-input>
+          <b-form-input v-model="description" :placeholder="$t('courseList.description')"></b-form-input>
         </b-card-body>
         <b-button
             class="bg-info"

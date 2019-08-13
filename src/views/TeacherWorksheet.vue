@@ -3,13 +3,13 @@
         {{worksheet.name}}
         <!--Section to set options needed for a worksheet -->
     <div>
-        <b-form-input v-model="worksheetName" placeholder={{$t('teacherWorksheet.name')}}></b-form-input>
-        <b-form-group label={{$t('teacherWorksheet.sheetOnline')}}>
+        <b-form-input v-model="worksheetName" :placeholder="$t('teacherWorksheet.name')"></b-form-input>
+        <b-form-group :label="$t('teacherWorksheet.sheetOnline')">
             <b-form-radio v-model="isOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
             <b-form-radio v-model="isOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
         </b-form-group>
 
-        <b-form-group label={{$t('teacherWorksheet.solutionOnline')}}>
+        <b-form-group :label="$t('teacherWorksheet.solutionOnline')">
             <b-form-radio v-model="isSolutionOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
             <b-form-radio v-model="isSolutionOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
         </b-form-group>
