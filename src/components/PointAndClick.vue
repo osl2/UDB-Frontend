@@ -18,6 +18,7 @@ declare var Blockly: any;
 import Vue from 'vue';
 
 export default Vue.extend({
+  props: ['allowedSqlToolbox'],
   data: () => ({
     workspace: Blockly,
     code: null,
@@ -27,7 +28,7 @@ export default Vue.extend({
   },
   methods: {
     initBlockly() {
-      const toolbox = require('@/assets/blockly/toolbox_all.xml'); // Vielleicht hier verschiedene Versionen haben
+      const toolbox = require('@/assets/blockly/' + this.allowedSqlToolbox);
       // remove metadata from loaded toolbox
       const cleantoolbox = toolbox.substring(28).toString();
       // decode base64

@@ -19,6 +19,7 @@
             <div class="clear">
                 <component class="taskSqlComponent"
                            :is="sqlTaskDynamicComponent"
+                           :allowedSqlToolbox="allowedSqlToolbox"
                            @executeQuery="executeQuery"
                 ></component>
             </div>
@@ -71,6 +72,7 @@ export default Vue.extend({
             gotFirstQueryExecuted: false,
             lastQueryExecuted: '',
             queryResult: {} as QueryResult,
+            allowedSqlToolbox: 'toolbox_all.xml',
         };
     },
     methods: {
@@ -113,6 +115,12 @@ export default Vue.extend({
     created() {
         if (this.solutions.has(this.currentSubtask.id)) {
             this.executeQuery(this.solutions.get(this.currentSubtask.id).querySolution);
+        }
+        const tempSubtask = this.currentSubtask as SqlTask;
+        if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
+            this.allowedSqlToolbox = 'toolbox_query.xml';
+        } else {
+            this.allowedSqlToolbox = 'toolbox_all.xml';
         }
     },
     computed: {

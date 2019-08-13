@@ -18,6 +18,7 @@
         <component class="sqlComponent"
                    :is="dynamicComponent"
                    @executeQuery="executeQuery"
+                   allowedSqlToolbox="toolbox_query.xml"
         ></component>
       </div>
       <div id="queryRes"></div>
