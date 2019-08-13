@@ -24,7 +24,9 @@
 
     <div class="container">
       <h2 class="headings">{{$t('navbar.databaseDropdown')}}:</h2>
-      <b-button @click="uploadTrigger">{{$t('teacher.uploadDb')}}</b-button>
+
+      <b-button @click="uploadTrigger" style="margin-bottom: 10px;">{{$t('teacher.uploadDb')}}</b-button>
+      <b-alert v-model="dbErrorMsg" v-if="dbErrorMsg !== ''" variant="danger" dismissible>{{dbErrorMsg}}</b-alert>
       <input id="fileUpload" type="file" style="display:none;" multiple accept=".db" @change="databaseUploadHandler">
 
       <DatabaseList class="d-flex flex-column"
@@ -46,6 +48,7 @@
   import CourseController from '@/controller/CourseController';
   import router from '@/router';
   import UserService from "@/services/UserService";
+  import DatabaseComponent from "@/components/DatabaseComponent.vue";
 
 
   @Component({
@@ -59,6 +62,7 @@
 
     // Data
     public messages: string[] = [];
+    private dbErrorMsg: string = '';
     private databaseController: DatabaseController = this.$store.getters.databaseController;
     private userController: UserService = this.$store.getters.userController;
     private courseController: CourseController = this.$store.getters.courseController;
@@ -73,8 +77,8 @@
     /*
     * This method should display a requested database.
      */
-    public showDatabase(database: Database) {
-      alert("TODO: Zeige die Datenbank mit folgendem Namen an: " + database.name);
+    public showDatabase(database: Database, dbComponent: DatabaseComponent) {
+      dbComponent.postInit(Promise.resolve(database));
     }
 
     /*
@@ -133,7 +137,9 @@
       for (let i = 0; i < files.length; i++) {
         const file = files.item(i)!;
         this.databaseController.importObject(file).then((database) => {
-          this.databaseController.create(database);
+          this.databaseController.create(database).catch((error: Error) => {
+            this.dbErrorMsg = error.message;
+          });
         });
       }
       target.value = '';

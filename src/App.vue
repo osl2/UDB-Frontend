@@ -42,6 +42,9 @@
 </script>
 
 <style lang="scss">
+    .lang-changer {
+        margin-top: 20px;
+    }
 
 
 </style>

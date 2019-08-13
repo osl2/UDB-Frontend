@@ -11,7 +11,7 @@ import {
 import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
 export default class DatabaseController extends ApiControllerAbstract
-  implements DataManagementService<Database>, ExportImport<Database> {
+    implements DataManagementService<Database>, ExportImport<Database> {
 
     private _databases: Map<string, Database>;
 
@@ -62,8 +62,8 @@ export default class DatabaseController extends ApiControllerAbstract
                 this._databases = new Map<string, Database>(this._databases.set(database.id, database));
                 return database.id;
             })
-            .catch((error) => {
-                throw new Error("Error creating database: " + error);
+            .catch((error: Response) => {
+                throw new Error("Error creating database. HTTP Status code " + error.status + " " + error.statusText);
             });
     }
 
