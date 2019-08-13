@@ -100,7 +100,11 @@ export default class CourseView extends Vue {
         }
 
         this.setIsStudentsViewActive();
-        this.courseController.loadWithAlias(this.$route.params.courseId);
+        try {
+            this.courseController.loadWithAlias(this.$route.params.courseId);
+        } catch (e) {
+            alert(e.message);
+        }
     }
 
     public toggleView() {
@@ -108,7 +112,11 @@ export default class CourseView extends Vue {
     }
 
     public createWorksheet(name: string) {
-        this.worksheetController.create(new Worksheet('', name, [], false, false));
+        try {
+            this.worksheetController.create(new Worksheet('', name, [], false, false));
+        } catch (e) {
+            alert(e.message);
+        }
         this.worksheetsChanged = true;
     }
 
@@ -133,7 +141,11 @@ export default class CourseView extends Vue {
     public loadWorksheets() {
         const course = this.courseController.courses.get(this.courseId);
         if (course !== undefined) {
-            this.worksheetController.loadChildren(course);
+            try {
+                this.worksheetController.loadChildren(course);
+            } catch (e) {
+                alert(e.message);
+            }
         }
     }
 
@@ -187,13 +199,17 @@ export default class CourseView extends Vue {
         if (this.userController.userState!.userGroup === UserGroup.Teacher) {
             if (!value.every((worksheet: Worksheet) => oldValue.includes(worksheet))) {
                 // if value and oldValue are different
-                this.courseController.save(new Course(
-                    this.course.id,
-                    this.course.name,
-                    this.course.description,
-                    this.course.alias,
-                    value.map((worksheet: Worksheet) => worksheet.id),
-                ));
+                try {
+                    this.courseController.save(new Course(
+                        this.course.id,
+                        this.course.name,
+                        this.course.description,
+                        this.course.alias,
+                        value.map((worksheet: Worksheet) => worksheet.id),
+                    ));
+                } catch (e) {
+                    alert(e.message);
+                }
             }
         }
     }
