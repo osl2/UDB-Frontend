@@ -3,15 +3,15 @@
         {{worksheet.name}}
         <!--Section to set options needed for a worksheet -->
     <div>
-        <b-form-input v-model="worksheetName" placeholder="Name des Worksheets"></b-form-input>
-        <b-form-group label="Ist das Worksheet für Schüler online?">
-            <b-form-radio v-model="isOnline" :value="true">ja</b-form-radio>
-            <b-form-radio v-model="isOnline" :value="false">nein</b-form-radio>
+        <b-form-input v-model="worksheetName" placeholder="{{$t('teacherWorksheet.name')}}"></b-form-input>
+        <b-form-group label="{{$t('teacherWorksheet.sheetOnline')}}">
+            <b-form-radio v-model="isOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
+            <b-form-radio v-model="isOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
         </b-form-group>
 
-        <b-form-group label="Ist das Lösungsblatt für Schüler einsehbar?">
-            <b-form-radio v-model="isSolutionOnline" :value="true">ja</b-form-radio>
-            <b-form-radio v-model="isSolutionOnline" :value="false">nein</b-form-radio>
+        <b-form-group label="{{$t('teacherWorksheet.solutionOnline')}}">
+            <b-form-radio v-model="isSolutionOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
+            <b-form-radio v-model="isSolutionOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
         </b-form-group>
     </div>
 
@@ -27,8 +27,8 @@
             ></TaskCreation>
         </div>
         <!--buttons to create a new Task assigned to the worksheet and to return to the course view -->
-        <b-button @click="newTask"> Aufgabe erstellen</b-button>
-        <b-button @click="toCourseView"> zurück zur Übersicht</b-button>
+        <b-button @click="newTask">{{$t('teacherWorksheet.new')}}</b-button>
+        <b-button @click="toCourseView"> {{$t('teacherWorksheet.toOverview')}}</b-button>
     </div>
 </template>
 
@@ -173,8 +173,7 @@ export default class TeacherWorksheet extends Vue {
     method to leave the teacherworksheet view and return to the courseview
      */
     private toCourseView() {
-        if (confirm('zurück zu Übersicht? Stelle sicher, dass alle Teilaufgaben gespeichert wurden,' +
-            ' ansonsten sind sie nicht im Aufgabenblatt enthalten')) {
+        if (confirm(this.$t('teacherWorksheet.alertReturn') as string)) {
             this.$router.push('/courseView/' + this.$route.params.courseId);
         }
     }

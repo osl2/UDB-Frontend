@@ -10,18 +10,22 @@
     <div v-if="!showfull">
         <b-card>
             <div v-if="this.tasktype ==='inst'" class="bg-secondary text-light">
-                Erklärender Text
+                {{$t('subtaskCreation.typeInstruction')}}
+
             </div>
             <div v-else-if="this.tasktype ==='text'" class="bg-secondary text-light">
-                Freitext Aufgabe
+                {{$t('subtaskCreation.typePlainText')}}
+
             </div>
             <div v-else-if="this.tasktype ==='mc'" class="bg-secondary text-light">
-               Multiple-Choice Aufgabe
+                {{$t('subtaskCreation.typeMultipleChoice')}}
+
             </div>
             <div v-else-if="this.tasktype ==='sql'" class="bg-secondary text-light">
-                Sql Aufgabe
+                {{$t('subtaskCreation.typeSql')}}
+
             </div>
-            <b-button @click="changeSize"> Teilaufgabe minimieren</b-button>
+            <b-button @click="changeSize">  {{$t('subtaskCreation.maximize')}}</b-button>
         </b-card>
     </div>
 
@@ -33,7 +37,7 @@
             it has an area to input the task instruction-->
 
         <div v-if="tasktype === 'inst'">
-            <b-form-input v-model="taskInstruction" placeholder="Aufgabentext hier eingeben"></b-form-input>
+            <b-form-input v-model="taskInstruction" placeholder=" {{$t('subtaskCreation.instruction')}}"></b-form-input>
         </div>
 
 
@@ -45,18 +49,18 @@
         a radio to choose whether a student can compare its solution to the teacher solution-->
 
         <div v-else-if="tasktype === 'text'">
-            <b-form-input v-model="taskInstruction" placeholder="Aufgabentext hier eingeben"></b-form-input>
-            <b-form-group label="Musterlösung vorhanden">
-                <b-form-radio v-model="solutionverifyable" :value="true">ja</b-form-radio>
-                <b-form-radio v-model="solutionverifyable" :value="false">nein</b-form-radio>
+            <b-form-input v-model="taskInstruction" placeholder="{{$t('subtaskCreation.instruction')}}"></b-form-input>
+            <b-form-group label="{{$t('subtaskCreation.verifiable')}}">
+                <b-form-radio v-model="solutionverifiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                <b-form-radio v-model="solutionverifiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
             </b-form-group>
 
-            <div v-if="solutionverifyable">
-                <b-form-input v-model="solution" placeholder="Lösung hier eingeben"></b-form-input>
+            <div v-if="solutionverifiable">
+                <b-form-input v-model="solution" placeholder="{{$t('subtaskCreation.solution')}}"></b-form-input>
 
-                <b-form-group label="Musterlösung freigegeben">
-                    <b-form-radio v-model="solutionvisible" :value="true">ja</b-form-radio>
-                    <b-form-radio v-model="solutionvisible" :value="false">nein</b-form-radio>
+                <b-form-group label="{{$t('subtaskCreation.visible')}}">
+                    <b-form-radio v-model="solutionvisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                    <b-form-radio v-model="solutionvisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                 </b-form-group>
             </div>
         </div>
@@ -70,21 +74,21 @@
        a radio to choose whether a student can compare its solution to the teacher solution-->
 
         <div v-else-if="tasktype === 'mc'">
-            <b-form-input v-model="taskInstruction" placeholder="Aufgabentext hier eingeben"></b-form-input>
-            <b-form-input v-model="answerOption" placeholder="Antwortmöglichkeit hier eingeben"></b-form-input>
-            <b-button @click="addAnswerOption(true)"> Antwort hinzufügen </b-button>
+            <b-form-input v-model="taskInstruction" placeholder="{{$t('subtaskCreation.instruction')}}"></b-form-input>
+            <b-form-input v-model="answerOption" placeholder="{{$t('subtaskCreation.answerOption')}}"></b-form-input>
+            <b-button @click="addAnswerOption(true)">{{$t('subtaskCreation.addAnswer')}} </b-button>
 
             <div>
                 Antwortmöglichkeiten: {{answerOptionsText}}
             </div>
 
-            <b-form-group label="Musterlösung vorhanden">
-                <b-form-radio v-model="solutionverifyable" :value="true">ja</b-form-radio>
-                <b-form-radio v-model="solutionverifyable" :value="false">nein</b-form-radio>
+            <b-form-group label="{{$t('subtaskCreation.verifiable')}}">
+                <b-form-radio v-model="solutionverifiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                <b-form-radio v-model="solutionverifiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
             </b-form-group>
 
-            <div v-if="solutionverifyable">
-                Wähle die richtigen Antwortmöglichkeiten aus.
+            <div v-if="solutionverifiable">
+                {{$t('subtaskCreation.rightAnswers')}}
                 <b-form-group>
                     <b-form-checkbox-group
                             v-model="selected"
@@ -94,9 +98,9 @@
                 </b-form-group>
 
 
-                <b-form-group label="Musterlösung freigegeben">
-                    <b-form-radio v-model="solutionvisible" :value="true">ja</b-form-radio>
-                    <b-form-radio v-model="solutionvisible" :value="false">nein</b-form-radio>
+                <b-form-group label="{{$t('subtaskCreation.solution')}}">
+                    <b-form-radio v-model="solutionvisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                    <b-form-radio v-model="solutionvisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                 </b-form-group>
             </div>
         </div>
@@ -114,44 +118,44 @@
                     to the teacher solution-->
 
         <div v-else-if="tasktype === 'sql'">
-            <b-form-input v-model="taskInstruction" placeholder="Aufgabentext hier eingeben"></b-form-input>
+            <b-form-input v-model="taskInstruction" placeholder="{{$t('subtaskCreation.instruction')}}"></b-form-input>
 
-            <b-form-group label="Welche sql Befehle dürfen verwendet werden?">
+            <b-form-group label="{{$t('subtaskCreation.allowedSql')}}">
                 <b-form-radio v-model="allowedSqlStatements"  :value='AllowedSqlStatements.NoRestriction'
-                >keine Einschränkungen</b-form-radio>
+                >{{$t('subtaskCreation.noRestriction')}}</b-form-radio>
                 <b-form-radio v-model="allowedSqlStatements"  :value="AllowedSqlStatements.SelectStatements"
-                >Select Befehle</b-form-radio>
+                >{{$t('subtaskCreation.select')}}</b-form-radio>
             </b-form-group>
 
-            <b-form-group label="Ist das Point and Click Feature Nutzbar?">
-                <b-form-radio v-model="isPointAndClickAllowed" :value="true">ja</b-form-radio>
-                <b-form-radio v-model="isPointAndClickAllowed"  :value="false">nein</b-form-radio>
+            <b-form-group label="{{$t('subtaskCreation.PandC')}}">
+                <b-form-radio v-model="isPointAndClickAllowed" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                <b-form-radio v-model="isPointAndClickAllowed"  :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
             </b-form-group>
 
-            <b-form-group label="Musterlösung vorhanden">
-                <b-form-radio v-model="solutionverifyable" :value="true">ja</b-form-radio>
-                <b-form-radio v-model="solutionverifyable" :value="false">nein</b-form-radio>
+            <b-form-group label="{{$t('subtaskCreation.verifiable')}}">
+                <b-form-radio v-model="solutionverifiable" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                <b-form-radio v-model="solutionverifiable" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
             </b-form-group>
 
-            <div v-if="solutionverifyable">
-                <b-form-input v-model="solution" placeholder="Lösung hier eingeben"></b-form-input>
+            <div v-if="solutionverifiable">
+                <b-form-input v-model="solution" placeholder="{{$t('subtaskCreation.solution')}}"></b-form-input>
 
-                <b-form-group label="Musterlösung zum Vergleichen freigegeben">
-                    <b-form-radio v-model="solutionvisible" :value="true">ja</b-form-radio>
-                    <b-form-radio v-model="solutionvisible" :value="false">nein</b-form-radio>
+                <b-form-group label="{{$t('subtaskCreation.solution')}}">
+                    <b-form-radio v-model="solutionvisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                    <b-form-radio v-model="solutionvisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                 </b-form-group>
 
-                <b-form-group v-if="solutionvisible" label="Ist die Reihenfolge der Reihen beim Vergleichen wichtig?">
-                    <b-form-radio v-model="doesRowOrderMatter"  :value="true">ja</b-form-radio>
-                    <b-form-radio v-model="doesRowOrderMatter"  :value="false">nein</b-form-radio>
+                <b-form-group v-if="solutionvisible" label="{{$t('subtaskCreation.rowOrder')}}">
+                    <b-form-radio v-model="doesRowOrderMatter"  :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
+                    <b-form-radio v-model="doesRowOrderMatter"  :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                 </b-form-group>
             </div>
 
         </div>
 
-        <b-button @click="saveSubtask"> Teilaufgabe speichern</b-button>
-        <b-button @click="deleteSubtask"> Teilaufgabe löschen</b-button>
-        <b-button @click="changeSize">Teilaufgabe minimieren</b-button>
+        <b-button @click="saveSubtask">{{$t('subtaskCreation.save')}}</b-button>
+        <b-button @click="deleteSubtask"> {{$t('subtaskCreation.delete')}}</b-button>
+        <b-button @click="changeSize">{{$t('subtaskCreation.minimize')}}</b-button>
 
     </div>
     </div>
@@ -188,16 +192,16 @@ export default Vue.extend ({
             taskInstruction: '',
             index : 0,
             typeOptions: [
-                {value: '', text: 'Wähle die Art der Teilaufgabe aus'},
-                {value: 'inst', text: 'Erklärender Text, keine Bearbeitung für Schüler'},
-                {value: 'text', text: 'Freitext Aufgabe'},
-                {value: 'mc', text: 'Multiple-Choice Aufgabe'},
-                {value: 'sql', text: 'Sql Aufgabe'},
+                {value: '', text: this.$t('subtaskCreation.chooseType') as string},
+                {value: 'inst', text: this.$t('subtaskCreation.typeInstructionExtra') as string},
+                {value: 'text', text: this.$t('subtaskCreation.typePlainText') as string},
+                {value: 'mc', text: this.$t('subtaskCreation.typeMultipleChoice') as string},
+                {value: 'sql', text: this.$t('subtaskCreation.typeSql') as string},
             ],
             subtaskController: this.$store.getters.subtask,
 
             // variables needed for a subtask with a solution
-            solutionverifyable: false,
+            solutionverifiable: false,
             solutionvisible: false,
 
             // variables needed for a sql subtask or plaintexttask
@@ -261,7 +265,7 @@ export default Vue.extend ({
                 this.createdSubtaskId = subtask.id;
                 this.taskInstruction = subtask.instruction;
                 this.solution = textSolution.text;
-                this.solutionverifyable = subtask.isSolutionVeryfiable;
+                this.solutionverifiable = subtask.isSolutionVeryfiable;
                 this.solutionvisible = subtask.isSolutionVisible;
 
             } else if (subtask.type === SubtaskTypes.MultipleChoice) {
@@ -270,7 +274,7 @@ export default Vue.extend ({
                 this.tasktype = 'mc';
                 this.createdSubtaskId = mcSubtask.id;
                 this.taskInstruction = mcSubtask.instruction;
-                this.solutionverifyable = mcSubtask.isSolutionVeryfiable;
+                this.solutionverifiable = mcSubtask.isSolutionVeryfiable;
                 this.solutionvisible = mcSubtask.isSolutionVisible;
                 this.answerOptionsText = mcSubtask.answerOptions;
                 for (const option of this.answerOptionsText) {
@@ -286,7 +290,7 @@ export default Vue.extend ({
                 this.tasktype = 'sql';
                 this.createdSubtaskId = sqlSubtask.id;
                 this.taskInstruction = sqlSubtask.instruction;
-                this.solutionverifyable = sqlSubtask.isSolutionVeryfiable;
+                this.solutionverifiable = sqlSubtask.isSolutionVeryfiable;
                 this.solutionvisible = sqlSubtask.isSolutionVisible;
                 this.isPointAndClickAllowed = sqlSubtask.isPointAndClickAllowed;
                 this.doesRowOrderMatter = sqlSubtask.doesRowOrderMatter;
@@ -304,7 +308,7 @@ export default Vue.extend ({
          */
         addAnswerOption(withText: boolean) {
             if (this.answerOption === '') {
-                alert("Bitte trage eine Antwortmöglichkeit ein.");
+                alert(this.$t('subtaskCreation.alertAnswerOption') as string);
                 return;
             }
             this.answerOptions.push({text: this.answerOption, value: this.index});
@@ -333,11 +337,11 @@ export default Vue.extend ({
 
             } else if (this.tasktype === 'text') {
                 createdSubtask = new PlainTextTask(this.subtaskId, new PlainTextSolution(this.solution)
-                    , this.taskInstruction, this.solutionverifyable, this.solutionvisible);
+                    , this.taskInstruction, this.solutionverifiable, this.solutionvisible);
 
             } else if (this.tasktype === 'mc') {
                 createdSubtask = new MultipleChoiceTask(this.subtaskId,
-                    new MultipleChoiceSolution(this.selected), this.taskInstruction, this.solutionverifyable,
+                    new MultipleChoiceSolution(this.selected), this.taskInstruction, this.solutionverifiable,
                     this.solutionvisible, this.answerOptionsText);
 
             } else {
@@ -357,7 +361,7 @@ export default Vue.extend ({
                 }
                 createdSubtask = new SqlTask(this.subtaskId,
                     new SqlSolution(this.solution, this.queryResult.columns, values),
-                    this.taskInstruction, this.solutionverifyable, this.isPointAndClickAllowed,
+                    this.taskInstruction, this.solutionverifiable, this.isPointAndClickAllowed,
                     this.doesRowOrderMatter, this.solutionvisible, this.allowedSqlStatements);
             }
             if (this.subtaskId === '') {
@@ -374,7 +378,7 @@ export default Vue.extend ({
         to delete the reference of the subtask
          */
         deleteSubtask() {
-            if (confirm('Teilaufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
+            if (confirm(this.$t('subtaskCreation.alertDelete') as string)) {
                 if (this.createdSubtaskId !== '') {
                     this.subtaskController.remove('');
                 }

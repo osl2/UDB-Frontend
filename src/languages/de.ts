@@ -69,6 +69,48 @@ const de = {
   hoverText: {
     switchToStudentsView: 'Hier klicken, um anzuzeigen, was die Schüler vom Kurs sehen werden.',
   },
+  subtaskCreation: {
+    typeInstruction: 'Erklärender Text',
+    typePlainText: 'Freitext Aufgabe',
+    typeMultipleChoice: 'Multiple-Choice Aufgabe',
+    typeSql: 'Sql Aufgabe',
+    maximize: 'Optionen ausklappen',
+    minimize: 'Optionen einklappen',
+    instruction: 'Aufgabentext hier eingeben',
+    verifiable: 'Ist eine Muserlösung vorhanden?',
+    solution: 'Lösung hier eingeben',
+    visible: 'Wird die Musterlösung zum Vergleichen freigegeben?',
+    yes: 'Ja',
+    no: 'Nein',
+    answerOption: 'Antwortmöglichkeit hier eingeben',
+    addAnswer: 'Antwort hinzufügen',
+    rightAnswers: 'Wähle die richtigen Antwortmöglichkeiten aus',
+    allowedSql: 'Welche Sql-Befehle dürfen verwendet werden?',
+    noRestriction: 'Keine Einschränkungen',
+    select: 'Select Anfragen',
+    PandC: 'Ist das Point and Click Feature Nutzbar?',
+    rowOrder: 'Ist die Reihenfolge der Reihen beim Vergleichen wichtig?',
+    save: 'Teilaufgabe speichern',
+    delete: 'Teilaufgabe löschen',
+  },
+  taskCreation: {
+    maximize: 'Aufgabe ausklappen',
+    minimize: 'Aufgabe einklappen',
+    name: 'Name der Aufgabe',
+    new: 'Neue Teilaufgabe erstellen',
+  },
+  teacherWorksheet: {
+    name: 'Name des Aufgabenblatts',
+    sheetOnline: 'Ist das Aufgabenblatt für Schüler online?',
+    solutionOnline: 'Ist das Lösungsblatt für Schüler einsehbar?',
+    yes: 'Ja',
+    no: 'Nein',
+    new: 'Neue Aufgabe erstellen',
+    toOverview: 'Zurück zur Kursübersicht',
+  },
+  studentWorkshhet: {
+
+  }
 };
 export default de;
 

@@ -6,14 +6,14 @@
             <div class="bg-secondary text-light">
                 {{task.name}}
             </div>
-            <b-button @click="changeSize"> Teilaufgabe maximieren</b-button>
+            <b-button @click="changeSize"> {{$t('taskCreation.maximize')}}</b-button>
         </div>
 
         <!-- Shows all the options needed to create or update a task-->
         <div v-if="showfull">
             {{task.name}}
         <div>
-            <b-form-input v-model="taskName" placeholder="Name der Aufgabe"></b-form-input>
+            <b-form-input v-model="taskName" placeholder="{{$t('taskCreation.name')}}"></b-form-input>
         </div>
         <div>
             <b-form-select v-model="dbId" :options="dbOptions"></b-form-select>
@@ -29,8 +29,8 @@
                              @deleteSubtask="deleteSubtask"
             ></SubtaskCreation>
         </div>
-        <b-button @click="newSubtask"> Teilaufgabe erstellen</b-button>
-            <b-button @click="changeSize"> Aufgabe minimieren</b-button>
+        <b-button @click="newSubtask">{{$t('taskCreation.new')}}</b-button>
+            <b-button @click="changeSize"> {{$t('taskCreation.minimize')}}</b-button>
     </div>
     </div>
 </template>
@@ -49,7 +49,7 @@ export default Vue.extend({
             taskName: '',
             dbId: '',
             createdTaskId: '',
-            dbOptions: [{text: "Wähle eine Datenbank aus", value: null}],
+            dbOptions: [{text: this.$t('taskCreation.chooseDb') as string, value: null}],
             index: 1,
             subtasks: [{subtaskId: '', index: 0}],
             subtaskIds: [] as string[],
@@ -187,7 +187,7 @@ export default Vue.extend({
         to the worksheet
          */
         deleteTask() {
-            if (confirm('Aufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
+            if (confirm(this.$t('subtaskCreation.alertDelete') as string)) {
                 if (this.taskId !== '') {
                     this.taskController.remove(this.task);
                 }
