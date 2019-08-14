@@ -67,36 +67,40 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Worksheet from '@/dataModel/Worksheet';
+    import {Component, Prop, Vue} from 'vue-property-decorator';
+    import Worksheet from '@/dataModel/Worksheet';
 
-export default Vue.extend({
-    props: ['worksheets', 'isStudentsViewActive', 'hasUserWritePermission'],
-    methods: {
-        showWorksheet(sheet: Worksheet): boolean {
+    @Component({})
+    export default class WorksheetList extends Vue {
+        private errorMsg: string = '';
+        @Prop() private worksheets!: Worksheet[];
+        @Prop() private isStudentsViewActive!: boolean;
+        @Prop() private hasUserWritePermission!: boolean;
+        private name: string = '';
+
+        public showWorksheet(sheet: Worksheet): boolean {
             if (this.isStudentsViewActive) {
                 return sheet.isOnline;
             } else {
                 return true;
             }
-        },
-        updateWorksheetOnline(sheet: Worksheet): void {
+        }
+
+        public updateWorksheetOnline(sheet: Worksheet): void {
             // we need to wait for v-model of worksheet.isOnline to catch up
             Vue.nextTick(() => {
                 this.$emit('updateWorksheet', sheet);
             });
-        },
-    },
-    computed: {
-        areWorksheetsEmpty(): boolean {
+        }
+
+        get areWorksheetsEmpty(): boolean {
             if (this.isStudentsViewActive) {
                 return this.worksheets.every((worksheet: Worksheet) => !worksheet.isOnline);
             } else {
                 return this.worksheets.length === 0;
             }
-        },
-    },
-});
+        }
+    }
 </script>
 
 <style scoped>
