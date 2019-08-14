@@ -43,10 +43,10 @@ export default class SqlTask extends Subtask {
                 undefined,
                 json.instruction,
                 json.solution_verifiable,
-                json.point_click_allowed,
+                json.content.sql.point_click_allowed,
                 false,
                 json.solution_visible,
-                AllowedSqlFromJSON(json.allowed_sql));
+                AllowedSqlFromJSON(json.content.sql.allowed_sql));
         }
         if (!json.content.hasOwnProperty("sql")) {
             throw new Error("Wrong subtask type");

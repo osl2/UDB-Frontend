@@ -79,7 +79,6 @@
         }
 
         public generateSolutionsheet(worksheet: Worksheet) {
-            alert('TODO: PDF anzeigen zu: ' + worksheet.name);
             this.worksheetController.getSolution(worksheet);
         }
 
