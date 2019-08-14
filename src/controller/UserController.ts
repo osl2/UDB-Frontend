@@ -49,9 +49,9 @@ export default class UserController extends ApiControllerAbstract implements Use
         });
     }
 
-    public register(username: string, password: string) {
+    public register(username: string, password: string): Promise<void> {
         const user = new User('', username, password, '', UserGroup.Teacher);
-        this.api.createAccount({account: user} as CreateAccountRequest).then((_) => {
+        return this.api.createAccount({account: user} as CreateAccountRequest).then((_) => {
             this.login(username, password);
         });
     }

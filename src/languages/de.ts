@@ -27,6 +27,7 @@ const de = {
     error2Pw: 'Gib beide Passwörter ein',
     errorPwEqual: 'Die Passwörter stimmen nicht überein',
     errorLogin: 'Anmeldung fehlgeschlagen',
+    errorRegistration: 'Registrierung fehlgeschlagen',
   },
   sandbox: {
     titleStartPage: 'Freier Modus',
