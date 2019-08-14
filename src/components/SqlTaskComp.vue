@@ -63,7 +63,7 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 import DatabaseComponent from "@/components/DatabaseComponent.vue";
 
 export default Vue.extend({
-    props: ['currentSubtask', 'solutions', 'sqlExecutor'],
+    props: ['currentSubtask', 'solutions'],
     components: {
         Query,
         PointAndClick,
@@ -71,12 +71,13 @@ export default Vue.extend({
     },
 
     data() {
-        return{
+        return {
             isPointAndClickActive: false,
             gotFirstQueryExecuted: false,
             lastQueryExecuted: '',
             queryResult: {} as QueryResult,
             allowedSqlToolbox: 'toolbox_all.xml',
+            sqlExecutor: this.$store.getters.sqlExecutor,
         };
     },
     methods: {
@@ -86,18 +87,17 @@ export default Vue.extend({
         executeQuery(query: string) {
           if (this.checkAllowedSqlStatements(query)) {
             const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-            try {
-              const dbNumber = dbComponent.$data.databaseNumber;
-              this.queryResult = this.sqlExecutor.executeQuery(dbNumber, query, 0);
-              const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
-              window.scrollTo(0, top + 200);
-              dbComponent.loadMetaData();
-              this.gotFirstQueryExecuted = true;
-              this.lastQueryExecuted = query;
-            } catch (error) {
-              alert(error.message);
-              return;
-            }
+            const dbNumber = dbComponent.$data.databaseNumber;
+            this.sqlExecutor.executeQuery(dbNumber, query, 0).then((queryResult: QueryResult) => {
+                 this.queryResult = queryResult;
+                 const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
+                 window.scrollTo(0, top + 200);
+                 dbComponent.loadMetaData();
+                 this.gotFirstQueryExecuted = true;
+                 this.lastQueryExecuted = query;
+              }).catch((e: string) => {
+                 alert(e);
+              });
           } else {
             alert(this.$t('sqlTaskComp.alertStatement') as string);
           }
@@ -141,7 +141,7 @@ export default Vue.extend({
 
     computed: {
         sqlTaskDynamicComponent() {
-            if (this.isPointAndClickActive) {
+            if (this.isPointAndClickActive && this.currentSubtask.isPointAndClickAllowed) {
                 return PointAndClick;
             } else {
                 return Query;

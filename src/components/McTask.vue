@@ -4,7 +4,7 @@
         <div class="taskContainer">
             {{this.currentSubtask.instruction}}
         </div>
-        <h3>{{$t('mcTaskComp.answerOptions')}}</h3>
+        <h3>{{$t('mcTask.answerOptions')}}</h3>
         <div class="taskContainer">
 
             <b-form-group>

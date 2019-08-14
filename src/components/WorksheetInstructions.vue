@@ -2,7 +2,7 @@
     <div>
         <b-list-group>
             <h3>{{task.name}}</h3>
-            <b-button @click="$emit('openTask', task, subtasks)">{{$t('studentWorksheet.exportPdf')}}</b-button>
+            <b-button @click="$emit('openTask', task, subtasks)">{{$t('workSheetInstruction.edit')}}</b-button>
 
             <b-list-group-item v-for="subtask in subtasks"
                                :key="subtask.id"
@@ -14,30 +14,28 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import SubtaskController from "@/controller/SubtaskController";
-import SubtaskService from "@/services/SubtaskService";
+import {Component, Prop, Vue} from 'vue-property-decorator';
 import Subtask from "@/dataModel/Subtask";
+import Task from "@/dataModel/Task";
+import SubtaskController from "@/controller/SubtaskController";
+@Component({})
 
+export default class WorksheetInstructions extends Vue {
+  @Prop() private task!: Task;
 
-export default  Vue.extend({
-  props: ['task'],
-  data() {
-    return {
-      subtaskController: new SubtaskController(this.$store.getters.api) as SubtaskService,
-    };
-  },
-  created() {
+  private subtaskController: SubtaskController = this.$store.getters.subtaskController;
+
+  public created() {
+    this.subtaskController = this.$store.getters.subtaskController;
     this.subtaskController.loadChildren(this.task);
-  },
-  computed: {
-    subtasks: {
-      get(): Subtask[] {
-        return this.subtaskController.getAllWithoutSolution();
-      },
-    },
-  },
-});
+  }
+
+  get subtasks(): Subtask[] {
+    return this.subtaskController.getAllWithoutSolution();
+
+  }
+
+}
 </script>
 
 <style scoped>

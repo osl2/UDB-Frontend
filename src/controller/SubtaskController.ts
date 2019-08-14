@@ -47,7 +47,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
                   this._subtasks = new Map<string, Subtask>(this._subtasks.set(response.id, response));
                 })
                 .catch((response) => {
-                    throw new Error("Error loading subtasks: " + response.status + " " + response.statusText);
+                    throw new Error("Error loading subtasks: " + response + " " + response);
                 });
         });
     }

@@ -153,7 +153,7 @@ const de = {
   studentWorksheet: {
       importSolution: 'Bearbeitungsstand importieren',
       exportSolution: 'Bearbeitungsstand exportieren',
-      exportPdf: 'Lösung des Blattes als PDF exportieren',
+      exportPdf: 'Lösung des eigenen Blattes als PDF exportieren',
       alertSolutionChange: "Wenn Aufgaben durch deinen Lehrer verändert wurden, " +
           'ist deine bisherige Lösung nicht mehr verfügbar!',
       alertSolutionWrong: 'Lösung passt nicht zum aktuellen Aufgabenblatt!',
