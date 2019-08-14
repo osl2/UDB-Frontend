@@ -7,5 +7,5 @@ export default abstract class Solution {
     protected constructor() {
 
     }
-    public abstract toJSON(): any;
+    public abstract get toJSON(): any;
 }

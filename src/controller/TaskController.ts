@@ -8,25 +8,31 @@ import {
     UpdateTaskRequest,
     GetTaskRequest,
 } from "@/api/DefaultApi";
+import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
+import Subtask from "@/dataModel/Subtask";
 
-export default class TaskController implements ParentService<Worksheet, Task> {
+export default class TaskController extends ApiControllerAbstract implements ParentService<Worksheet, Task> {
 
-    private _api: DefaultApi;
-    private _tasks: Task[] = [];
-    private _task?: Task = undefined;
+    private _tasks: Map<string, Task>;
 
-    constructor(api: DefaultApi) {
-        this._api = api;
-    }
+  constructor(api: DefaultApi) {
+    super(api);
+    this._tasks = new Map<string, Task>();
+  }
+
 
     /**
      * Loads all tasks available
      */
     public loadAll(): void {
-        this._api.getTasks()
+        this.api.getTasks()
             .then((response: Task[]) => {
-                this._tasks = response;
-            });
+                response.forEach((task: Task) => {
+                    this._tasks = new Map<string, Task>(this._tasks.set(task.id, task));
+                });
+            }).catch((response) => {
+          throw new Error("Error loading tasks: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -35,12 +41,13 @@ export default class TaskController implements ParentService<Worksheet, Task> {
      * @param object
      */
     public loadChildren(object: Worksheet) {
-        this._tasks = [];
         object.taskIds.forEach((taskId) => {
-            this._api.getTask({taskId} as GetTaskRequest)
+            this.api.getTask({taskId} as GetTaskRequest)
                 .then((response: Task) => {
-                    this._tasks.push(response);
-                });
+                    this._tasks = new Map<string, Task>(this._tasks.set(response.id, response));
+                }).catch((response) => {
+              throw new Error("Error getting tasks from worksheet: " + response.status + " " + response.statusText);
+            });
         });
     }
 
@@ -50,62 +57,98 @@ export default class TaskController implements ParentService<Worksheet, Task> {
      * @param id
      */
     public load(id: string): void {
-        this._task = this._tasks.find((task) => task.id === id);
-        if (this._task === undefined) {
-            this._api.getTask({taskId: id} as GetTaskRequest)
+        if (this._tasks.get(id) === undefined) {
+            this.api.getTask({taskId: id} as GetTaskRequest)
                 .then((response: Task) => {
-                    this._task = response;
-                });
+                    this._tasks = new Map<string, Task>(this._tasks.set(response.id, response));
+                }).catch((response) => {
+              throw new Error("Error loading task: " + response.status + " " + response.statusText);
+            });
         }
     }
 
-    public create(task: Task): void {
-        this._api.createTask({task} as CreateTaskRequest)
+    /**
+     * Create a new task and upload to backend
+     *
+     * @param task
+     */
+    public create(task: Task): Promise<string> {
+        return this.api.createTask({task} as CreateTaskRequest)
           .then((response: string) => {
               task.id = response;
-              this._tasks.push(task);
+              this._tasks = new Map<string, Task>(this._tasks.set(task.id, task));
+              return task.id;
           })
           .catch((error) => {
               throw new Error("Error creating task: " + error);
           });
     }
+
+    /**
+     * Delete a task
+     *
+     * @param object
+     */
     public remove(object: Task): void {
-        this._api.deleteTask({taskId: object.id} as DeleteTaskRequest)
+        this.api.deleteTask({taskId: object.id} as DeleteTaskRequest)
           .then((response) => {
-              const index = this._tasks.indexOf(object, 0);
-              if (index > -1) {
-                  this._tasks.splice(index, 1);
-              }
-          });
+              this._tasks.delete(object.id);
+              this._tasks = new Map<string, Task>(this._tasks);
+          }).catch((response) => {
+          throw new Error("Error deleting task: " + response.status + " " + response.statusText);
+        });
     }
+
+    /**
+     * Update a task
+     *
+     * @param object
+     */
     public save(object: Task): void {
-        this._api.updateTask({task: object, taskId: object.id} as UpdateTaskRequest)
+        this.api.updateTask({task: object, taskId: object.id} as UpdateTaskRequest)
           .then(() => {
-              const index = this._tasks.findIndex((task) => task.id === object.id);
-              if (index > -1) {
-                  this._tasks[index] = object;
+              if (this._tasks.get(object.id) !== undefined) {
+                  this._tasks = new Map<string, Task>(this._tasks.set(object.id, object));
               }
-          });
+          }).catch((response) => {
+          throw new Error("Error saving task: " + response.status + " " + response.statusText);
+        });
     }
+
+    /**
+     * Returns Task with given id, if Task was loaded
+     *
+     * @param id
+     */
     public get(id: string): Task {
-        const tempTask = this._tasks.find((task) => task.id === id);
-        if (tempTask === undefined) {
+        const task = this._tasks.get(id);
+        if (task === undefined) {
             throw new Error("Task not found");
         }
-        return tempTask;
+        return task;
     }
 
     /**
-     * Getter for loaded courses.
+     * Returns all children of Worksheet that have benn loaded.
+     *
+     * @param worksheet
+     */
+    public getChildren(worksheet: Worksheet): Task[] {
+        const tasks: Task[] = [];
+        worksheet.taskIds.map((taskId: string) => {
+            return this._tasks.get(taskId);
+        }).forEach((task: Task | undefined) => {
+            if (task !== undefined) {
+                tasks.push(task);
+            }
+        });
+        return tasks;
+    }
+
+    /**
+     * Getter for all loaded courses.
      */
     get all(): Task[] {
-        return this._tasks;
-    }
-
-    /**
-     * Getter for single loaded course.
-     */
-    get one(): Task | undefined {
-        return this._task;
+        return Array.from(this._tasks.values());
     }
 }

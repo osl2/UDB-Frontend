@@ -1,9 +1,14 @@
 <template>
     <div>
-        <h3>Aufgabenstellung:</h3>
+        <h3>{{$t('taskComp.instruction')}}</h3>
         <div class="taskContainer">
-            {{this.currentSubtask.instruction}}
+            {{currentSubtask.instruction}}
          </div>
+
+        <div v-if ="currentSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements">
+            {{$t('sqlTaskComp.select')}}
+        </div>
+
         <div>
             <div v-if="currentSubtask.isPointAndClickAllowed" class="taskSwitchButton">
                 <b-button v-on:click="switchComponent"
@@ -19,28 +24,28 @@
             <div class="clear">
                 <component class="taskSqlComponent"
                            :is="sqlTaskDynamicComponent"
+                           :allowedSqlToolbox="allowedSqlToolbox"
                            @executeQuery="executeQuery"
                 ></component>
             </div>
 
-            <div>
-                <p v-show="gotFirstQueryExecuted">
+            <div v-if="gotFirstQueryExecuted">
+                <p>
                     {{$t('sandbox.resultText')}}({{lastQueryExecuted}}):
                 </p>
-                <QueryResultView :showResult="showResult"
-                             v-show="gotFirstQueryExecuted"
-                ></QueryResultView>
+                <QueryResultComp :columns="queryResult.result.columns"
+                                 :rows="queryResult.result.values"
+                ></QueryResultComp>
 
             </div>
 
-            <b-button v-b-popover.hover="'Wenn Du diesen Knopf drückst, wird die zuletzt ausgeführte Query gespeichert.'+
-            ' Achte darauf, dass Du die Anfrage, die Du speichern willst, auch noch einmal ausführst.'"
+            <b-button v-b-popover.hover="this.$t('sqlTaskComp.hover')" as string
                       @click="$emit('save', subtaskSolution)"
             >
-                Speichern</b-button>
-            <b-button v-show="currentSubtask.isSolutionVisible"
+                {{$t('taskComp.save')}}</b-button>
+            <b-button v-if="currentSubtask.isSolutionVisible"
                       @click="$emit('compare', subtaskSolution)">
-                Vergleich mit Musterlösung
+                {{$t('taskComp.compare')}}
             </b-button>
         </div>
     </div>
@@ -49,77 +54,115 @@
 <script lang="ts">
 import Vue from 'vue';
 import Query from '@/components/Query.vue';
-import QueryResultView from '@/components/QueryResult.vue';
+import QueryResultComp from '@/components/QueryResult.vue';
 import PointAndClick from '@/components/PointAndClick.vue';
 import SqlSolution from "@/dataModel/SqlSolution";
 import QueryResult from "@/dataModel/QueryResult";
-import {SqlJs} from "sql.js/module";
-import ValueType = SqlJs.ValueType;
+import SqlTask from "@/dataModel/SqlTask";
+import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
+import DatabaseComponent from "@/components/DatabaseComponent.vue";
 
 export default Vue.extend({
-    props: ['currentSubtask', 'solutions', 'sqlExecutor', 'databaseNumber'],
+    props: ['currentSubtask', 'solutions'],
     components: {
         Query,
         PointAndClick,
-        QueryResultView,
+        QueryResultComp,
     },
 
     data() {
-        return{
+        return {
             isPointAndClickActive: false,
             gotFirstQueryExecuted: false,
             lastQueryExecuted: '',
             queryResult: {} as QueryResult,
-
-            // TODO Array nicht hard coden
-            showResult: [
-                 {Name: 'Schmidt', Vorname: 'Anna', Alter: 50},
-                {Name: 'Müller', Vorname: 'Herbert', Alter: 29},
-            ],
-
+            allowedSqlToolbox: 'toolbox_all.xml',
+            sqlExecutor: this.$store.getters.sqlExecutor,
         };
     },
     methods: {
+        /*
+        method executes the query created by the student and checks if only allowed Statements are used
+        */
         executeQuery(query: string) {
-            this.sqlExecutor.executeQuery(this.databaseNumber, query, 0).then((res: QueryResult) => {
-              this.queryResult = res;
-              this.gotFirstQueryExecuted = true;
-              this.lastQueryExecuted = query;
-            }).catch((message: string) => {
-              alert(message);
-            });
+          if (this.checkAllowedSqlStatements(query)) {
+            const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+            const dbNumber = dbComponent.$data.databaseNumber;
+            this.sqlExecutor.executeQuery(dbNumber, query, 0).then((queryResult: QueryResult) => {
+                 this.queryResult = queryResult;
+                 const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
+                 window.scrollTo(0, top + 200);
+                 dbComponent.loadMetaData();
+                 this.gotFirstQueryExecuted = true;
+                 this.lastQueryExecuted = query;
+              }).catch((e: string) => {
+                 alert(e);
+              });
+          } else {
+            alert(this.$t('sqlTaskComp.alertStatement') as string);
+          }
+        },
+
+        /*
+        checks if the query the student created only uses sql statements that are allowed to use in the subtask
+         */
+        checkAllowedSqlStatements(query: string): boolean {
+          const tempSubtask = this.currentSubtask as SqlTask;
+          if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
+            // check if the input contains a statement which is NOT allowed
+            const regexSelect = new RegExp('^/(drop)|(alter)|(create)|(update)|(insert)|(delete)/', 'i');
+            if (query.match(regexSelect) === null) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            // no restrictions on the query input
+            return true;
+          }
         },
 
         switchComponent() {
             this.isPointAndClickActive = !this.isPointAndClickActive;
         },
     },
+
     created() {
         if (this.solutions.has(this.currentSubtask.id)) {
             this.executeQuery(this.solutions.get(this.currentSubtask.id).querySolution);
         }
+        const tempSubtask = this.currentSubtask as SqlTask;
+        if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
+            this.allowedSqlToolbox = 'toolbox_query.xml';
+        } else {
+            this.allowedSqlToolbox = 'toolbox_all.xml';
+        }
     },
+
     computed: {
         sqlTaskDynamicComponent() {
-            if (this.isPointAndClickActive) {
+            if (this.isPointAndClickActive && this.currentSubtask.isPointAndClickAllowed) {
                 return PointAndClick;
             } else {
                 return Query;
             }
         },
+
         subtaskSolution: {
             get(): SqlSolution {
-
                 const values: string[][] = [[]];
                 let i = 0;
                 for (const row of this.queryResult.result.values) {
                     values.push([]);
                     for (const cell of row) {
-                        values[i].push(cell.toString());
+                        if (cell != null) {
+                            values[i].push(cell.toString());
+                        } else {
+                            values[i].push("null");
+                        }
                     }
                     i++;
                 }
-
                 return new SqlSolution(this.queryResult.query, this.queryResult.result.columns,
                   values);
             },

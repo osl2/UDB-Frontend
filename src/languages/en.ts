@@ -5,6 +5,12 @@ const en = {
     langEnglish: 'English',
     logo: 'u<sup>DB</sup>',
     slogan: 'You to the power of database',
+    descriptionTextFreeMode: 'Use the free mode to practice creating databases and executing databases.',
+    descriptionTextCourse: 'Join a course to work on exercise sheets of your teacher.',
+    descriptionTextTeacher: 'Login to the teachers working space.',
+    login: 'Login',
+    register: 'Register',
+
   },
   sandbox: {
     titleStartPage: 'Free mode',

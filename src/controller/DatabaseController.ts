@@ -8,25 +8,30 @@ import {
     GetDatabaseRequest,
     UpdateDatabaseRequest,
 } from "@/api/DefaultApi";
+import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 
-export default class DatabaseController implements DataManagementService<Database>, ExportImport<Database> {
+export default class DatabaseController extends ApiControllerAbstract
+    implements DataManagementService<Database>, ExportImport<Database> {
 
-    private _api: DefaultApi;
-    private _databases: Database[] = [];
-    private _database?: Database = undefined;
+    private _databases: Map<string, Database>;
 
     constructor(api: DefaultApi) {
-        this._api = api;
+        super(api);
+        this._databases = new Map<string, Database>();
     }
 
     /**
      * Load all available databases for the authenticated user
      */
     public loadAll(): void {
-        this._api.getDatabases()
+        this.api.getDatabases()
             .then((response: Database[]) => {
-                this._databases = response;
-            });
+                response.forEach((database: Database) => {
+                    this._databases = new Map<string, Database>(this._databases.set(database.id, database));
+                });
+            }).catch((response) => {
+            throw new Error("Error loading databases: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -35,12 +40,13 @@ export default class DatabaseController implements DataManagementService<Databas
      * @param id
      */
     public load(id: string): void {
-        this._database = this._databases.find((database) => database.id === id);
-        if (this._database === undefined) {
-            this._api.getDatabase({databaseId: id} as GetDatabaseRequest)
+        if (this._databases.get(id) === undefined) {
+            this.api.getDatabase({databaseId: id} as GetDatabaseRequest)
                 .then((response: Database) => {
-                    this._database = response;
-                });
+                    this._databases = new Map<string, Database>(this._databases.set(response.id, response));
+                }).catch((response) => {
+                throw new Error("Error loading database: " + response.status + " " + response.statusText);
+            });
         }
     }
 
@@ -49,35 +55,45 @@ export default class DatabaseController implements DataManagementService<Databas
      *
      * @param database
      */
-    public create(database: Database): void {
-        this._api.createDatabase({database} as CreateDatabaseRequest)
+    public create(database: Database): Promise<string> {
+        return this.api.createDatabase({database} as CreateDatabaseRequest)
             .then((response: string) => {
                 database.id = response;
-                this._databases.push(database);
+                this._databases = new Map<string, Database>(this._databases.set(database.id, database));
+                return database.id;
             })
-            .catch((error) => {
-                throw new Error("Error creating database: " + error);
+            .catch((error: Response) => {
+                throw new Error("Error creating database. HTTP Status code " + error.status + " " + error.statusText);
             });
     }
 
     public save(object: Database): void {
-        this._api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest)
+        this.api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest)
             .then(() => {
-                const index = this._databases.findIndex((database) => database.id === object.id);
-                if (index > -1) {
-                    this._databases[index] = object;
+                if (this._databases.get(object.id) !== undefined) {
+                    this._databases = new Map<string, Database>(this._databases.set(object.id, object));
                 }
-            });
+            }).catch((response) => {
+            throw new Error("Error saving database: " + response.status + " " + response.statusText);
+        });
     }
 
     public remove(object: Database): void {
-        this._api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest)
+        this.api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest)
             .then((response) => {
-                const index = this._databases.indexOf(object, 0);
-                if (index > -1) {
-                    this._databases.splice(index, 1);
-                }
-            });
+                this._databases.delete(object.id);
+                this._databases = new Map<string, Database>(this._databases);
+            }).catch((response) => {
+            throw new Error("Error deleting database: " + response.status + " " + response.statusText);
+        });
+    }
+
+    public get(id: string): Database {
+        const db = this._databases.get(id);
+        if (db === undefined) {
+            throw new Error("Database not found: " + id);
+        }
+        return db;
     }
 
     /**
@@ -117,8 +133,8 @@ export default class DatabaseController implements DataManagementService<Databas
             };
 
             fileReader.onload = () => {
-                const uInts = new Uint8Array(fileReader.result as ArrayBuffer);
-                const db = new Database('', file.name, uInts);
+                const byteArrayContent = new Uint8Array(fileReader.result as ArrayBuffer);
+                const db = new Database('', file.name, byteArrayContent);
                 resolve(db);
             };
             fileReader.readAsArrayBuffer(file);
@@ -130,14 +146,7 @@ export default class DatabaseController implements DataManagementService<Databas
      * Getter for all loaded databases.
      */
     get all(): Database[] {
-        return this._databases;
-    }
-
-    /**
-     * Getter for single loaded database.
-     */
-    get one(): Database | undefined {
-        return this._database;
+        return Array.from(this._databases.values());
     }
 
     /**

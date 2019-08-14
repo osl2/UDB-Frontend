@@ -1,6 +1,6 @@
 <template>
         <div>
-            <h3>Aufgabentext:</h3>
+            <h3>{{$t('taskComp.instruction')}}</h3>
             <div class="taskContainer">
                 {{this.currentSubtask.instruction}}
             </div>

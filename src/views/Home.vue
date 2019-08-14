@@ -15,7 +15,7 @@
 
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
-  import StartPage from '@/components/StartPage.vue'; // @ is an alias to /src
+  import StartPage from '@/views/StartPage.vue'; // @ is an alias to /src
 
   @Component({
     components: {StartPage},

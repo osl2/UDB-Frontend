@@ -7,6 +7,6 @@ export default interface UserService {
     delete(username: string, password: string): any; // TODO: Same here
     changePassword(username: string, password: string, newPassword: string): any; // TODO: Same here
     getCurrentUserGroup(): UserGroup;
-    switchUserGroup(group: UserGroup): boolean;
+    switchUserGroup(group: UserGroup): void;
     availableUserGroups(): UserGroup[];
 }

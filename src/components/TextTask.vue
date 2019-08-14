@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h3>Aufgabenstellung:</h3>
+        <h3>{{$t('taskComp.instruction')}}</h3>
         <div class="taskContainer">
             <p>{{this.currentSubtask.instruction}}</p>
         </div>
@@ -12,10 +12,10 @@
                 placeholder="Antwort eingeben">
         </b-form-textarea>
 
-        <b-button @click="$emit('save', subtaskSolution)">Speichern</b-button>
-        <b-button v-show="currentSubtask.isSolutionVisible"
+        <b-button @click="$emit('save', subtaskSolution)">{{$t('taskComp.save')}}</b-button>
+        <b-button v-if="currentSubtask.isSolutionVisible"
                   @click="$emit('compare', subtaskSolution)">
-            Vergleich mit Musterlösung
+            {{$t('taskComp.compare')}}
         </b-button>
 
     </div>

@@ -1,10 +1,10 @@
 <template>
     <div>
-        <h3>Aufgabenstellung:</h3>
+        <h3>{{$t('taskComp.instruction')}}</h3>
         <div class="taskContainer">
             {{this.currentSubtask.instruction}}
         </div>
-        <h3>Antwortmöglichkeiten:</h3>
+        <h3>{{$t('mcTask.answerOptions')}}</h3>
         <div class="taskContainer">
 
             <b-form-group>
@@ -15,10 +15,10 @@
                 ></b-form-checkbox-group>
             </b-form-group>
 
-            <b-button @click="$emit('save', subtaskSolution)">Speichern</b-button>
+            <b-button @click="$emit('save', subtaskSolution)">{{$t('taskComp.save')}}</b-button>
             <b-button v-show="currentSubtask.isSolutionVisible"
                       @click="$emit('compare', subtaskSolution)">
-                Vergleich mit Musterlösung
+                {{$t('taskComp.compare')}}
             </b-button>
         </div>
 

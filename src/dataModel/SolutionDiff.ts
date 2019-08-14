@@ -17,4 +17,6 @@ export default abstract class SolutionDiff {
     set same(value: boolean) {
         this._same = value;
     }
+
+    public abstract getFeedbackString(): string;
 }

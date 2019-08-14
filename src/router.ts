@@ -43,12 +43,12 @@ export default new Router({
       component: CourseView,
     },
     {
-      path: '/studentWorksheet/:worksheetId',
+      path: '/studentCourseView/:courseId/:worksheetId',
       name: 'studentWorksheet',
       component: StudentWorksheet,
     },
     {
-      path: '/teacherWorksheet',
+      path: '/courseView/:courseId/:worksheetId',
       name: 'teacherWorksheet',
       component: TeacherWorksheet,
     },

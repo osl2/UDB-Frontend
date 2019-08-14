@@ -27,8 +27,12 @@ import PlainTextTask from "@/dataModel/PlainTextTask";
 import SqlSolutionDiff from "@/dataModel/SqlSolutionDiff";
 import MultipleChoiceSolutionDiff from "@/dataModel/MultipleChoiceSolutionDiff";
 import PlainTextSolutionDiff from "@/dataModel/PlainTextSolutionDiff";
+import LocalStorageController from "@/controller/LocalStorageController";
+import InstructionTask from "@/dataModel/InstructionTask";
 
-type Token = string;
+export interface Token {
+    token: string;
+}
 
 export interface CreateAccountRequest {
     account: User;
@@ -43,7 +47,6 @@ export interface CreateDatabaseRequest {
 }
 
 export interface CreateSubtaskRequest {
-    taskId: string;
     subtask: Subtask;
 }
 
@@ -65,6 +68,12 @@ export enum ObjectType {
 
 export interface CreateAliasRequest {
     objectId: string;
+    objectType: ObjectType;
+}
+
+export interface AliasResponse {
+    alias: string;
+    uuid: string;
     objectType: ObjectType;
 }
 
@@ -93,7 +102,6 @@ export interface GetDatabaseRequest {
 }
 
 export interface GetSubtaskRequest {
-    taskId: string;
     subtaskId: string;
 }
 
@@ -109,12 +117,11 @@ export interface GetUUIDRequest {
     alias: string;
 }
 
-export interface GetSubtasksRequest {
-    taskId: string;
+export interface GetAliasRequest {
+    uuid: string;
 }
 
 export interface VerifySubtaskSolutionRequest {
-    taskId: string;
     subtaskId: string;
     solution: Solution;
 }
@@ -138,6 +145,11 @@ export interface UpdateTaskRequest {
     task: Task;
 }
 
+export interface UpdateSubtaskRequest {
+    subtaskId: string;
+    subtask: Subtask;
+}
+
 export interface UpdateWorksheetRequest {
     worksheetId: string;
     worksheet: Worksheet;
@@ -147,6 +159,17 @@ export interface UpdateWorksheetRequest {
  * no description
  */
 export class DefaultApi extends runtime.BaseAPI {
+
+    constructor() {
+      const ls = new LocalStorageController();
+      const currentUser: User | undefined = ls.get("userState");
+      if (currentUser !== undefined) {
+          const user: User = Object.setPrototypeOf(currentUser, User.prototype);
+          super(new Configuration({accessToken: user.token}));
+      } else {
+        super(new Configuration());
+      }
+    }
 
     /**
      * Registration
@@ -163,8 +186,9 @@ export class DefaultApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
+
         const response = await this.request({
-            path: `/account`,
+            path: `/account/register`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -205,6 +229,7 @@ export class DefaultApi extends runtime.BaseAPI {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
+
         const response = await this.request({
             path: `/courses`,
             method: 'POST',
@@ -318,10 +343,6 @@ export class DefaultApi extends runtime.BaseAPI {
      * Create a Subtask
      */
     public async createSubtaskRaw(requestParameters: CreateSubtaskRequest): Promise<runtime.ApiResponse<string>> {
-        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId',
-                'Required parameter requestParameters.taskId was null or undefined when calling createSubtask.');
-        }
 
         if (requestParameters.subtask === null || requestParameters.subtask === undefined) {
             throw new runtime.RequiredError('subtask',
@@ -343,8 +364,7 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks`
-                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            path: `/subtasks`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -846,10 +866,6 @@ export class DefaultApi extends runtime.BaseAPI {
      * Get a Subtask
      */
     public async getSubtaskRaw(requestParameters: GetSubtaskRequest): Promise<runtime.ApiResponse<Subtask>> {
-        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId',
-                'Required parameter requestParameters.taskId was null or undefined when calling getSubtask.');
-        }
 
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
             throw new runtime.RequiredError('subtaskId',
@@ -869,8 +885,7 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks/{subtaskId}`
-                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId)))
+            path: `/subtasks/{subtaskId}`
                 .replace(`{${"subtaskId"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
             method: 'GET',
             headers: headerParameters,
@@ -878,14 +893,17 @@ export class DefaultApi extends runtime.BaseAPI {
         });
 
         return new runtime.JSONApiResponse(response, (jsonValue) => {
-            if (jsonValue.hasOwnProperty("sql")) {
+            if (jsonValue.content.hasOwnProperty("sql")) {
                 return SqlTask.fromJSON(jsonValue);
             }
-            if (jsonValue.hasOwnProperty("multiple_choice")) {
+            if (jsonValue.content.hasOwnProperty("multiple_choice")) {
                 return MultipleChoiceTask.fromJSON(jsonValue);
             }
-            if (jsonValue.hasOwnProperty("plaintext")) {
+            if (jsonValue.content.hasOwnProperty("plaintext")) {
                 return PlainTextTask.fromJSON(jsonValue);
+            }
+            if (jsonValue.content === "instruction") {
+                return InstructionTask.fromJSON(jsonValue);
             }
             throw new Error("Unknown Subtask type");
         });
@@ -988,10 +1006,10 @@ export class DefaultApi extends runtime.BaseAPI {
      * Gets the uuid when given alias
      * Get a string (UUID)
      */
-    public async getUUIDRaw(requestParameters: GetUUIDRequest): Promise<runtime.ApiResponse<string>> {
+    public async getUUIDRaw(requestParameters: GetUUIDRequest): Promise<runtime.ApiResponse<AliasResponse>> {
         if (requestParameters.alias === null || requestParameters.alias === undefined) {
             throw new runtime.RequiredError('alias', 'Required parameter ' +
-                'requestParameters.alias was null or undefined when calling getWorksheet.');
+                'requestParameters.alias was null or undefined when calling getUUIDRaw.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1007,34 +1025,84 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/alias/{alias}`.replace(`{${"alias"}}`,
+            path: `/alias/uuid/{alias}`.replace(`{${"alias"}}`,
                 encodeURIComponent(String(requestParameters.alias))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.TextApiResponse(response);
+        return new runtime.JSONApiResponse(response, (json: any) => {
+            return {
+                alias: json.alias,
+                uuid: json.object_id,
+                objectType: json.object_type,
+            } as AliasResponse;
+        });
     }
 
     /**
      * Gets the uuid when given alias
      * Get a string (UUID)
      */
-    public async getUUID(requestParameters: GetUUIDRequest): Promise<string> {
+    public async getUUID(requestParameters: GetUUIDRequest): Promise<AliasResponse> {
         const response = await this.getUUIDRaw(requestParameters);
         return await response.value();
     }
+
+  /**
+   * Gets the alias when given uuid
+   * Get a string (UUID)
+   */
+  public async getAliasRaw(requestParameters: GetAliasRequest): Promise<runtime.ApiResponse<AliasResponse>> {
+    if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
+      throw new runtime.RequiredError('uuid', 'Required parameter ' +
+        'requestParameters.uuid was null or undefined when calling getWorksheet.');
+    }
+
+    const queryParameters: runtime.HTTPQuery = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+      const token = this.configuration.accessToken || this.configuration.apiKey;
+      const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+      if (tokenString) {
+        headerParameters.Authorization = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request({
+      path: `/alias/{uuid}`.replace(`{${"uuid"}}`,
+        encodeURIComponent(String(requestParameters.uuid))),
+      method: 'GET',
+      headers: headerParameters,
+      query: queryParameters,
+    });
+
+    return new runtime.JSONApiResponse(response, (json: any) => {
+      return {
+        alias: json.alias,
+        uuid: json.object_id,
+        objectType: json.object_type,
+      } as AliasResponse;
+    });
+  }
+
+  /**
+   * Gets the uuid when given alias
+   * Get a string (UUID)
+   */
+  public async getAlias(requestParameters: GetAliasRequest): Promise<AliasResponse> {
+    const response = await this.getAliasRaw(requestParameters);
+    return await response.value();
+  }
 
     /**
      * Gets a list of all `Subtask` entities.
      * List All subtasks
      */
-    public async getSubtasksRaw(requestParameters: GetSubtasksRequest): Promise<runtime.ApiResponse<Subtask[]>> {
-        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId',
-                'Required parameter requestParameters.taskId was null or undefined when calling getsubtasks.');
-        }
+    public async getSubtasksRaw(): Promise<runtime.ApiResponse<Subtask[]>> {
 
         const queryParameters: runtime.HTTPQuery = {};
 
@@ -1049,22 +1117,24 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks`
-                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            path: `/subtasks`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map((singleJsonValue: any) => {
-            if (singleJsonValue.hasOwnProperty("sql")) {
+            if (singleJsonValue.content.hasOwnProperty("sql")) {
                 return SqlTask.fromJSON(singleJsonValue);
             }
-            if (singleJsonValue.hasOwnProperty("multiple_choice")) {
+            if (singleJsonValue.content.hasOwnProperty("multiple_choice")) {
                 return MultipleChoiceTask.fromJSON(singleJsonValue);
             }
-            if (singleJsonValue.hasOwnProperty("plaintext")) {
+            if (singleJsonValue.content.hasOwnProperty("plaintext")) {
                 return PlainTextTask.fromJSON(singleJsonValue);
+            }
+            if (singleJsonValue.content === "instruction") {
+                return InstructionTask.fromJSON(singleJsonValue);
             }
             throw new Error("Unknown Subtask type");
         }));
@@ -1074,8 +1144,8 @@ export class DefaultApi extends runtime.BaseAPI {
      * Gets a list of all `Subtask` entities.
      * List All subtasks
      */
-    public async getSubtasks(requestParameters: GetSubtasksRequest): Promise<Subtask[]> {
-        const response = await this.getSubtasksRaw(requestParameters);
+    public async getSubtasks(): Promise<Subtask[]> {
+        const response = await this.getSubtasksRaw();
         return await response.value();
     }
 
@@ -1168,7 +1238,7 @@ export class DefaultApi extends runtime.BaseAPI {
         }
         const response = await this.request({
             path: `/account/login`,
-            method: 'GET',
+            method: 'POST',
             headers: headerParameters,
             query: queryParameters,
         });
@@ -1216,11 +1286,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async verifySubtaskSolutionRaw(requestParameters: VerifySubtaskSolutionRequest)
         : Promise<runtime.ApiResponse<SolutionDiff>> {
-        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId',
-                'Required parameter requestParameters.taskId was' +
-                ' null or undefined when calling verifySubtaskSolution.');
-        }
 
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
             throw new runtime.RequiredError('subtaskid',
@@ -1249,8 +1314,7 @@ export class DefaultApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}/subtasks/{subtaskid}/verify`
-                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId)))
+            path: `/subtasks/{subtaskid}/verify`
                 .replace(`{${"subtaskid"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
             method: 'POST',
             headers: headerParameters,
@@ -1466,6 +1530,56 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async updateTask(requestParameters: UpdateTaskRequest): Promise<void> {
         await this.updateTaskRaw(requestParameters);
+    }
+
+    /**
+     * Updates an existing `Subtask`.
+     * Update a Subtask
+     */
+    public async updateSubtaskRaw(requestParameters: UpdateSubtaskRequest): Promise<runtime.ApiResponse<void>> {
+
+        if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
+            throw new runtime.RequiredError('subtaskId',
+                'Required parameter requestParameters.subtaskId was null or undefined when calling updateSubtask');
+        }
+
+        if (requestParameters.subtask === null || requestParameters.subtask === undefined) {
+            throw new runtime.RequiredError('subtask',
+                'Required parameter requestParameters.subtask was null or undefined when calling updateSubtask.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+            const token = this.configuration.accessToken || this.configuration.apiKey;
+            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+
+            if (tokenString) {
+                headerParameters.Authorization = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/subtasks/{subtaskId}`
+                .replace(`{${"subtaskId"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: requestParameters.subtask.toJSON(),
+        });
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Updates an existing `Subtask`.
+     * Update a Subtask
+     */
+    public async updateSubtask(requestParameters: UpdateSubtaskRequest): Promise<void> {
+        await this.updateSubtaskRaw(requestParameters);
     }
 
     /**

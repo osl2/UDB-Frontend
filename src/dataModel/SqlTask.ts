@@ -1,6 +1,6 @@
 import SqlSolution from '@/dataModel/SqlSolution';
 import Subtask from '@/dataModel/Subtask';
-import AllowedSqlStatements, {AllowedSqlFromJSON, AllowedSqlToJSON} from "@/dataModel/allowedSqlStatements";
+import AllowedSqlStatements, {AllowedSqlFromJSON, AllowedSqlToJSON} from "@/dataModel/AllowedSqlStatements";
 import SubtaskTypes from "@/dataModel/SubtaskTypes";
 
 /**
@@ -86,7 +86,7 @@ export default class SqlTask extends Subtask {
                 sql: {
                     allowed_sql: AllowedSqlToJSON(this.allowedSqlStatements),
                     row_order_matters: this.doesRowOrderMatter,
-                    solution: this.solution ? this.solution.toJSON() : {},
+                    solution: this.solution ? this.solution.toJSON : {},
                 },
             },
         };

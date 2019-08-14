@@ -1,7 +1,8 @@
 <template>
   <div>
-    <DatabaseComponent elementId="sandbox-dropzone-db" ref="databaseComponent"
-                       @databaseExists="eventDbExists" @reset="reset"></DatabaseComponent>
+    <HelpButton :helpmsg="$t('helpMessages.sandbox')"></HelpButton>
+    <DatabaseComponent elementId="sandbox-dropzone-db" showExportImport="true" loadSandboxLocalStorageDb="true" ref="databaseComponent"
+                       @databaseExists="eventDbExists" @reset="reset" ></DatabaseComponent>
     <div v-if="databaseExists" :databaseExists:sync="databaseExists">
       <div class="switchButton">
         <b-button v-on:click="switchComponent"
@@ -17,6 +18,7 @@
         <component class="sqlComponent"
                    :is="dynamicComponent"
                    @executeQuery="executeQuery"
+                   allowedSqlToolbox="toolbox_all.xml"
         ></component>
       </div>
       <div id="queryRes"></div>
@@ -35,37 +37,34 @@
 
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
-import Query from '@/components/Query.vue';
-import QueryResultComp from '@/components/QueryResult.vue';
-import PointAndClick from '@/components/PointAndClick.vue';
-import DatabaseComponent from '@/components/DatabaseComponent.vue';
-import QueryResult from '@/dataModel/QueryResult';
+  import {Component, Vue} from 'vue-property-decorator';
+  import Query from '@/components/Query.vue';
+  import QueryResultComp from '@/components/QueryResult.vue';
+  import PointAndClick from '@/components/PointAndClick.vue';
+  import DatabaseComponent from '@/components/DatabaseComponent.vue';
+  import QueryResult from '@/dataModel/QueryResult';
+  import SQLExecutor from "@/controller/SQLExecutor";
+  import HelpButton from "@/components/HelpButton.vue";
 
 
-@Component({
+  @Component({
   components: {
     Query,
     QueryResultComp,
     PointAndClick,
     DatabaseComponent,
+    HelpButton,
   },
 })
 
 export default class Sandbox extends Vue {
 
-  /*
-   private created() {
-    if (this.database) {
-      this.databaseExists = true;
-    } else {
-      this.databaseExists = false;
-    }
-  }
-   private updated(){
-      this.created();
-  }
-   */
+  // Data
+  public isPointAndClickActive: boolean = false;
+  public queryResult: QueryResult | null = null;
+  private databaseExists: boolean = false;
+  private sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
+
   get database() {
 
     const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
@@ -86,26 +85,24 @@ export default class Sandbox extends Vue {
     }
   }
 
-  // Data
-  public isPointAndClickActive: boolean = false;
-  public queryResult: QueryResult | null = null;
-  private databaseExists: boolean = false;
-
   // Methods
 
   private executeQuery(query: string) {
 
     const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-    try {
-      const dbNumber = dbComponent.$data.databaseNumber;
-      this.queryResult = dbComponent.$data.sqlExecutor.executeQuery(dbNumber, query, 0);
+    const dbNumber = dbComponent.$data.databaseNumber;
+    this.sqlExecutor.executeQuery(dbNumber, query, 0).then((queryResult) => {
+      this.queryResult = queryResult;
       const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
       window.scrollTo(0, top + 200);
+
+      // this is not optimal because select requests does not need to replace database in storage neither metadata
+      // fix by implementing the logic by detecting query type (select, update or delete)
       dbComponent.loadMetaData();
-    } catch (error) {
+      dbComponent.replaceStorage();
+    }).catch((error) => {
       alert(error.message);
-      return;
-    }
+    });
 
   }
 

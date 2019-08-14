@@ -8,6 +8,10 @@ import Solution from '@/dataModel/Solution';
  */
 
 export default class SqlSolution extends Solution {
+    public static fromJSON(json: any): SqlSolution {
+        return new SqlSolution(json.query, json.columns, json.rows);
+    }
+
     private _querySolution: string;
     private _columns: string[];
     private _values: string[][];
@@ -29,7 +33,7 @@ export default class SqlSolution extends Solution {
         this._values = values;
     }
 
-    public toJSON(): any {
+    get toJSON(): any {
         return {
             query: this.querySolution,
             columns: this.columns,

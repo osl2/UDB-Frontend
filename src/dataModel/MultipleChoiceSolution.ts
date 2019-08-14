@@ -8,6 +8,9 @@ import Solution from '@/dataModel/Solution';
  */
 
 export default class MultipleChoiceSolution extends Solution {
+    public static fromJSON(json: any): MultipleChoiceSolution {
+        return new MultipleChoiceSolution(json.choices);
+    }
 
     private _choices: number[];
 
@@ -21,9 +24,9 @@ export default class MultipleChoiceSolution extends Solution {
         this._choices = choices;
     }
 
-    public toJSON(): any {
+    get toJSON(): any {
         return {
-            choices: this.choices,
+            correct_positions: this.choices,
         };
     }
 

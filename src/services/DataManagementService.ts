@@ -12,11 +12,7 @@ export default interface DataManagementService<T extends DataModel> {
    * This property is an array of all DataModel objects currently stored within the service.
    */
   all: T[];
-  /**
-   * This property stores the currently used DataModel object, if one is in use at the moment.
-   */
-  one?: T;
-  create(object: T): void;
+  create(object: T): Promise<string>;
   /**
    * This method removes the object passed to it from the local store of the service,
    * from [[one]] if it's the currently used object, and from the API if it exists on
@@ -36,4 +32,10 @@ export default interface DataManagementService<T extends DataModel> {
    * and merge them with the locally available objects.
    */
   loadAll(): void;
+
+  /**
+   * Return an already loaded object with given id.
+   * @param id
+   */
+  get(id: string): T;
 }

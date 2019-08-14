@@ -2,17 +2,16 @@
     <div>
         <div class="taskHeader">
             <h2>{{task.name}}</h2>
-            <h3>Teilaufgabe {{subtaskIndex+1}} von {{numberOfSubtasks}}</h3>
+            <h3>{{$t('taskSolve.subtask')}} {{subtaskIndex+1}} {{$t('taskSolve.of')}} {{numberOfSubtasks}}</h3>
         </div>
         <div class="containerDatabase">
-            <h3>Übersicht über die Datenbank:</h3>
-            <DatabaseComponent></DatabaseComponent>
+            <h3>{{$t('taskSolve.dbOverview')}}</h3>
+            <DatabaseComponent :elementId="task.id" ref="databaseComponent"></DatabaseComponent>
         </div>
+        <!--Loads the component that matches the type of the current Subtask -->
         <div v-if="typeOfSubtask()===1">
             <SqlTaskComp :currentSubtask="currentSubtask"
                          :solutions="solutions"
-                         :sqlExecutor="sqlExecutor"
-                         :databaseNumber="databaseNumber"
                          @save="saveSubtask"
                          @compare="$emit('compare', subtaskSolution)"
             >
@@ -40,62 +39,76 @@
 
         <!-- Buttons to navigate through one task-->
         <div>
-            <b-button @click="$emit('prevSubtask')">Vorherige Aufgabe</b-button>
-            <b-button @click="$emit('nextSubtask')">nächste Aufgabe</b-button>
+            <b-button @click="$emit('prevSubtask')">{{$t('taskSolve.prevSubtask')}}</b-button>
+            <b-button @click="$emit('nextSubtask')">{{$t('taskSolve.nextSubtask')}}</b-button>
         </div>
         <div class="clear"></div>
 
         <div>
-            <b-button @click="$emit('switchback')">Zurück zur Übersicht</b-button>
+            <b-button @click="$emit('switchback')">{{$t('taskSolve.toOverview')}}</b-button>
 
-            <b-button class="btn" v-b-modal.modal-reset>Aufgabe zurücksetzen</b-button>
-            <b-modal id="modal-reset">
-                <p>Wenn Du die Aufgabe zurücksetzt, geht Dein bisheriger Fortschritt aller zugehörigen Teilaufgaben
-                    verloren. Du kannst diesen Vorgang nicht rückgängig machen.</p>
-                <template slot="modal-footer">
-                    <b-button size="sm" @click="$emit('reset'),$bvModal.hide('modal-reset')">
-                        Aufgabe neu starten
-                    </b-button>
-                    <b-button size="sm" @click="$bvModal.hide('modal-reset')">
-                        Abbrechen
-                    </b-button>
-                </template>
-            </b-modal>
-
+            <b-button class="btn" @click="$emit('reset')">{{$t('taskSolve.resetTask')}}</b-button>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import DatabaseComponent from "@/components/DatabaseComponent.vue";
-import InstructionTaskComp from '@/components/InstructionTaskComp.vue';
-import SqlTaskComp from '@/components/SqlTaskComp.vue';
-import McTask from '@/components/McTask.vue';
-import TextTask from '@/components/TextTask.vue';
-import SubtaskTypes from "@/dataModel/SubtaskTypes";
-import Solution from "@/dataModel/Solution";
-import SQLExecutor from "@/controller/SQLExecutor";
-import SQLService from "@/services/SQLService";
+  import {Vue, Component, Prop, Watch} from 'vue-property-decorator';
+  import DatabaseComponent from "@/components/DatabaseComponent.vue";
+  import SqlTaskComp from '@/components/SqlTaskComp.vue';
+  import McTask from '@/components/McTask.vue';
+  import TextTask from '@/components/TextTask.vue';
+  import SubtaskTypes from "@/dataModel/SubtaskTypes";
+  import Solution from "@/dataModel/Solution";
+  import Task from "@/dataModel/Task";
+  import Subtask from "@/dataModel/Subtask";
+  import Database from "@/dataModel/Database";
+  import InstructionTaskComp from "@/components/InstructionTaskComp.vue";
 
 
-export default Vue.extend({
-    props: ['task', 'currentSubtask', 'solutions', 'subtaskIndex', 'numberOfSubtasks', 'database'],
-    data() {
-      return {
-        sqlExecutor: new SQLExecutor() as SQLService,
-        databaseNumber: 0 as number,
-        };
-    },
-    components: {
-        SqlTaskComp,
-        TextTask,
-        McTask,
-        InstructionTaskComp,
-        DatabaseComponent,
-    },
-    methods: {
-      typeOfSubtask(): number {
+  @Component({
+  components: {
+    SqlTaskComp,
+    McTask,
+    TextTask,
+    InstructionTaskComp,
+    DatabaseComponent,
+  },
+  })
+export default class TaskSolve extends Vue {
+
+    @Prop() private task!: Task;
+    @Prop() private currentSubtask!: Subtask;
+    @Prop() private solutions!: Map<string, Solution>;
+    @Prop() private subtaskIndex!: number;
+    @Prop() private numberOfSubtasks!: number;
+    @Prop() private database!: Database;
+
+
+    @Watch('database')
+    public onDatabaseChange(value: Database, oldValue: Database) {
+      if ((value !== oldValue)) {
+        this.initDatabase();
+        return;
+      }
+    }
+
+      /*
+       * Calls the methods save in StudentWorksheet.vue
+       */
+   public saveSubtask(solution: Solution): void {
+        this.$emit('save', this.currentSubtask.id, solution);
+      }
+
+      /*
+       * opens the database provided through props
+       */
+      public initDatabase() {
+          const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+          dbComponent.postInit(Promise.resolve(this.database));
+      }
+
+    private typeOfSubtask(): number {
           if (this.currentSubtask.type === SubtaskTypes.Sql) {
               return 1;
           } else if (this.currentSubtask.type === SubtaskTypes.MultipleChoice) {
@@ -106,30 +119,11 @@ export default Vue.extend({
               return 4;
           }
 
-      },
-
-      /**
-       * Calls the methods save in StudentWorksheet.vue
-       */
-      saveSubtask(solution: Solution): void {
-        this.$emit('save', this.currentSubtask.id, solution);
-      },
-
-      /**
-       * opens the database provided through props
-       */
-      initDatabase() {
-        this.sqlExecutor.open(this.database).then((dbNumber: number) => {
-          this.databaseNumber = dbNumber;
-        });
-      },
+      }
 
 
-      created() {
-        this.initDatabase();
-      },
-    },
-});
+
+}
 </script>
 
 <style scoped>

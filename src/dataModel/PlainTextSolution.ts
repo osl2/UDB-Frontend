@@ -8,6 +8,10 @@ import Solution from '@/dataModel/Solution';
  */
 
 export default class PlainTextSolution extends Solution {
+    public static fromJSON(json: any): PlainTextSolution {
+        return new PlainTextSolution(json.text);
+    }
+
     private _text: string;
 
     /**
@@ -19,7 +23,7 @@ export default class PlainTextSolution extends Solution {
         this._text = text;
     }
 
-    public toJSON(): any {
+    get toJSON(): any {
         return {
             text: this.text,
         };

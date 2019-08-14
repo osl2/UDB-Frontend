@@ -5,30 +5,34 @@ import {
     CreateSubtaskRequest,
     DefaultApi,
     DeleteSubtaskRequest,
-    GetSubtaskRequest,
+    GetSubtaskRequest, UpdateSubtaskRequest, VerifySubtaskSolutionRequest,
 } from "@/api/DefaultApi";
+import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
+import SolutionDiff from "@/dataModel/SolutionDiff";
 
-export default class SubtaskController implements SubtaskService {
+export default class SubtaskController extends ApiControllerAbstract implements SubtaskService {
 
-    private _api: DefaultApi;
-    private _subtasks: Subtask[] = [];
-    private _subtask?: Subtask = undefined;
+
+    private _subtasks: Map<string, Subtask>;
 
     constructor(api: DefaultApi) {
-        this._api = api;
+        super(api);
+        this._subtasks = new Map<string, Subtask>();
     }
+
 
     /**
      * Loads all subtasks available
      */
     public loadAll(): void {
-        /* TODO Kommentare entfernen wenn in DefaultApi implementiert.
-        this._api.getSubtasks()
+        this.api.getSubtasks()
             .then((response: Subtask[]) => {
-                this._subtasks = response;
-            });
-         */
-        throw new Error("Method not implemented in DefaultApi.");
+                response.forEach((subtask: Subtask) => {
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(subtask.id, subtask));
+                });
+            }).catch((response) => {
+            throw new Error("Error loading subtasks: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
@@ -37,11 +41,13 @@ export default class SubtaskController implements SubtaskService {
      * @param object
      */
     public loadChildren(object: Task): void {
-        this._subtasks = [];
         object.subtaskIds.forEach((subtaskId) => {
-            this._api.getSubtasks({taskId: object.id, subtaskId} as GetSubtaskRequest)
-                .then((response: Subtask[]) => {
-                    this._subtasks = response;
+            this.api.getSubtask({subtaskId} as GetSubtaskRequest)
+                .then((response: Subtask) => {
+                  this._subtasks = new Map<string, Subtask>(this._subtasks.set(response.id, response));
+                })
+                .catch((response) => {
+                    throw new Error("Error loading subtasks: " + response + " " + response);
                 });
         });
     }
@@ -52,16 +58,14 @@ export default class SubtaskController implements SubtaskService {
      * @param id
      */
     public load(id: string): void {
-        /* TODO Kommentare entfernen wenn in DefaultApi implementiert.
-        this._subtask = this._subtasks.find((subtask) => subtask.id === id);
-        if (this._subtask === undefined) {
-            this._api.getSubtask({subtaskId: id} as GetSubtaskRequest)
+        if (this._subtasks.get(id) === undefined) {
+            this.api.getSubtask({subtaskId: id} as GetSubtaskRequest)
                 .then((response: Subtask) => {
-                    this._subtask = response;
-                });
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(response.id, response));
+                }).catch((response) => {
+                throw new Error("Error loading subtask: " + response.status + " " + response.statusText);
+            });
         }
-         */
-        throw new Error("Method not implemented in DefaultApi.");
     }
 
     /**
@@ -69,45 +73,55 @@ export default class SubtaskController implements SubtaskService {
      *
      * @param subtask
      */
-    public create(subtask: Subtask): void {
-        this._api.createSubtask({subtask} as CreateSubtaskRequest)
+    public create(subtask: Subtask): Promise<string> {
+        return this.api.createSubtask({subtask} as CreateSubtaskRequest)
           .then((response: string) => {
               subtask.id = response;
-              this._subtasks.push(subtask);
+              this._subtasks = new Map<string, Subtask>(this._subtasks.set(subtask.id, subtask));
+              return subtask.id;
           })
           .catch((error) => {
               throw new Error("Error creating subtask: " + error);
           });
     }
+
+    /**
+     *
+     *
+     * @param object
+     */
     public remove(object: Subtask): void {
-        this._api.deleteSubtask({subtaskId: object.id} as DeleteSubtaskRequest)
+        this.api.deleteSubtask({subtaskId: object.id} as DeleteSubtaskRequest)
           .then((response) => {
-              const index = this._subtasks.indexOf(object, 0);
-              if (index > -1) {
-                  this._subtasks.splice(index, 1);
-              }
-          });
+              this._subtasks.delete(object.id);
+              this._subtasks = new Map<string, Subtask>(this._subtasks);
+          }).catch((response) => {
+            throw new Error("Error deleting subtask: " + response.status + " " + response.statusText);
+        });
     }
     public save(object: Subtask): void {
-        /* TODO Kommentare entfernen wenn in DefaultApi implementiert.
-        this._api.updateSubtask({subtask: object, subtaskId: object.id} as UpdateSubtaskRequest)
+        this.api.updateSubtask({subtask: object, subtaskId: object.id} as UpdateSubtaskRequest)
           .then(() => {
-              const index = this._subtasks.findIndex((subtask) => { return subtask.id === object.id; });
-              if (index > -1) {
-                  this._subtasks[index] = object;
+              if (this._subtasks.get(object.id) !== undefined) {
+                  this._subtasks = new Map<string, Subtask>(this._subtasks.set(object.id, object));
               }
-          })
-         */
-        throw new Error("Method not implemented in DefaultApi.");
+          }).catch((response) => {
+            throw new Error("Error saving subtask: " + response.status + " " + response.statusText);
+        });
     }
 
     /**
      * Loads all subtasks available, but without solution
      */
     public loadAllWithoutSolution(): void {
-        this.loadAll();
-        this._subtasks.forEach( (subtask) => {
-            subtask.solution = undefined;
+        this.api.getSubtasks()
+            .then((response: Subtask[]) => {
+                response.forEach((subtask: Subtask) => {
+                    subtask.solution = undefined;
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(subtask.id, subtask));
+                });
+            }).catch((response) => {
+            throw new Error("Error loading subtasks: " + response.status + " " + response.statusText);
         });
     }
 
@@ -117,9 +131,14 @@ export default class SubtaskController implements SubtaskService {
      * @param object
      */
     public loadChildrenWithoutSolution(object: Task): void {
-        this.loadChildren(object);
-        this._subtasks.forEach( (subtask) => {
-            subtask.solution = undefined;
+        object.subtaskIds.forEach((subtaskId) => {
+            this.api.getSubtask({subtaskId} as GetSubtaskRequest)
+                .then((response: Subtask) => {
+                    response.solution = undefined;
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(response.id, response));
+                }).catch((response) => {
+                  throw new Error("Error loading subtasks: " + response.status + " " + response.statusText);
+            });
         });
     }
 
@@ -129,19 +148,17 @@ export default class SubtaskController implements SubtaskService {
      * @param id
      */
     public loadWithoutSolution(id: string): void {
-        this.load(id);
-        if (this._subtask !== undefined) {
-            this._subtask.solution = undefined;
+        if (this._subtasks.get(id) === undefined) {
+            this.api.getSubtask({subtaskId: id} as GetSubtaskRequest)
+                .then((response: Subtask) => {
+                    response.solution = undefined;
+                    this._subtasks = new Map<string, Subtask>(this._subtasks.set(response.id, response));
+                }).catch((response) => {
+                throw new Error("Error loading subtask: " + response.status + " " + response.statusText);
+            });
         }
     }
 
-    public get(id: string): Subtask {
-        const tempSubtask = this._subtasks.find((subtask) => subtask.id === id);
-        if (tempSubtask === undefined) {
-            throw new Error("Subtask not found");
-        }
-        return tempSubtask;
-    }
     public getWithoutSolution(id: string): Subtask {
         let subtask: Subtask;
         try {subtask = this.get(id);
@@ -152,6 +169,7 @@ export default class SubtaskController implements SubtaskService {
         return subtask;
 
     }
+
     public getAllWithoutSolution(): Subtask[] {
         const subtasks: Subtask[] = [];
         this._subtasks.forEach((subtask: Subtask) => {
@@ -159,21 +177,44 @@ export default class SubtaskController implements SubtaskService {
         });
         return subtasks;
     }
-    public compareSolution(subtask: Subtask) {
-        throw new Error("Method not implemented.");
+
+    /**
+     * Returns comparison between given subtask solution and teacher solution
+     * saved in backend as SolutionDiff.
+     *
+     * @param subtask
+     */
+    public compareSolution(subtask: Subtask): Promise<SolutionDiff> {
+        return this.api.verifySubtaskSolution({
+            subtaskId: subtask.id,
+            solution: subtask.solution,
+        } as VerifySubtaskSolutionRequest);
+    }
+
+    public get(id: string): Subtask {
+        const tempSubtask = this._subtasks.get(id);
+        if (tempSubtask === undefined) {
+            throw new Error("Subtask not found");
+        }
+        return tempSubtask;
+    }
+
+    public getChildren(task: Task): Subtask[] {
+        const subtasks: Subtask[] = [];
+        task.subtaskIds.map((subtaskId: string) => {
+            return this._subtasks.get(subtaskId);
+        }).forEach((subtask: Subtask | undefined) => {
+            if (subtask !== undefined) {
+                subtasks.push(subtask);
+            }
+        });
+        return subtasks;
     }
 
     /**
-     * Getter for loaded subtasks.
+     * Getter for all loaded subtasks.
      */
     get all(): Subtask[] {
-        return this._subtasks;
-    }
-
-    /**
-     * Getter for single loaded subtask.
-     */
-    get one(): Subtask | undefined {
-        return this._subtask;
+        return Array.from(this._subtasks.values());
     }
 }

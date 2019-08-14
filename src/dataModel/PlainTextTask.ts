@@ -33,7 +33,7 @@ export default class PlainTextTask extends Subtask {
             solution_visible: this.isSolutionVisible,
             content: {
                 plaintext: {
-                    solution: this.solution ? this.solution.toJSON() : {},
+                    solution: this.solution ? this.solution.toJSON : {},
                 },
             },
         };
