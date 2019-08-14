@@ -151,7 +151,7 @@
             this.userController.register(username, password).then((_) => {
                 this.$router.push(this.path);
             }).catch((e) => {
-                this.errorMsg = this.$t('home.errorLogin') as string;
+                this.errorMsg = this.$t('home.errorRegistration') as string;
             });
 
         }
