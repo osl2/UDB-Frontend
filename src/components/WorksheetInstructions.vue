@@ -25,7 +25,7 @@ export default class WorksheetInstructions extends Vue {
 
   private subtaskController: SubtaskController = this.$store.getters.subtaskController;
 
-  created() {
+  public created() {
     this.subtaskController = this.$store.getters.subtaskController;
     this.subtaskController.loadChildren(this.task);
   }
@@ -35,7 +35,7 @@ export default class WorksheetInstructions extends Vue {
 
   }
 
-};
+}
 </script>
 
 <style scoped>
