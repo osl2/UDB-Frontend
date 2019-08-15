@@ -172,7 +172,8 @@ export default class WorksheetController extends ApiControllerAbstract
             const task: Task = taskController.get(taskId);
             for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
                 const subtask: Subtask = subtaskController.get(subtaskId);
-                docDefinition.content.push({text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ', style: 'taskheader'});
+                docDefinition.content.push({text: 'Aufgabe ' + task.name + '-'
+                        + (subtaskIndex + 1) + ': ', style: 'taskheader'});
                 docDefinition.content.push({text: subtask.instruction, style: 'taskdescription'});
                 if (subtask.type !== SubtaskTypes.Instruction) {
                     docDefinition.content.push({text: 'Lösungsvorschlag:', style: 'solutionheader'});
@@ -388,7 +389,8 @@ export default class WorksheetController extends ApiControllerAbstract
             const task: Task = taskController.get(taskId);
             for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
                 const subtask: Subtask = subtaskController.get(subtaskId);
-                docDefinition.content.push({text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ', style: 'taskheader'});
+                docDefinition.content.push({text: 'Aufgabe ' + task.name
+                        + '-' + (subtaskIndex + 1) + ': ', style: 'taskheader'});
                 docDefinition.content.push({text: subtask.instruction, style: 'taskdescription'});
                 if (subtask.type !== SubtaskTypes.Instruction) {
                     docDefinition.content.push({text: 'Lösung:', style: 'solutionheader'});
