@@ -69,7 +69,7 @@ const de = {
     createDatabase: 'Falls Du noch keine Datenbank Datei hast, dann erstelle hier eine.',
     noDBYetCreateOne: 'Noch keine Datenbank zur Hand? Dann erstelle eine',
     createEmptyDB: 'leere Datenbank',
-    orStartWith: 'oder starte mit einem',
+    orStartWith: 'oder starte mit einer',
     createExampleDB: 'Beispiel-Datenbank',
     emptyDatabaseMsg: 'Die Datenbank beinhaltet noch keine Tabellen.',
     downloadDB: 'Datenbank herunterladen',
