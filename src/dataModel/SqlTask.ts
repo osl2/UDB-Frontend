@@ -60,7 +60,7 @@ export default class SqlTask extends Subtask {
             json.point_click_allowed,
             json.content.sql.row_order_matters,
             json.solution_visible,
-            AllowedSqlFromJSON(json.allowed_sql));
+            AllowedSqlFromJSON(json.content.sql.allowed_sql));
     }
     private _isPointAndClickAllowed: boolean;
     private _doesRowOrderMatter: boolean;
