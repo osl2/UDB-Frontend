@@ -38,18 +38,8 @@ export default class SqlTask extends Subtask {
     }
 
     public static fromJSON(json: any): SqlTask {
-        if (!json.hasOwnProperty("content")) {
-            return new SqlTask(json.id,
-                undefined,
-                json.instruction,
-                json.solution_verifiable,
-                json.content.sql.point_click_allowed,
-                false,
-                json.solution_visible,
-                AllowedSqlFromJSON(json.content.sql.allowed_sql));
-        }
         if (!json.content.hasOwnProperty("sql")) {
-            throw new Error("Wrong subtask type");
+            throw new Error("Wrong subtask type. Expected SQL, got");
         }
         const solution = new SqlSolution(json.content.sql.solution.query,
             json.content.sql.solution.columns,
@@ -57,7 +47,7 @@ export default class SqlTask extends Subtask {
         return new SqlTask(json.id, solution,
             json.instruction,
             json.solution_verifiable,
-            json.point_click_allowed,
+            json.content.sql.is_point_and_click_allowed,
             json.content.sql.row_order_matters,
             json.solution_visible,
             AllowedSqlFromJSON(json.content.sql.allowed_sql));
@@ -85,6 +75,7 @@ export default class SqlTask extends Subtask {
             content: {
                 sql: {
                     allowed_sql: AllowedSqlToJSON(this.allowedSqlStatements),
+                    is_point_and_click_allowed: this.isPointAndClickAllowed,
                     row_order_matters: this.doesRowOrderMatter,
                     solution: this.solution ? this.solution.toJSON : {},
                 },
