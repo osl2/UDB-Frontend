@@ -170,9 +170,9 @@ export default class WorksheetController extends ApiControllerAbstract
 
         for (const taskId of object.taskIds) {
             const task: Task = taskController.get(taskId);
-            for (const subtaskId of task.subtaskIds) {
+            for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
                 const subtask: Subtask = subtaskController.get(subtaskId);
-                docDefinition.content.push({text: 'Aufgabe ' + taskId + '-' + subtaskId + ': ', style: 'taskheader'});
+                docDefinition.content.push({text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ', style: 'taskheader'});
                 docDefinition.content.push({text: subtask.instruction, style: 'taskdescription'});
                 if (subtask.type !== SubtaskTypes.Instruction) {
                     docDefinition.content.push({text: 'Lösungsvorschlag:', style: 'solutionheader'});
@@ -189,12 +189,12 @@ export default class WorksheetController extends ApiControllerAbstract
                     const typedSubtask = subtask as MultipleChoiceTask;
                     if (solutions.has(subtaskId)) {
                         const solution = solutions.get(subtaskId) as MultipleChoiceSolution;
-                        let content: string | undefined;
+                        let content: string = "";
                         for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
-                            if (content !== undefined) {
+                            if (content.length > 0) {
                                 content += "\n";
                             }
-                            if (solution.choices.indexOf(index) > 0) {
+                            if (solution.choices.includes(index)) {
                                 content += "[X] " + answerOption;
                             } else {
                                 content += "[ ]" + answerOption;
@@ -249,11 +249,11 @@ export default class WorksheetController extends ApiControllerAbstract
         for (const [key, solution] of solutions.entries()) {
             const tempobject = {id: "", type: 0 as SubtaskTypes, data: {}};
             tempobject.id = key;
-            if (solution.hasOwnProperty("text")) {
+            if (solution instanceof PlainTextSolution) {
                 tempobject.type = SubtaskTypes.PlainText;
-            } else if (solution.hasOwnProperty("choices")) {
+            } else if (solution instanceof  MultipleChoiceSolution) {
                 tempobject.type = SubtaskTypes.MultipleChoice;
-            } else if (solution.hasOwnProperty("querySolution")) {
+            } else if (solution instanceof SqlSolution) {
                 tempobject.type = SubtaskTypes.Sql;
             }
             tempobject.data = solution;
@@ -386,9 +386,9 @@ export default class WorksheetController extends ApiControllerAbstract
 
         for (const taskId of sheet.taskIds) {
             const task: Task = taskController.get(taskId);
-            for (const subtaskId of task.subtaskIds) {
+            for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
                 const subtask: Subtask = subtaskController.get(subtaskId);
-                docDefinition.content.push({text: 'Aufgabe ' + taskId + '-' + subtaskId + ': ', style: 'taskheader'});
+                docDefinition.content.push({text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ', style: 'taskheader'});
                 docDefinition.content.push({text: subtask.instruction, style: 'taskdescription'});
                 if (subtask.type !== SubtaskTypes.Instruction) {
                     docDefinition.content.push({text: 'Lösung:', style: 'solutionheader'});
