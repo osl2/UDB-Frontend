@@ -71,13 +71,14 @@
 
         // Functions
         public openWorksheet(worksheet: Worksheet) {
-            if (confirm(this.$t('course.alertEditWorksheet') as string)) {
+
                 if (this.isStudentsViewActive) {
                     router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
                 } else {
+                    if (confirm(this.$t('course.alertEditWorksheet') as string)) {
                     router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
+                    }
                 }
-            }
         }
 
         public generateSolutionsheet(worksheet: Worksheet) {
