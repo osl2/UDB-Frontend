@@ -20,7 +20,7 @@ export default class SqlSolutionDiff extends SolutionDiff {
 
     public static fromJSON(json: any): SqlSolutionDiff {
         return new SqlSolutionDiff(
-            json.sql.same,
+            json.sql.correct,
             json.sql.wrong_rows,
             json.sql.missed_rows,
         );

@@ -12,7 +12,7 @@ export default class PlainTextSolutionDiff extends SolutionDiff {
 
     public static fromJSON(json: any): PlainTextSolutionDiff {
         return new PlainTextSolutionDiff(
-            json.plaintext.same,
+            json.plaintext.correct,
             json.plaintext.correct_answer,
         );
     }

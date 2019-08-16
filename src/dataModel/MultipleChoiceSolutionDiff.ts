@@ -20,7 +20,7 @@ export default class MultipleChoiceSolutionDiff extends SolutionDiff {
 
     public static fromJSON(json: any): MultipleChoiceSolutionDiff {
         return new MultipleChoiceSolutionDiff(
-            json.multiple_choice.same,
+            json.multiple_choice.correct,
             json.multiple_choice.wrong_choices,
             json.multiple_choice.missed_choices,
         );

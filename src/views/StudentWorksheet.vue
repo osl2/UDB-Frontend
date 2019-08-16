@@ -230,16 +230,16 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
        */
       public compare(subtaskSolution: Solution) {
           this.currentSubtask.solution = subtaskSolution;
-          this.save(this.currentSubtask.id, subtaskSolution);
+          this.save(this.currentSubtask.id, this.currentSubtask.solution);
           this.subtaskController.compareSolution(this.currentSubtask).then((feedback: SolutionDiff) => {
-                  if (feedback.same === true) {
+                  if (feedback.same) {
                       alert(this.$t('studentWorksheet.alertSolutionCorrect') as string);
                   } else {
                       alert(feedback.getFeedbackString());
                   }
               },
           ).catch((response) => {
-              alert('Error comparing solution: ' + response.status + ' ' + response.statusText);
+              alert('Error comparing solution: ' + response.status + ' ' + response.statusText + ' ' + response);
           });
       }
 

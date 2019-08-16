@@ -17,7 +17,7 @@
                          :lastQueryExecuted="lastQueryExecuted"
                          @save="saveSubtask"
                          @executeQuery="executeQuery"
-                         @compare="$emit('compare', subtaskSolution)"
+                         @compare="compare"
             >
             </SqlTaskComp>
         </div>
@@ -25,7 +25,7 @@
             <McTask :currentSubtask="currentSubtask"
                     :solutions="solutions"
                     @save="saveSubtask"
-                    @compare="$emit('compare', subtaskSolution)"
+                    @compare="compare"
             >
             </McTask>
         </div>
@@ -33,7 +33,7 @@
             <TextTask :currentSubtask="currentSubtask"
                       :solutions="solutions"
                       @save="saveSubtask"
-                      @compare="$emit('compare', subtaskSolution)"
+                      @compare="compare"
             >
             </TextTask>
         </div>
@@ -125,6 +125,10 @@ export default class TaskSolve extends Vue {
         this.initDatabase();
         return;
       }
+    }
+
+    public compare(solution: Solution) {
+      this.$emit('compare', solution);
     }
 
       /*

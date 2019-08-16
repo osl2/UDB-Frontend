@@ -29,6 +29,9 @@ import MultipleChoiceSolutionDiff from "@/dataModel/MultipleChoiceSolutionDiff";
 import PlainTextSolutionDiff from "@/dataModel/PlainTextSolutionDiff";
 import LocalStorageController from "@/controller/LocalStorageController";
 import InstructionTask from "@/dataModel/InstructionTask";
+import SqlSolution from "@/dataModel/SqlSolution";
+import PlainTextSolution from "@/dataModel/PlainTextSolution";
+import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
 
 export interface Token {
     token: string;
@@ -1313,13 +1316,14 @@ export class DefaultApi extends runtime.BaseAPI {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
+
         const response = await this.request({
             path: `/subtasks/{subtaskid}/verify`
                 .replace(`{${"subtaskid"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: requestParameters.solution.toJSON(),
+            body: requestParameters.solution.toJSON,
         });
 
         return new runtime.JSONApiResponse(response, (jsonValue) => {
