@@ -36,16 +36,20 @@ export default class MultipleChoiceSolutionDiff extends SolutionDiff {
 
     public getFeedbackString(): string {
         const messages: string[] = [];
-        messages.push("Die folgenden ausgewählten Antworten waren falsch: ");
-        for (let i = 0; i < this._wrongChoices.length - 1; i++) {
-            messages.push((this._wrongChoices[i] + 1).toString(), ", ");
+        if (this._wrongChoices.length) {
+            messages.push("Die folgenden ausgewählten Antworten waren falsch: ");
+            for (let i = 0; i < this._wrongChoices.length - 1; i++) {
+                messages.push((this._wrongChoices[i] + 1).toString(), ", ");
+            }
         }
-        messages.push((this._wrongChoices[this._wrongChoices.length - 1] + 1).toString(), ". ",
-          "Die folgenden Antworten wären noch richtig gewesen: ");
-        for (let i = 0; i < this._missedChoices.length - 1; i++) {
-            messages.push((this._missedChoices[i] + 1).toString(), ", ");
+        if (this._missedChoices.length) {
+            messages.push((this._wrongChoices[this._wrongChoices.length - 1] + 1).toString(), ". ",
+              "Die folgenden Antworten wären noch richtig gewesen: ");
+            for (let i = 0; i < this._missedChoices.length - 1; i++) {
+                messages.push((this._missedChoices[i] + 1).toString(), ", ");
+            }
+            messages.push((this._missedChoices[this._missedChoices.length - 1] + 1).toString(), ".");
         }
-        messages.push((this._missedChoices[this._missedChoices.length - 1] + 1).toString(), ".");
-        return messages.join();
+        return messages.join("");
     }
 }

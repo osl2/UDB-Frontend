@@ -99,6 +99,9 @@ export default class TaskSolve extends Vue {
       this.initDatabase();
     }
 
+    public mounted() {
+      this.initDatabase();
+    }
     /*
         method executes the query created by the student and checks if only allowed Statements are used
         */
