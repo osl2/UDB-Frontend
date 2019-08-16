@@ -71,10 +71,12 @@
 
         // Functions
         public openWorksheet(worksheet: Worksheet) {
-            if (this.isStudentsViewActive) {
-                router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
-            } else {
-                router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
+            if (confirm(this.$t('course.alertEditWorksheet') as string)) {
+                if (this.isStudentsViewActive) {
+                    router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
+                } else {
+                    router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
+                }
             }
         }
 
@@ -108,7 +110,7 @@
         }
 
         public createWorksheet(name: string) {
-            if (confirm(this.$t('course.alertEditWorksheet') as string)) {
+
                 this.worksheetController.create(new Worksheet('', name, [], false, false)).then((worksheetId) => {
                     this.course.worksheetIds.push(worksheetId);
                     this.courseController.save(this.course);
@@ -116,7 +118,6 @@
                 }).catch((e) => {
                     alert(e.message);
                 });
-            }
         }
 
         public deleteWorksheet(worksheet: Worksheet) {
