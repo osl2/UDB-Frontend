@@ -188,7 +188,7 @@ const de = {
           'Bitte versuche erneut die Aufgabe zu lösen.',
   },
   mcTask: {
-      anwserOptions: 'Antwortmöglichkeiten: ',
+    answerOptions: 'Antwortmöglichkeiten: ',
   },
   courseList: {
     name: 'Name',

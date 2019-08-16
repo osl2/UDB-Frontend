@@ -96,7 +96,7 @@
         * Method to permanently remove a course.
          */
         public removeCourse(course: Course) {
-            if (confirm(this.$t('teacher.alertCourse') + course.name + this.$t('teacher.alertDelete'))) {
+            if (confirm(this.$t('teacher.alertCourse') as string + course.name + this.$t('teacher.alertDelete')as string)) {
                 this.courseController.remove(course);
             }
         }
