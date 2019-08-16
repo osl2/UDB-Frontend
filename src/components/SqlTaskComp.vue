@@ -5,7 +5,7 @@
             {{currentSubtask.instruction}}
          </div>
 
-        <div v-if ="currentSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements">
+        <div v-if ="currentSubtask.allowedSqlStatements === 1">
             {{$t('sqlTaskComp.select')}}
         </div>
 
@@ -63,7 +63,7 @@ import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 import DatabaseComponent from "@/components/DatabaseComponent.vue";
 
 export default Vue.extend({
-    props: ['currentSubtask', 'solutions'],
+    props: ['currentSubtask', 'solutions', 'queryResult', 'gotFirstQueryExecuted', 'lastQueryExecuted'],
     components: {
         Query,
         PointAndClick,
@@ -73,54 +73,38 @@ export default Vue.extend({
     data() {
         return {
             isPointAndClickActive: false,
-            gotFirstQueryExecuted: false,
-            lastQueryExecuted: '',
-            queryResult: {} as QueryResult,
             allowedSqlToolbox: 'toolbox_all.xml',
             sqlExecutor: this.$store.getters.sqlExecutor,
         };
     },
     methods: {
-        /*
-        method executes the query created by the student and checks if only allowed Statements are used
-        */
-        executeQuery(query: string) {
-          if (this.checkAllowedSqlStatements(query)) {
-            const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
-            const dbNumber = dbComponent.$data.databaseNumber;
-            this.sqlExecutor.executeQuery(dbNumber, query, 0).then((queryResult: QueryResult) => {
-                 this.queryResult = queryResult;
-                 const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
-                 window.scrollTo(0, top + 200);
-                 dbComponent.loadMetaData();
-                 this.gotFirstQueryExecuted = true;
-                 this.lastQueryExecuted = query;
-              }).catch((e: string) => {
-                 alert(e);
-              });
-          } else {
-            alert(this.$t('sqlTaskComp.alertStatement') as string);
-          }
-        },
 
-        /*
-        checks if the query the student created only uses sql statements that are allowed to use in the subtask
-         */
-        checkAllowedSqlStatements(query: string): boolean {
-          const tempSubtask = this.currentSubtask as SqlTask;
-          if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
-            // check if the input contains a statement which is NOT allowed
-            const regexSelect = new RegExp('^/(drop)|(alter)|(create)|(update)|(insert)|(delete)/', 'i');
-            if (query.match(regexSelect) === null) {
-              return true;
-            } else {
-              return false;
-            }
-          } else {
-            // no restrictions on the query input
+      executeQuery(query: string) {
+        if (this.checkAllowedSqlStatements(query)) {
+          this.$emit('executeQuery', query);
+        } else {
+            alert(this.$t('sqlTaskComp.alertStatement') as string);
+        }
+      },
+
+      /*
+    checks if the query the student created only uses sql statements that are allowed to use in the subtask
+     */
+      checkAllowedSqlStatements(query: string): boolean {
+        const tempSubtask = this.currentSubtask as SqlTask;
+        if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
+          // check if the input contains a statement which is NOT allowed
+          const regexSelect = new RegExp('^/(drop)|(alter)|(create)|(update)|(insert)|(delete)/', 'i');
+          if (query.match(regexSelect) === null) {
             return true;
+          } else {
+            return false;
           }
-        },
+        } else {
+          // no restrictions on the query input
+          return true;
+        }
+      },
 
         switchComponent() {
             this.isPointAndClickActive = !this.isPointAndClickActive;

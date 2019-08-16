@@ -12,7 +12,11 @@
         <div v-if="typeOfSubtask()===1">
             <SqlTaskComp :currentSubtask="currentSubtask"
                          :solutions="solutions"
+                         :queryResult="queryResult"
+                         :gotFirstQueryExecuted="gotFirstQueryExecuted"
+                         :lastQueryExecuted="lastQueryExecuted"
                          @save="saveSubtask"
+                         @executeQuery="executeQuery"
                          @compare="$emit('compare', subtaskSolution)"
             >
             </SqlTaskComp>
@@ -64,6 +68,8 @@
   import Subtask from "@/dataModel/Subtask";
   import Database from "@/dataModel/Database";
   import InstructionTaskComp from "@/components/InstructionTaskComp.vue";
+  import SQLExecutor from "@/controller/SQLExecutor";
+  import QueryResult from "@/dataModel/QueryResult";
 
 
   @Component({
@@ -83,6 +89,34 @@ export default class TaskSolve extends Vue {
     @Prop() private subtaskIndex!: number;
     @Prop() private numberOfSubtasks!: number;
     @Prop() private database!: Database;
+    private sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
+    private queryResult: QueryResult = {} as QueryResult;
+    private gotFirstQueryExecuted: boolean = false;
+    private lastQueryExecuted: string = "";
+
+    public created() {
+      this.sqlExecutor = this.$store.getters.sqlExecutor;
+      this.initDatabase();
+    }
+
+    /*
+        method executes the query created by the student and checks if only allowed Statements are used
+        */
+    public executeQuery(query: string) {
+        const dbComponent: DatabaseComponent = this.$refs.databaseComponent as unknown as DatabaseComponent;
+        const dbNumber = dbComponent.$data.databaseNumber;
+        this.sqlExecutor.executeQuery(dbNumber, query, 0).then((queryResult: QueryResult) => {
+          this.queryResult = queryResult;
+          // TODO
+          // const top = document.getElementById('queryResult')!.offsetTop; // Getting Y of target element
+          // window.scrollTo(0, top + 200);
+          dbComponent.loadMetaData();
+          this.gotFirstQueryExecuted = true;
+          this.lastQueryExecuted = query;
+        }).catch((e: string) => {
+          alert(e);
+        });
+    }
 
 
     @Watch('database')
