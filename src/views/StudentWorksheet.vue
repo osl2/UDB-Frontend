@@ -79,14 +79,7 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
 
       // returns the worksheet that matches the WorksheetId saved in the component
       get worksheet() {
-          if (this.worksheetController.get(this.worksheetId) !== undefined) {
-              try {
-                  this.taskController.loadChildren(this.worksheetController.get(this.worksheetId));
-              } catch (e) {
-                  alert(e.message);
-              }
-          }
-          return this.worksheetController.get(this.worksheetId);
+          return this.worksheetController.worksheets.get(this.worksheetId) || new Worksheet('', '', [], true, false);
       }
 
       // returns all tasks that are assigned to the worksheet saved in the component
@@ -104,10 +97,11 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
         }
         return tempDB;
       }
+      get worksheetId() {
+        return this.$route.params.worksheetId;
+      }
 
       // Data
-
-      private worksheetId: string = '';
 
       // the solution maps an id of a subtask to the students solution.
       private solutions: Map<string, Solution> = new Map<string, Solution>();
@@ -125,6 +119,16 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
       private taskController: ParentService<Worksheet, Task> = this.$store.getters.taskController;
       private subtaskController: SubtaskService = this.$store.getters.subtaskController;
       private databaseController: DataManagementService<Database> = this.$store.getters.databaseController;
+  public loadTasks() {
+    const worksheet = this.worksheetController.worksheets.get(this.worksheetId);
+    if (worksheet !== undefined) {
+      try {
+        this.taskController.loadChildren(worksheet);
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+  }
 
       // methods
       /*
@@ -260,8 +264,18 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
           } catch (e) {
               alert(e.message);
           }
-          this.worksheetId = this.$route.params.worksheetId;
       }
+
+  @Watch('worksheet')
+  private onWorksheetChanged(value: Worksheet, oldValue: Worksheet) {
+    if (value === undefined || value.id === '') {
+      // course not yet loaded
+      return;
+    } else if (oldValue === undefined || oldValue.id === '' || value.id !== oldValue.id) {
+      // course loaded or changed, load worksheets of this course
+      this.loadTasks();
+    }
+  }
       /*
        opens file upload dialog
        */

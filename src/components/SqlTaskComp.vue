@@ -57,10 +57,8 @@ import Query from '@/components/Query.vue';
 import QueryResultComp from '@/components/QueryResult.vue';
 import PointAndClick from '@/components/PointAndClick.vue';
 import SqlSolution from "@/dataModel/SqlSolution";
-import QueryResult from "@/dataModel/QueryResult";
 import SqlTask from "@/dataModel/SqlTask";
 import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
-import DatabaseComponent from "@/components/DatabaseComponent.vue";
 
 export default Vue.extend({
     props: ['currentSubtask', 'solutions', 'queryResult', 'gotFirstQueryExecuted', 'lastQueryExecuted'],
@@ -122,6 +120,17 @@ export default Vue.extend({
             this.allowedSqlToolbox = 'toolbox_all.xml';
         }
     },
+  mounted() {
+    if (this.solutions.has(this.currentSubtask.id)) {
+      this.executeQuery(this.solutions.get(this.currentSubtask.id).querySolution);
+    }
+    const tempSubtask = this.currentSubtask as SqlTask;
+    if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
+      this.allowedSqlToolbox = 'toolbox_query.xml';
+    } else {
+      this.allowedSqlToolbox = 'toolbox_all.xml';
+    }
+  },
 
     computed: {
         sqlTaskDynamicComponent() {

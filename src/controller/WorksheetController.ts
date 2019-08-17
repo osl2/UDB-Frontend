@@ -474,4 +474,7 @@ export default class WorksheetController extends ApiControllerAbstract
     get all(): Worksheet[] {
         return Array.from(this._worksheets.values());
     }
+    get worksheets(): Map<string, Worksheet> {
+        return this._worksheets;
+    }
 }

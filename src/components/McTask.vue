@@ -26,12 +26,12 @@
 </template>
 
 <script lang ="ts">
-  import {Component, Prop, Vue} from 'vue-property-decorator';
-import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
+import {Component, Prop, Vue} from 'vue-property-decorator';
+  import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
   import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
   import Solution from "@/dataModel/Solution";
 
-@Component({})
+  @Component({})
 
 export default class McTask extends Vue {
   @Prop() private currentSubtask!: MultipleChoiceTask;
@@ -42,13 +42,13 @@ export default class McTask extends Vue {
   private options: object[] = []; // am anfang leeres object drinnen? an index 0
 
 
-  setOptions() {
+  public setOptions() {
     for (let index = 0; index < this.currentSubtask.answerOptions.length; index++) {
       this.options.push({text: this.currentSubtask.answerOptions[index], value: index});
     }
   }
 
-  created(): void {
+  public created(): void {
     this.setOptions();
     if (this.solutions.has(this.currentSubtask.id)) {
       const solution = this.solutions.get(this.currentSubtask.id)! as MultipleChoiceSolution;
@@ -60,7 +60,7 @@ export default class McTask extends Vue {
   }
 
 
-    };
+    }
 </script>
 
 <style scoped>
