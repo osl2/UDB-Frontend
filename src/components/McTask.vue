@@ -27,11 +27,11 @@
 
 <script lang ="ts">
 import {Component, Prop, Vue} from 'vue-property-decorator';
-  import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
-  import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
-  import Solution from "@/dataModel/Solution";
+import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
+import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
+import Solution from "@/dataModel/Solution";
 
-  @Component({})
+@Component({})
 
 export default class McTask extends Vue {
   @Prop() private currentSubtask!: MultipleChoiceTask;

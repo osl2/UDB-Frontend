@@ -85,11 +85,9 @@
         * Method to create a new Course with a name and description given by the user.
          */
         public addCourse(name: string, description: string) {
-            try {
-                this.courseController.create(new Course("", name, description, "", []));
-            } catch (e) {
-                alert(e.message);
-            }
+                this.courseController.create(new Course("", name, description, "", [])).catch((e) => {
+                  alert(e.message);
+                });
         }
 
         /*
