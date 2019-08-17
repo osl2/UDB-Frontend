@@ -26,43 +26,41 @@
 </template>
 
 <script lang ="ts">
-import Vue from 'vue';
+  import {Component, Prop, Vue} from 'vue-property-decorator';
 import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
+  import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
+  import Solution from "@/dataModel/Solution";
 
-export default Vue.extend({
-        props: ['currentSubtask', 'solutions'],
-        data() {
-            return {
-                selected: [],
-                options: [] as object[], // am anfang leeres object drinnen? an index 0
-            };
-        },
-        methods: {
-            setOptions() {
-                for (let index = 0; index < this.currentSubtask.answerOptions.length; index++) {
+@Component({})
 
-                    this.options.push({text: this.currentSubtask.answerOptions[index], value: index});
+export default class McTask extends Vue {
+  @Prop() private currentSubtask!: MultipleChoiceTask;
+  @Prop() private solutions!: Map<string, Solution>;
 
-                }
-            },
-        },
-        created(): void {
-            this.setOptions();
 
-            if (this.solutions.has(this.currentSubtask.id)) {
-                this.selected = this.solutions.get(this.currentSubtask.id).choices;
+  private selected: number[] = [];
+  private options: object[] = []; // am anfang leeres object drinnen? an index 0
+
+
+  setOptions() {
+    for (let index = 0; index < this.currentSubtask.answerOptions.length; index++) {
+      this.options.push({text: this.currentSubtask.answerOptions[index], value: index});
+    }
+  }
+
+  created(): void {
+    this.setOptions();
+    if (this.solutions.has(this.currentSubtask.id)) {
+      const solution = this.solutions.get(this.currentSubtask.id)! as MultipleChoiceSolution;
+      this.selected = solution.choices;
             }
-        },
+  }
+  get subtaskSolution(): MultipleChoiceSolution {
+    return new MultipleChoiceSolution(this.selected);
+  }
 
-    computed: {
-        subtaskSolution: {
-            get(): MultipleChoiceSolution {
-                return new MultipleChoiceSolution(this.selected);
-            },
-        },
-    },
 
-    });
+    };
 </script>
 
 <style scoped>
