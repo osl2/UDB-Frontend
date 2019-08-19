@@ -8,10 +8,6 @@ import DataModel from '@/dataModel/DataModel';
  * @typeparam T The DataManagementService interface can be used with all DataModel types.
  */
 export default interface DataManagementService<T extends DataModel> {
-  /**
-   * This property is an array of all DataModel objects currently stored within the service.
-   */
-  all: T[];
   create(object: T): Promise<string>;
   /**
    * This method removes the object passed to it from the local store of the service,
@@ -20,22 +16,17 @@ export default interface DataManagementService<T extends DataModel> {
    *
    * @param object The object to remove.
    */
-  remove(object: T): void;
-  save(object: T): void;
-  /**
-   * Load a single object from the API and put it into [[one]] once the promise resolves.
-   * @param id The UUID of the object to load.
-   */
-  load(id: string): void;
+  remove(object: T): Promise<void>;
+  save(object: T): Promise<void>;
   /**
    * If logged in as a teacher, load all objects of this type that the user has access to,
    * and merge them with the locally available objects.
    */
-  loadAll(): void;
+  getAll(): Promise<T[]>;
 
   /**
    * Return an already loaded object with given id.
    * @param id
    */
-  get(id: string): T;
+  get(id: string): Promise<T>;
 }

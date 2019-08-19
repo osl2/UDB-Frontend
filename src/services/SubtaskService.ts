@@ -5,6 +5,6 @@ import SolutionDiff from "@/dataModel/SolutionDiff";
 
 export default interface SubtaskService extends ParentService<Task, Subtask> {
     compareSolution(subtask: Subtask): Promise<SolutionDiff>;
-    getAllWithoutSolution(): Subtask[];
-    getWithoutSolution(id: string): Subtask;
+    getAllWithoutSolution(): Promise<Subtask[]>;
+    getWithoutSolution(id: string): Promise<Subtask>;
 }

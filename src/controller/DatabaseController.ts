@@ -13,25 +13,16 @@ import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
 export default class DatabaseController extends ApiControllerAbstract
     implements DataManagementService<Database>, ExportImport<Database> {
 
-    private _databases: Map<string, Database>;
 
     constructor(api: DefaultApi) {
         super(api);
-        this._databases = new Map<string, Database>();
     }
 
     /**
      * Load all available databases for the authenticated user
      */
-    public loadAll(): void {
-        this.api.getDatabases()
-            .then((response: Database[]) => {
-                response.forEach((database: Database) => {
-                    this._databases = new Map<string, Database>(this._databases.set(database.id, database));
-                });
-            }).catch((response) => {
-            throw new Error("Error loading databases: " + response.status + " " + response.statusText);
-        });
+    public getAll(): Promise<Database[]> {
+        return this.api.getDatabases();
     }
 
     /**
@@ -39,15 +30,8 @@ export default class DatabaseController extends ApiControllerAbstract
      *
      * @param id
      */
-    public load(id: string): void {
-        if (this._databases.get(id) === undefined) {
-            this.api.getDatabase({databaseId: id} as GetDatabaseRequest)
-                .then((response: Database) => {
-                    this._databases = new Map<string, Database>(this._databases.set(response.id, response));
-                }).catch((response) => {
-                throw new Error("Error loading database: " + response.status + " " + response.statusText);
-            });
-        }
+    public get(id: string): Promise<Database> {
+        return this.api.getDatabase({databaseId: id} as GetDatabaseRequest);
     }
 
     /**
@@ -59,41 +43,16 @@ export default class DatabaseController extends ApiControllerAbstract
         return this.api.createDatabase({database} as CreateDatabaseRequest)
             .then((response: string) => {
                 database.id = response;
-                this._databases = new Map<string, Database>(this._databases.set(database.id, database));
                 return database.id;
             })
-            .catch((error: Response) => {
-                throw new Error("Error creating database. HTTP Status code " + error.status + " " + error.statusText);
-            });
     }
 
-    public save(object: Database): void {
-        this.api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest)
-            .then(() => {
-                if (this._databases.get(object.id) !== undefined) {
-                    this._databases = new Map<string, Database>(this._databases.set(object.id, object));
-                }
-            }).catch((response) => {
-            throw new Error("Error saving database: " + response.status + " " + response.statusText);
-        });
+    public save(object: Database): Promise<void> {
+        return this.api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest);
     }
 
-    public remove(object: Database): void {
-        this.api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest)
-            .then((response) => {
-                this._databases.delete(object.id);
-                this._databases = new Map<string, Database>(this._databases);
-            }).catch((response) => {
-            throw new Error("Error deleting database: " + response.status + " " + response.statusText);
-        });
-    }
-
-    public get(id: string): Database {
-        const db = this._databases.get(id);
-        if (db === undefined) {
-            throw new Error("Database not found: " + id);
-        }
-        return db;
+    public remove(object: Database): Promise<void> {
+        return this.api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest);
     }
 
     /**
@@ -140,13 +99,6 @@ export default class DatabaseController extends ApiControllerAbstract
             fileReader.readAsArrayBuffer(file);
         });
         return promise;
-    }
-
-    /**
-     * Getter for all loaded databases.
-     */
-    get all(): Database[] {
-        return Array.from(this._databases.values());
     }
 
     /**

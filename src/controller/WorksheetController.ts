@@ -30,48 +30,23 @@ import Solution from "@/dataModel/Solution";
 export default class WorksheetController extends ApiControllerAbstract
     implements ParentService<Course, Worksheet>, SolutionService {
 
-    private _worksheets: Map<string, Worksheet>;
 
     constructor(api: DefaultApi) {
         super(api);
-        this._worksheets = new Map<string, Worksheet>();
     }
 
 
-    public loadAll() {
-        this.api.getWorksheets()
-            .then((response: Worksheet[]) => {
-                response.forEach((worksheet: Worksheet) => {
-                    this._worksheets = new Map<string, Worksheet>(this._worksheets.set(worksheet.id, worksheet));
-                });
-            })
-            .catch((response) => {
-                throw new Error("Error getting worksheets: " + response.status + " " + response.statusText);
-        });
+    public getAll(): Promise<Worksheet[]> {
+        return this.api.getWorksheets();
     }
-    public loadChildren(object: Course) {
-        object.worksheetIds.forEach((worksheetId) => {
-            this.api.getWorksheet({worksheetId} as GetWorksheetRequest)
-                .then((response: Worksheet) => {
-                    this._worksheets = new Map<string, Worksheet>(this._worksheets.set(response.id, response));
-                })
-                .catch((response) => {
-                    throw new Error("Error getting worksheets from course: " + response.status
-                      + " " + response.statusText);
-            });
-        });
+
+    public getChildren(object: Course): Promise<Worksheet[]> {
+        return Promise.all(object.worksheetIds.map((worksheetId) =>
+          this.api.getWorksheet({worksheetId} as GetWorksheetRequest)));
     }
-    public load(id: string) {
-        const worksheet = this._worksheets.get(id);
-        if (worksheet === undefined) {
-            this.api.getWorksheet({worksheetId: id} as GetWorksheetRequest)
-                .then((response: Worksheet) => {
-                    this._worksheets = new Map<string, Worksheet>(this._worksheets.set(response.id, response));
-                })
-                .catch((response) => {
-                throw new Error("Error loading workshee: " + response.status + " " + response.statusText);
-            });
-        }
+
+    public get(id: string) {
+        return this.api.getWorksheet({worksheetId: id} as GetWorksheetRequest);
     }
 
     public create(worksheet: Worksheet): Promise<string> {
@@ -80,28 +55,13 @@ export default class WorksheetController extends ApiControllerAbstract
                 worksheet.id = response;
                 this._worksheets = new Map<string, Worksheet>(this._worksheets.set(worksheet.id, worksheet));
                 return worksheet.id;
-            }).catch((response) => {
-              throw new Error("Error creating worksheet: " + response.status + " " + response.statusText);
-          });
+            })
     }
-    public save(object: Worksheet): void {
-        this.api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest)
-          .then(() => {
-              if (this._worksheets.get(object.id) !== undefined) {
-                  this._worksheets = new Map<string, Worksheet>(this._worksheets.set(object.id, object));
-              }
-          }).catch((response) => {
-            throw new Error("Error saving worksheet: " + response.status + " " + response.statusText);
-        });
+    public save(object: Worksheet): Promise<void> {
+        return this.api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest);
     }
-    public remove(object: Worksheet): void {
-        this.api.deleteWorksheet({worksheetId: object.id} as DeleteWorksheetRequest)
-            .then((response) => {
-                this._worksheets.delete(object.id);
-                this._worksheets = new Map<string, Worksheet>(this._worksheets);
-            }).catch((response) => {
-            throw new Error("Error deleting worksheet: " + response.status + " " + response.statusText);
-        });
+    public remove(object: Worksheet): Promise<void> {
+        return this.api.deleteWorksheet({worksheetId: object.id} as DeleteWorksheetRequest);
     }
 
     /**
@@ -449,32 +409,5 @@ export default class WorksheetController extends ApiControllerAbstract
 
         pdfMake.createPdf(docDefinition)
             .download('Solution_' + sheet.name.replace(' ', '_') + '.pdf');
-    }
-
-    public get(id: string): Worksheet {
-        const worksheet = this._worksheets.get(id);
-        if (worksheet === undefined) {
-            throw new Error("Worksheet not found");
-        }
-        return worksheet;
-    }
-
-    public getChildren(course: Course): Worksheet[] {
-        const worksheets: Worksheet[] = [];
-        course.worksheetIds.map((worksheetId: string) => {
-            return this._worksheets.get(worksheetId);
-        }).forEach((worksheet: Worksheet | undefined) => {
-            if (worksheet !== undefined) {
-                worksheets.push(worksheet);
-            }
-        });
-        return worksheets;
-    }
-
-    get all(): Worksheet[] {
-        return Array.from(this._worksheets.values());
-    }
-    get worksheets(): Map<string, Worksheet> {
-        return this._worksheets;
     }
 }
