@@ -22,7 +22,6 @@
                     :isStudentsViewActive="isStudentsViewActive"
                     :hasUserWritePermission="hasUserWritePermission"
                     @openWorksheet="openWorksheet"
-                    @loadWorksheets="loadWorksheets"
                     @deleteWorksheet="deleteWorksheet"
                     @updateWorksheet="updateWorksheet"
                     @createWorksheet="createWorksheet"
@@ -63,6 +62,8 @@
     export default class CourseView extends Vue {
 
         // Data
+        private course: Course = new Course('', 'Loading', '', '', []);
+        private worksheets: Worksheet[] = [];
         private courseController: CourseController = this.$store.getters.courseController;
         private worksheetController: WorksheetController = this.$store.getters.worksheetController;
         private userController: UserController = this.$store.getters.userController;
@@ -73,10 +74,10 @@
         public openWorksheet(worksheet: Worksheet) {
 
                 if (this.isStudentsViewActive) {
-                    router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
+                    router.push('/studentCourseView/' + this.course.alias + '/' + worksheet.id);
                 } else {
                     if (confirm(this.$t('course.alertEditWorksheet') as string)) {
-                    router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
+                    router.push('/courseView/' + this.course.alias + '/' + worksheet.id);
                     }
                 }
         }
@@ -99,11 +100,15 @@
             }
 
             this.setIsStudentsViewActive();
-            try {
-                this.courseController.loadWithAlias(this.$route.params.courseId);
-            } catch (e) {
-                alert(e.message);
-            }
+            this.courseController.getWithAlias(this.$route.params.courseId)
+              .then((course: Course) => {
+                this.course = course;
+                this.worksheetController.getChildren(course)
+                  .then((worksheets: Worksheet[]) => {
+                    this.worksheets = worksheets;
+                  })
+              })
+              .catch((e) => alert(e));
         }
 
         public toggleView() {
@@ -111,8 +116,9 @@
         }
 
         public createWorksheet(name: string) {
-
-                this.worksheetController.create(new Worksheet('', name, [], false, false)).then((worksheetId) => {
+          let newWorksheet = new Worksheet('', name, [], false, false)
+                this.worksheetController.create(newWorksheet).then((worksheetId) => {
+                    this.worksheets.push(newWorksheet);
                     this.course.worksheetIds.push(worksheetId);
                     this.courseController.save(this.course);
                     this.worksheetsChanged = true;
@@ -123,31 +129,21 @@
 
         public deleteWorksheet(worksheet: Worksheet) {
             if (confirm(this.$t('course.alertDelete') as string)) {
-                try {
-                    this.worksheetController.remove(worksheet);
-                } catch (e) {
+                this.worksheetController.remove(worksheet)
+                  .then(() => {
+                    this.worksheets = this.worksheets.filter((ws: Worksheet) => ws.id !== worksheet.id);
+                  })
+                  .catch((e) => {
                     alert(e.message);
-                }
+                  });
             }
         }
 
         public updateWorksheet(worksheet: Worksheet) {
-            try {
-                this.worksheetController.save(worksheet);
-            } catch (e) {
-                alert(e.message);
-            }
-        }
-
-        public loadWorksheets() {
-            const course = this.courseController.courses.get(this.courseId);
-            if (course !== undefined) {
-                try {
-                    this.worksheetController.loadChildren(course);
-                } catch (e) {
-                    alert(e.message);
-                }
-            }
+          this.worksheetController.save(worksheet)
+            .catch((e) => {
+              alert(e.message);
+            });
         }
 
         get isStudentsViewActive() {
@@ -166,53 +162,6 @@
 
         get hasUserWritePermission() {
             return (this.userController.userState!.userGroup === UserGroup.Teacher);
-        }
-
-        get courseAlias() {
-            return this.$route.params.courseId;
-        }
-
-        get courseId() {
-            return this.courseController.aliases.get(this.courseAlias) || '';
-        }
-
-        get course() {
-            return this.courseController.courses.get(this.courseId) || new Course('', '', '', '', []);
-        }
-
-        @Watch('course')
-        private onCourseChanged(value: Course, oldValue: Course) {
-            if (value === undefined || value.id === '') {
-                // course not yet loaded
-                return;
-            } else if (oldValue === undefined || oldValue.id === '' || value.id !== oldValue.id) {
-                // course loaded or changed, load worksheets of this course
-                this.loadWorksheets();
-            }
-        }
-
-        get worksheets() {
-            return this.worksheetController.all && this.worksheetController.getChildren(this.course);
-        }
-
-        @Watch('worksheets')
-        private onWorksheetsChanged(value: Worksheet[], oldValue: Worksheet[]) {
-            if (this.userController.userState!.userGroup === UserGroup.Teacher) {
-                if (!value.every((worksheet: Worksheet) => oldValue.includes(worksheet))) {
-                    // if value and oldValue are different
-                    try {
-                        this.courseController.save(new Course(
-                            this.course.id,
-                            this.course.name,
-                            this.course.description,
-                            this.course.alias,
-                            value.map((worksheet: Worksheet) => worksheet.id),
-                        ));
-                    } catch (e) {
-                        alert(e.message);
-                    }
-                }
-            }
         }
     }
 </script>

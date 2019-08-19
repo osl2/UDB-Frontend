@@ -42,7 +42,17 @@ export default class WorksheetController extends ApiControllerAbstract
 
     public getChildren(object: Course): Promise<Worksheet[]> {
         return Promise.all(object.worksheetIds.map((worksheetId) =>
-          this.api.getWorksheet({worksheetId} as GetWorksheetRequest)));
+          this.api.getWorksheet({worksheetId} as GetWorksheetRequest)
+            .catch((e) => {
+                if (e.status === 404) {
+                    return undefined;
+                }
+                Promise.reject(e);
+            })))
+          .then((worksheets: (Worksheet | undefined)[]) => {
+              // type cast is ok, because we filter undefined
+              return worksheets.filter((worksheet: Worksheet | undefined) => worksheet !== undefined) as Worksheet[];
+          });
     }
 
     public get(id: string) {
@@ -53,7 +63,6 @@ export default class WorksheetController extends ApiControllerAbstract
         return this.api.createWorksheet({worksheet} as CreateWorksheetRequest)
             .then((response: string) => {
                 worksheet.id = response;
-                this._worksheets = new Map<string, Worksheet>(this._worksheets.set(worksheet.id, worksheet));
                 return worksheet.id;
             })
     }
