@@ -2,7 +2,6 @@
     <div>
         <div class="helpBtnPos">
             <h1>
-
                 <b-button id="popoverHelpMsg" class="helpBtn bg-info btn-lg">?</b-button>
                 <b-popover target="popoverHelpMsg"
                            triggers="hover focus"
@@ -34,16 +33,10 @@
         position: absolute;
         top: 40px;
         right: 40px;
+        z-index: 99;
     }
 
     .helpBtn {
         border-radius: 25px;
-
     }
-
-    .cardStyling {
-        background-color: #17a2b8;
-        color: white;
-    }
-
 </style>

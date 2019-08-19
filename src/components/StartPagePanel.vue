@@ -15,8 +15,6 @@
                     <b-button v-if='!loggedIn' class="btn btn-lg mr-3" v-b-modal.modal-login>
                         {{$t('home.login')}}
                     </b-button>
-
-
                     <b-button v-if='!loggedIn' class="btn btn-lg" v-b-modal.modal-registration>
                         {{ $t('home.register') }}
                     </b-button>
@@ -124,7 +122,7 @@
 
 
         // methods
-        private loginTeacher(username: string, password: string, mmsg: string): void {
+        private loginTeacher(username: string, password: string): void {
             if (!username) {
                 this.errorMsg = this.$t('home.errorUser') as string;
                 return;
@@ -187,13 +185,6 @@
 
         }
 
-
-        private checkRegistration(username: string, password: string): boolean {
-            alert('TODO: serverseitige Registrierungsmethode aufrufen.');
-            this.userController.switchUserGroup(UserGroup.Teacher);
-            return true;
-        }
-
         private created() {
             if (this.userController.userState === undefined) {
                 this.userController.userState = new User('', '', '', '', UserGroup.Unauthenticated);
@@ -209,18 +200,10 @@
         private resetErrorMsgOnModalHide(): void {
             this.errorMsg = "";
         }
-
-
     }
 </script>
 
 <style scoped lang="scss">
-    .bottom-btn {
-        position: absolute;
-        alignment: center;
-        bottom: 17px;
-    }
-
     .inputfield {
         margin-bottom: 5px;
     }
@@ -228,5 +211,4 @@
     .error {
         color: darkred;
     }
-
 </style>

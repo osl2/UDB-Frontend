@@ -4,11 +4,10 @@
             <h1>{{course.name}}</h1>
             <h2>{{course.description}}</h2>
         </div>
-        <!-- TODO ButtonTexte Englisch und ButtonTexte wechseln lassen"-->
         <div>
             <b-button v-b-popover.hover="$t('hoverText.switchToStudentsView')"
                       @click="toggleView"
-                      class="studentViewButton"
+                      class="studentViewButton float-right"
                       v-if="hasUserWritePermission"
             >
                 {{$t('buttonText.changeView')}}
@@ -40,184 +39,184 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue, Watch} from 'vue-property-decorator';
-    import WorksheetList from '@/components/WorksheetList.vue';
-    import SolutionsheetList from '@/components/SolutionsheetList.vue';
-    import Course from '@/dataModel/Course.ts';
-    import Worksheet from '@/dataModel/Worksheet.ts';
-    import WorksheetController from '@/controller/WorksheetController';
-    import CourseController from '@/controller/CourseController';
-    import UserGroup from '@/dataModel/UserGroup';
-    import router from '@/router';
-    import UserController from '@/controller/UserController';
-    import User from '@/dataModel/User';
+import {Component, Vue, Watch} from 'vue-property-decorator';
+import WorksheetList from '@/components/WorksheetList.vue';
+import SolutionsheetList from '@/components/SolutionsheetList.vue';
+import Course from '@/dataModel/Course.ts';
+import Worksheet from '@/dataModel/Worksheet.ts';
+import WorksheetController from '@/controller/WorksheetController';
+import CourseController from '@/controller/CourseController';
+import UserGroup from '@/dataModel/UserGroup';
+import router from '@/router';
+import UserController from '@/controller/UserController';
+import User from '@/dataModel/User';
 
-    @Component({
-        components: {
-            WorksheetList,
-            SolutionsheetList,
-        },
-    })
+@Component({
+    components: {
+        WorksheetList,
+        SolutionsheetList,
+    },
+})
 
 
-    export default class CourseView extends Vue {
+export default class CourseView extends Vue {
 
-        // Data
-        private courseController: CourseController = this.$store.getters.courseController;
-        private worksheetController: WorksheetController = this.$store.getters.worksheetController;
-        private userController: UserController = this.$store.getters.userController;
-        private _isStudentsViewActive: boolean = false;
-        private worksheetsChanged: boolean = false;
+    // Data
+    private courseController: CourseController = this.$store.getters.courseController;
+    private worksheetController: WorksheetController = this.$store.getters.worksheetController;
+    private userController: UserController = this.$store.getters.userController;
+    private isInStudentView: boolean = false;
+    private worksheetsChanged: boolean = false;
 
-        // Functions
-        public openWorksheet(worksheet: Worksheet) {
-
-                if (this.isStudentsViewActive) {
-                    router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
-                } else {
-                    if (confirm(this.$t('course.alertEditWorksheet') as string)) {
-                    router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
-                    }
+    // Functions
+    public openWorksheet(worksheet: Worksheet) {
+            if (this.isStudentsViewActive) {
+                router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
+            } else {
+                if (confirm(this.$t('course.alertEditWorksheet') as string)) {
+                router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
                 }
+            }
+    }
+
+    public generateSolutionsheet(worksheet: Worksheet) {
+        this.worksheetController.getSolution(worksheet);
+    }
+
+    public created() {
+        this.userController = this.$store.getters.userController;
+        this.courseController = this.$store.getters.courseController;
+        this.worksheetController = this.$store.getters.worksheetController;
+
+        if (this.userController.userState === undefined) {
+            this.userController.userState = new User('', '', '', '', UserGroup.Unauthenticated);
         }
 
-        public generateSolutionsheet(worksheet: Worksheet) {
-            this.worksheetController.getSolution(worksheet);
+        if (this.userController.userState!.userGroup === UserGroup.Unauthenticated) {
+            this.userController.switchUserGroup(UserGroup.Student);
         }
 
-        public created() {
-            this.userController = this.$store.getters.userController;
-            this.courseController = this.$store.getters.courseController;
-            this.worksheetController = this.$store.getters.worksheetController;
+        this.setIsStudentsViewActive();
 
-            if (this.userController.userState === undefined) {
-                this.userController.userState = new User('', '', '', '', UserGroup.Unauthenticated);
-            }
+        try {
+            this.courseController.loadWithAlias(this.$route.params.courseId);
+        } catch (e) {
+            alert(e.message);
+        }
+    }
 
-            if (this.userController.userState!.userGroup === UserGroup.Unauthenticated) {
-                this.userController.switchUserGroup(UserGroup.Student);
-            }
+    public toggleView() {
+        this.isInStudentView = !this.isInStudentView;
+    }
 
-            this.setIsStudentsViewActive();
+    public createWorksheet(name: string) {
+        if (!name) {
+            alert(this.$t('course.alertName') as string);
+            return;
+        }
+        this.worksheetController.create(new Worksheet('', name, [], false, false)).then((worksheetId) => {
+                this.course.worksheetIds.push(worksheetId);
+                this.courseController.save(this.course);
+                this.worksheetsChanged = true;
+            }).catch((e) => {
+                alert(e.message);
+            });
+    }
+
+    public deleteWorksheet(worksheet: Worksheet) {
+        if (confirm(this.$t('course.alertDelete') as string)) {
             try {
-                this.courseController.loadWithAlias(this.$route.params.courseId);
+                this.worksheetController.remove(worksheet);
             } catch (e) {
                 alert(e.message);
             }
         }
+    }
 
-        public toggleView() {
-            this._isStudentsViewActive = !this._isStudentsViewActive;
+    public updateWorksheet(worksheet: Worksheet) {
+        try {
+            this.worksheetController.save(worksheet);
+        } catch (e) {
+            alert(e.message);
         }
+    }
 
-        public createWorksheet(name: string) {
-            if(!name){
-                alert(this.$t('course.alertName') as string);
-                return;
-            }
-                this.worksheetController.create(new Worksheet('', name, [], false, false)).then((worksheetId) => {
-                    this.course.worksheetIds.push(worksheetId);
-                    this.courseController.save(this.course);
-                    this.worksheetsChanged = true;
-                }).catch((e) => {
-                    alert(e.message);
-                });
-        }
-
-        public deleteWorksheet(worksheet: Worksheet) {
-            if (confirm(this.$t('course.alertDelete') as string)) {
-                try {
-                    this.worksheetController.remove(worksheet);
-                } catch (e) {
-                    alert(e.message);
-                }
-            }
-        }
-
-        public updateWorksheet(worksheet: Worksheet) {
+    public loadWorksheets() {
+        const course = this.courseController.courses.get(this.courseId);
+        if (course !== undefined) {
             try {
-                this.worksheetController.save(worksheet);
+                this.worksheetController.loadChildren(course);
             } catch (e) {
                 alert(e.message);
             }
         }
+    }
 
-        public loadWorksheets() {
-            const course = this.courseController.courses.get(this.courseId);
-            if (course !== undefined) {
+    get isStudentsViewActive() {
+        this.setIsStudentsViewActive();
+        return this.isInStudentView;
+    }
+
+    private setIsStudentsViewActive() {
+        if (this.userController.userState !== undefined) {
+            if (this.userController.userState.userGroup === UserGroup.Student ||
+                this.userController.userState.userGroup === UserGroup.Unauthenticated) {
+                this.isInStudentView = true;
+            }
+        }
+    }
+
+    get hasUserWritePermission() {
+        return (this.userController.userState!.userGroup === UserGroup.Teacher);
+    }
+
+    get courseAlias() {
+        return this.$route.params.courseId;
+    }
+
+    get courseId() {
+        return this.courseController.aliases.get(this.courseAlias) || '';
+    }
+
+    get course() {
+        return this.courseController.courses.get(this.courseId) || new Course('', '', '', '', []);
+    }
+
+    @Watch('course')
+    private onCourseChanged(value: Course, oldValue: Course) {
+        if (value === undefined || value.id === '') {
+            // course not yet loaded
+            return;
+        } else if (oldValue === undefined || oldValue.id === '' || value.id !== oldValue.id) {
+            // course loaded or changed, load worksheets of this course
+            this.loadWorksheets();
+        }
+    }
+
+    get worksheets() {
+        return this.worksheetController.all && this.worksheetController.getChildren(this.course);
+    }
+
+    @Watch('worksheets')
+    private onWorksheetsChanged(value: Worksheet[], oldValue: Worksheet[]) {
+        if (this.userController.userState!.userGroup === UserGroup.Teacher) {
+            if (!value.every((worksheet: Worksheet) => oldValue.includes(worksheet))) {
+                // if value and oldValue are different
                 try {
-                    this.worksheetController.loadChildren(course);
+                    this.courseController.save(new Course(
+                        this.course.id,
+                        this.course.name,
+                        this.course.description,
+                        this.course.alias,
+                        value.map((worksheet: Worksheet) => worksheet.id),
+                    ));
                 } catch (e) {
                     alert(e.message);
-                }
-            }
-        }
-
-        get isStudentsViewActive() {
-            this.setIsStudentsViewActive();
-            return this._isStudentsViewActive;
-        }
-
-        private setIsStudentsViewActive() {
-            if (this.userController.userState !== undefined) {
-                if (this.userController.userState.userGroup === UserGroup.Student ||
-                    this.userController.userState.userGroup === UserGroup.Unauthenticated) {
-                    this._isStudentsViewActive = true;
-                }
-            }
-        }
-
-        get hasUserWritePermission() {
-            return (this.userController.userState!.userGroup === UserGroup.Teacher);
-        }
-
-        get courseAlias() {
-            return this.$route.params.courseId;
-        }
-
-        get courseId() {
-            return this.courseController.aliases.get(this.courseAlias) || '';
-        }
-
-        get course() {
-            return this.courseController.courses.get(this.courseId) || new Course('', '', '', '', []);
-        }
-
-        @Watch('course')
-        private onCourseChanged(value: Course, oldValue: Course) {
-            if (value === undefined || value.id === '') {
-                // course not yet loaded
-                return;
-            } else if (oldValue === undefined || oldValue.id === '' || value.id !== oldValue.id) {
-                // course loaded or changed, load worksheets of this course
-                this.loadWorksheets();
-            }
-        }
-
-        get worksheets() {
-            return this.worksheetController.all && this.worksheetController.getChildren(this.course);
-        }
-
-        @Watch('worksheets')
-        private onWorksheetsChanged(value: Worksheet[], oldValue: Worksheet[]) {
-            if (this.userController.userState!.userGroup === UserGroup.Teacher) {
-                if (!value.every((worksheet: Worksheet) => oldValue.includes(worksheet))) {
-                    // if value and oldValue are different
-                    try {
-                        this.courseController.save(new Course(
-                            this.course.id,
-                            this.course.name,
-                            this.course.description,
-                            this.course.alias,
-                            value.map((worksheet: Worksheet) => worksheet.id),
-                        ));
-                    } catch (e) {
-                        alert(e.message);
-                    }
                 }
             }
         }
     }
+}
 </script>
 
 <style scoped>
@@ -237,7 +236,6 @@
 
     .studentViewButton {
         margin-bottom: 15px;
-        float: right;
     }
 
     .headings {
