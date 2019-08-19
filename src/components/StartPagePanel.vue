@@ -35,9 +35,11 @@
 
                     <div>
                         <b-form-input class="inputfield" v-model="username"
-                                      :placeholder="$t('home.name')"></b-form-input>
+                                      :placeholder="$t('home.name')"
+                                      @keydown.enter.native="loginTeacher(username, password)"></b-form-input>
                         <b-form-input class="inputfield" v-model="password" type="password"
-                                      :placeholder="$t('home.pw')"></b-form-input>
+                                      :placeholder="$t('home.pw')"
+                                      @keydown.enter.native="loginTeacher(username, password)"></b-form-input>
                     </div>
 
                     <template slot="modal-footer">
@@ -52,15 +54,14 @@
                     </p>
                     <div>
                         <b-form-input class="inputfield" v-model="username"
-                                      :placeholder="$t('home.name')"></b-form-input>
-                    </div>
-                    <div>
+                                      :placeholder="$t('home.name')"
+                                      @keydown.enter.native="registration(username, password, repeatedpw)"></b-form-input>
                         <b-form-input class="inputfield" v-model="password" type="password"
-                                      :placeholder="$t('home.pw')"></b-form-input>
-                    </div>
-                    <div>
+                                      :placeholder="$t('home.pw')"
+                                      @keydown.enter.native="registration(username, password, repeatedpw)"></b-form-input>
                         <b-form-input class="inputfield" v-model="repeatedpw" type="password"
-                                      :placeholder="$t('home.repeatedpw')"></b-form-input>
+                                      :placeholder="$t('home.repeatedpw')"
+                                      @keydown.enter.native="registration(username, password, repeatedpw)"></b-form-input>
                     </div>
                     <template slot="modal-footer">
                         <b-button size="sm" @click="registration(username, password, repeatedpw)">
@@ -78,7 +79,8 @@
                     </p>
                     <div>
                         <b-form-input class="inputfield" v-model="courseId"
-                                      :placeholder="$t('home.courseId')"></b-form-input>
+                                      :placeholder="$t('home.courseId')"
+                                      @keydown.enter.native="enterCourse(courseId)"></b-form-input>
                     </div>
                     <template slot="modal-footer">
                         <b-button size="sm" @click="enterCourse(courseId)">
