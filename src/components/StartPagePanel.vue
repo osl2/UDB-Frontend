@@ -66,6 +66,9 @@
             <template v-else-if="type === 'student'">
                 <b-button class="btn btn-lg btn-block" v-b-modal.modal-joinCourse>{{buttonName}}</b-button>
                 <b-modal id="modal-joinCourse" :ok-title="$t('home.join')" :cancel-title="$t('home.cancel')">
+                    <p class=error>
+                        {{errorMsg}}
+                    </p>
                     <div>
                         <b-form-input class="inputfield" v-model="courseId"
                                       :placeholder="$t('home.courseId')"></b-form-input>
@@ -149,6 +152,7 @@
 
 
             this.userController.register(username, password).then((_) => {
+                alert(this.$t('home.successRegistration') as string);
                 this.$router.push(this.path);
             }).catch((e) => {
                 this.errorMsg = this.$t('home.errorRegistration') as string;
@@ -159,23 +163,21 @@
         private enterCourse(courseId: string): void {
             if (!courseId) {
                 this.errorMsg = this.$t('home.errorCourseId') as string;
+                return;
             }
-            this.userController.userState!.userGroup = UserGroup.Student;
-            this.$router.push(this.path + courseId);
+            try{
+                this.courseController.loadWithAlias(courseId);
+                this.userController.userState!.userGroup = UserGroup.Student;
+                this.$router.push(this.path + courseId);
+            }catch (e) {
+                alert(e.message);
+                alert(this.$t('home.noCourse') as string);
+                return;
+            }
+
         }
 
-        private checkCourseEntry(courseId: string): boolean {
-            if (this.courseController.get(courseId) === undefined) {
-                alert(this.$t('home.alertNoCourse') as string);
-                return false;
-            }
-            // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
-            if (this.userController.getCurrentUserGroup() === UserGroup.Teacher) {
-                return true;
-            }
-            this.userController.switchUserGroup(UserGroup.Student);
-            return true;
-        }
+
 
         private checkRegistration(username: string, password: string): boolean {
             alert('TODO: serverseitige Registrierungsmethode aufrufen.');

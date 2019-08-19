@@ -86,7 +86,7 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
                         </b-form-group>
 
 
-                        <b-form-group :label="$t('subtaskCreation.solution')">
+                        <b-form-group :label="$t('subtaskCreation.visible')">
                             <b-form-radio v-model="subtask.isSolutionVisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                             <b-form-radio v-model="subtask.isSolutionVisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                         </b-form-group>
@@ -129,9 +129,9 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
                     </b-form-group>
 
                     <div v-if="subtask.isSolutionVeryfiable">
-                        <b-form-input v-model="subtask.solution.querySolution" :placeholder="$t('subtaskCreation.solution')"></b-form-input>
+                        <b-form-input v-model="subtask.solution.querySolution" :placeholder="$t('subtaskCreation.visible')"></b-form-input>
 
-                        <b-form-group :label="$t('subtaskCreation.solution')">
+                        <b-form-group :label="$t('subtaskCreation.visible')">
                             <b-form-radio v-model="subtask.isSolutionVisible" :value="true">{{$t('subtaskCreation.yes')}}</b-form-radio>
                             <b-form-radio v-model="subtask.isSolutionVisible" :value="false">{{$t('subtaskCreation.no')}}</b-form-radio>
                         </b-form-group>

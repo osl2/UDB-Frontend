@@ -21,13 +21,14 @@ const de = {
     join: 'Beitreten',
     alertNoCourse: 'Laden des Kurses ist fehlgeschlagen: Es wurde kein Kurs mit der eingegebenen ID gefunden. ' +
         'Bitte versuche es erneut.',
-    errorCourseId: 'Gib eine KursId ein',
+    errorCourseId: 'Gib eine Kurs-Id ein',
     errorUser: 'Gib einen Nutzernamen ein',
     errorPw: 'Gib ein Passwort ein',
     error2Pw: 'Gib beide Passwörter ein',
     errorPwEqual: 'Die Passwörter stimmen nicht überein',
     errorLogin: 'Anmeldung fehlgeschlagen',
     errorRegistration: 'Registrierung fehlgeschlagen',
+    successRegistration: 'Registrierung erfolgreich',
   },
   sandbox: {
     titleStartPage: 'Freier Modus',
@@ -40,6 +41,8 @@ const de = {
     uploadDb: 'Datenbanken hochladen',
     alertCourse: 'Kurs',
     alertDelete: 'wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden',
+    alertName: 'Gib einen Namen für den Kurs an.',
+    notAuthorized: 'Du bist nicht passend authorisiert',
   },
   course: {
     titleStartPage: 'Kursbereich',
@@ -48,6 +51,7 @@ const de = {
     alertDelete: 'Arbeitsblatt wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden!',
     alertEditWorksheet: 'Aufgabenblatt wirklich bearbeiten? Schüler können ihren aktuellen Bearbeitungsstand ' +
       'eventuell nicht mehr importieren, da die Aufgaben dann eventuell nicht mehr kompatibel sind.',
+    alertName: 'Gib einen Namen für das Arbeitsblatt an',
   },
   courseViewStudent: {
     solveWorksheetButton: 'Blatt bearbeiten',

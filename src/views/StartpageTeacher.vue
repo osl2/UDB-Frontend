@@ -85,6 +85,10 @@
         * Method to create a new Course with a name and description given by the user.
          */
         public addCourse(name: string, description: string) {
+            if(!name){
+                alert(this.$t('teacher.alertCourse') as string);
+                return;
+            }
                 this.courseController.create(new Course("", name, description, "", [])).catch((e) => {
                   alert(e.message);
                 });

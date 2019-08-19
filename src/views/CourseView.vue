@@ -111,7 +111,10 @@
         }
 
         public createWorksheet(name: string) {
-
+            if(!name){
+                alert(this.$t('course.alertName') as string);
+                return;
+            }
                 this.worksheetController.create(new Worksheet('', name, [], false, false)).then((worksheetId) => {
                     this.course.worksheetIds.push(worksheetId);
                     this.courseController.save(this.course);
