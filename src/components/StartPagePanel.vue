@@ -5,22 +5,37 @@
             <p class="card-text">
                 {{ description }}
             </p>
+        </div>
+        <div class="card-footer">
             <!--This section determines the content of the bottom of the panel
-                    teacher: two modal buttons, one for login with two input fields and one for registration with 3input fields
-                    student: A modal button to enter a course-id-->
+        teacher: two modal buttons, one for login with two input fields and one for registration with 3input fields
+        student: A modal button to enter a course-id-->
             <template v-if="type === 'teacher'">
-                <b-button v-if='!loggedIn' class="btn btn-lg" v-b-modal.modal-login style="margin-left: 10px;">
-                    {{$t('home.login')}}
-                </b-button>
+                <div class="btn-toolbar justify-content-center">
+                    <b-button v-if='!loggedIn' class="btn btn-lg mr-3" v-b-modal.modal-login>
+                        {{$t('home.login')}}
+                    </b-button>
+
+
+                    <b-button v-if='!loggedIn' class="btn btn-lg" v-b-modal.modal-registration>
+                        {{ $t('home.register') }}
+                    </b-button>
+                </div>
+
+                <router-link :to="path">
+                    <b-button v-if='loggedIn' tag="button" class="btn btn-lg btn-block btn-secondary">
+                        <span v-html="$t('home.alreadyLoggedIn',{ userName: this.userController.userState.name})"></span>
+                    </b-button>
+                </router-link>
+
                 <b-modal id="modal-login">
                     <p class=error>
                         {{errorMsg}}
                     </p>
+
                     <div>
                         <b-form-input class="inputfield" v-model="username"
                                       :placeholder="$t('home.name')"></b-form-input>
-                    </div>
-                    <div>
                         <b-form-input class="inputfield" v-model="password" type="password"
                                       :placeholder="$t('home.pw')"></b-form-input>
                     </div>
@@ -31,9 +46,6 @@
                         </b-button>
                     </template>
                 </b-modal>
-
-                <b-button v-if='!loggedIn' class="btn btn-lg" v-b-modal.modal-registration>{{ $t('home.register') }}
-                </b-button>
                 <b-modal id="modal-registration">
                     <p class=error>
                         {{errorMsg}}
@@ -56,11 +68,6 @@
                         </b-button>
                     </template>
                 </b-modal>
-                <router-link :to="path">
-                    <b-button v-if='loggedIn' tag="button" class="btn btn-lg btn-block btn-secondary">
-                        <span v-html="$t('home.alreadyLoggedIn',{ userName: this.userController.userState.name})"></span>
-                    </b-button>
-                </router-link>
             </template>
 
             <template v-else-if="type === 'student'">
@@ -165,18 +172,17 @@
                 this.errorMsg = this.$t('home.errorCourseId') as string;
                 return;
             }
-            try{
+            try {
                 this.courseController.loadWithAlias(courseId);
                 this.userController.userState!.userGroup = UserGroup.Student;
                 this.$router.push(this.path + courseId);
-            }catch (e) {
+            } catch (e) {
                 alert(e.message);
                 alert(this.$t('home.noCourse') as string);
                 return;
             }
 
         }
-
 
 
         private checkRegistration(username: string, password: string): boolean {
