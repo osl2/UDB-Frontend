@@ -91,6 +91,7 @@
     import UserGroup from "@/dataModel/UserGroup";
     import UserController from "@/controller/UserController";
     import User from '@/dataModel/User';
+    import Course from "@/dataModel/Course";
 
     @Component
     export default class StartPagePanel extends Vue {
@@ -160,27 +161,26 @@
             if (!courseId) {
                 this.errorMsg = this.$t('home.errorCourseId') as string;
             }
-            this.userController.userState!.userGroup = UserGroup.Student;
-            this.$router.push(this.path + courseId);
-        }
-
-        private checkCourseEntry(courseId: string): boolean {
-            if (this.courseController.get(courseId) === undefined) {
-                alert(this.$t('home.alertNoCourse') as string);
-                return false;
-            }
-            // if a logged in teacher uses the course entry point the current user should not get set to UserGroup.Student
-            if (this.userController.getCurrentUserGroup() === UserGroup.Teacher) {
-                return true;
-            }
-            this.userController.switchUserGroup(UserGroup.Student);
-            return true;
-        }
-
-        private checkRegistration(username: string, password: string): boolean {
-            alert('TODO: serverseitige Registrierungsmethode aufrufen.');
-            this.userController.switchUserGroup(UserGroup.Teacher);
-            return true;
+            this.courseController.getWithAlias(courseId)
+              .then((course: Course) => {
+                if (this.userController.getCurrentUserGroup() !== UserGroup.Teacher) {
+                  this.userController.switchUserGroup(UserGroup.Student);
+                }
+                this.$router.push(this.path + courseId);
+              })
+              .catch((error) => {
+                switch (error.status) {
+                  case 404:
+                    alert("ERROR: Dieser Kurs existiert nicht!");
+                    break;
+                  case 500:
+                    alert("ERROR: Der Server ist abgekackt!");
+                    break;
+                  default:
+                    alert("ERROR: Etwas ist schiefgelaufen");
+                    break;
+                }
+              })
         }
 
         private created() {
