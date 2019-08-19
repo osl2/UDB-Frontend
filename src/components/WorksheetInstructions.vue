@@ -22,18 +22,18 @@ import SubtaskController from "@/controller/SubtaskController";
 
 export default class WorksheetInstructions extends Vue {
   @Prop() private task!: Task;
+  private subtasks: Subtask[] = [];
 
   private subtaskController: SubtaskController = this.$store.getters.subtaskController;
 
   public created() {
     this.subtaskController = this.$store.getters.subtaskController;
-    this.subtaskController.loadChildren(this.task);
+    this.subtaskController.getChildrenWithoutSolution(this.task).then((subtasks: Subtask[]) =>
+    {
+      this.subtasks = subtasks;
+    })
   }
 
-  get subtasks(): Subtask[] {
-    return this.subtaskController.getAllWithoutSolution();
-
-  }
 
 }
 </script>
