@@ -28,7 +28,7 @@
                     </b-button>
                 </router-link>
 
-                <b-modal id="modal-login">
+                <b-modal id="modal-login" @hidden="resetErrorMsgOnModalHide">
                     <p class=error>
                         {{errorMsg}}
                     </p>
@@ -48,7 +48,7 @@
                         </b-button>
                     </template>
                 </b-modal>
-                <b-modal id="modal-registration">
+                <b-modal id="modal-registration" @hidden="resetErrorMsgOnModalHide">
                     <p class=error>
                         {{errorMsg}}
                     </p>
@@ -73,7 +73,8 @@
 
             <template v-else-if="type === 'student'">
                 <b-button class="btn btn-lg btn-block" v-b-modal.modal-joinCourse>{{buttonName}}</b-button>
-                <b-modal id="modal-joinCourse" :ok-title="$t('home.join')" :cancel-title="$t('home.cancel')">
+                <b-modal id="modal-joinCourse" :ok-title="$t('home.join')" :cancel-title="$t('home.cancel')"
+                         @hidden="resetErrorMsgOnModalHide">
                     <p class=error>
                         {{errorMsg}}
                     </p>
@@ -203,6 +204,10 @@
             } else {
                 this.loggedIn = false;
             }
+        }
+
+        private resetErrorMsgOnModalHide(): void {
+            this.errorMsg = "";
         }
 
 
