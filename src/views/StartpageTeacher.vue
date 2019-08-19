@@ -60,6 +60,9 @@
     export default class StartpageTeacher extends Vue {
 
         // Data
+        private courses: Course[] = [];
+        private databases: Database[] = [];
+        private loading = true;
         public messages: string[] = [];
         private dbErrorMsg: string = '';
         private databaseController: DatabaseController = this.$store.getters.databaseController;
@@ -85,9 +88,14 @@
         * Method to create a new Course with a name and description given by the user.
          */
         public addCourse(name: string, description: string) {
-                this.courseController.create(new Course("", name, description, "", [])).catch((e) => {
-                  alert(e.message);
-                });
+            let newCourse = new Course("", name, description, "", [])
+            this.courseController.create(newCourse)
+              .then(() => {
+                this.courses.push(newCourse)
+              })
+              .catch((e) => {
+                alert(e.message);
+              });
         }
 
         /*
@@ -95,7 +103,11 @@
          */
         public removeCourse(course: Course) {
             if (confirm(this.$t('teacher.alertCourse') as string + course.name + this.$t('teacher.alertDelete')as string)) {
-                this.courseController.remove(course);
+                this.courseController.remove(course)
+                  .then(() => {
+                    this.courses = this.courses.filter((c: Course) => c.id !== course.id);
+                  })
+                  .catch((e) => alert("Kurs konnte nicht gelöscht werden. Sind noch Worksheets enthalten?\n" + e));
             }
         }
 
@@ -107,19 +119,26 @@
                 this.$router.push('/');
                 return;
             }
-            this.courseController.loadAll();
-            this.databaseController.loadAll();
+            this.courseController.getAll()
+              .then((courses: Course[]) => {
+                this.courses = courses;
+                this.loading = false;
+              })
+              .catch((error) => {
+                alert(error);
+                console.log(error);
+              });
+            this.databaseController.getAll()
+              .then((databases: Database[]) => {
+                this.databases = databases;
+              })
+              .catch((error) => {
+                  alert(error);
+                  console.log(error);
+             });
         }
 
         // Computed methods
-
-        get courses() {
-            return this.courseController.all;
-        }
-
-        get databases() {
-            return this.databaseController.all;
-        }
 
         private uploadTrigger(event: Event) {
             document.getElementById('fileUpload')!.click();
@@ -133,8 +152,10 @@
             for (let i = 0; i < files.length; i++) {
                 const file = files.item(i)!;
                 this.databaseController.importObject(file).then((database) => {
-                    this.databaseController.create(database).catch((error: Error) => {
-                        this.dbErrorMsg = error.message;
+                    this.databaseController.create(database).then(() => {
+                      this.databases.push(database);
+                    }).catch((error: Error) => {
+                        this.dbErrorMsg = "Error";
                     });
                 });
             }
@@ -143,7 +164,9 @@
 
         private deleteDatabase(database: Database) {
             if (confirm('Datenbank wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
-                this.databaseController.remove(database);
+                this.databaseController.remove(database).then(() => {
+                  this.databases = this.databases.filter((db) => db.id !== database.id);
+                }).catch(() => {});
             }
         }
 
