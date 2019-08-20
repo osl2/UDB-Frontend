@@ -21,7 +21,7 @@
                           :key="task.id"
                           :databases="databases"
                           :initialTask="task"
-                          @save="save"
+                          @updateTasks="updateTasks"
                           @delete="deleteTask"
             ></TaskCreation>
         </div>
@@ -38,9 +38,9 @@ import TaskCreation from '@/components/TaskCreation.vue';
 import DatabaseController from "@/controller/DatabaseController";
 import WorksheetController from "@/controller/WorksheetController";
 import Worksheet from '@/dataModel/Worksheet';
-import CourseController from "@/controller/CourseController";
 import Task from "@/dataModel/Task";
 import TaskController from "@/controller/TaskController";
+import Database from "@/dataModel/Database";
 
 
 
@@ -53,83 +53,93 @@ export default class TeacherWorksheet extends Vue {
 
     private databaseController: DatabaseController = this.$store.getters.databaseController;
     private worksheetController: WorksheetController = this.$store.getters.worksheetController;
-    private courseController: CourseController = this.$store.getters.courseController;
     private taskController: TaskController = this.$store.getters.taskController;
+
+    private worksheet: Worksheet = new Worksheet('', '', [], false, false);
+    private tasks: Task[] = [];
+    private databases: Database[] = [];
+
 
     public created() {
       this.databaseController = this.$store.getters.databaseController;
       this.worksheetController = this.$store.getters.worksheetController;
-      this.courseController = this.$store.getters.courseController;
       this.taskController = this.$store.getters.taskController;
 
-      this.courseController.loadWithAlias(this.$route.params.courseId);
-      this.worksheetController.load(this.$route.params.worksheetId);
+
+      this.worksheetController.get(this.$route.params.worksheetId).then((worksheet: Worksheet) =>
+      {
+        this.worksheet = worksheet;
+        this.taskController.getChildren(this.worksheet).then((tasks: Task[]) => {
+          this.tasks = tasks;
+        }
+        // TODO catchen
+      ).catch(() => {});
+      }).catch(() => {});
+
+
+      this.databaseController.getAll().then((databases: Database[]) =>
+      {
+        this.databases = databases;
+        // TODO catchen
+      }).catch(() => {});
     }
+
+
 
     public createTask() {
-        this.taskController.create(new Task('', '', '', []))
-          .then((taskId: string) => {
+      const task = new Task('', '', '', []);
+      this.taskController.create(task)
+        .then((taskId: string) => {
+            task.id = taskId;
+            this.tasks.push(task);
             this.worksheet.taskIds.push(taskId);
-          });
+            // TODO entfernen, wenn create auf dem Backend auch das Worksheet aktualisiert
+            this.worksheetController.save(this.worksheet).then();
+          })
+        // TODO catchen
+        .catch(() => {});
     }
+
+
 
     public deleteTask(task: Task) {
-        this.taskController.remove(task);
+        this.taskController.remove(task).then(() => {
+        this.tasks = this.tasks.filter((oldTask: Task) => oldTask.id !== task.id);
         this.worksheet.taskIds = this.worksheet.taskIds.filter((id: string) => id !== task.id);
-        this.worksheetController.save(this.worksheet);
+        // TODO entfernen, wenn delete auf dem Backend auch das Worksheet aktualisiert
+        this.worksheetController.save(this.worksheet).then();
+        });
     }
 
+
+
     public save() {
-      this.worksheetController.save(this.worksheet);
+      this.worksheetController.save(this.worksheet).then(() =>
+      {
+        // TODO Sprache auslagern
+        alert("Speichern erfolgreich");
+      })
+      // TODO catchen
+        .catch(() => {});
     }
+    /*
+     this method gets calles whenever a task gets saved in taskCreation.vue. That is so the task
+     array in this view can get updated. It just gets called when the save call to the API was successful.
+     */
+  public updateTasks() {
+    this.taskController.getChildren(this.worksheet).then((tasks: Task[]) => {
+      this.tasks = tasks;
+      // TODO catchen
+    }).catch(() => {});
+  }
+
+
 
     public toCourseView() {
       this.save();
-      this.$router.push('/courseView');
+      this.$router.push('/courseView/' + this.$route.params.courseId);
     }
 
-  get databases() {
-    return this.databaseController.all;
-  }
-
-  /*
-  returns a worksheet and calls the setVar method to update the variables to match the worksheet.
-  this is used when an existing worksheet is loaded not when a new one is created
-   */
-  get worksheet(): Worksheet {
-    let tempWorksheet = new Worksheet('', '', [], false, false);
-    try {
-      tempWorksheet = this.worksheetController.get(this.$route.params.worksheetId);
-    } catch (e) {
-      return tempWorksheet;
-    }
-    return tempWorksheet;
-  }
-  @Watch('worksheet')
-  public onWorksheetChange(value: Worksheet, oldValue: Worksheet) {
-    if (value === undefined) {
-      return;
-    }
-    if (oldValue === undefined || value.id !== oldValue.id) {
-      this.taskController.loadChildren(value);
-    }
-  }
-
-  get tasks(): Task[] {
-    return this.taskController.all && this.taskController.getChildren(this.worksheet);
-  }
-  @Watch('tasks')
-  public onTasksChange(value: Task[], oldValue: Task[]) {
-    if (value === undefined) {
-      return;
-    }
-    if (value.length !== oldValue.length
-      || !value.every((task: Task, index: number) => oldValue[index].id === task.id)) {
-      this.worksheet.taskIds = value.map((task: Task) => task.id);
-      this.worksheetController.save(this.worksheet);
-      this.taskController.loadChildren(this.worksheet);
-    }
-  }
 }
 </script>
 

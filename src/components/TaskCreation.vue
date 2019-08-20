@@ -20,11 +20,9 @@
         <div v-if="dbOptions !== null">
             <SubtaskCreation v-for="subtask in subtasks"
                              :key="subtask.id"
-                             :dbId="task.databaseId"
                              :initialSubtask="subtask"
-                             @save="save"
-                             @deleteSubtask="deleteSubtask"
-                             @createSubtask="createSubtask"
+                             @delete="deleteSubtask"
+                             @updateSubtasks="updateSubtasks"
             ></SubtaskCreation>
         </div>
         <div>
@@ -68,17 +66,18 @@ export default class TaskCreation extends Vue {
   @Prop() private databases!: Database[];
   @Prop() private initialTask!: Task;
 
+  private taskController: TaskController = this.$store.getters.taskController;
+  private subtaskController: SubtaskController = this.$store.getters.subtaskController;
+
   private task: Task = new Task('', '', '', []);
+  private subtasks: Subtask[] = [];
   private showfull: boolean = true;
   private dbOptions: Array<{text: string, value: string}> = [{text: "Wähle eine Datenbank aus", value: ''}];
   private subtaskType: string = "";
   private subtaskTypes: string[] = ["SQL", "Multiple-Choice", "Text", "Instruction"];
-  private taskController: TaskController = this.$store.getters.taskController;
-  private subtaskController: SubtaskController = this.$store.getters.subtaskController;
 
     /*
-    method is called when the component is created. it loads the databases connected to the user and loads a task
-    if one was given
+    method is called when the component is created. It loads the databases connected to the user and loads a task
      */
    public created() {
         this.task = this.initialTask;
@@ -87,77 +86,76 @@ export default class TaskCreation extends Vue {
         for (const database of this.databases) {
             this.dbOptions.push({text: database.name, value: database.id});
         }
-        this.subtaskController.loadChildren(this.task);
+        this.subtaskController.getChildren(this.task).then((subtasks: Subtask[]) => {
+          this.subtasks = subtasks;
+          // TODO catchen
+        }).catch(() => {});
     }
-
-   get subtasks(): Subtask[] {
-     const subtasks = this.subtaskController.getChildren(this.task);
-     return this.subtaskController.all && subtasks;
-   }
-
-      // creates a new entry in the subtask array
-   public createSubtask() {
-     switch (this.subtaskType) {
-       case "SQL":
-         this.newSqlTask();
-         break;
-       case "Multiple-Choice":
-         this.newMCTask();
-         break;
-       case "Text":
-         this.newTextTask();
-         break;
-       case "Instruction":
-         this.newInstructionTask();
-         break;
-     }
-   }
 
    public newSqlTask() {
-        this.subtaskController.create(
-          new SqlTask('', new SqlSolution('', [], [[]]), '',
-            false, false, false, false, AllowedSqlStatements.NoRestriction),
-        ).then((subtaskId: string) => {
+     const subtask = new SqlTask('', new SqlSolution('', [], [[]]), '',
+       false, false, false, false, AllowedSqlStatements.NoRestriction);
+        this.subtaskController.create(subtask).then((subtaskId: string) => {
+          subtask.id = subtaskId;
+          this.subtasks.push(subtask);
           this.task.subtaskIds.push(subtaskId);
+          // TODO Methode entfernen, sobald Create auf dem Backend den Task aktualisisert
           this.save();
-        });
+          // TODO catchen
+        }).catch(() => {});
     }
    public newMCTask() {
-        this.subtaskController.create(
-          new MultipleChoiceTask('', new MultipleChoiceSolution([]), '', false, false, []),
-        ).then((subtaskId: string) => {
+     const subtask = new MultipleChoiceTask('', new MultipleChoiceSolution([0]), '', false, false, []);
+        this.subtaskController.create(subtask).then((subtaskId: string) => {
+          subtask.id = subtaskId;
+          this.subtasks.push(subtask);
           this.task.subtaskIds.push(subtaskId);
+          // TODO Methode entfernen, sobald Create auf dem Backend den Task aktualisisert
           this.save();
-        });
+          // TODO catchen
+        }).catch(() => {});
       }
    public newTextTask() {
-        this.subtaskController.create(
-          new PlainTextTask('', new PlainTextSolution(''), '', false, false),
-        ).then((subtaskId: string) => {
+     const subtask = new PlainTextTask('', new PlainTextSolution(''), '', false, false);
+        this.subtaskController.create(subtask).then((subtaskId: string) => {
+          subtask.id = subtaskId;
+          this.subtasks.push(subtask);
           this.task.subtaskIds.push(subtaskId);
+          // TODO Methode entfernen, sobald Create auf dem Backend den Task aktualisisert
           this.save();
-        });
+          // TODO catchen
+        }).catch(() => {});
       }
    public newInstructionTask() {
-        this.subtaskController.create(
-          new InstructionTask('', ''),
-        ).then((subtaskId: string) => {
+     const subtask = new InstructionTask('', '');
+        this.subtaskController.create(subtask).then((subtaskId: string) => {
+          subtask.id = subtaskId;
+          this.subtasks.push(subtask);
           this.task.subtaskIds.push(subtaskId);
+          // TODO Methode entfernen, sobald Create auf dem Backend den Task aktualisisert
           this.save();
-        });
+          // TODO catchen
+        }).catch(() => {});
    }
 
-      /*
-        sends a create request to the server if the task defined by the component is new
-        or sends an update request to the server if an existing task was changed
-        emits the save call to the TeacherWorksheet view to also update the worksheet.
-        this is needed to ensure that a task always has a worksheet it is assigned to, even if the website is
-        closed during the creation
-        index: the index where the subtask can be found that was saved and started the save call
-        subtaskId: id of the subtask that was changed
-     */
+
   public save() {
-    this.taskController.save(this.task);
+    this.taskController.save(this.task).then(() => {
+      this.$emit('updateTasks');
+      // TODO Sprache auslagern, bzw auch nicht, Methode wird noch gelöscht
+      alert("Subtask wurde Task erfolgreich hinzugefügt");
+    });
+  }
+
+  /*
+   this method gets calles whenever a subtask gets saved in SubtaskCreation.vue. That is so the subtask
+   array in this view can get updated. It just gets called when the save call to the API was successful.
+   */
+  public updateSubtasks(){
+     this.subtaskController.getChildren(this.task).then((subtasks: Subtask[]) => {
+       this.subtasks = subtasks;
+       // TODO catchen
+     }).catch(() => {});
   }
 
   /*
@@ -167,14 +165,21 @@ export default class TaskCreation extends Vue {
     this.showfull = !this.showfull;
   }
 
+  public deleteSubtask(subtask: Subtask) {
+    this.subtaskController.remove(subtask).then(() => {
+      this.subtasks = this.subtasks.filter((oldSubtask: Subtask) => oldSubtask.id !== subtask.id);
+      this.task.subtaskIds = this.task.subtaskIds.filter((id: string) => id !== subtask.id);
+      // TODO entfernen, wenn delete auf dem Backend auch den Task aktualisiert
+      this.taskController.save(this.task).then();
+    });
+  }
+
   /*
-    sends a request to the server to delete the task that is currently displayed in this component.
-    emits a delete and taskindex to the teacherworksheet to also delete the task from the array of tasks assigned
-    to the worksheet
-     */
+   calls the method deleteTask in TeacherWorksheet.vue to send a delete request to the server and delete it in
+   the data of the component.
+   */
   public deleteTask() {
     if (confirm(this.$t('subtaskCreation.alertDelete') as string)) {
-      this.taskController.remove(this.task);
       this.$emit('delete', this.task);
     }
   }
