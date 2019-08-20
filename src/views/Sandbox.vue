@@ -127,9 +127,8 @@
         position: relative;
         margin-bottom: 15px;
     }
-</style>
-<style>
-    .clear {
-        clear: both;
-    }
+
+    /deep/.clear {
+         clear: both;
+     }
 </style>
