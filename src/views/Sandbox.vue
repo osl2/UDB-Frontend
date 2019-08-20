@@ -5,7 +5,7 @@
                            ref="databaseComponent"
                            @databaseExists="eventDbExists" @reset="reset"></DatabaseComponent>
         <div v-if="databaseExists" :databaseExists:sync="databaseExists">
-            <div class="switchButton float-right mr-3">
+            <div class="btn switchButton float-right">
                 <b-button v-on:click="switchComponent"
                           v-if="isPointAndClickActive">
                     {{$t('sandbox.switchToPlainSQL')}}
@@ -30,8 +30,6 @@
                 <QueryResultComp :columns="queryResult.result.columns" :rows="queryResult.result.values"
                 ></QueryResultComp>
             </div>
-
-
         </div>
     </div>
 </template>
