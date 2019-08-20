@@ -19,11 +19,11 @@
                 >{{$t('courseViewStudent.showSolutionsheetButton')}}
                 </b-button>
                 <b-card-text slot="footer"
-                             v-if="!isStudentsViewActive && worksheet.isOnline"
+                             v-if="!isStudentsViewActive && worksheet.isSolutionOnline"
                 >{{$t('solutionsheetList.solutionsheetOnline')}}
                 </b-card-text>
                 <b-card-text slot="footer"
-                             v-if="!isStudentsViewActive && !worksheet.isOnline"
+                             v-if="!isStudentsViewActive && !worksheet.isSolutionOnline"
                 >{{$t('solutionsheetList.solutionsheetOffline')}}
                 </b-card-text>
             </b-card>
