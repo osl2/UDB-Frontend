@@ -12,7 +12,7 @@
         student: A modal button to enter a course-id-->
             <template v-if="type === 'teacher'">
                 <div class="btn-toolbar justify-content-center">
-                    <b-button v-if='!loggedIn' class="btn btn-lg mr-3" v-b-modal.modal-login>
+                    <b-button v-if='!loggedIn' class="btn btn-lg mr-1 mr-sm-0 mr-xl-3 mb-0 mb-sm-1 mb-xl-0" v-b-modal.modal-login>
                         {{$t('home.login')}}
                     </b-button>
                     <b-button v-if='!loggedIn' class="btn btn-lg" v-b-modal.modal-registration>
