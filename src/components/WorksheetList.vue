@@ -36,7 +36,7 @@
                     </b-button>
                 </div>
                 <div v-if="!isStudentsViewActive" class="btn-toolbar justify-content-center" slot="footer">
-                    <b-button class="bg-danger mr-3"
+                    <b-button class="bg-danger mr-2"
                               @click="$emit('deleteWorksheet', worksheet)"
                     >{{$t('worksheetList.delete')}}
                     </b-button>
@@ -64,6 +64,8 @@
                 >{{$t('worksheetList.add')}}
                 </b-button>
             </b-card>
+            <!--Empty Div is needed to fix slider behaviour!-->
+            <div class="ml-3"></div>
         </div>
     </div>
 </template>

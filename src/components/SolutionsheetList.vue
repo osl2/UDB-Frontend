@@ -5,7 +5,7 @@
                     v-for="worksheet in worksheets"
                     :key="worksheet.id"
                     bg-variant="light"
-                    class="card ml-3 col col-2"
+                    class="card ml-3 col col-2 p-0"
                     v-if="showWorksheet(worksheet)"
             >
                 <b-card-title>
@@ -27,6 +27,8 @@
                 >{{$t('solutionsheetList.solutionsheetOffline')}}
                 </b-card-text>
             </b-card>
+            <!--Empty Div is needed to fix slider behaviour!-->
+            <div class="ml-3"></div>
         </div>
     </div>
 </template>
