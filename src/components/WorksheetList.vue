@@ -1,9 +1,9 @@
 <template>
-    <div class="container-fluid bg-secondary mb-2">
+    <div class="container-fluid bg-secondary mb-5 pt-3 pb-3 pl-0">
         <div class="d-flex flex-row flex-nowrap">
             <b-card v-if="areWorksheetsEmpty"
                     bg-variant="light"
-                    class="card-custom"
+                    class="card ml-3 col col-2 p-0"
             >
                 <b-card-title>{{$t('worksheetList.noSheets')}}</b-card-title>
                 <b-button slot="footer"
@@ -12,11 +12,12 @@
                     {{$t('worksheetList.loadNew')}}
                 </b-button>
             </b-card>
+
             <b-card
                     v-for="worksheet in worksheets"
                     :key="worksheet.id"
                     bg-variant="light"
-                    class="card"
+                    class="card ml-3 col col-2 p-0"
                     v-if="showWorksheet(worksheet)"
             >
                 <b-card-title>
@@ -28,27 +29,28 @@
                             v-model="worksheet.isOnline"
                 >{{$t('worksheetList.worksheetOnline')}}
                 </b-checkbox>
-                <b-button
-                        class="bg-info"
-                        slot="footer"
-                        @click="$emit('openWorksheet', worksheet, false)"
-                        v-if="isStudentsViewActive"
-                >{{$t('courseViewStudent.solveWorksheetButton')}}
-                </b-button>
-                <b-button v-if="!isStudentsViewActive"
-                          class="bg-danger"
-                          slot="footer"
-                          @click="$emit('deleteWorksheet', worksheet)"
-                >{{$t('worksheetList.delete')}}
-                </b-button>
-                <b-button v-if="!isStudentsViewActive"
-                          class="bg-info"
-                          slot="footer"
-                          @click="$emit('openWorksheet', worksheet)"
-                >{{$t('worksheetList.edit')}}
-                </b-button>
+                <div v-if="isStudentsViewActive" class="btn-toolbar justify-content-center" slot="footer">
+                    <b-button class="bg-info"
+                              @click="$emit('openWorksheet', worksheet, false)"
+                    >{{$t('courseViewStudent.solveWorksheetButton')}}
+                    </b-button>
+                </div>
+                <div v-if="!isStudentsViewActive" class="btn-toolbar justify-content-center" slot="footer">
+                    <b-button class="bg-danger mr-3"
+                              @click="$emit('deleteWorksheet', worksheet)"
+                    >{{$t('worksheetList.delete')}}
+                    </b-button>
+                    <b-button class="bg-info"
+                              @click="$emit('openWorksheet', worksheet)"
+                    >{{$t('worksheetList.edit')}}
+                    </b-button>
+                </div>
             </b-card>
-            <b-card v-if="hasUserWritePermission && !isStudentsViewActive">
+
+            <b-card
+                    class="card ml-3 col col-2 p-0"
+                    v-if="hasUserWritePermission && !isStudentsViewActive"
+            >
                 <b-card-title>
                     {{$t('worksheetList.newSheet')}}
                 </b-card-title>
@@ -109,10 +111,16 @@
         display: flex;
     }
 
-    .card {
+    /deep/.card {
+        text-align: left;
+        min-width: 15rem;
+    }
+
+    /deep/.card-footer {
         text-align: center;
-        min-width: 14rem;
-        max-width: 14rem;
-        margin: 0 10px 0 0;
+    }
+
+    /deep/.card-title {
+        overflow-y: fragments;
     }
 </style>

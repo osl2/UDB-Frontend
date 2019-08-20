@@ -1,11 +1,11 @@
 <template>
-    <div class="container-fluid bg-secondary mb-2">
+    <div class="container-fluid bg-secondary mb-5 pt-3 pb-3 pl-0">
         <div class="d-flex flex-row flex-nowrap">
             <b-card
                     v-for="worksheet in worksheets"
                     :key="worksheet.id"
                     bg-variant="light"
-                    class="card"
+                    class="card ml-3 col col-2"
                     v-if="showWorksheet(worksheet)"
             >
                 <b-card-title>
@@ -55,12 +55,16 @@ export default Vue.extend({
         display: flex;
     }
 
-    .card {
+    /deep/.card {
+        text-align: left;
+        min-width: 15rem;
+    }
+
+    /deep/.card-footer {
         text-align: center;
-        min-width: 12rem;
-        min-height: 11rem;
-        max-width: 12rem;
-        max-height: 11rem;
-        margin: 10px 20px 10px 10px;
+    }
+
+    /deep/.card-title {
+        overflow-y: fragments;
     }
 </style>

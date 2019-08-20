@@ -87,11 +87,11 @@ const de = {
   worksheetList: {
     worksheetOnline: 'Aufgabenblatt ist online',
     worksheetOffline: 'Aufgabenblatt ist offline',
-    noSheets: 'Dieser Kurs enthält noch keine Aufgabenblätter.',
+    noSheets: 'Dieser Kurs enthält noch keine Aufgabenblätter',
     loadNew: 'Neu laden',
     delete: 'Löschen',
     edit: 'Bearbeiten',
-    newSheet: 'neues Aufgabenblatt',
+    newSheet: 'Neues Aufgabenblatt',
     add: 'Hinzufügen',
     name: 'Name',
   },
