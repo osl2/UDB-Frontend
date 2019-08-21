@@ -38,8 +38,10 @@ const de = {
   teacher: {
     titleStartPage: 'Lehrerbereich',
     uploadDb: 'Datenbanken hochladen',
+    notAuthorized: 'Kein Zugriff auf diese Seite.',
     alertCourse: 'Kurs',
-    alertDelete: 'wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden',
+    alertDatabase: 'Datenbank',
+    alertDelete: 'wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.',
   },
   course: {
     titleStartPage: 'Kursbereich',
@@ -199,6 +201,37 @@ const de = {
     open: 'Kurs öffnen',
     new: 'Neuer Kurs',
   },
+  apiError: {
+    defaultMsg: 'ERROR: Etwas ist schiefgelaufen.',
+    server500: 'ERROR: Es gab einen Fehler auf dem Server.',
+
+    // Account
+    register400:'ERROR: Benutzername existiert bereits.',
+
+    // Course
+    course404: 'ERROR: Dieser Kurs existiert nicht.',
+    courses404: 'ERROR: Kurse existieren nicht.',
+
+    // Database
+    databaseCreate: 'Beim Erstellen der Datenbank ist ein Fehler aufgetreten.',
+    database404: 'ERROR: Diese Datenbank existiert nicht.',
+    databases404: 'ERROR: Datenbanken existieren nicht.',
+
+    // Worksheet
+    worksheet404: 'ERROR: Dieses Aufgabenblatt existiert nicht.',
+    worksheets404: 'ERROR: Aufgabenblätter existieren nicht.',
+
+    // Task
+    task404: 'ERROR: Diese Aufgabe existiert nicht.',
+    tasks404: 'ERROR: Aufgaben existieren nicht.',
+
+    // Subtask
+    subtask404: 'ERROR: Diese Teilaufgabe existiert nicht.',
+    subtasks404: 'ERROR: Teilaufgaben existieren nicht.',
+
+    // Solution
+    compare404: 'ERROR: Diese Teilaufgabe hat (noch) keine (öffentlich zugängliche) Lösung zum Vergleichen.',
+  }
 };
 export default de;
 

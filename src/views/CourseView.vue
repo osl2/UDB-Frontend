@@ -106,9 +106,33 @@
                 this.worksheetController.getChildren(course)
                   .then((worksheets: Worksheet[]) => {
                     this.worksheets = worksheets;
-                  })
+                  }).catch((error) => {
+                  switch (error.status) {
+                    case 404:
+                      alert(this.$t('apiError.worksheets404') as string);
+                      break;
+                    case 500:
+                      alert(this.$t('apiError.server500') as string);
+                      break;
+                    default:
+                      alert(this.$t('apiError.defaultMsg') as string);
+                      break;
+                  }
+                });
               })
-              .catch((e) => alert(e));
+              .catch((error) => {
+                switch (error.status) {
+                  case 404:
+                    alert(this.$t('apiError.course404') as string);
+                    break;
+                  case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                  default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+                }
+              });
         }
 
         public toggleView() {
@@ -120,10 +144,18 @@
                 this.worksheetController.create(newWorksheet).then((worksheetId) => {
                     this.worksheets.push(newWorksheet);
                     this.course.worksheetIds.push(worksheetId);
-                    this.courseController.save(this.course);
+                    // TODO rausschmeißen, wenn das Backend bei create den Kurs aktualisiert
+                    this.courseController.save(this.course).then();
                     this.worksheetsChanged = true;
-                }).catch((e) => {
-                    alert(e.message);
+                }).catch((error) => {
+                  switch (error.status) {
+                    case 500:
+                      alert(this.$t('apiError.server500') as string);
+                      break;
+                    default:
+                      alert(this.$t('apiError.defaultMsg') as string);
+                      break;
+                  }
                 });
         }
 
@@ -133,16 +165,30 @@
                   .then(() => {
                     this.worksheets = this.worksheets.filter((ws: Worksheet) => ws.id !== worksheet.id);
                   })
-                  .catch((e) => {
-                    alert(e.message);
+                  .catch((error) => {
+                    switch (error.status) {
+                      case 500:
+                        alert(this.$t('apiError.server500') as string);
+                        break;
+                      default:
+                        alert(this.$t('apiError.defaultMsg') as string);
+                        break;
+                    }
                   });
             }
         }
 
         public updateWorksheet(worksheet: Worksheet) {
           this.worksheetController.save(worksheet)
-            .catch((e) => {
-              alert(e.message);
+            .catch((error) => {
+              switch (error.status) {
+                case 500:
+                  alert(this.$t('apiError.server500') as string);
+                  break;
+                default:
+                  alert(this.$t('apiError.defaultMsg') as string);
+                  break;
+              }
             });
         }
 

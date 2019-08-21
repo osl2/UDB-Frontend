@@ -127,8 +127,8 @@
                 if (success) {
                     this.$router.push(this.path);
                 } else {
-                    this.errorMsg = this.$t('home.errorLogin') as string;
-                    return;
+                  this.errorMsg = this.$t('home.errorLogin') as string;
+                  return;
                 }
             });
         }
@@ -151,8 +151,18 @@
 
             this.userController.register(username, password).then((_) => {
                 this.$router.push(this.path);
-            }).catch((e) => {
-                this.errorMsg = this.$t('home.errorRegistration') as string;
+            }).catch((error) => {
+                switch (error.status) {
+                  case 400:
+                    this.errorMsg= this.$t('apiError.register400') as string;
+                    break;
+                  case 500:
+                    this.errorMsg = this.$t('apiError.server500') as string;
+                    break;
+                  default:
+                    this.errorMsg = this.$t('apiError.defaultMsg') as string;
+                    break;
+              }
             });
 
         }
@@ -171,13 +181,13 @@
               .catch((error) => {
                 switch (error.status) {
                   case 404:
-                    alert("ERROR: Dieser Kurs existiert nicht!");
+                    alert(this.$t('apiError.course404') as string);
                     break;
                   case 500:
-                    alert("ERROR: Der Server ist abgekackt!");
+                    alert(this.$t('apiError.server500') as string);
                     break;
                   default:
-                    alert("ERROR: Etwas ist schiefgelaufen");
+                    alert(this.$t('apiError.defaultMsg') as string);
                     break;
                 }
               })

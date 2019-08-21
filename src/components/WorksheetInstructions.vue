@@ -28,9 +28,20 @@ export default class WorksheetInstructions extends Vue {
 
   public created() {
     this.subtaskController = this.$store.getters.subtaskController;
-    this.subtaskController.getChildrenWithoutSolution(this.task).then((subtasks: Subtask[]) =>
-    {
+    this.subtaskController.getChildrenWithoutSolution(this.task).then((subtasks: Subtask[]) => {
       this.subtasks = subtasks;
+    }).catch((error) => {
+      switch (error.status) {
+        case 404:
+          alert(this.$t('apiError.tasks404') as string);
+          break;
+        case 500:
+          alert(this.$t('apiError.server500') as string);
+          break;
+        default:
+          alert(this.$t('apiError.defaultMsg') as string);
+          break;
+      }
     })
   }
 

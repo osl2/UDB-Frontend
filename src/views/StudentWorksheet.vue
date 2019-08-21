@@ -99,6 +99,45 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
       private databaseController: DataManagementService<Database> = this.$store.getters.databaseController;
 
 
+  public created() {
+    this.worksheetController = this.$store.getters.worksheetController;
+    this.taskController = this.$store.getters.taskController;
+    this.subtaskController = this.$store.getters.subtaskController;
+    this.databaseController = this.$store.getters.databaseController;
+    this.worksheetController.get(this.$route.params.worksheetId).then((worksheet: Worksheet) =>
+    {
+      this.worksheet = worksheet;
+      this.taskController.getChildren(this.worksheet).then((tasks: Task[]) =>
+      {
+        this.tasks = tasks;
+      }).catch((error) => {
+        switch (error.status) {
+          case 404:
+            alert(this.$t('apiError.tasks404') as string);
+            break;
+          case 500:
+            alert(this.$t('apiError.server500') as string);
+            break;
+          default:
+            alert(this.$t('apiError.defaultMsg') as string);
+            break;
+        }
+      });
+    }).catch((error) => {
+      switch (error.status) {
+        case 404:
+          alert(this.$t('apiError.worksheet404') as string);
+          break;
+        case 500:
+          alert(this.$t('apiError.server500') as string);
+          break;
+        default:
+          alert(this.$t('apiError.defaultMsg') as string);
+          break;
+      }
+    });
+  }
+
       // methods
       /*
        Exports the solutions the student created for the worksheet
@@ -211,8 +250,18 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
                       alert(feedback.getFeedbackString());
                   }
               },
-          ).catch((response) => {
-              alert('Error comparing solution: ' + response.status + ' ' + response.statusText + ' ' + response);
+          ).catch((error) => {
+            switch (error.status) {
+              case 404:
+                alert(this.$t('apiError.compare404') as string);
+                break;
+              case 500:
+                alert(this.$t('apiError.server500') as string);
+                break;
+              default:
+                alert(this.$t('apiError.defaultMsg') as string);
+                break;
+            }
           });
       }
 
@@ -220,24 +269,6 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
       public switchback() {
           this.showSheetInstructions = true;
       }
-
-      // lifecycle methods
-
-      public created() {
-          this.worksheetController = this.$store.getters.worksheetController;
-          this.taskController = this.$store.getters.taskController;
-          this.subtaskController = this.$store.getters.subtaskController;
-          this.databaseController = this.$store.getters.databaseController;
-          this.worksheetController.get(this.$route.params.worksheetId).then((worksheet: Worksheet) =>
-          {
-            this.worksheet = worksheet;
-            this.taskController.getChildren(this.worksheet).then((tasks: Task[]) =>
-            {
-              this.tasks = tasks;
-            })
-          })
-      }
-
 
 
       /*
@@ -259,7 +290,19 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
           this.databaseController.get(this.currentTask.databaseId).then((database: Database) =>
           {
             this.database = database;
-          }).catch((e) => {alert(e)});
+          }).catch((error) => {
+            switch (error.status) {
+              case 404:
+                alert(this.$t('apiError.database404') as string);
+                break;
+              case 500:
+                alert(this.$t('apiError.server500') as string);
+                break;
+              default:
+                alert(this.$t('apiError.defaultMsg') as string);
+                break;
+            }
+          });
 
       }
   }

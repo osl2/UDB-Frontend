@@ -88,13 +88,20 @@
         * Method to create a new Course with a name and description given by the user.
          */
         public addCourse(name: string, description: string) {
-            let newCourse = new Course("", name, description, "", [])
+            let newCourse = new Course("", name, description, "", []);
             this.courseController.create(newCourse)
               .then(() => {
                 this.courses.push(newCourse)
               })
-              .catch((e) => {
-                alert(e.message);
+              .catch((error) => {
+                switch (error.status) {
+                  case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                  default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+                }
               });
         }
 
@@ -102,12 +109,22 @@
         * Method to permanently remove a course.
          */
         public removeCourse(course: Course) {
-            if (confirm(this.$t('teacher.alertCourse') as string + course.name + this.$t('teacher.alertDelete')as string)) {
+            if (confirm(this.$t('teacher.alertCourse') as string + course.name
+            + this.$t('teacher.alertDelete') as string)) {
                 this.courseController.remove(course)
                   .then(() => {
                     this.courses = this.courses.filter((c: Course) => c.id !== course.id);
                   })
-                  .catch((e) => alert("Kurs konnte nicht gelöscht werden. Sind noch Worksheets enthalten?\n" + e));
+                  .catch((error) =>  {
+                    switch (error.status) {
+                      case 500:
+                        alert(this.$t('apiError.server500') as string);
+                        break;
+                      default:
+                        alert(this.$t('apiError.defaultMsg') as string);
+                        break;
+                    }
+                  });
             }
         }
 
@@ -125,16 +142,34 @@
                 this.loading = false;
               })
               .catch((error) => {
-                alert(error);
-                console.log(error);
+                switch (error.status) {
+                  case 404:
+                    alert(this.$t('apiError.courses404') as string);
+                    break;
+                  case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                  default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+                }
               });
             this.databaseController.getAll()
               .then((databases: Database[]) => {
                 this.databases = databases;
               })
               .catch((error) => {
-                  alert(error);
-                  console.log(error);
+                switch (error.status) {
+                  case 404:
+                    alert(this.$t('apiError.databases404') as string);
+                    break;
+                  case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                  default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+                }
              });
         }
 
@@ -154,8 +189,16 @@
                 this.databaseController.importObject(file).then((database) => {
                     this.databaseController.create(database).then(() => {
                       this.databases.push(database);
-                    }).catch((error: Error) => {
-                        this.dbErrorMsg = "Error";
+                    }).catch((error) => {
+                          this.dbErrorMsg = "Error";
+                          switch (error.status) {
+                            case 500:
+                              this.dbErrorMsg = this.$t('apiError.server500') as string;
+                              break;
+                            default:
+                              this.dbErrorMsg = this.$t('apiError.databaseCreate') as string;
+                              break;
+                          }
                     });
                 });
             }
@@ -163,10 +206,20 @@
         }
 
         private deleteDatabase(database: Database) {
-            if (confirm('Datenbank wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
+            if (confirm(this.$t('teacher.alertDatabase') as string + database.name
+            + this.$t('teacher.alertDelete') as string)) {
                 this.databaseController.remove(database).then(() => {
                   this.databases = this.databases.filter((db) => db.id !== database.id);
-                }).catch(() => {});
+                }).catch((error) => {
+                  switch (error.status) {
+                    case 500:
+                      alert(this.$t('apiError.server500') as string);
+                      break;
+                    default:
+                      alert(this.$t('apiError.defaultMsg') as string);
+                      break;
+                  }
+                });
             }
         }
 
