@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid bg-secondary">
     <b-modal id="modal-showdb" size="xl" ok-only  @change="showDatabase()">
       <DatabaseComponent elementId="db-meta-data-list" ref="databaseComponent"></DatabaseComponent>
     </b-modal>
@@ -9,16 +9,16 @@
               v-for="database in databases"
               :key="database.id"
               bg-variant="light"
-              class="card"
       >
         {{database.name}}
-
-        <b-button class="bg-danger" @click="$emit('deleteDatabase', database)" style="margin-left: 5px;">
-          {{$t('buttonText.delete')}}
-        </b-button>
-        <b-button class="bg-info"  v-b-modal.modal-showdb @click="choosenDB = database">
-          {{$t('buttonText.showDatabase')}}
-        </b-button>
+        <div class="btn-toolbar float-right">
+          <b-button class="bg-danger mr-3" @click="$emit('deleteDatabase', database)">
+            {{$t('buttonText.delete')}}
+          </b-button>
+          <b-button class="bg-info"  v-b-modal.modal-showdb @click="choosenDB = database">
+            {{$t('buttonText.showDatabase')}}
+          </b-button>
+        </div>
 
       </b-list-group-item>
     </b-list-group>
@@ -53,7 +53,6 @@
   .container-fluid {
     overflow-x: auto;
     display: flex;
-    background-color: lightgray;
   }
 
   .card {

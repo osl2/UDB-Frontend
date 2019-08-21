@@ -24,15 +24,17 @@
         <div class="container">
             <h2 class="headings">{{$t('navbar.databaseDropdown')}}:</h2>
 
-            <b-button @click="uploadTrigger" style="margin-bottom: 10px;">{{$t('teacher.uploadDb')}}</b-button>
-            <b-alert v-model="dbErrorMsg" v-if="dbErrorMsg !== ''" variant="danger" dismissible>{{dbErrorMsg}}</b-alert>
-            <input id="fileUpload" type="file" style="display:none;" multiple accept=".db"
-                   @change="databaseUploadHandler">
-
             <DatabaseList class="d-flex flex-column"
                           :databases="databases"
                           @deleteDatabase="deleteDatabase"
             ></DatabaseList>
+
+            <b-button @click="uploadTrigger" class="mt-2 mb-2 float-left">{{$t('teacher.uploadDb')}}</b-button>
+            <b-alert v-model="dbErrorMsg" v-if="dbErrorMsg !== ''" variant="danger" dismissible>{{dbErrorMsg}}</b-alert>
+            <input id="fileUpload" type="file" style="display:none;" multiple accept=".db"
+                   @change="databaseUploadHandler">
+
+
         </div>
     </div>
 </template>
