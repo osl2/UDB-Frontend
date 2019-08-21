@@ -25,9 +25,7 @@ export default class PlainTextSolution extends Solution {
 
     get toJSON(): any {
         return {
-            plaintext: {
-                text: this.text,
-            },
+            text: this.text,
         };
     }
 

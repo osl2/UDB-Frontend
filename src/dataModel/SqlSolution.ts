@@ -35,11 +35,9 @@ export default class SqlSolution extends Solution {
 
     get toJSON(): any {
         return {
-            sql: {
-                query: this.querySolution,
-                columns: this.columns,
-                rows: this.values,
-            },
+            query: this.querySolution,
+            columns: this.columns,
+            rows: this.values,
         };
     }
 
