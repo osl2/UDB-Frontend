@@ -166,6 +166,7 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
 export default class SubtaskCreation extends Vue {
 
     @Prop() private initialSubtask!: Subtask;
+    @Prop() private eventBus!: Vue;
 
     private subtask = new InstructionTask("", "Error");
 
@@ -206,6 +207,7 @@ export default class SubtaskCreation extends Vue {
      because Props are readonly
      */
     public created() {
+      this.eventBus.$on('save', this.saveSubtask);
         this.subtaskController = this.$store.getters.subtaskController;
         this.subtask = this.initialSubtask;
     }

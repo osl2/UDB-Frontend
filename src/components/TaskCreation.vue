@@ -1,41 +1,34 @@
 <template>
-    <div>
-        <!-- A minimized version of the task that doesn't show the options to make the page
-        less cluttered when working on several tasks-->
-        <div v-if="!showfull">
-            <div class="bg-secondary text-light">
-                {{task.name}}
-            </div>
-            <b-button @click="changeSize"> {{$t('taskCreation.maximize')}}</b-button>
-        </div>
+    <div class="mb-5 pb-3 border-dark border-bottom">
 
         <!-- Shows all the options needed to create or update a task-->
-        <div v-if="showfull">
-            {{task.name}}
         <div>
-            <b-form-input v-model="task.name" :placeholder="$t('taskCreation.name')"></b-form-input>
-            <b-form-select v-model="task.databaseId" :options="dbOptions"></b-form-select>
+            <b-button block variant="info" v-b-toggle="'task-' + task.id">{{task.name}}</b-button>
         </div>
-            <!--Displays a SubtaskCreation component for every subtask in the subtasks array -->
-        <div v-if="dbOptions !== null">
-            <SubtaskCreation v-for="subtask in subtasks"
-                             :key="subtask.id"
-                             :initialSubtask="subtask"
-                             @delete="deleteSubtask"
-                             @updateSubtasks="updateSubtasks"
-            ></SubtaskCreation>
-        </div>
-        <div>
-            <b-button-group>
-            <b-button @click="newSqlTask">{{$t('taskCreation.new')}} SQL</b-button>
-            <b-button @click="newMCTask">{{$t('taskCreation.new')}} MC</b-button>
-            <b-button @click="newTextTask">{{$t('taskCreation.new')}} Text</b-button>
-            <b-button @click="newInstructionTask">{{$t('taskCreation.new')}} Instruction</b-button>
-            </b-button-group>
-        </div>
-
-        <b-button @click="changeSize"> {{$t('taskCreation.minimize')}}</b-button>
-    </div>
+        <b-collapse :id="'task-' + task.id" accordion="tasks-accordion">
+            <div>
+                <b-form-input v-model="task.name" :placeholder="$t('taskCreation.name')"></b-form-input>
+                <b-form-select v-model="task.databaseId" :options="dbOptions"></b-form-select>
+            </div>
+                <!--Displays a SubtaskCreation component for every subtask in the subtasks array -->
+            <div v-if="dbOptions !== null">
+                <SubtaskCreation v-for="subtask in subtasks"
+                                 :key="subtask.id"
+                                 :initialSubtask="subtask"
+                                 :eventBus="eventBus"
+                                 @delete="deleteSubtask"
+                                 @updateSubtasks="updateSubtasks"
+                ></SubtaskCreation>
+            </div>
+            <div>
+                <b-button-group>
+                <b-button @click="newSqlTask">{{$t('taskCreation.new')}} SQL</b-button>
+                <b-button @click="newMCTask">{{$t('taskCreation.new')}} MC</b-button>
+                <b-button @click="newTextTask">{{$t('taskCreation.new')}} Text</b-button>
+                <b-button @click="newInstructionTask">{{$t('taskCreation.new')}} Instruction</b-button>
+                </b-button-group>
+            </div>
+        </b-collapse>
     </div>
 </template>
 
@@ -65,6 +58,7 @@ export default class TaskCreation extends Vue {
 
   @Prop() private databases!: Database[];
   @Prop() private initialTask!: Task;
+  @Prop() private eventBus!: Vue;
 
   private taskController: TaskController = this.$store.getters.taskController;
   private subtaskController: SubtaskController = this.$store.getters.subtaskController;
@@ -81,6 +75,7 @@ export default class TaskCreation extends Vue {
      */
    public created() {
         this.task = this.initialTask;
+        this.eventBus.$on('save', this.save);
         this.subtaskController = this.$store.getters.subtaskController;
         this.taskController = this.$store.getters.taskController;
         for (const database of this.databases) {
@@ -93,7 +88,7 @@ export default class TaskCreation extends Vue {
     }
 
    public newSqlTask() {
-     const subtask = new SqlTask('', new SqlSolution('', [], [[]]), '',
+     const subtask = new SqlTask('', new SqlSolution(';', [], [[]]), '',
        false, false, false, false, AllowedSqlStatements.NoRestriction);
         this.subtaskController.create(subtask).then((subtaskId: string) => {
           subtask.id = subtaskId;

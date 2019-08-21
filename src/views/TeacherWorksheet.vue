@@ -1,33 +1,50 @@
 <template>
     <div>
-        {{worksheet.name}}
-        <!--Section to set options needed for a worksheet -->
-    <div>
-        <b-form-input v-model="worksheet.name" :placeholder="$t('teacherWorksheet.name')"></b-form-input>
-        <b-form-group :label="$t('teacherWorksheet.sheetOnline')">
-            <b-form-radio v-model="worksheet.isOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
-            <b-form-radio v-model="worksheet.isOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
-        </b-form-group>
+        <div class="head">
+            <h2>
+                {{worksheet.name}}
+            </h2>
+            <b-button @click="toCourseView"> {{$t('teacherWorksheet.toOverview')}}</b-button>
+        </div>
+        <div>
+            <h3>
+                Einstellungen
+            </h3>
+            <!--Section to set options needed for a worksheet -->
+            <b-input-group class="col-6">
+                <b-input-group-text><span>Name</span></b-input-group-text>
+                <b-input v-model="worksheet.name" :placeholder="$t('teacherWorksheet.name')">Name: </b-input>
+            </b-input-group>
+            <div class="d-flex">
+                <b-form-group :label="$t('teacherWorksheet.sheetOnline')" class="col-6">
+                    <b-form-radio v-model="worksheet.isOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
+                    <b-form-radio v-model="worksheet.isOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
+                </b-form-group>
 
-        <b-form-group :label="$t('teacherWorksheet.solutionOnline')">
-            <b-form-radio v-model="worksheet.isSolutionOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
-            <b-form-radio v-model="worksheet.isSolutionOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
-        </b-form-group>
-    </div>
+                <b-form-group :label="$t('teacherWorksheet.solutionOnline')" class="col-6">
+                    <b-form-radio v-model="worksheet.isSolutionOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
+                    <b-form-radio v-model="worksheet.isSolutionOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
+                </b-form-group>
+            </div>
+        </div>
 
         <!--Displays a TaskCreation Component for every Task in the worksheet -->
         <div>
+            <h3>
+                Aufgaben
+            </h3>
             <TaskCreation v-for="task in tasks"
                           :key="task.id"
                           :databases="databases"
                           :initialTask="task"
+                          :eventBus="eventBus"
                           @updateTasks="updateTasks"
                           @delete="deleteTask"
             ></TaskCreation>
         </div>
         <!--buttons to create a new Task assigned to the worksheet and to return to the course view -->
         <b-button @click="createTask">{{$t('teacherWorksheet.new')}}</b-button>
-        <b-button @click="toCourseView"> {{$t('teacherWorksheet.toOverview')}}</b-button>
+        <b-button @click="save" variant="primary">Speichern</b-button>
     </div>
 </template>
 
@@ -58,7 +75,7 @@ export default class TeacherWorksheet extends Vue {
     private worksheet: Worksheet = new Worksheet('', '', [], false, false);
     private tasks: Task[] = [];
     private databases: Database[] = [];
-
+    private eventBus = new Vue();
 
     public created() {
       this.databaseController = this.$store.getters.databaseController;
@@ -83,8 +100,6 @@ export default class TeacherWorksheet extends Vue {
         // TODO catchen
       }).catch(() => {});
     }
-
-
 
     public createTask() {
       const task = new Task('', '', '', []);
@@ -114,6 +129,7 @@ export default class TeacherWorksheet extends Vue {
 
 
     public save() {
+      this.eventBus.$emit('save');
       this.worksheetController.save(this.worksheet).then(() =>
       {
         // TODO Sprache auslagern
@@ -144,5 +160,12 @@ export default class TeacherWorksheet extends Vue {
 </script>
 
 <style scoped>
-
+    .head {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        margin-bottom: 35px;
+        text-align: center;
+        background-color: #17a2b8;
+        color: white;
+    }
 </style>
