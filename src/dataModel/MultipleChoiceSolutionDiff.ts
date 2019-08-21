@@ -41,10 +41,10 @@ export default class MultipleChoiceSolutionDiff extends SolutionDiff {
             for (let i = 0; i < this._wrongChoices.length - 1; i++) {
                 messages.push((this._wrongChoices[i] + 1).toString(), ", ");
             }
+            messages.push((this._wrongChoices[this._wrongChoices.length - 1] + 1).toString(), ". ");
         }
         if (this._missedChoices.length) {
-            messages.push((this._wrongChoices[this._wrongChoices.length - 1] + 1).toString(), ". ",
-              "Die folgenden Antworten wären noch richtig gewesen: ");
+            messages.push(("Die folgenden Antworten wären noch richtig gewesen: "));
             for (let i = 0; i < this._missedChoices.length - 1; i++) {
                 messages.push((this._missedChoices[i] + 1).toString(), ", ");
             }
