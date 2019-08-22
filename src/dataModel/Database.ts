@@ -9,6 +9,30 @@ import DataModel from '@/dataModel/DataModel';
 
 export default class Database extends DataModel {
 
+    /**
+     * The following methods are getter and setter for each attribute in this class.
+     */
+
+    get name(): string {
+        return this._name;
+    }
+
+    set name(value: string) {
+        this._name = value;
+    }
+
+    get content(): Uint8Array | null {
+        return this._content;
+    }
+
+    set content(value: Uint8Array | null) {
+        this._content = value;
+    }
+
+    /**
+     * the following methods transform an instance of the database class to json format or do the same thing the
+     * other way around. This is needed to store objects in the server or to read them.
+     */
     public static fromJSON(json: any): Database {
         if (typeof json.database === 'undefined') {
             return new Database(json.id, json.name, null);
@@ -16,6 +40,9 @@ export default class Database extends DataModel {
         return new Database(json.id, json.name, Database.base64ToU8(json.database));
     }
 
+    /**
+     * the following methods convert an unint8 array to a base64 array or do the same thing the other way around.
+     */
     private static u8ToBase64(arr: Uint8Array | null) {
         if (!arr) {
             return "";
@@ -39,7 +66,6 @@ export default class Database extends DataModel {
 
     private _name: string;
     private _content: Uint8Array | null;
-
     /**
      * The constructor of this class.
      * @param id: The unique id of the database.
@@ -52,27 +78,6 @@ export default class Database extends DataModel {
         this._content = content;
     }
 
-    /**
-     * The following methods are getter and setter for each attribute in this class.
-     */
-
-    get name(): string {
-        return this._name;
-    }
-
-    set name(value: string) {
-        this._name = value;
-    }
-
-    get content(): Uint8Array | null {
-        return this._content;
-    }
-
-    set content(value: Uint8Array | null) {
-        this._content = value;
-    }
-
-
     public toJSON(): any {
         return {
             id: this.id,
@@ -80,6 +85,5 @@ export default class Database extends DataModel {
             name: this.name,
         };
     }
-
 
 }

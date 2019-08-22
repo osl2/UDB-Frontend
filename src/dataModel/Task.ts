@@ -34,6 +34,10 @@ export default class Task extends DataModel {
         this._subtaskIds = value;
     }
 
+    /**
+     * the following methods transform an instance of the Task class to json format or do the same
+     * thing the other way around. This is needed to store objects in the server or to read them.
+     */
     public static fromJSON(json: any): Task {
         return new Task(json.id, json.name, json.database, json.subtasks);
     }
@@ -63,4 +67,5 @@ export default class Task extends DataModel {
             subtasks: this.subtaskIds,
         };
     }
+
 }

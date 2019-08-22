@@ -10,6 +10,10 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
  */
 export default class PlainTextTask extends Subtask {
 
+    /**
+     * the following methods transform an instance of the PlainTextTask class to json format or do the same
+     * thing the other way around. This is needed to store objects in the server or to read them.
+     */
     public static fromJSON(json: any): PlainTextTask {
         return new PlainTextTask(json.id,
             new PlainTextSolution(json.content.plaintext.solution.text),
@@ -18,6 +22,14 @@ export default class PlainTextTask extends Subtask {
             json.solution_visible);
     }
 
+    /**
+     * the constructor of the PlainTextTask
+     * @param id the unique id for an instance of the PlainTextTask class
+     * @param solution a solution of the class PlainTextSolution
+     * @param instruction the instruction of the task provided by the teacher
+     * @param isSolutionVeryfiable a boolean that indicates if a solution for the task exists
+     * @param isSolutionVisible a boolean that indicates if a student can compare it's solution
+     */
     constructor(id: string, solution: PlainTextSolution | undefined,
                 instruction: string, isSolutionVeryfiable: boolean,
                 isSolutionVisible: boolean) {

@@ -42,6 +42,10 @@ export default class Course extends DataModel {
       this._worksheetIds = value;
     }
 
+    /**
+     * the following methods transform an instance of the course class to json format or do the same thing the
+     * other way around. This is needed to store objects in the server or to read them.
+     */
     public static fromJSON(json: any): Course {
         return new Course(json.id,
             json.name,
@@ -49,6 +53,7 @@ export default class Course extends DataModel {
             "",
             json.worksheets);
     }
+
     private _name: string;
     private _description: string;
     private _alias: string;
@@ -79,5 +84,6 @@ export default class Course extends DataModel {
             worksheets: this.worksheetIds,
         };
     }
+
 }
 

@@ -37,6 +37,11 @@ export default class SqlTask extends Subtask {
         this._allowedSqlStatements = value;
     }
 
+    /**
+     * the following methods transform an instance of the SqlTask class to json format or do the same
+     * thing the other way around. This is needed to store objects in the server or to read them.
+     */
+
     public static fromJSON(json: any): SqlTask {
         if (!json.content.hasOwnProperty("sql")) {
             throw new Error("Wrong subtask type. Expected SQL, got");
@@ -52,10 +57,22 @@ export default class SqlTask extends Subtask {
             json.solution_visible,
             AllowedSqlFromJSON(json.content.sql.allowed_sql));
     }
+
     private _isPointAndClickAllowed: boolean;
     private _doesRowOrderMatter: boolean;
     private  _allowedSqlStatements: AllowedSqlStatements;
 
+    /**
+     * the constructor for the SqlTask
+     * @param id the unique id for an instance of the SqlTask class
+     * @param solution a solution of the Type SqlSolution
+     * @param instruction the task instruction provided by the teacher
+     * @param isSolutionVeryfiable a boolean that indicates whether a solution exists or not
+     * @param isPointAndClickAllowed a boolean that indicates whether the Point and Click feature can be used or not
+     * @param doesRowOrderMatter a boolean that indicates whether the order of rows should matter for a solution or not
+     * @param isSolutionVisible a boolean that indicates whether a student can compare its solution or not
+     * @param allowedSqlStatements indicates what kind of sql statements can be used to solve the task
+     */
     constructor(id: string, solution: SqlSolution | undefined, instruction: string,
                 isSolutionVeryfiable: boolean, isPointAndClickAllowed: boolean, doesRowOrderMatter: boolean,
                 isSolutionVisible: boolean, allowedSqlStatements: AllowedSqlStatements) {
@@ -82,4 +99,5 @@ export default class SqlTask extends Subtask {
             },
         };
     }
+
 }

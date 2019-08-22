@@ -21,6 +21,10 @@ export default class MultipleChoiceTask extends Subtask {
         this._answerOptions = value;
     }
 
+    /**
+     * the following methods transform an instance of the MultipleChoiceTask class to json format or do the same
+     * thing the other way around. This is needed to store objects in the server or to read them.
+     */
     public static fromJSON(json: any): MultipleChoiceTask {
         return new MultipleChoiceTask(json.id,
             json.content.multiple_choice.solution,
@@ -29,14 +33,25 @@ export default class MultipleChoiceTask extends Subtask {
             json.solution_visible,
             json.content.multiple_choice.answer_options);
     }
+
     private _answerOptions: string[];
 
+    /**
+     * the constructor for the MiltipleChoiceTask
+     * @param id unique id for an instance of the multipleChoiceTask
+     * @param solution a solution of the type MultipleChoiceSolution
+     * @param instruction the instruction of the task provided by the teacher
+     * @param isSolutionVeryfiable a boolean to decide if a MultipleChoiceTask has a solution
+     * @param isSolutionVisible a boolean to the decide if a student can compare its solution to the task solution
+     * @param answerOptions a string array that contains all possible answers
+     */
     constructor(id: string, solution: MultipleChoiceSolution | undefined, instruction: string,
                 isSolutionVeryfiable: boolean,  isSolutionVisible: boolean, answerOptions: string[]) {
         super(id, solution, instruction, isSolutionVeryfiable,
             isSolutionVisible, SubtaskTypes.MultipleChoice);
         this._answerOptions = answerOptions;
     }
+
 
     public toJSON(): any {
         return {
@@ -52,4 +67,5 @@ export default class MultipleChoiceTask extends Subtask {
             },
         };
     }
+
 }

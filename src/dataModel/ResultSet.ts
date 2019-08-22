@@ -1,3 +1,6 @@
+/**
+ * The ResultSet Class saves the result of a sql statement.
+ */
 export interface ResultSet {
     status: number;
     message: string;

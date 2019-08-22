@@ -44,6 +44,11 @@ export default class Worksheet extends DataModel {
         this._isSolutionOnline = value;
     }
 
+    /**
+     * the following methods transform an instance of the Worksheet class to json format or do the same
+     * thing the other way around. This is needed to store objects in the server or to read them.
+     */
+
     public static fromJSON(json: any): Worksheet {
         return new Worksheet(json.id,
             !exists(json, 'name') ? undefined : json.name,
@@ -51,6 +56,7 @@ export default class Worksheet extends DataModel {
             json.is_online,
             json.is_solution_online);
     }
+
     private _name: string;
     private _taskIds: string[];
     private _isOnline: boolean;
@@ -82,6 +88,7 @@ export default class Worksheet extends DataModel {
             tasks: this.taskIds,
         };
     }
+
 }
 
 

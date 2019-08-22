@@ -1,3 +1,8 @@
+/**
+ * TableMetaData is a class that stores the name of a table as well as the names of its columns. It is used to make a
+ * visual representation of a table and therefore the database it belongs to easier.
+ */
+
 export default class TableMetaData {
   private _tableName: string;
   private _columns: string[];
