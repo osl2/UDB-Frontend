@@ -5,13 +5,17 @@
             <h2>{{course.description}}</h2>
         </div>
         <div>
-            <b-button v-b-popover.hover="$t('hoverText.switchToStudentsView')"
+            <b-button id="changeViewButton"
                       @click="toggleView"
                       class="studentViewButton float-right"
                       v-if="hasUserWritePermission"
             >
                 {{$t('buttonText.changeView')}}
             </b-button>
+            <b-popover target="changeViewButton"
+                       triggers="hover focus"
+                       :content="changeMessage">
+            </b-popover>
         </div>
         <div class="clear"></div>
         <div class="container">
@@ -67,6 +71,7 @@ export default class CourseView extends Vue {
     private userController: UserController = this.$store.getters.userController;
     private isInStudentView: boolean = false;
     private worksheetsChanged: boolean = false;
+    private changeMessage = this.$t('hoverText.switchToStudentsView') as string;
 
     // Functions
     public openWorksheet(worksheet: Worksheet) {

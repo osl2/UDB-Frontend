@@ -39,14 +39,19 @@
 
             </div>
 
-            <b-button v-b-popover.hover="this.$t('sqlTaskComp.hover')" as string
+            <b-button v-b-popover.hover="$t('sqlTaskComp.save')"
                       @click="$emit('save', subtaskSolution)"
             >
                 {{$t('taskComp.save')}}</b-button>
-            <b-button v-if="currentSubtask.isSolutionVisible"
+            <b-button id="compareSolutionButtonSQL"
+                      v-if="currentSubtask.isSolutionVisible"
                       @click="$emit('compare', subtaskSolution)">
                 {{$t('taskComp.compare')}}
             </b-button>
+            <b-popover target="compareSolutionButtonSQL"
+                       triggers="hover focus"
+                       :content="$t('hoverText.compareSolutionMessage')">
+            </b-popover>
         </div>
     </div>
 </template>

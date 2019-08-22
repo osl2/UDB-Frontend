@@ -15,11 +15,21 @@
                 ></b-form-checkbox-group>
             </b-form-group>
 
-            <b-button @click="$emit('save', subtaskSolution)">{{$t('taskComp.save')}}</b-button>
-            <b-button v-show="currentSubtask.isSolutionVisible"
+            <b-button id="saveMC"
+                      @click="$emit('save', subtaskSolution)">{{$t('taskComp.save')}}</b-button>
+            <b-popover target="saveMC"
+                       triggers="hover focus"
+                       :content="$t('hoverText.saveMessageStudentWorksheet')">
+            </b-popover>
+            <b-button id="compareSolutionButtonMC"
+                      v-show="currentSubtask.isSolutionVisible"
                       @click="$emit('compare', subtaskSolution)">
                 {{$t('taskComp.compare')}}
             </b-button>
+            <b-popover target="compareSolutionButtonMC"
+                       triggers="hover focus"
+                       :content="$t('hoverText.compareSolutionMessage')">
+            </b-popover>
         </div>
 
     </div>

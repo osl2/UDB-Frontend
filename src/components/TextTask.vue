@@ -12,11 +12,21 @@
                 placeholder="Antwort eingeben">
         </b-form-textarea>
 
-        <b-button @click="$emit('save', subtaskSolution)">{{$t('taskComp.save')}}</b-button>
-        <b-button v-if="currentSubtask.isSolutionVisible"
+        <b-button id="saveText"
+                  @click="$emit('save', subtaskSolution)">{{$t('taskComp.save')}}</b-button>
+        <b-popover target="saveText"
+                   triggers="hover focus"
+                   :content="$t('hoverText.saveMessageStudentWorksheet')">
+        </b-popover>
+        <b-button id="compareSolutionButtonText"
+                  v-if="currentSubtask.isSolutionVisible"
                   @click="$emit('compare', subtaskSolution)">
             {{$t('taskComp.compare')}}
         </b-button>
+        <b-popover target="compareSolutionButtonText"
+                   triggers="hover focus"
+                   :content="$t('hoverText.compareSolutionMessage')">
+        </b-popover>
 
     </div>
     </div>

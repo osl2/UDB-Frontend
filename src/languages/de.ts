@@ -106,6 +106,11 @@ const de = {
   },
   hoverText: {
     switchToStudentsView: 'Hier klicken, um anzuzeigen, was die Schüler vom Kurs sehen werden.',
+    switchBackToTeachersView: 'Zurück zur eigenen Übersicht.',
+    saveMessageStudentWorksheet: 'Die Lösung wird nur lokal gespeichert. Exportiere Deinen Bearbeitungsstand, ' +
+      'bevor Du die Seite schließt. Sonst geht deine Lösung verloren.',
+    compareSolutionMessage: 'Die Eingabe, die mit der Musterlösung verglichen wird, ' +
+      'wird zuvor automatisch gespeichert.',
   },
   subtaskCreation: {
     typeInstruction: 'Erklärender Text',
@@ -185,8 +190,10 @@ const de = {
     },
   sqlTaskComp: {
 
-      hover: 'Wenn Du diesen Knopf drückst, wird die zuletzt ausgeführte Query gespeichert.' +
-          ' Achte darauf, dass Du die Anfrage, die Du speichern willst, auch noch einmal ausführst.',
+      save: 'Wenn Du diesen Knopf drückst, wird die zuletzt ausgeführte Query gespeichert.' +
+          ' Achte darauf, dass Du die Anfrage, die Du speichern willst, auch noch einmal ausführst. ' +
+          'Die Lösung wird nur lokal gespeichert. Exportiere Deinen Bearbeitungsstand, bevor Du die Seite schließt. ' +
+          'Sonst geht deine Lösung verloren.',
       select: 'Es dürfen nur Select Statements verwendet werden.',
       alertStatement: 'Du hast einen SQL-Befehl verwendet, der für diese Aufgabe nicht erlaubt war.' +
           'Bitte versuche erneut die Aufgabe zu lösen.',
