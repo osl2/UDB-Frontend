@@ -1,7 +1,6 @@
 import ParentService from '@/services/ParentService';
 import Worksheet from '@/dataModel/Worksheet';
 import Task from '@/dataModel/Task';
-import ExportPDF from '@/services/ExportPDF';
 import SolutionService from '@/services/SolutionService';
 import Course from '@/dataModel/Course';
 import {
@@ -141,82 +140,85 @@ export default class WorksheetController extends ApiControllerAbstract
         };
 
         for (const taskId of object.taskIds) {
-            const task: Task = taskController.get(taskId);
-            for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
-                const subtask: Subtask = subtaskController.get(subtaskId);
-                docDefinition.content.push({
-                    text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ',
-                    style: 'taskheader',
-                });
-                docDefinition.content.push({ text: subtask.instruction, style: 'taskdescription' });
-                if (subtask.type !== SubtaskTypes.Instruction) {
-                    docDefinition.content.push({ text: 'Lösungsvorschlag:', style: 'solutionheader' });
-                }
-                if (subtask.type === SubtaskTypes.PlainText) {
-                    const typedSubtask = subtask as PlainTextTask;
-                    if (solutions.has(subtaskId)) {
-                        const solution = solutions.get(subtaskId) as PlainTextSolution;
-                        docDefinition.content.push({ text: solution.text, style: 'solution' });
-                    } else {
-                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
-                    }
-                } else if (subtask.type === SubtaskTypes.MultipleChoice) {
-                    const typedSubtask = subtask as MultipleChoiceTask;
-                    if (solutions.has(subtaskId)) {
-                        const solution = solutions.get(subtaskId) as MultipleChoiceSolution;
-                        let content: string = '';
-                        for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
-                            if (content.length > 0) {
-                                content += '\n';
-                            }
-                            if (solution.choices.includes(index)) {
-                                content += '[X] ' + answerOption;
+            taskController.get(taskId).then((task: Task) => {
+                for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
+                    //TODO Auf getChildren umbauen, sodass alle Subtasks sofort zur Verfügung stehen
+                    subtaskController.get(subtaskId).then((subtask: Subtask) => {
+                        docDefinition.content.push({
+                            text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ',
+                            style: 'taskheader',
+                        });
+                        docDefinition.content.push({ text: subtask.instruction, style: 'taskdescription' });
+                        if (subtask.type !== SubtaskTypes.Instruction) {
+                            docDefinition.content.push({ text: 'Lösungsvorschlag:', style: 'solutionheader' });
+                        }
+                        if (subtask.type === SubtaskTypes.PlainText) {
+                            const typedSubtask = subtask as PlainTextTask;
+                            if (solutions.has(subtaskId)) {
+                                const solution = solutions.get(subtaskId) as PlainTextSolution;
+                                docDefinition.content.push({ text: solution.text, style: 'solution' });
                             } else {
-                                content += '[ ]' + answerOption;
+                                docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
+                            }
+                        } else if (subtask.type === SubtaskTypes.MultipleChoice) {
+                            const typedSubtask = subtask as MultipleChoiceTask;
+                            if (solutions.has(subtaskId)) {
+                                const solution = solutions.get(subtaskId) as MultipleChoiceSolution;
+                                let content: string = '';
+                                for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
+                                    if (content.length > 0) {
+                                        content += '\n';
+                                    }
+                                    if (solution.choices.includes(index)) {
+                                        content += '[X] ' + answerOption;
+                                    } else {
+                                        content += '[ ]' + answerOption;
+                                    }
+                                }
+                                docDefinition.content.push({ text: content, style: 'solution' });
+                            } else {
+                                docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
+                            }
+                        } else if (subtask.type === SubtaskTypes.Sql) {
+                            const typedSubtask = subtask as SqlTask;
+                            if (solutions.has(subtaskId)) {
+                                const solution = solutions.get(subtaskId) as SqlSolution;
+                                const tablequery = {
+                                    widths: ['*'],
+                                    body: [
+                                        [
+                                            {
+                                                text: 'Query:',
+                                                fillColor: '#eeeeee',
+                                                border: [true, true, true, false],
+                                                style: { bold: true },
+                                            },
+                                        ],
+                                        [
+                                            {
+                                                text: solution.querySolution,
+                                                fillColor: '#eeeeee',
+                                                border: [true, false, true, true],
+                                            },
+                                        ],
+                                    ],
+                                };
+                                docDefinition.content.push({ table: tablequery, style: 'solutionQuery' });
+                                const tabledata = { widths: [] as string[], body: [] as string[][] };
+                                // Set all table widths to star
+                                for (const column of solution.columns) {
+                                    tabledata.widths.push('*');
+                                }
+                                tabledata.body = solution.values;
+                                tabledata.body.unshift(solution.columns);
+                                docDefinition.content.push({ table: tabledata, style: 'solutionTable' });
+                            } else {
+                                docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
                             }
                         }
-                        docDefinition.content.push({ text: content, style: 'solution' });
-                    } else {
-                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
-                    }
-                } else if (subtask.type === SubtaskTypes.Sql) {
-                    const typedSubtask = subtask as SqlTask;
-                    if (solutions.has(subtaskId)) {
-                        const solution = solutions.get(subtaskId) as SqlSolution;
-                        const tablequery = {
-                            widths: ['*'],
-                            body: [
-                                [
-                                    {
-                                        text: 'Query:',
-                                        fillColor: '#eeeeee',
-                                        border: [true, true, true, false],
-                                        style: { bold: true },
-                                    },
-                                ],
-                                [
-                                    {
-                                        text: solution.querySolution,
-                                        fillColor: '#eeeeee',
-                                        border: [true, false, true, true],
-                                    },
-                                ],
-                            ],
-                        };
-                        docDefinition.content.push({ table: tablequery, style: 'solutionQuery' });
-                        const tabledata = { widths: [] as string[], body: [] as string[][] };
-                        // Set all table widths to star
-                        for (const column of solution.columns) {
-                            tabledata.widths.push('*');
-                        }
-                        tabledata.body = solution.values;
-                        tabledata.body.unshift(solution.columns);
-                        docDefinition.content.push({ table: tabledata, style: 'solutionTable' });
-                    } else {
-                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
-                    }
+                    });
                 }
-            }
+            });
         }
 
         pdfMake.createPdf(docDefinition).download('Print' + object.name.replace(' ', '_') + '_' + datestring + '.pdf');
@@ -380,82 +382,84 @@ export default class WorksheetController extends ApiControllerAbstract
         };
 
         for (const taskId of sheet.taskIds) {
-            const task: Task = taskController.get(taskId);
-            for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
-                const subtask: Subtask = subtaskController.get(subtaskId);
-                docDefinition.content.push({
-                    text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ',
-                    style: 'taskheader',
-                });
-                docDefinition.content.push({ text: subtask.instruction, style: 'taskdescription' });
-                if (subtask.type !== SubtaskTypes.Instruction) {
-                    docDefinition.content.push({ text: 'Lösung:', style: 'solutionheader' });
-                }
-                if (subtask.type === SubtaskTypes.PlainText) {
-                    const typedSubtask = subtask as PlainTextTask;
-                    if (typedSubtask.solution !== undefined) {
-                        const solution = typedSubtask.solution as PlainTextSolution;
-                        docDefinition.content.push({ text: solution.text, style: 'solution' });
-                    } else {
-                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
-                    }
-                } else if (subtask.type === SubtaskTypes.MultipleChoice) {
-                    const typedSubtask = subtask as MultipleChoiceTask;
-                    if (typedSubtask.solution !== undefined) {
-                        const solution = typedSubtask.solution as MultipleChoiceSolution;
-                        let content: string | undefined;
-                        for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
-                            if (content !== undefined) {
-                                content += '\n';
-                            }
-                            if (solution.choices.indexOf(index) > 0) {
-                                content += '[X] ' + answerOption;
+            taskController.get(taskId).then((task: Task) => {
+                for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
+                    subtaskController.get(subtaskId).then((subtask: Subtask) => {
+                        docDefinition.content.push({
+                            text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ',
+                            style: 'taskheader',
+                        });
+                        docDefinition.content.push({ text: subtask.instruction, style: 'taskdescription' });
+                        if (subtask.type !== SubtaskTypes.Instruction) {
+                            docDefinition.content.push({ text: 'Lösung:', style: 'solutionheader' });
+                        }
+                        if (subtask.type === SubtaskTypes.PlainText) {
+                            const typedSubtask = subtask as PlainTextTask;
+                            if (typedSubtask.solution !== undefined) {
+                                const solution = typedSubtask.solution as PlainTextSolution;
+                                docDefinition.content.push({ text: solution.text, style: 'solution' });
                             } else {
-                                content += '[ ]' + answerOption;
+                                docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
+                            }
+                        } else if (subtask.type === SubtaskTypes.MultipleChoice) {
+                            const typedSubtask = subtask as MultipleChoiceTask;
+                            if (typedSubtask.solution !== undefined) {
+                                const solution = typedSubtask.solution as MultipleChoiceSolution;
+                                let content: string | undefined;
+                                for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
+                                    if (content !== undefined) {
+                                        content += '\n';
+                                    }
+                                    if (solution.choices.indexOf(index) > 0) {
+                                        content += '[X] ' + answerOption;
+                                    } else {
+                                        content += '[ ]' + answerOption;
+                                    }
+                                }
+                                docDefinition.content.push({ text: content, style: 'solution' });
+                            } else {
+                                docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
+                            }
+                        } else if (subtask.type === SubtaskTypes.Sql) {
+                            const typedSubtask = subtask as SqlTask;
+                            if (typedSubtask.solution !== undefined) {
+                                const solution = typedSubtask.solution as SqlSolution;
+                                const tablequery = {
+                                    widths: ['*'],
+                                    body: [
+                                        [
+                                            {
+                                                text: 'Query:',
+                                                fillColor: '#eeeeee',
+                                                border: [true, true, true, false],
+                                                style: { bold: true },
+                                            },
+                                        ],
+                                        [
+                                            {
+                                                text: solution.querySolution,
+                                                fillColor: '#eeeeee',
+                                                border: [true, false, true, true],
+                                            },
+                                        ],
+                                    ],
+                                };
+                                docDefinition.content.push({ table: tablequery, style: 'solutionQuery' });
+                                const tabledata = { widths: [] as string[], body: [] as string[][] };
+                                // Set all table widths to star
+                                for (const column of solution.columns) {
+                                    tabledata.widths.push('*');
+                                }
+                                tabledata.body = solution.values;
+                                tabledata.body.unshift(solution.columns);
+                                docDefinition.content.push({ table: tabledata, style: 'solutionTable' });
+                            } else {
+                                docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
                             }
                         }
-                        docDefinition.content.push({ text: content, style: 'solution' });
-                    } else {
-                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
-                    }
-                } else if (subtask.type === SubtaskTypes.Sql) {
-                    const typedSubtask = subtask as SqlTask;
-                    if (typedSubtask.solution !== undefined) {
-                        const solution = typedSubtask.solution as SqlSolution;
-                        const tablequery = {
-                            widths: ['*'],
-                            body: [
-                                [
-                                    {
-                                        text: 'Query:',
-                                        fillColor: '#eeeeee',
-                                        border: [true, true, true, false],
-                                        style: { bold: true },
-                                    },
-                                ],
-                                [
-                                    {
-                                        text: solution.querySolution,
-                                        fillColor: '#eeeeee',
-                                        border: [true, false, true, true],
-                                    },
-                                ],
-                            ],
-                        };
-                        docDefinition.content.push({ table: tablequery, style: 'solutionQuery' });
-                        const tabledata = { widths: [] as string[], body: [] as string[][] };
-                        // Set all table widths to star
-                        for (const column of solution.columns) {
-                            tabledata.widths.push('*');
-                        }
-                        tabledata.body = solution.values;
-                        tabledata.body.unshift(solution.columns);
-                        docDefinition.content.push({ table: tabledata, style: 'solutionTable' });
-                    } else {
-                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
-                    }
+                    });
                 }
-            }
+            });
         }
 
         pdfMake.createPdf(docDefinition).download('Solution_' + sheet.name.replace(' ', '_') + '.pdf');
