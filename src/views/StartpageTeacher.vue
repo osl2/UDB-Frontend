@@ -61,12 +61,15 @@ import UserController from "@/controller/UserController";
 })
 export default class StartpageTeacher extends Vue {
 
-    // Data
-    public messages: string[] = [];
-    private dbErrorMsg: string = '';
-    private databaseController: DatabaseController = this.$store.getters.databaseController;
-    private userController: UserController = this.$store.getters.userController;
-    private courseController: CourseController = this.$store.getters.courseController;
+        // Data
+        private courses: Course[] = [];
+        private databases: Database[] = [];
+        private loading = true;
+        public messages: string[] = [];
+        private dbErrorMsg: string = '';
+        private databaseController: DatabaseController = this.$store.getters.databaseController;
+        private userController: UserController = this.$store.getters.userController;
+        private courseController: CourseController = this.$store.getters.courseController;
 
     /*
     * This method sets the route to the requested course.
@@ -83,75 +86,148 @@ export default class StartpageTeacher extends Vue {
         this.$router.push("/");
     }
 
-    /*
-    * Method to create a new Course with a name and description given by the user.
-     */
-    public addCourse(name: string, description: string) {
-        if (!name) {
-            alert(this.$t('teacher.alertCourse') as string);
-            return;
+        /*
+        * Method to create a new Course with a name and description given by the user.
+         */
+        public addCourse(name: string, description: string) {
+            if (!name) {
+                alert(this.$t('teacher.alertCourse') as string);
+                return;
+            }
+            let newCourse = new Course("", name, description, "", []);
+            this.courseController.create(newCourse)
+              .then(() => {
+                this.courses.push(newCourse)
+              })
+              .catch((error) => {
+                switch (error.status) {
+                  case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                  default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+                }
+              });
         }
-        this.courseController.create(new Course("", name, description, "", [])).catch((e) => {
-              alert(e.message);
-            });
-    }
 
-    /*
-    * Method to permanently remove a course.
-     */
-    public removeCourse(course: Course) {
-        if (confirm(this.$t('teacher.alertCourse') as string + course.name + this.$t('teacher.alertDelete')as string)) {
-            this.courseController.remove(course);
+        /*
+        * Method to permanently remove a course.
+         */
+        public removeCourse(course: Course) {
+            if (confirm(this.$t('teacher.alertCourse') as string + course.name
+            + this.$t('teacher.alertDelete') as string)) {
+                this.courseController.remove(course)
+                  .then(() => {
+                    this.courses = this.courses.filter((c: Course) => c.id !== course.id);
+                  })
+                  .catch((error) =>  {
+                    switch (error.status) {
+                      case 500:
+                        alert(this.$t('apiError.server500') as string);
+                        break;
+                      default:
+                        alert(this.$t('apiError.defaultMsg') as string);
+                        break;
+                    }
+                  });
+            }
         }
-    }
 
 
-    public created() {
-        const loggedInUser = this.userController.userState;
-        if (!loggedInUser || !loggedInUser.token) {
-            alert(this.$t('teacher.notAuthorized'));
-            this.$router.push('/');
-            return;
+        public created() {
+            const loggedInUser = this.userController.userState;
+            if (!loggedInUser || !loggedInUser.token) {
+                alert(this.$t('teacher.notAuthorized'));
+                this.$router.push('/');
+                return;
+            }
+            this.courseController.getAll()
+              .then((courses: Course[]) => {
+                this.courses = courses;
+                this.loading = false;
+              })
+              .catch((error) => {
+                switch (error.status) {
+                  case 404:
+                    alert(this.$t('apiError.courses404') as string);
+                    break;
+                  case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                  default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+                }
+              });
+            this.databaseController.getAll()
+              .then((databases: Database[]) => {
+                this.databases = databases;
+              })
+              .catch((error) => {
+                switch (error.status) {
+                  case 404:
+                    alert(this.$t('apiError.databases404') as string);
+                    break;
+                  case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                  default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+                }
+             });
         }
-        this.courseController.loadAll();
-        this.databaseController.loadAll();
-    }
 
     // Computed methods
 
-    get courses() {
-        return this.courseController.all;
-    }
+        private uploadTrigger(event: Event) {
+            document.getElementById('fileUpload')!.click();
+        }
 
-    get databases() {
-        return this.databaseController.all;
-    }
-
-    private uploadTrigger(event: Event) {
-        document.getElementById('fileUpload')!.click();
-    }
-
-    private databaseUploadHandler(event: Event) {
-        // we need to tell typescript and tslint checker that we are working with file input HTMLInputElement
-        // for this there are no standards yet
-        const target = event.target as (HTMLInputElement & Event);
-        const files = target!.files!;
-        for (let i = 0; i < files.length; i++) {
-            const file = files.item(i)!;
-            this.databaseController.importObject(file).then((database) => {
-                this.databaseController.create(database).catch((error: Error) => {
-                    this.dbErrorMsg = error.message;
+        private databaseUploadHandler(event: Event) {
+            // we need to tell typescript and tslint checker that we are working with file input HTMLInputElement
+            // for this there are no standards yet
+            const target = event.target as (HTMLInputElement & Event);
+            const files = target!.files!;
+            for (let i = 0; i < files.length; i++) {
+                const file = files.item(i)!;
+                this.databaseController.importObject(file).then((database) => {
+                    this.databaseController.create(database).then(() => {
+                      this.databases.push(database);
+                    }).catch((error) => {
+                          this.dbErrorMsg = "Error";
+                          switch (error.status) {
+                            case 500:
+                              this.dbErrorMsg = this.$t('apiError.server500') as string;
+                              break;
+                            default:
+                              this.dbErrorMsg = this.$t('apiError.databaseCreate') as string;
+                              break;
+                          }
+                    });
                 });
-            });
+            }
+            target.value = '';
         }
-        target.value = '';
-    }
 
-    private deleteDatabase(database: Database) {
-        if (confirm('Datenbank wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.')) {
-            this.databaseController.remove(database);
+        private deleteDatabase(database: Database) {
+            if (confirm(this.$t('teacher.alertDatabase') as string + database.name
+            + this.$t('teacher.alertDelete') as string)) {
+                this.databaseController.remove(database).then(() => {
+                  this.databases = this.databases.filter((db) => db.id !== database.id);
+                }).catch((error) => {
+                  switch (error.status) {
+                    case 500:
+                      alert(this.$t('apiError.server500') as string);
+                      break;
+                    default:
+                      alert(this.$t('apiError.defaultMsg') as string);
+                      break;
+                  }
+                });
+            }
         }
-    }
 
 }
 </script>

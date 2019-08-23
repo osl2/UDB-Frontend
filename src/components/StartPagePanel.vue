@@ -102,6 +102,7 @@
     import UserGroup from "@/dataModel/UserGroup";
     import UserController from "@/controller/UserController";
     import User from '@/dataModel/User';
+    import Course from "@/dataModel/Course";
 
     @Component
     export default class StartPagePanel extends Vue {
@@ -137,8 +138,8 @@
                 if (success) {
                     this.$router.push(this.path);
                 } else {
-                    this.errorMsg = this.$t('home.errorLogin') as string;
-                    return;
+                  this.errorMsg = this.$t('home.errorLogin') as string;
+                  return;
                 }
             });
         }
@@ -162,8 +163,18 @@
             this.userController.register(username, password).then((_) => {
                 alert(this.$t('home.successRegistration') as string);
                 this.$router.push(this.path);
-            }).catch((e) => {
-                this.errorMsg = this.$t('home.errorRegistration') as string;
+            }).catch((error) => {
+                switch (error.status) {
+                  case 400:
+                    this.errorMsg= this.$t('apiError.register400') as string;
+                    break;
+                  case 500:
+                    this.errorMsg = this.$t('apiError.server500') as string;
+                    break;
+                  default:
+                    this.errorMsg = this.$t('apiError.defaultMsg') as string;
+                    break;
+              }
             });
 
         }
@@ -173,16 +184,26 @@
                 this.errorMsg = this.$t('home.errorCourseId') as string;
                 return;
             }
-            try {
-                this.courseController.loadWithAlias(courseId);
-                this.userController.userState!.userGroup = UserGroup.Student;
+            this.courseController.getWithAlias(courseId)
+              .then((course: Course) => {
+                if (this.userController.getCurrentUserGroup() !== UserGroup.Teacher) {
+                  this.userController.switchUserGroup(UserGroup.Student);
+                }
                 this.$router.push(this.path + courseId);
-            } catch (e) {
-                alert(e.message);
-                alert(this.$t('home.noCourse') as string);
-                return;
-            }
-
+              })
+              .catch((error) => {
+                switch (error.status) {
+                  case 404:
+                    alert(this.$t('apiError.course404') as string);
+                    break;
+                  case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                  default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+                }
+              })
         }
 
         private created() {

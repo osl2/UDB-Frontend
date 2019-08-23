@@ -6,11 +6,6 @@
                     class="card ml-3 col col-2 p-0"
             >
                 <b-card-title>{{$t('worksheetList.noSheets')}}</b-card-title>
-                <b-button slot="footer"
-                          @click="$emit('loadWorksheets')"
-                >
-                    {{$t('worksheetList.loadNew')}}
-                </b-button>
             </b-card>
 
             <b-card

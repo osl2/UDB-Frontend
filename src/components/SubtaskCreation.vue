@@ -1,11 +1,6 @@
 import SubtaskTypes from "@/dataModel/SubtaskTypes";
 <template>
     <div>
-        <!--Div is never shown as the subtask type doesn't need to be displayed here but a use of subtask is needed
-         for the variables to be set. v-show always loads even if it's not displayed-->
-        <div v-show="false">
-            {{subtask.type}}
-        </div>
         <!--Minimized variant, showing only the type of the subtask
          to make the site less cluttered when creating or editing several subtasks -->
     <div>
@@ -169,13 +164,9 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
 
 })
 export default class SubtaskCreation extends Vue {
-    /*
-     subtask: either null (if a subtask is created) or a subtask if an existing subtask is edited
-     subindex: indicates the index of the subtask in context of the task it belongs to
-     dbId: the Id of the database assigned to the task, It's needed to create a solution for a sql subtask
-     */
-    @Prop() private dbId!: string;
+
     @Prop() private initialSubtask!: Subtask;
+    @Prop() private eventBus!: Vue;
 
     private subtask = new InstructionTask("", "Error");
 
@@ -212,11 +203,11 @@ export default class SubtaskCreation extends Vue {
     }
 
     /*
-     the created method does nothing if an empty subtask(Instruction task without id or instruction)
-     is passed to the component. otherwise it updates the variables of
-     the component to match the task it has been passed
+     the created method sets the attribute subtask to the given initial subtask. It's a new attribute
+     because Props are readonly
      */
     public created() {
+      this.eventBus.$on('save', this.saveSubtask);
         this.subtaskController = this.$store.getters.subtaskController;
         this.subtask = this.initialSubtask;
     }
@@ -250,8 +241,12 @@ export default class SubtaskCreation extends Vue {
             .map((answerOption: any) => answerOption.text);
           ((this.subtask as MultipleChoiceTask).solution as MultipleChoiceSolution).choices = this.selected;
         }
-        this.$emit('save');
-        this.subtaskController.save(this.subtask);
+        this.subtaskController.save(this.subtask).then(()=> {
+          this.$emit('updateSubtasks');
+          // TODO Sprache auslagern
+          alert("Speichern der Teilaufgabe erfolgreich")
+          // TODO catchen
+        }).catch(() => {});
       });
     }
 
@@ -262,13 +257,13 @@ export default class SubtaskCreation extends Vue {
         this.showfull = !this.showfull;
     }
 
-        /*
-        sends a request to delete the subtask to the server and emits the delete function to the task
-        to delete the reference of the subtask
-         */
+    /*
+     calls the method deleteTask in TeacherWorksheet.vue to send a delete request to the server and delete it in
+     the data of the component.
+     */
     public deleteSubtask() {
         if (confirm(this.$t('subtaskCreation.alertDelete') as string)) {
-            this.subtaskController.remove(this.subtask);
+          this.$emit('delete', this.subtask);
         }
 
     }

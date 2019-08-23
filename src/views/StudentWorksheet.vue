@@ -75,33 +75,11 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
   })
   export default class StudentWorksheet extends Vue {
 
-      // computed methods
-
-      // returns the worksheet that matches the WorksheetId saved in the component
-      get worksheet() {
-          return this.worksheetController.worksheets.get(this.worksheetId) || new Worksheet('', '', [], true, false);
-      }
-
-      // returns all tasks that are assigned to the worksheet saved in the component
-      get tasks() {
-          return this.taskController.all;
-      }
-
-      // returns the database of the task that can currently be solved
-      get database() {
-        let tempDB = new Database('', '', new Uint8Array());
-        try {
-          tempDB = this.databaseController.get(this.currentTask.databaseId);
-        } catch (e) {
-          return tempDB;
-        }
-        return tempDB;
-      }
-      get worksheetId() {
-        return this.$route.params.worksheetId;
-      }
 
       // Data
+      private database: Database = new Database('', '', null);
+      private worksheet: Worksheet = new Worksheet('', '', [], false, false);
+      private tasks: Task [] = [];
 
       // the solution maps an id of a subtask to the students solution.
       private solutions: Map<string, Solution> = new Map<string, Solution>();
@@ -119,15 +97,45 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
       private taskController: ParentService<Worksheet, Task> = this.$store.getters.taskController;
       private subtaskController: SubtaskService = this.$store.getters.subtaskController;
       private databaseController: DataManagementService<Database> = this.$store.getters.databaseController;
-  public loadTasks() {
-    const worksheet = this.worksheetController.worksheets.get(this.worksheetId);
-    if (worksheet !== undefined) {
-      try {
-        this.taskController.loadChildren(worksheet);
-      } catch (e) {
-        alert(e.message);
+
+
+  public created() {
+    this.worksheetController = this.$store.getters.worksheetController;
+    this.taskController = this.$store.getters.taskController;
+    this.subtaskController = this.$store.getters.subtaskController;
+    this.databaseController = this.$store.getters.databaseController;
+    this.worksheetController.get(this.$route.params.worksheetId).then((worksheet: Worksheet) =>
+    {
+      this.worksheet = worksheet;
+      this.taskController.getChildren(this.worksheet).then((tasks: Task[]) =>
+      {
+        this.tasks = tasks;
+      }).catch((error) => {
+        switch (error.status) {
+          case 404:
+            alert(this.$t('apiError.tasks404') as string);
+            break;
+          case 500:
+            alert(this.$t('apiError.server500') as string);
+            break;
+          default:
+            alert(this.$t('apiError.defaultMsg') as string);
+            break;
+        }
+      });
+    }).catch((error) => {
+      switch (error.status) {
+        case 404:
+          alert(this.$t('apiError.worksheet404') as string);
+          break;
+        case 500:
+          alert(this.$t('apiError.server500') as string);
+          break;
+        default:
+          alert(this.$t('apiError.defaultMsg') as string);
+          break;
       }
-    }
+    });
   }
 
       // methods
@@ -242,8 +250,18 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
                       alert(feedback.getFeedbackString());
                   }
               },
-          ).catch((response) => {
-              alert('Error comparing solution: ' + response.status + ' ' + response.statusText + ' ' + response);
+          ).catch((error) => {
+            switch (error.status) {
+              case 404:
+                alert(this.$t('apiError.compare404') as string);
+                break;
+              case 500:
+                alert(this.$t('apiError.server500') as string);
+                break;
+              default:
+                alert(this.$t('apiError.defaultMsg') as string);
+                break;
+            }
           });
       }
 
@@ -252,30 +270,7 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
           this.showSheetInstructions = true;
       }
 
-      // lifecycle methods
 
-      public created() {
-          this.worksheetController = this.$store.getters.worksheetController;
-          this.taskController = this.$store.getters.taskController;
-          this.subtaskController = this.$store.getters.subtaskController;
-          this.databaseController = this.$store.getters.databaseController;
-          try {
-              this.worksheetController.load(this.$route.params.worksheetId);
-          } catch (e) {
-              alert(e.message);
-          }
-      }
-
-  @Watch('worksheet')
-  private onWorksheetChanged(value: Worksheet, oldValue: Worksheet) {
-    if (value === undefined || value.id === '') {
-      // course not yet loaded
-      return;
-    } else if (oldValue === undefined || oldValue.id === '' || value.id !== oldValue.id) {
-      // course loaded or changed, load worksheets of this course
-      this.loadTasks();
-    }
-  }
       /*
        opens file upload dialog
        */
@@ -292,11 +287,23 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
           this.currentSubtask = subtasks[index];
           this.subtaskIndex = index;
           this.numberOfSubtasks = this.currentMatchingSubtasks.length;
-          try {
-              this.databaseController.load(this.currentTask.databaseId);
-          } catch (e) {
-              alert(e.message);
-          }
+          this.databaseController.get(this.currentTask.databaseId).then((database: Database) =>
+          {
+            this.database = database;
+          }).catch((error) => {
+            switch (error.status) {
+              case 404:
+                alert(this.$t('apiError.database404') as string);
+                break;
+              case 500:
+                alert(this.$t('apiError.server500') as string);
+                break;
+              default:
+                alert(this.$t('apiError.defaultMsg') as string);
+                break;
+            }
+          });
+
       }
   }
 </script>

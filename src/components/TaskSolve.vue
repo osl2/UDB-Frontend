@@ -96,7 +96,6 @@ export default class TaskSolve extends Vue {
 
     public created() {
       this.sqlExecutor = this.$store.getters.sqlExecutor;
-      this.initDatabase();
     }
 
     public mounted() {

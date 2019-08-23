@@ -25,7 +25,6 @@
                     :isStudentsViewActive="isStudentsViewActive"
                     :hasUserWritePermission="hasUserWritePermission"
                     @openWorksheet="openWorksheet"
-                    @loadWorksheets="loadWorksheets"
                     @deleteWorksheet="deleteWorksheet"
                     @updateWorksheet="updateWorksheet"
                     @createWorksheet="createWorksheet"
@@ -66,12 +65,15 @@ import User from '@/dataModel/User';
 export default class CourseView extends Vue {
 
     // Data
+    private course: Course = new Course('', 'Loading', '', '', []);
+    private worksheets: Worksheet[] = [];
     private courseController: CourseController = this.$store.getters.courseController;
     private worksheetController: WorksheetController = this.$store.getters.worksheetController;
     private userController: UserController = this.$store.getters.userController;
     private isInStudentView: boolean = false;
     private worksheetsChanged: boolean = false;
     private changeMessage = this.$t('hoverText.switchToStudentsView') as string;
+
 
     // Functions
     public openWorksheet(worksheet: Worksheet) {
@@ -101,14 +103,41 @@ export default class CourseView extends Vue {
             this.userController.switchUserGroup(UserGroup.Student);
         }
 
-        this.setIsStudentsViewActive();
-
-        try {
-            this.courseController.loadWithAlias(this.$route.params.courseId);
-        } catch (e) {
-            alert(e.message);
+            this.setIsStudentsViewActive();
+            this.courseController.getWithAlias(this.$route.params.courseId)
+              .then((course: Course) => {
+                this.course = course;
+                this.worksheetController.getChildren(course)
+                  .then((worksheets: Worksheet[]) => {
+                    this.worksheets = worksheets;
+                  }).catch((error) => {
+                  switch (error.status) {
+                    case 404:
+                      alert(this.$t('apiError.worksheets404') as string);
+                      break;
+                    case 500:
+                      alert(this.$t('apiError.server500') as string);
+                      break;
+                    default:
+                      alert(this.$t('apiError.defaultMsg') as string);
+                      break;
+                  }
+                });
+              })
+              .catch((error) => {
+                switch (error.status) {
+                  case 404:
+                    alert(this.$t('apiError.course404') as string);
+                    break;
+                  case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                  default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+                }
+              });
         }
-    }
 
     public toggleView() {
         this.isInStudentView = !this.isInStudentView;
@@ -119,43 +148,57 @@ export default class CourseView extends Vue {
             alert(this.$t('course.alertName') as string);
             return;
         }
-        this.worksheetController.create(new Worksheet('', name, [], false, false)).then((worksheetId) => {
+      let newWorksheet = new Worksheet('', name, [], false, false)
+            this.worksheetController.create(newWorksheet).then((worksheetId) => {
+                this.worksheets.push(newWorksheet);
                 this.course.worksheetIds.push(worksheetId);
-                this.courseController.save(this.course);
+                // TODO rausschmeißen, wenn das Backend bei create den Kurs aktualisiert
+                this.courseController.save(this.course).then();
                 this.worksheetsChanged = true;
-            }).catch((e) => {
-                alert(e.message);
+            }).catch((error) => {
+              switch (error.status) {
+                case 500:
+                  alert(this.$t('apiError.server500') as string);
+                  break;
+                default:
+                  alert(this.$t('apiError.defaultMsg') as string);
+                  break;
+              }
             });
     }
 
-    public deleteWorksheet(worksheet: Worksheet) {
-        if (confirm(this.$t('course.alertDelete') as string)) {
-            try {
-                this.worksheetController.remove(worksheet);
-            } catch (e) {
-                alert(e.message);
+        public deleteWorksheet(worksheet: Worksheet) {
+            if (confirm(this.$t('course.alertDelete') as string)) {
+                this.worksheetController.remove(worksheet)
+                  .then(() => {
+                    this.worksheets = this.worksheets.filter((ws: Worksheet) => ws.id !== worksheet.id);
+                  })
+                  .catch((error) => {
+                    switch (error.status) {
+                      case 500:
+                        alert(this.$t('apiError.server500') as string);
+                        break;
+                      default:
+                        alert(this.$t('apiError.defaultMsg') as string);
+                        break;
+                    }
+                  });
             }
         }
-    }
 
-    public updateWorksheet(worksheet: Worksheet) {
-        try {
-            this.worksheetController.save(worksheet);
-        } catch (e) {
-            alert(e.message);
+        public updateWorksheet(worksheet: Worksheet) {
+          this.worksheetController.save(worksheet)
+            .catch((error) => {
+              switch (error.status) {
+                case 500:
+                  alert(this.$t('apiError.server500') as string);
+                  break;
+                default:
+                  alert(this.$t('apiError.defaultMsg') as string);
+                  break;
+              }
+            });
         }
-    }
-
-    public loadWorksheets() {
-        const course = this.courseController.courses.get(this.courseId);
-        if (course !== undefined) {
-            try {
-                this.worksheetController.loadChildren(course);
-            } catch (e) {
-                alert(e.message);
-            }
-        }
-    }
 
     get isStudentsViewActive() {
         this.setIsStudentsViewActive();
@@ -171,57 +214,10 @@ export default class CourseView extends Vue {
         }
     }
 
-    get hasUserWritePermission() {
-        return (this.userController.userState!.userGroup === UserGroup.Teacher);
-    }
-
-    get courseAlias() {
-        return this.$route.params.courseId;
-    }
-
-    get courseId() {
-        return this.courseController.aliases.get(this.courseAlias) || '';
-    }
-
-    get course() {
-        return this.courseController.courses.get(this.courseId) || new Course('', '', '', '', []);
-    }
-
-    @Watch('course')
-    private onCourseChanged(value: Course, oldValue: Course) {
-        if (value === undefined || value.id === '') {
-            // course not yet loaded
-            return;
-        } else if (oldValue === undefined || oldValue.id === '' || value.id !== oldValue.id) {
-            // course loaded or changed, load worksheets of this course
-            this.loadWorksheets();
+        get hasUserWritePermission() {
+            return (this.userController.userState!.userGroup === UserGroup.Teacher);
         }
     }
-
-    get worksheets() {
-        return this.worksheetController.all && this.worksheetController.getChildren(this.course);
-    }
-
-    @Watch('worksheets')
-    private onWorksheetsChanged(value: Worksheet[], oldValue: Worksheet[]) {
-        if (this.userController.userState!.userGroup === UserGroup.Teacher) {
-            if (!value.every((worksheet: Worksheet) => oldValue.includes(worksheet))) {
-                // if value and oldValue are different
-                try {
-                    this.courseController.save(new Course(
-                        this.course.id,
-                        this.course.name,
-                        this.course.description,
-                        this.course.alias,
-                        value.map((worksheet: Worksheet) => worksheet.id),
-                    ));
-                } catch (e) {
-                    alert(e.message);
-                }
-            }
-        }
-    }
-}
 </script>
 
 <style scoped>

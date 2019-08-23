@@ -1,33 +1,50 @@
 <template>
     <div>
-        {{worksheet.name}}
-        <!--Section to set options needed for a worksheet -->
-    <div>
-        <b-form-input v-model="worksheet.name" :placeholder="$t('teacherWorksheet.name')"></b-form-input>
-        <b-form-group :label="$t('teacherWorksheet.sheetOnline')">
-            <b-form-radio v-model="worksheet.isOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
-            <b-form-radio v-model="worksheet.isOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
-        </b-form-group>
+        <div class="head">
+            <h2>
+                {{worksheet.name}}
+            </h2>
+            <b-button @click="toCourseView"> {{$t('teacherWorksheet.toOverview')}}</b-button>
+        </div>
+        <div>
+            <h3>
+                Einstellungen
+            </h3>
+            <!--Section to set options needed for a worksheet -->
+            <b-input-group class="col-6">
+                <b-input-group-text><span>Name</span></b-input-group-text>
+                <b-input v-model="worksheet.name" :placeholder="$t('teacherWorksheet.name')">Name: </b-input>
+            </b-input-group>
+            <div class="d-flex">
+                <b-form-group :label="$t('teacherWorksheet.sheetOnline')" class="col-6">
+                    <b-form-radio v-model="worksheet.isOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
+                    <b-form-radio v-model="worksheet.isOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
+                </b-form-group>
 
-        <b-form-group :label="$t('teacherWorksheet.solutionOnline')">
-            <b-form-radio v-model="worksheet.isSolutionOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
-            <b-form-radio v-model="worksheet.isSolutionOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
-        </b-form-group>
-    </div>
+                <b-form-group :label="$t('teacherWorksheet.solutionOnline')" class="col-6">
+                    <b-form-radio v-model="worksheet.isSolutionOnline" :value="true">{{$t('teacherWorksheet.yes')}}</b-form-radio>
+                    <b-form-radio v-model="worksheet.isSolutionOnline" :value="false">{{$t('teacherWorksheet.no')}}</b-form-radio>
+                </b-form-group>
+            </div>
+        </div>
 
         <!--Displays a TaskCreation Component for every Task in the worksheet -->
         <div>
+            <h3>
+                Aufgaben
+            </h3>
             <TaskCreation v-for="task in tasks"
                           :key="task.id"
                           :databases="databases"
                           :initialTask="task"
-                          @save="save"
+                          :eventBus="eventBus"
+                          @updateTasks="updateTasks"
                           @delete="deleteTask"
             ></TaskCreation>
         </div>
         <!--buttons to create a new Task assigned to the worksheet and to return to the course view -->
         <b-button @click="createTask">{{$t('teacherWorksheet.new')}}</b-button>
-        <b-button @click="toCourseView"> {{$t('teacherWorksheet.toOverview')}}</b-button>
+        <b-button @click="save" variant="primary">Speichern</b-button>
     </div>
 </template>
 
@@ -38,9 +55,9 @@ import TaskCreation from '@/components/TaskCreation.vue';
 import DatabaseController from "@/controller/DatabaseController";
 import WorksheetController from "@/controller/WorksheetController";
 import Worksheet from '@/dataModel/Worksheet';
-import CourseController from "@/controller/CourseController";
 import Task from "@/dataModel/Task";
 import TaskController from "@/controller/TaskController";
+import Database from "@/dataModel/Database";
 
 
 
@@ -53,86 +70,102 @@ export default class TeacherWorksheet extends Vue {
 
     private databaseController: DatabaseController = this.$store.getters.databaseController;
     private worksheetController: WorksheetController = this.$store.getters.worksheetController;
-    private courseController: CourseController = this.$store.getters.courseController;
     private taskController: TaskController = this.$store.getters.taskController;
+
+    private worksheet: Worksheet = new Worksheet('', '', [], false, false);
+    private tasks: Task[] = [];
+    private databases: Database[] = [];
+    private eventBus = new Vue();
 
     public created() {
       this.databaseController = this.$store.getters.databaseController;
       this.worksheetController = this.$store.getters.worksheetController;
-      this.courseController = this.$store.getters.courseController;
       this.taskController = this.$store.getters.taskController;
 
-      this.courseController.loadWithAlias(this.$route.params.courseId);
-      this.worksheetController.load(this.$route.params.worksheetId);
+
+      this.worksheetController.get(this.$route.params.worksheetId).then((worksheet: Worksheet) =>
+      {
+        this.worksheet = worksheet;
+        this.taskController.getChildren(this.worksheet).then((tasks: Task[]) => {
+          this.tasks = tasks;
+        }
+        // TODO catchen
+      ).catch(() => {});
+      }).catch(() => {});
+
+
+      this.databaseController.getAll().then((databases: Database[]) =>
+      {
+        this.databases = databases;
+        // TODO catchen
+      }).catch(() => {});
     }
 
     public createTask() {
-        this.taskController.create(new Task('', '', '', []))
-          .then((taskId: string) => {
+      const task = new Task('', '', '', []);
+      this.taskController.create(task)
+        .then((taskId: string) => {
+            task.id = taskId;
+            this.tasks.push(task);
             this.worksheet.taskIds.push(taskId);
-          });
+            // TODO entfernen, wenn create auf dem Backend auch das Worksheet aktualisiert
+            this.worksheetController.save(this.worksheet).then();
+          })
+        // TODO catchen
+        .catch(() => {});
     }
+
+
 
     public deleteTask(task: Task) {
-        this.taskController.remove(task);
+        this.taskController.remove(task).then(() => {
+        this.tasks = this.tasks.filter((oldTask: Task) => oldTask.id !== task.id);
         this.worksheet.taskIds = this.worksheet.taskIds.filter((id: string) => id !== task.id);
-        this.worksheetController.save(this.worksheet);
+        // TODO entfernen, wenn delete auf dem Backend auch das Worksheet aktualisiert
+        this.worksheetController.save(this.worksheet).then();
+        });
     }
 
+
+
     public save() {
-      this.worksheetController.save(this.worksheet);
+      this.eventBus.$emit('save');
+      this.worksheetController.save(this.worksheet).then(() =>
+      {
+        // TODO Sprache auslagern
+        alert("Speichern erfolgreich");
+      })
+      // TODO catchen
+        .catch(() => {});
     }
+    /*
+     this method gets calles whenever a task gets saved in taskCreation.vue. That is so the task
+     array in this view can get updated. It just gets called when the save call to the API was successful.
+     */
+  public updateTasks() {
+    this.taskController.getChildren(this.worksheet).then((tasks: Task[]) => {
+      this.tasks = tasks;
+      // TODO catchen
+    }).catch(() => {});
+  }
+
+
 
     public toCourseView() {
       this.save();
-      this.$router.push('/courseView');
+      this.$router.push('/courseView/' + this.$route.params.courseId);
     }
 
-  get databases() {
-    return this.databaseController.all;
-  }
-
-  /*
-  returns a worksheet and calls the setVar method to update the variables to match the worksheet.
-  this is used when an existing worksheet is loaded not when a new one is created
-   */
-  get worksheet(): Worksheet {
-    let tempWorksheet = new Worksheet('', '', [], false, false);
-    try {
-      tempWorksheet = this.worksheetController.get(this.$route.params.worksheetId);
-    } catch (e) {
-      return tempWorksheet;
-    }
-    return tempWorksheet;
-  }
-  @Watch('worksheet')
-  public onWorksheetChange(value: Worksheet, oldValue: Worksheet) {
-    if (value === undefined) {
-      return;
-    }
-    if (oldValue === undefined || value.id !== oldValue.id) {
-      this.taskController.loadChildren(value);
-    }
-  }
-
-  get tasks(): Task[] {
-    return this.taskController.all && this.taskController.getChildren(this.worksheet);
-  }
-  @Watch('tasks')
-  public onTasksChange(value: Task[], oldValue: Task[]) {
-    if (value === undefined) {
-      return;
-    }
-    if (value.length !== oldValue.length
-      || !value.every((task: Task, index: number) => oldValue[index].id === task.id)) {
-      this.worksheet.taskIds = value.map((task: Task) => task.id);
-      this.worksheetController.save(this.worksheet);
-      this.taskController.loadChildren(this.worksheet);
-    }
-  }
 }
 </script>
 
 <style scoped>
-
+    .head {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        margin-bottom: 35px;
+        text-align: center;
+        background-color: #17a2b8;
+        color: white;
+    }
 </style>
