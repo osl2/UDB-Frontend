@@ -49,7 +49,7 @@ export default class WorksheetController extends ApiControllerAbstract
                 }
                 Promise.reject(e);
             })))
-          .then((worksheets: (Worksheet | undefined)[]) => {
+          .then((worksheets: Array<Worksheet | undefined>) => {
               // type cast is ok, because we filter undefined
               return worksheets.filter((worksheet: Worksheet | undefined) => worksheet !== undefined) as Worksheet[];
           });
@@ -64,7 +64,7 @@ export default class WorksheetController extends ApiControllerAbstract
             .then((response: string) => {
                 worksheet.id = response;
                 return worksheet.id;
-            })
+            });
     }
     public save(object: Worksheet): Promise<void> {
         return this.api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest);

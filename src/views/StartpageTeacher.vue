@@ -60,12 +60,12 @@ import UserController from "@/controller/UserController";
     },
 })
 export default class StartpageTeacher extends Vue {
+        public messages: string[] = [];
 
         // Data
         private courses: Course[] = [];
         private databases: Database[] = [];
         private loading = true;
-        public messages: string[] = [];
         private dbErrorMsg: string = '';
         private databaseController: DatabaseController = this.$store.getters.databaseController;
         private userController: UserController = this.$store.getters.userController;
@@ -94,10 +94,10 @@ export default class StartpageTeacher extends Vue {
                 alert(this.$t('teacher.alertCourse') as string);
                 return;
             }
-            let newCourse = new Course("", name, description, "", []);
+            const newCourse = new Course("", name, description, "", []);
             this.courseController.create(newCourse)
               .then(() => {
-                this.courses.push(newCourse)
+                this.courses.push(newCourse);
               })
               .catch((error) => {
                 switch (error.status) {

@@ -104,11 +104,9 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
     this.taskController = this.$store.getters.taskController;
     this.subtaskController = this.$store.getters.subtaskController;
     this.databaseController = this.$store.getters.databaseController;
-    this.worksheetController.get(this.$route.params.worksheetId).then((worksheet: Worksheet) =>
-    {
+    this.worksheetController.get(this.$route.params.worksheetId).then((worksheet: Worksheet) => {
       this.worksheet = worksheet;
-      this.taskController.getChildren(this.worksheet).then((tasks: Task[]) =>
-      {
+      this.taskController.getChildren(this.worksheet).then((tasks: Task[]) => {
         this.tasks = tasks;
       }).catch((error) => {
         switch (error.status) {
@@ -287,8 +285,7 @@ import SolutionDiff from '@/dataModel/SolutionDiff';
           this.currentSubtask = subtasks[index];
           this.subtaskIndex = index;
           this.numberOfSubtasks = this.currentMatchingSubtasks.length;
-          this.databaseController.get(this.currentTask.databaseId).then((database: Database) =>
-          {
+          this.databaseController.get(this.currentTask.databaseId).then((database: Database) => {
             this.database = database;
           }).catch((error) => {
             switch (error.status) {

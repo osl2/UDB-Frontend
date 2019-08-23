@@ -20,14 +20,14 @@ export default class CourseController extends ApiControllerAbstract implements D
   public getAll(): Promise<Course[]> {
     return this.api.getCourses()
       .then((response: Course[]) => {
-        let promises = response.map((course: Course) => this.api.getAlias({uuid: course.id} as GetAliasRequest))
+        const promises = response.map((course: Course) => this.api.getAlias({uuid: course.id} as GetAliasRequest));
         return Promise.all(promises)
           .then((aliasResponses: AliasResponse[]) => {
             for (let i = 0; i < response.length; i++) {
               response[i].alias = aliasResponses[i].alias;
             }
             return response;
-          })
+          });
         });
   }
 
@@ -38,8 +38,8 @@ export default class CourseController extends ApiControllerAbstract implements D
           .then((response: AliasResponse) => {
             course.alias = response.alias;
             return course;
-          })
-      })
+          });
+      });
   }
 
   public getWithAlias(alias: string): Promise<Course> {
@@ -50,10 +50,10 @@ export default class CourseController extends ApiControllerAbstract implements D
             .then((course: Course) => {
               course.alias = response.alias;
               return course;
-            })
+            });
         }
         return Promise.reject("Alias type wrong!");
-      })
+      });
   }
 
   /**
@@ -70,7 +70,7 @@ export default class CourseController extends ApiControllerAbstract implements D
             course.alias = aliasResponse;
             return course.id;
           });
-      })
+      });
   }
 
   public save(object: Course): Promise<void> {

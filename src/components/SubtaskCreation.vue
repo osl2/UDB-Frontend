@@ -148,19 +148,19 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
 </template>
 
 <script lang="ts">
-  import Vue from 'vue';
-  import InstructionTask from "@/dataModel/InstructionTask";
-  import Subtask from '@/dataModel/Subtask';
-  import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
-  import {ResultSet} from "@/dataModel/ResultSet";
-  import SubtaskTypes from '@/dataModel/SubtaskTypes';
-  import SubtaskController from "@/controller/SubtaskController";
-  import {Component, Prop} from "vue-property-decorator";
-  import SQLExecutor from "@/controller/SQLExecutor";
-  import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
-  import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
+import Vue from 'vue';
+import InstructionTask from "@/dataModel/InstructionTask";
+import Subtask from '@/dataModel/Subtask';
+import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
+import {ResultSet} from "@/dataModel/ResultSet";
+import SubtaskTypes from '@/dataModel/SubtaskTypes';
+import SubtaskController from "@/controller/SubtaskController";
+import {Component, Prop} from "vue-property-decorator";
+import SQLExecutor from "@/controller/SQLExecutor";
+import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
+import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
 
-  @Component({
+@Component({
 
 })
 export default class SubtaskCreation extends Vue {
@@ -208,8 +208,8 @@ export default class SubtaskCreation extends Vue {
      */
     public created() {
       this.eventBus.$on('save', this.saveSubtask);
-        this.subtaskController = this.$store.getters.subtaskController;
-        this.subtask = this.initialSubtask;
+      this.subtaskController = this.$store.getters.subtaskController;
+      this.subtask = this.initialSubtask;
     }
 
         /*
@@ -241,12 +241,20 @@ export default class SubtaskCreation extends Vue {
             .map((answerOption: any) => answerOption.text);
           ((this.subtask as MultipleChoiceTask).solution as MultipleChoiceSolution).choices = this.selected;
         }
-        this.subtaskController.save(this.subtask).then(()=> {
+        this.subtaskController.save(this.subtask).then(() => {
           this.$emit('updateSubtasks');
           // TODO Sprache auslagern
-          alert("Speichern der Teilaufgabe erfolgreich")
-          // TODO catchen
-        }).catch(() => {});
+          alert("Speichern der Teilaufgabe erfolgreich");
+        }).catch((error) => {
+            switch (error.status) {
+                case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+            }
+        });
       });
     }
 

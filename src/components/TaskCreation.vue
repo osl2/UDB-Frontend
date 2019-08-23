@@ -83,54 +83,97 @@ export default class TaskCreation extends Vue {
         }
         this.subtaskController.getChildren(this.task).then((subtasks: Subtask[]) => {
           this.subtasks = subtasks;
-          // TODO catchen
-        }).catch(() => {});
+        }).catch((error) => {
+            switch (error.status) {
+                case 404:
+                    alert(this.$t('apiError.subtasks404') as string);
+                    break;
+                case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+            }
+        });
     }
 
    public newSqlTask() {
      const subtask = new SqlTask('', new SqlSolution(';', [], [[]]), '',
        false, false, false, false, AllowedSqlStatements.NoRestriction);
-        this.subtaskController.create(subtask).then((subtaskId: string) => {
+     this.subtaskController.create(subtask).then((subtaskId: string) => {
           subtask.id = subtaskId;
           this.subtasks.push(subtask);
           this.task.subtaskIds.push(subtaskId);
           // TODO Methode entfernen, sobald Create auf dem Backend den Task aktualisisert
           this.save();
-          // TODO catchen
-        }).catch(() => {});
+        }).catch((error) => {
+         switch (error.status) {
+             case 500:
+                 alert(this.$t('apiError.server500') as string);
+                 break;
+             default:
+                 alert(this.$t('apiError.defaultMsg') as string);
+                 break;
+         }
+     });
     }
    public newMCTask() {
      const subtask = new MultipleChoiceTask('', new MultipleChoiceSolution([0]), '', false, false, []);
-        this.subtaskController.create(subtask).then((subtaskId: string) => {
+     this.subtaskController.create(subtask).then((subtaskId: string) => {
           subtask.id = subtaskId;
           this.subtasks.push(subtask);
           this.task.subtaskIds.push(subtaskId);
           // TODO Methode entfernen, sobald Create auf dem Backend den Task aktualisisert
           this.save();
-          // TODO catchen
-        }).catch(() => {});
+        }).catch((error) => {
+         switch (error.status) {
+             case 500:
+                 alert(this.$t('apiError.server500') as string);
+                 break;
+             default:
+                 alert(this.$t('apiError.defaultMsg') as string);
+                 break;
+         }
+     });
       }
    public newTextTask() {
      const subtask = new PlainTextTask('', new PlainTextSolution(''), '', false, false);
-        this.subtaskController.create(subtask).then((subtaskId: string) => {
+     this.subtaskController.create(subtask).then((subtaskId: string) => {
           subtask.id = subtaskId;
           this.subtasks.push(subtask);
           this.task.subtaskIds.push(subtaskId);
           // TODO Methode entfernen, sobald Create auf dem Backend den Task aktualisisert
           this.save();
-          // TODO catchen
-        }).catch(() => {});
+        }).catch((error) => {
+         switch (error.status) {
+             case 500:
+                 alert(this.$t('apiError.server500') as string);
+                 break;
+             default:
+                 alert(this.$t('apiError.defaultMsg') as string);
+                 break;
+         }
+     });
       }
    public newInstructionTask() {
      const subtask = new InstructionTask('', '');
-        this.subtaskController.create(subtask).then((subtaskId: string) => {
+     this.subtaskController.create(subtask).then((subtaskId: string) => {
           subtask.id = subtaskId;
           this.subtasks.push(subtask);
           this.task.subtaskIds.push(subtaskId);
           // TODO Methode entfernen, sobald Create auf dem Backend den Task aktualisisert
           this.save();
-          // TODO catchen
-        }).catch(() => {});
+        }).catch((error) => {
+         switch (error.status) {
+             case 500:
+                 alert(this.$t('apiError.server500') as string);
+                 break;
+             default:
+                 alert(this.$t('apiError.defaultMsg') as string);
+                 break;
+         }
+     });
    }
 
 
@@ -146,11 +189,19 @@ export default class TaskCreation extends Vue {
    this method gets calles whenever a subtask gets saved in SubtaskCreation.vue. That is so the subtask
    array in this view can get updated. It just gets called when the save call to the API was successful.
    */
-  public updateSubtasks(){
+  public updateSubtasks() {
      this.subtaskController.getChildren(this.task).then((subtasks: Subtask[]) => {
        this.subtasks = subtasks;
-       // TODO catchen
-     }).catch(() => {});
+     }).catch((error) => {
+         switch (error.status) {
+             case 500:
+                 alert(this.$t('apiError.server500') as string);
+                 break;
+             default:
+                 alert(this.$t('apiError.defaultMsg') as string);
+                 break;
+         }
+     });
   }
 
   /*
@@ -166,6 +217,15 @@ export default class TaskCreation extends Vue {
       this.task.subtaskIds = this.task.subtaskIds.filter((id: string) => id !== subtask.id);
       // TODO entfernen, wenn delete auf dem Backend auch den Task aktualisiert
       this.taskController.save(this.task).then();
+    }).catch((error) => {
+        switch (error.status) {
+            case 500:
+                alert(this.$t('apiError.server500') as string);
+                break;
+            default:
+                alert(this.$t('apiError.defaultMsg') as string);
+                break;
+        }
     });
   }
 

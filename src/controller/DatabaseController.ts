@@ -44,7 +44,7 @@ export default class DatabaseController extends ApiControllerAbstract
             .then((response: string) => {
                 database.id = response;
                 return database.id;
-            })
+            });
     }
 
     public save(object: Database): Promise<void> {

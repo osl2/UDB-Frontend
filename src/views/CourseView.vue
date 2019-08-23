@@ -72,16 +72,16 @@ export default class CourseView extends Vue {
     private userController: UserController = this.$store.getters.userController;
     private isInStudentView: boolean = false;
     private worksheetsChanged: boolean = false;
-    private changeMessage = this.$t('hoverText.switchToStudentsView') as string;
+    private changeMessage: string = "";
 
 
     // Functions
     public openWorksheet(worksheet: Worksheet) {
             if (this.isStudentsViewActive) {
-                router.push('/studentCourseView/' + this.courseAlias + '/' + worksheet.id);
+                router.push('/studentCourseView/' + this.course.alias + '/' + worksheet.id);
             } else {
                 if (confirm(this.$t('course.alertEditWorksheet') as string)) {
-                router.push('/courseView/' + this.courseAlias + '/' + worksheet.id);
+                router.push('/courseView/' + this.course.alias + '/' + worksheet.id);
                 }
             }
     }
@@ -94,6 +94,7 @@ export default class CourseView extends Vue {
         this.userController = this.$store.getters.userController;
         this.courseController = this.$store.getters.courseController;
         this.worksheetController = this.$store.getters.worksheetController;
+        this.changeMessage = this.$t('hoverText.switchToStudentsView') as string;
 
         if (this.userController.userState === undefined) {
             this.userController.userState = new User('', '', '', '', UserGroup.Unauthenticated);
@@ -103,8 +104,8 @@ export default class CourseView extends Vue {
             this.userController.switchUserGroup(UserGroup.Student);
         }
 
-            this.setIsStudentsViewActive();
-            this.courseController.getWithAlias(this.$route.params.courseId)
+        this.setIsStudentsViewActive();
+        this.courseController.getWithAlias(this.$route.params.courseId)
               .then((course: Course) => {
                 this.course = course;
                 this.worksheetController.getChildren(course)
@@ -148,8 +149,8 @@ export default class CourseView extends Vue {
             alert(this.$t('course.alertName') as string);
             return;
         }
-      let newWorksheet = new Worksheet('', name, [], false, false)
-            this.worksheetController.create(newWorksheet).then((worksheetId) => {
+        const newWorksheet = new Worksheet('', name, [], false, false);
+        this.worksheetController.create(newWorksheet).then((worksheetId) => {
                 this.worksheets.push(newWorksheet);
                 this.course.worksheetIds.push(worksheetId);
                 // TODO rausschmeißen, wenn das Backend bei create den Kurs aktualisiert

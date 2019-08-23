@@ -83,22 +83,55 @@ export default class TeacherWorksheet extends Vue {
       this.taskController = this.$store.getters.taskController;
 
 
-      this.worksheetController.get(this.$route.params.worksheetId).then((worksheet: Worksheet) =>
-      {
+      this.worksheetController.get(this.$route.params.worksheetId).then((worksheet: Worksheet) => {
         this.worksheet = worksheet;
         this.taskController.getChildren(this.worksheet).then((tasks: Task[]) => {
           this.tasks = tasks;
-        }
+        },
         // TODO catchen
-      ).catch(() => {});
-      }).catch(() => {});
+      ).catch((error) => {
+            switch (error.status) {
+                case 404:
+                    alert(this.$t('apiError.tasks404') as string);
+                    break;
+                case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+            }
+        });
+      }).catch((error) => {
+          switch (error.status) {
+              case 404:
+                  alert(this.$t('apiError.worksheet404') as string);
+                  break;
+              case 500:
+                  alert(this.$t('apiError.server500') as string);
+                  break;
+              default:
+                  alert(this.$t('apiError.defaultMsg') as string);
+                  break;
+          }
+      });
 
 
-      this.databaseController.getAll().then((databases: Database[]) =>
-      {
+      this.databaseController.getAll().then((databases: Database[]) => {
         this.databases = databases;
-        // TODO catchen
-      }).catch(() => {});
+      }).catch((error) => {
+          switch (error.status) {
+              case 404:
+                  alert(this.$t('apiError.databases404') as string);
+                  break;
+              case 500:
+                  alert(this.$t('apiError.server500') as string);
+                  break;
+              default:
+                  alert(this.$t('apiError.defaultMsg') as string);
+                  break;
+          }
+      });
     }
 
     public createTask() {
@@ -110,9 +143,16 @@ export default class TeacherWorksheet extends Vue {
             this.worksheet.taskIds.push(taskId);
             // TODO entfernen, wenn create auf dem Backend auch das Worksheet aktualisiert
             this.worksheetController.save(this.worksheet).then();
-          })
-        // TODO catchen
-        .catch(() => {});
+          }).catch((error) => {
+          switch (error.status) {
+              case 500:
+                  alert(this.$t('apiError.server500') as string);
+                  break;
+              default:
+                  alert(this.$t('apiError.defaultMsg') as string);
+                  break;
+          }
+      });
     }
 
 
@@ -123,6 +163,15 @@ export default class TeacherWorksheet extends Vue {
         this.worksheet.taskIds = this.worksheet.taskIds.filter((id: string) => id !== task.id);
         // TODO entfernen, wenn delete auf dem Backend auch das Worksheet aktualisiert
         this.worksheetController.save(this.worksheet).then();
+        }).catch((error) => {
+            switch (error.status) {
+                case 500:
+                    alert(this.$t('apiError.server500') as string);
+                    break;
+                default:
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+            }
         });
     }
 
@@ -130,13 +179,19 @@ export default class TeacherWorksheet extends Vue {
 
     public save() {
       this.eventBus.$emit('save');
-      this.worksheetController.save(this.worksheet).then(() =>
-      {
+      this.worksheetController.save(this.worksheet).then(() => {
         // TODO Sprache auslagern
         alert("Speichern erfolgreich");
-      })
-      // TODO catchen
-        .catch(() => {});
+      }).catch((error) => {
+          switch (error.status) {
+              case 500:
+                  alert(this.$t('apiError.server500') as string);
+                  break;
+              default:
+                  alert(this.$t('apiError.defaultMsg') as string);
+                  break;
+          }
+      });
     }
     /*
      this method gets calles whenever a task gets saved in taskCreation.vue. That is so the task
@@ -145,8 +200,19 @@ export default class TeacherWorksheet extends Vue {
   public updateTasks() {
     this.taskController.getChildren(this.worksheet).then((tasks: Task[]) => {
       this.tasks = tasks;
-      // TODO catchen
-    }).catch(() => {});
+    }).catch((error) => {
+        switch (error.status) {
+            case 404:
+                alert(this.$t('apiError.tasks404') as string);
+                break;
+            case 500:
+                alert(this.$t('apiError.server500') as string);
+                break;
+            default:
+                alert(this.$t('apiError.defaultMsg') as string);
+                break;
+        }
+    });
   }
 
 

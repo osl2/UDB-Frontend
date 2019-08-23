@@ -34,7 +34,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
                 subtask.solution = undefined;
                 return subtask;
             });
-        })
+        });
     }
 
     /**
@@ -53,7 +53,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
               .then((subtask: Subtask) => {
                   subtask.solution = undefined;
                   return subtask;
-              })
+              });
         }));
     }
 
@@ -71,7 +71,7 @@ export default class SubtaskController extends ApiControllerAbstract implements 
           .then((subtask: Subtask) => {
               subtask.solution = undefined;
               return subtask;
-          })
+          });
     }
 
     /**

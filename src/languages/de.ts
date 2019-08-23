@@ -216,7 +216,7 @@ const de = {
     server500: 'ERROR: Es gab einen Fehler auf dem Server.',
 
     // Account
-    register400:'ERROR: Benutzername existiert bereits.',
+    register400: 'ERROR: Benutzername existiert bereits.',
 
     // Course
     course404: 'ERROR: Dieser Kurs existiert nicht.',
@@ -241,7 +241,7 @@ const de = {
 
     // Solution
     compare404: 'ERROR: Diese Teilaufgabe hat (noch) keine (öffentlich zugängliche) Lösung zum Vergleichen.',
-  }
+  },
 };
 export default de;
 

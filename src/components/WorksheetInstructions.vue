@@ -42,7 +42,7 @@ export default class WorksheetInstructions extends Vue {
           alert(this.$t('apiError.defaultMsg') as string);
           break;
       }
-    })
+    });
   }
 
 
