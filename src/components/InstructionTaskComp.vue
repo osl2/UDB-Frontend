@@ -2,17 +2,19 @@
     <div>
         <h3>{{ $t('taskComp.instruction') }}</h3>
         <div class="taskContainer">
-            {{ this.currentSubtask.instruction }}
+            {{ currentSubtask.instruction }}
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import Subtask from '@/dataModel/Subtask';
 
-export default Vue.extend({
-    props: ['currentSubtask'],
-});
+@Component
+export default class InstructionTaskComp extends Vue {
+    @Prop() private currentSubtask!: Subtask;
+}
 </script>
 
 <style scoped>

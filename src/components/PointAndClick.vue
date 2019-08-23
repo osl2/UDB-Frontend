@@ -13,53 +13,52 @@
 <script lang="ts">
 declare var Blockly: any;
 
-import Vue from 'vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
-export default Vue.extend({
-    props: ['allowedSqlToolbox'],
-    data: () => ({
-        workspace: Blockly,
-        code: null,
-    }),
+@Component
+export default class PointAndClick extends Vue {
+    @Prop() private allowedSqlToolbox!: string;
+    private workspace: any = Blockly;
+    private code: string = '';
+
     mounted() {
         this.initBlockly();
-    },
-    methods: {
-        initBlockly() {
-            const toolbox = require('@/assets/blockly/' + this.allowedSqlToolbox);
-            // remove metadata from loaded toolbox
-            const cleantoolbox = toolbox.substring(28).toString();
-            // decode base64
-            const decodedtoolbox = atob(cleantoolbox);
-            this.workspace = Blockly.inject(
-                // this.$refs.blocklyDiv,
-                'blocklyDiv',
-                {
-                    toolbox: decodedtoolbox,
-                    path: './static/js/blockly/',
-                    collapse: false,
-                    comments: false,
-                    disable: false,
-                    maxBlocks: Infinity,
-                    trashcan: true,
-                    horizontalLayout: false,
-                    toolboxPosition: 'start',
-                    css: true,
-                    media: './static/js/blockly/media/',
-                    rtl: false,
-                    scrollbars: true,
-                    sounds: true,
-                    oneBasedIndex: true,
-                }
-            );
-            this.workspace.addChangeListener(this.updateCode);
-        },
+    }
 
-        updateCode() {
-            this.code = Blockly.SQL.workspaceToCode(this.workspace);
-        },
-    },
-});
+    private initBlockly() {
+        const toolbox = require('@/assets/blockly/' + this.allowedSqlToolbox);
+        // remove metadata from loaded toolbox
+        const cleantoolbox = toolbox.substring(28).toString();
+        // decode base64
+        const decodedtoolbox = atob(cleantoolbox);
+        this.workspace = Blockly.inject(
+            // this.$refs.blocklyDiv,
+            'blocklyDiv',
+            {
+                toolbox: decodedtoolbox,
+                path: './static/js/blockly/',
+                collapse: false,
+                comments: false,
+                disable: false,
+                maxBlocks: Infinity,
+                trashcan: true,
+                horizontalLayout: false,
+                toolboxPosition: 'start',
+                css: true,
+                media: './static/js/blockly/media/',
+                rtl: false,
+                scrollbars: true,
+                sounds: true,
+                oneBasedIndex: true,
+            }
+        );
+        this.workspace.addChangeListener(this.updateCode);
+    }
+
+    updateCode() {
+        this.code = Blockly.SQL.workspaceToCode(this.workspace);
+    }
+}
 </script>
 
 <style scoped>

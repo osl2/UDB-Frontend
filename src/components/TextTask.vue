@@ -2,7 +2,7 @@
     <div>
         <h3>{{ $t('taskComp.instruction') }}</h3>
         <div class="taskContainer">
-            <p>{{ this.currentSubtask.instruction }}</p>
+            <p>{{ currentSubtask.instruction }}</p>
         </div>
 
         <div>
@@ -31,32 +31,29 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import PlainTextSolution from '@/dataModel/PlainTextSolution';
+import Subtask from '@/dataModel/Subtask';
+import Solution from '@/dataModel/Solution';
 
-export default Vue.extend({
-    props: ['currentSubtask', 'solutions'],
-    data() {
-        return {
-            studentSolution: '' as string,
-        };
-    },
+@Component
+export default class TextTask extends Vue {
+    @Prop() private currentSubtask!: Subtask;
+    @Prop() private solutions!: Map<string, Solution>;
+    private studentSolution: string = '';
 
-    computed: {
-        subtaskSolution: {
-            get(): PlainTextSolution {
-                return new PlainTextSolution(this.studentSolution);
-            },
-        },
-    },
+    get subtaskSolution(): PlainTextSolution {
+        return new PlainTextSolution(this.studentSolution);
+    }
 
     // if there is a saved solution in the solutions map it gets displayed by setting the attribute studentSolution
     created() {
         if (this.solutions.has(this.currentSubtask.id)) {
-            this.studentSolution = this.solutions.get(this.currentSubtask.id).text;
+            const solution = this.solutions.get(this.currentSubtask.id) as PlainTextSolution;
+            this.studentSolution = solution.text;
         }
-    },
-});
+    }
+}
 </script>
 
 <style scoped>

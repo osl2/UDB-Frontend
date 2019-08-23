@@ -56,62 +56,65 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Query from '@/components/Query.vue';
 import QueryResultComp from '@/components/QueryResult.vue';
 import PointAndClick from '@/components/PointAndClick.vue';
 import SqlSolution from '@/dataModel/SqlSolution';
 import SqlTask from '@/dataModel/SqlTask';
 import AllowedSqlStatements from '@/dataModel/AllowedSqlStatements';
+import Subtask from '@/dataModel/Subtask';
+import Solution from '@/dataModel/Solution';
+import QueryResult from '@/dataModel/QueryResult';
+import SQLExecutor from '@/controller/SQLExecutor';
 
-export default Vue.extend({
+@Component({
     components: {
         Query,
         PointAndClick,
         QueryResultComp,
     },
-    props: ['currentSubtask', 'solutions', 'queryResult', 'gotFirstQueryExecuted', 'lastQueryExecuted'],
+})
+export default class SqlTaskComp extends Vue {
+    @Prop() private currentSubtask!: Subtask;
+    @Prop() private solutions!: Map<string, Solution>;
+    @Prop() private queryResult!: QueryResult;
+    @Prop() private gotFirstQueryExecuted!: boolean;
+    @Prop() private lastQueryExecuted!: string;
+    private isPointAndClickActive: boolean = false;
+    private allowedSqlToolbox: string = 'toolbox_all.xml';
+    private sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
 
-    data() {
-        return {
-            isPointAndClickActive: false,
-            allowedSqlToolbox: 'toolbox_all.xml',
-            sqlExecutor: this.$store.getters.sqlExecutor,
-        };
-    },
+    get sqlTaskDynamicComponent() {
+        const subtask: SqlTask = this.currentSubtask as SqlTask;
+        if (this.isPointAndClickActive && subtask.isPointAndClickAllowed) {
+            return PointAndClick;
+        } else {
+            return Query;
+        }
+    }
 
-    computed: {
-        sqlTaskDynamicComponent() {
-            if (this.isPointAndClickActive && this.currentSubtask.isPointAndClickAllowed) {
-                return PointAndClick;
-            } else {
-                return Query;
-            }
-        },
-
-        subtaskSolution: {
-            get(): SqlSolution {
-                const values: string[][] = [[]];
-                let i = 0;
-                for (const row of this.queryResult.result.values) {
-                    values.push([]);
-                    for (const cell of row) {
-                        if (cell != null) {
-                            values[i].push(cell.toString());
-                        } else {
-                            values[i].push('null');
-                        }
-                    }
-                    i++;
+    get subtaskSolution(): SqlSolution {
+        const values: string[][] = [[]];
+        let i = 0;
+        for (const row of this.queryResult.result.values) {
+            values.push([]);
+            for (const cell of row) {
+                if (cell != null) {
+                    values[i].push(cell.toString());
+                } else {
+                    values[i].push('null');
                 }
-                return new SqlSolution(this.queryResult.query, this.queryResult.result.columns, values);
-            },
-        },
-    },
+            }
+            i++;
+        }
+        return new SqlSolution(this.queryResult.query, this.queryResult.result.columns, values);
+    }
 
     created() {
         if (this.solutions.has(this.currentSubtask.id)) {
-            this.executeQuery(this.solutions.get(this.currentSubtask.id).querySolution);
+            const solution: SqlSolution = this.solutions.get(this.currentSubtask.id) as SqlSolution;
+            this.executeQuery(solution.querySolution);
         }
         const tempSubtask = this.currentSubtask as SqlTask;
         if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
@@ -119,10 +122,12 @@ export default Vue.extend({
         } else {
             this.allowedSqlToolbox = 'toolbox_all.xml';
         }
-    },
+    }
+
     mounted() {
         if (this.solutions.has(this.currentSubtask.id)) {
-            this.executeQuery(this.solutions.get(this.currentSubtask.id).querySolution);
+            const solution: SqlSolution = this.solutions.get(this.currentSubtask.id) as SqlSolution;
+            this.executeQuery(solution.querySolution);
         }
         const tempSubtask = this.currentSubtask as SqlTask;
         if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
@@ -130,40 +135,39 @@ export default Vue.extend({
         } else {
             this.allowedSqlToolbox = 'toolbox_all.xml';
         }
-    },
-    methods: {
-        executeQuery(query: string) {
-            if (this.checkAllowedSqlStatements(query)) {
-                this.$emit('executeQuery', query);
-            } else {
-                alert(this.$t('sqlTaskComp.alertStatement') as string);
-            }
-        },
+    }
 
-        /*
+    private executeQuery(query: string) {
+        if (this.checkAllowedSqlStatements(query)) {
+            this.$emit('executeQuery', query);
+        } else {
+            alert(this.$t('sqlTaskComp.alertStatement') as string);
+        }
+    }
+
+    /*
     checks if the query the student created only uses sql statements that are allowed to use in the subtask
      */
-        checkAllowedSqlStatements(query: string): boolean {
-            const tempSubtask = this.currentSubtask as SqlTask;
-            if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
-                // check if the input contains a statement which is NOT allowed
-                const regexSelect = new RegExp('^/(drop)|(alter)|(create)|(update)|(insert)|(delete)/', 'i');
-                if (query.match(regexSelect) === null) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                // no restrictions on the query input
+    checkAllowedSqlStatements(query: string): boolean {
+        const tempSubtask = this.currentSubtask as SqlTask;
+        if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
+            // check if the input contains a statement which is NOT allowed
+            const regexSelect = new RegExp('^/(drop)|(alter)|(create)|(update)|(insert)|(delete)/', 'i');
+            if (query.match(regexSelect) === null) {
                 return true;
+            } else {
+                return false;
             }
-        },
+        } else {
+            // no restrictions on the query input
+            return true;
+        }
+    }
 
-        switchComponent() {
-            this.isPointAndClickActive = !this.isPointAndClickActive;
-        },
-    },
-});
+    switchComponent() {
+        this.isPointAndClickActive = !this.isPointAndClickActive;
+    }
+}
 </script>
 
 <style scoped>

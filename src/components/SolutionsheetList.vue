@@ -2,8 +2,7 @@
     <div class="container-fluid bg-secondary mb-5 pt-3 pb-3 pl-0">
         <div class="d-flex flex-row flex-nowrap">
             <b-card
-                v-for="worksheet in worksheets"
-                v-if="showWorksheet(worksheet)"
+                v-for="worksheet in visibleWorksheets"
                 :key="worksheet.id"
                 bg-variant="light"
                 class="card ml-3 col col-2 p-0"
@@ -31,21 +30,26 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Worksheet from '@/dataModel/Worksheet';
 
-export default Vue.extend({
-    props: ['worksheets', 'isStudentsViewActive'],
-    methods: {
-        showWorksheet(sheet: Worksheet): boolean {
-            if (this.isStudentsViewActive) {
-                return sheet.isOnline;
-            } else {
-                return true;
-            }
-        },
-    },
-});
+@Component
+export default class SolutionsheetList extends Vue {
+    @Prop() private worksheets!: Worksheet[];
+    @Prop() private isStudentsViewActive!: boolean;
+
+    showWorksheet(sheet: Worksheet): boolean {
+        if (this.isStudentsViewActive) {
+            return sheet.isSolutionOnline;
+        } else {
+            return true;
+        }
+    }
+
+    get visibleWorksheets(): Worksheet[] {
+        return this.worksheets.filter(worksheet => this.showWorksheet(worksheet));
+    }
+}
 </script>
 
 <style scoped>

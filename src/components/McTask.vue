@@ -2,7 +2,7 @@
     <div>
         <h3>{{ $t('taskComp.instruction') }}</h3>
         <div class="taskContainer">
-            {{ this.currentSubtask.instruction }}
+            {{ currentSubtask.instruction }}
         </div>
         <h3>{{ $t('mcTask.answerOptions') }}</h3>
         <div class="taskContainer">

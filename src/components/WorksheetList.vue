@@ -4,39 +4,35 @@
             <b-card v-if="areWorksheetsEmpty" bg-variant="light" class="card ml-3 col col-2 p-0">
                 <b-card-title>{{ $t('worksheetList.noSheets') }}</b-card-title>
             </b-card>
-
-            <b-card
-                v-for="worksheet in worksheets"
-                v-if="showWorksheet(worksheet)"
-                :key="worksheet.id"
-                bg-variant="light"
-                class="card ml-3 col col-2 p-0"
-            >
-                <b-card-title>
-                    {{ worksheet.name }}
-                </b-card-title>
-                <b-checkbox
-                    v-if="!isStudentsViewActive"
-                    v-model="worksheet.isOnline"
-                    class="custom-switch"
-                    @change="updateWorksheetOnline(worksheet)"
-                >
-                    {{ $t('worksheetList.worksheetOnline') }}
-                </b-checkbox>
-                <div v-if="isStudentsViewActive" slot="footer" class="btn-toolbar justify-content-center">
-                    <b-button class="bg-info" @click="$emit('openWorksheet', worksheet, false)">
-                        {{ $t('courseViewStudent.solveWorksheetButton') }}
-                    </b-button>
-                </div>
-                <div v-if="!isStudentsViewActive" slot="footer" class="btn-toolbar justify-content-center">
-                    <b-button class="bg-danger mr-2" @click="$emit('deleteWorksheet', worksheet)">
-                        {{ $t('worksheetList.delete') }}
-                    </b-button>
-                    <b-button class="bg-info" @click="$emit('openWorksheet', worksheet)">
-                        {{ $t('worksheetList.edit') }}
-                    </b-button>
-                </div>
-            </b-card>
+            <!--TODO Checken ob das div so tut-->
+            <div v-for="worksheet in visibleWorksheets" :key="worksheet.id">
+                <b-card bg-variant="light" class="card ml-3 col col-2 p-0">
+                    <b-card-title>
+                        {{ worksheet.name }}
+                    </b-card-title>
+                    <b-checkbox
+                        v-if="!isStudentsViewActive"
+                        v-model="worksheet.isOnline"
+                        class="custom-switch"
+                        @change="updateWorksheetOnline(worksheet)"
+                    >
+                        {{ $t('worksheetList.worksheetOnline') }}
+                    </b-checkbox>
+                    <div v-if="isStudentsViewActive" slot="footer" class="btn-toolbar justify-content-center">
+                        <b-button class="bg-info" @click="$emit('openWorksheet', worksheet, false)">
+                            {{ $t('courseViewStudent.solveWorksheetButton') }}
+                        </b-button>
+                    </div>
+                    <div v-if="!isStudentsViewActive" slot="footer" class="btn-toolbar justify-content-center">
+                        <b-button class="bg-danger mr-2" @click="$emit('deleteWorksheet', worksheet)">
+                            {{ $t('worksheetList.delete') }}
+                        </b-button>
+                        <b-button class="bg-info" @click="$emit('openWorksheet', worksheet)">
+                            {{ $t('worksheetList.edit') }}
+                        </b-button>
+                    </div>
+                </b-card>
+            </div>
 
             <b-card v-if="hasUserWritePermission && !isStudentsViewActive" class="card ml-3 col col-2 p-0">
                 <b-card-title>
@@ -80,6 +76,10 @@ export default class WorksheetList extends Vue {
         Vue.nextTick(() => {
             this.$emit('updateWorksheet', sheet);
         });
+    }
+
+    get visibleWorksheets(): Worksheet[] {
+        return this.worksheets.filter(worksheet => this.showWorksheet(worksheet));
     }
 
     get areWorksheetsEmpty(): boolean {

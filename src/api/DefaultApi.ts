@@ -936,13 +936,13 @@ export class DefaultApi extends runtime.BaseAPI {
         });
 
         return new runtime.JSONApiResponse(response, jsonValue => {
-            if (jsonValue.content.hasOwnProperty('sql')) {
+            if (Object.prototype.hasOwnProperty.call(jsonValue.content, 'sql')) {
                 return SqlTask.fromJSON(jsonValue);
             }
-            if (jsonValue.content.hasOwnProperty('multiple_choice')) {
+            if (Object.prototype.hasOwnProperty.call(jsonValue.content, 'multiple_choice')) {
                 return MultipleChoiceTask.fromJSON(jsonValue);
             }
-            if (jsonValue.content.hasOwnProperty('plaintext')) {
+            if (Object.prototype.hasOwnProperty.call(jsonValue.content, 'plaintext')) {
                 return PlainTextTask.fromJSON(jsonValue);
             }
             if (jsonValue.content === 'instruction') {
@@ -1174,13 +1174,13 @@ export class DefaultApi extends runtime.BaseAPI {
 
         return new runtime.JSONApiResponse(response, jsonValue =>
             jsonValue.map((singleJsonValue: any) => {
-                if (singleJsonValue.content.hasOwnProperty('sql')) {
+                if (Object.prototype.hasOwnProperty.call(singleJsonValue.content, 'sql')) {
                     return SqlTask.fromJSON(singleJsonValue);
                 }
-                if (singleJsonValue.content.hasOwnProperty('multiple_choice')) {
+                if (Object.prototype.hasOwnProperty.call(singleJsonValue.content, 'multiple_choice')) {
                     return MultipleChoiceTask.fromJSON(singleJsonValue);
                 }
-                if (singleJsonValue.content.hasOwnProperty('plaintext')) {
+                if (Object.prototype.hasOwnProperty.call(singleJsonValue.content, 'plaintext')) {
                     return PlainTextTask.fromJSON(singleJsonValue);
                 }
                 if (singleJsonValue.content === 'instruction') {
@@ -1383,13 +1383,13 @@ export class DefaultApi extends runtime.BaseAPI {
         });
 
         return new runtime.JSONApiResponse(response, jsonValue => {
-            if (jsonValue.hasOwnProperty('sql')) {
+            if (Object.prototype.hasOwnProperty.call(jsonValue, 'sql')) {
                 return SqlSolutionDiff.fromJSON(jsonValue);
             }
-            if (jsonValue.hasOwnProperty('multiple_choice')) {
+            if (Object.prototype.hasOwnProperty.call(jsonValue, 'multiple_choice')) {
                 return MultipleChoiceSolutionDiff.fromJSON(jsonValue);
             }
-            if (jsonValue.hasOwnProperty('plaintext')) {
+            if (Object.prototype.hasOwnProperty.call(jsonValue, 'plaintext')) {
                 return PlainTextSolutionDiff.fromJSON(jsonValue);
             }
             throw new Error(jsonValue.error);

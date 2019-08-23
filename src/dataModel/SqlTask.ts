@@ -42,7 +42,7 @@ export default class SqlTask extends Subtask {
      */
 
     public static fromJSON(json: any): SqlTask {
-        if (!json.content.hasOwnProperty('sql')) {
+        if (!Object.prototype.hasOwnProperty.call(json.content, 'sql')) {
             throw new Error('Wrong subtask type. Expected SQL, got');
         }
         const solution = new SqlSolution(
