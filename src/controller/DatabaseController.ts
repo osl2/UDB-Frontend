@@ -7,13 +7,11 @@ import {
     DeleteDatabaseRequest,
     GetDatabaseRequest,
     UpdateDatabaseRequest,
-} from "@/api/DefaultApi";
-import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
+} from '@/api/DefaultApi';
+import ApiControllerAbstract from '@/controller/ApiControllerAbstract';
 
 export default class DatabaseController extends ApiControllerAbstract
     implements DataManagementService<Database>, ExportImport<Database> {
-
-
     constructor(api: DefaultApi) {
         super(api);
     }
@@ -31,7 +29,7 @@ export default class DatabaseController extends ApiControllerAbstract
      * @param id
      */
     public get(id: string): Promise<Database> {
-        return this.api.getDatabase({databaseId: id} as GetDatabaseRequest);
+        return this.api.getDatabase({ databaseId: id } as GetDatabaseRequest);
     }
 
     /**
@@ -40,19 +38,18 @@ export default class DatabaseController extends ApiControllerAbstract
      * @param database
      */
     public create(database: Database): Promise<string> {
-        return this.api.createDatabase({database} as CreateDatabaseRequest)
-            .then((response: string) => {
-                database.id = response;
-                return database.id;
-            });
+        return this.api.createDatabase({ database } as CreateDatabaseRequest).then((response: string) => {
+            database.id = response;
+            return database.id;
+        });
     }
 
     public save(object: Database): Promise<void> {
-        return this.api.updateDatabase({database: object, databaseId: object.id} as UpdateDatabaseRequest);
+        return this.api.updateDatabase({ database: object, databaseId: object.id } as UpdateDatabaseRequest);
     }
 
     public remove(object: Database): Promise<void> {
-        return this.api.deleteDatabase({databaseId: object.id} as DeleteDatabaseRequest);
+        return this.api.deleteDatabase({ databaseId: object.id } as DeleteDatabaseRequest);
     }
 
     /**

@@ -7,8 +7,21 @@
     "build": "vue-cli-service build",
     "postbuild": "mkdir -p dist/static/wasm/; cp node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm",
     "lint": "vue-cli-service lint",
+    "pretest": "copy node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm",
     "test:e2e": "vue-cli-service test:e2e",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "copy node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm && vue-cli-service test:unit"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "src/**/*.{ts,js,vue}": ["prettier --write", "git add"],
+      "src/*.{ts,js,vue}": ["prettier --write", "git add"]
+    },
+    "ignore": ["node_modules", "dist"]
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
@@ -37,18 +50,36 @@
     "@types/sinon": "^7.0.13",
     "@vue/cli-plugin-babel": "^3.9.0",
     "@vue/cli-plugin-e2e-nightwatch": "^3.9.0",
+    "@vue/cli-plugin-eslint": "^3.10.0",
     "@vue/cli-plugin-pwa": "^3.9.0",
     "@vue/cli-plugin-typescript": "^3.9.0",
     "@vue/cli-plugin-unit-mocha": "^3.9.0",
     "@vue/cli-service": "^3.9.0",
-    "@vue/test-utils": "1.0.0-beta.29",
+    "@vue/eslint-config-prettier": "^5.0.0",
+    "@vue/eslint-config-typescript": "^4.0.0",
+    "@vue/test-utils": "^1.0.0-beta.29",
+    "babel-eslint": "^10.0.2",
+    "babel-plugin-istanbul": "^5.2.0",
     "chai": "^4.1.2",
+    "eslint": "^6.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-vue": "^5.2.3",
+    "husky": "^3.0.4",
+    "jsdom": "^15.1.1",
+    "jsdom-global": "^3.0.2",
+    "lint-staged": "^9.2.3",
     "node-sass": "^4.9.0",
+    "nyc": "^14.1.1",
+    "prettier": "^1.18.2",
     "sass-loader": "^7.1.0",
     "sinon": "^7.4.1",
+    "source-map-support": "^0.5.13",
     "typescript": "^3.4.3",
     "vue-template-compiler": "^2.6.10"
   },
+  "eslintIgnore": [
+    "**/*.d.ts"
+  ],
   "postcss": {
     "plugins": {
       "autoprefixer": {}

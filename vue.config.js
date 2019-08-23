@@ -5,9 +5,9 @@ module.exports = {
             rules: [
                 {
                     test: /\.xml$/,
-                    loader: 'url-loader'
-                }
-            ]
-        }
-    }
+                    loader: 'url-loader',
+                },
+            ],
+        },
+    },
 };

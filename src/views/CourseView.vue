@@ -1,48 +1,46 @@
 <template>
     <div>
         <div class="head">
-            <h1>{{course.name}}</h1>
-            <h2>{{course.description}}</h2>
+            <h1>{{ course.name }}</h1>
+            <h2>{{ course.description }}</h2>
         </div>
         <div>
-            <b-button id="changeViewButton"
-                      @click="toggleView"
-                      class="studentViewButton float-right"
-                      v-if="hasUserWritePermission"
+            <b-button
+                v-if="hasUserWritePermission"
+                id="changeViewButton"
+                class="studentViewButton float-right"
+                @click="toggleView"
             >
-                {{$t('buttonText.changeView')}}
+                {{ $t('buttonText.changeView') }}
             </b-button>
-            <b-popover target="changeViewButton"
-                       triggers="hover focus"
-                       :content="changeMessage">
-            </b-popover>
+            <b-popover target="changeViewButton" triggers="hover focus" :content="changeMessage"></b-popover>
         </div>
         <div class="clear"></div>
         <div class="container">
-            <h2 class="headings">{{$t('course.worksheets')}}</h2>
+            <h2 class="headings">{{ $t('course.worksheets') }}</h2>
             <WorksheetList
-                    :worksheets="worksheets"
-                    :isStudentsViewActive="isStudentsViewActive"
-                    :hasUserWritePermission="hasUserWritePermission"
-                    @openWorksheet="openWorksheet"
-                    @deleteWorksheet="deleteWorksheet"
-                    @updateWorksheet="updateWorksheet"
-                    @createWorksheet="createWorksheet"
+                :worksheets="worksheets"
+                :is-students-view-active="isStudentsViewActive"
+                :has-user-write-permission="hasUserWritePermission"
+                @openWorksheet="openWorksheet"
+                @deleteWorksheet="deleteWorksheet"
+                @updateWorksheet="updateWorksheet"
+                @createWorksheet="createWorksheet"
             ></WorksheetList>
         </div>
-        <div class="container" v-if="(worksheets.length !== 0)">
-            <h2 class="headings">{{$t('course.solutionsheets')}}</h2>
+        <div v-if="worksheets.length !== 0" class="container">
+            <h2 class="headings">{{ $t('course.solutionsheets') }}</h2>
             <SolutionsheetList
-                    :worksheets="worksheets"
-                    :isStudentsViewActive="isStudentsViewActive"
-                    @generateSolutionsheet="generateSolutionsheet"
+                :worksheets="worksheets"
+                :is-students-view-active="isStudentsViewActive"
+                @generateSolutionsheet="generateSolutionsheet"
             ></SolutionsheetList>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import {Component, Vue, Watch} from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import WorksheetList from '@/components/WorksheetList.vue';
 import SolutionsheetList from '@/components/SolutionsheetList.vue';
 import Course from '@/dataModel/Course.ts';
@@ -60,10 +58,7 @@ import User from '@/dataModel/User';
         SolutionsheetList,
     },
 })
-
-
 export default class CourseView extends Vue {
-
     // Data
     private course: Course = new Course('', 'Loading', '', '', []);
     private worksheets: Worksheet[] = [];
@@ -72,18 +67,17 @@ export default class CourseView extends Vue {
     private userController: UserController = this.$store.getters.userController;
     private isInStudentView: boolean = false;
     private worksheetsChanged: boolean = false;
-    private changeMessage: string = "";
-
+    private changeMessage: string = '';
 
     // Functions
     public openWorksheet(worksheet: Worksheet) {
-            if (this.isStudentsViewActive) {
-                router.push('/studentCourseView/' + this.course.alias + '/' + worksheet.id);
-            } else {
-                if (confirm(this.$t('course.alertEditWorksheet') as string)) {
+        if (this.isStudentsViewActive) {
+            router.push('/studentCourseView/' + this.course.alias + '/' + worksheet.id);
+        } else {
+            if (confirm(this.$t('course.alertEditWorksheet') as string)) {
                 router.push('/courseView/' + this.course.alias + '/' + worksheet.id);
-                }
             }
+        }
     }
 
     public generateSolutionsheet(worksheet: Worksheet) {
@@ -105,40 +99,43 @@ export default class CourseView extends Vue {
         }
 
         this.setIsStudentsViewActive();
-        this.courseController.getWithAlias(this.$route.params.courseId)
-              .then((course: Course) => {
+        this.courseController
+            .getWithAlias(this.$route.params.courseId)
+            .then((course: Course) => {
                 this.course = course;
-                this.worksheetController.getChildren(course)
-                  .then((worksheets: Worksheet[]) => {
-                    this.worksheets = worksheets;
-                  }).catch((error) => {
-                  switch (error.status) {
-                    case 404:
-                      alert(this.$t('apiError.worksheets404') as string);
-                      break;
-                    case 500:
-                      alert(this.$t('apiError.server500') as string);
-                      break;
-                    default:
-                      alert(this.$t('apiError.defaultMsg') as string);
-                      break;
-                  }
-                });
-              })
-              .catch((error) => {
+                this.worksheetController
+                    .getChildren(course)
+                    .then((worksheets: Worksheet[]) => {
+                        this.worksheets = worksheets;
+                    })
+                    .catch(error => {
+                        switch (error.status) {
+                            case 404:
+                                alert(this.$t('apiError.worksheets404') as string);
+                                break;
+                            case 500:
+                                alert(this.$t('apiError.server500') as string);
+                                break;
+                            default:
+                                alert(this.$t('apiError.defaultMsg') as string);
+                                break;
+                        }
+                    });
+            })
+            .catch(error => {
                 switch (error.status) {
-                  case 404:
-                    alert(this.$t('apiError.course404') as string);
-                    break;
-                  case 500:
-                    alert(this.$t('apiError.server500') as string);
-                    break;
-                  default:
-                    alert(this.$t('apiError.defaultMsg') as string);
-                    break;
+                    case 404:
+                        alert(this.$t('apiError.course404') as string);
+                        break;
+                    case 500:
+                        alert(this.$t('apiError.server500') as string);
+                        break;
+                    default:
+                        alert(this.$t('apiError.defaultMsg') as string);
+                        break;
                 }
-              });
-        }
+            });
+    }
 
     public toggleView() {
         this.isInStudentView = !this.isInStudentView;
@@ -150,56 +147,59 @@ export default class CourseView extends Vue {
             return;
         }
         const newWorksheet = new Worksheet('', name, [], false, false);
-        this.worksheetController.create(newWorksheet).then((worksheetId) => {
+        this.worksheetController
+            .create(newWorksheet)
+            .then(worksheetId => {
                 this.worksheets.push(newWorksheet);
                 this.course.worksheetIds.push(worksheetId);
                 // TODO rausschmeißen, wenn das Backend bei create den Kurs aktualisiert
                 this.courseController.save(this.course).then();
                 this.worksheetsChanged = true;
-            }).catch((error) => {
-              switch (error.status) {
-                case 500:
-                  alert(this.$t('apiError.server500') as string);
-                  break;
-                default:
-                  alert(this.$t('apiError.defaultMsg') as string);
-                  break;
-              }
+            })
+            .catch(error => {
+                switch (error.status) {
+                    case 500:
+                        alert(this.$t('apiError.server500') as string);
+                        break;
+                    default:
+                        alert(this.$t('apiError.defaultMsg') as string);
+                        break;
+                }
             });
     }
 
-        public deleteWorksheet(worksheet: Worksheet) {
-            if (confirm(this.$t('course.alertDelete') as string)) {
-                this.worksheetController.remove(worksheet)
-                  .then(() => {
+    public deleteWorksheet(worksheet: Worksheet) {
+        if (confirm(this.$t('course.alertDelete') as string)) {
+            this.worksheetController
+                .remove(worksheet)
+                .then(() => {
                     this.worksheets = this.worksheets.filter((ws: Worksheet) => ws.id !== worksheet.id);
-                  })
-                  .catch((error) => {
+                })
+                .catch(error => {
                     switch (error.status) {
-                      case 500:
-                        alert(this.$t('apiError.server500') as string);
-                        break;
-                      default:
-                        alert(this.$t('apiError.defaultMsg') as string);
-                        break;
+                        case 500:
+                            alert(this.$t('apiError.server500') as string);
+                            break;
+                        default:
+                            alert(this.$t('apiError.defaultMsg') as string);
+                            break;
                     }
-                  });
-            }
+                });
         }
+    }
 
-        public updateWorksheet(worksheet: Worksheet) {
-          this.worksheetController.save(worksheet)
-            .catch((error) => {
-              switch (error.status) {
+    public updateWorksheet(worksheet: Worksheet) {
+        this.worksheetController.save(worksheet).catch(error => {
+            switch (error.status) {
                 case 500:
-                  alert(this.$t('apiError.server500') as string);
-                  break;
+                    alert(this.$t('apiError.server500') as string);
+                    break;
                 default:
-                  alert(this.$t('apiError.defaultMsg') as string);
-                  break;
-              }
-            });
-        }
+                    alert(this.$t('apiError.defaultMsg') as string);
+                    break;
+            }
+        });
+    }
 
     get isStudentsViewActive() {
         this.setIsStudentsViewActive();
@@ -208,39 +208,41 @@ export default class CourseView extends Vue {
 
     private setIsStudentsViewActive() {
         if (this.userController.userState !== undefined) {
-            if (this.userController.userState.userGroup === UserGroup.Student ||
-                this.userController.userState.userGroup === UserGroup.Unauthenticated) {
+            if (
+                this.userController.userState.userGroup === UserGroup.Student ||
+                this.userController.userState.userGroup === UserGroup.Unauthenticated
+            ) {
                 this.isInStudentView = true;
             }
         }
     }
 
-        get hasUserWritePermission() {
-            return (this.userController.userState!.userGroup === UserGroup.Teacher);
-        }
+    get hasUserWritePermission() {
+        return this.userController.userState!.userGroup === UserGroup.Teacher;
     }
+}
 </script>
 
 <style scoped>
-    .container {
-        width: 80%;
-        margin: auto;
-    }
+.container {
+    width: 80%;
+    margin: auto;
+}
 
-    .head {
-        padding-top: 15px;
-        padding-bottom: 15px;
-        margin-bottom: 35px;
-        text-align: center;
-        background-color: #17a2b8;
-        color: white;
-    }
+.head {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 35px;
+    text-align: center;
+    background-color: #17a2b8;
+    color: white;
+}
 
-    .studentViewButton {
-        margin-bottom: 15px;
-    }
+.studentViewButton {
+    margin-bottom: 15px;
+}
 
-    .headings {
-        color: #333;
-    }
+.headings {
+    color: #333;
+}
 </style>

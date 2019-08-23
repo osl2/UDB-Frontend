@@ -9,10 +9,9 @@ import en from '@/languages/en.ts';
 import './registerServiceWorker';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {faCloudUploadAlt, faUpload} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faCloudUploadAlt, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 // Boostrap integration with Vue
 Vue.use(BootstrapVue);
@@ -25,20 +24,20 @@ Vue.config.productionTip = false;
 Vue.use(VueI18n);
 
 const messages = {
-  de,
-  en,
+    de,
+    en,
 };
 
 // Create VueI18n instance with options
 export const i18n = new VueI18n({
-  locale: 'de', // set locale
-  messages, // set locale messages
-  fallbackLocale: 'de',
+    locale: 'de', // set locale
+    messages, // set locale messages
+    fallbackLocale: 'de',
 });
 
 new Vue({
-  router,
-  store,
-  render: (h) => h(App),
-  i18n,
+    router,
+    store,
+    render: h => h(App),
+    i18n,
 }).$mount('#app');

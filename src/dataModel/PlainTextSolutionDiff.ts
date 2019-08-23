@@ -1,4 +1,4 @@
-import SolutionDiff from "@/dataModel/SolutionDiff";
+import SolutionDiff from '@/dataModel/SolutionDiff';
 
 /**
  * An instance of a PlaintextChoiceSolutionDiff represents the data returned from the server after comparing the student
@@ -9,7 +9,6 @@ import SolutionDiff from "@/dataModel/SolutionDiff";
  */
 
 export default class PlainTextSolutionDiff extends SolutionDiff {
-
     /**
      * The following methods are getter and setter for the additional attribute in this class.
      */
@@ -26,10 +25,7 @@ export default class PlainTextSolutionDiff extends SolutionDiff {
      * @param json the PlainTextSolutionDiff in json format
      */
     public static fromJSON(json: any): PlainTextSolutionDiff {
-        return new PlainTextSolutionDiff(
-            json.plaintext.correct,
-            json.plaintext.correct_answer,
-        );
+        return new PlainTextSolutionDiff(json.plaintext.correct, json.plaintext.correct_answer);
     }
     private _correctAnswer: string;
 
@@ -47,7 +43,6 @@ export default class PlainTextSolutionDiff extends SolutionDiff {
      * Creates a string that summarizes the result of the comparison.
      */
     public getFeedbackString(): string {
-        return "Die folgende Antwort wurde von Deinem Lehrer erwartet: " + this._correctAnswer;
+        return 'Die folgende Antwort wurde von Deinem Lehrer erwartet: ' + this._correctAnswer;
     }
-
 }

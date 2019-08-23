@@ -1,7 +1,7 @@
 import Solution from '@/dataModel/Solution';
 import DataModel from '@/dataModel/DataModel';
 import Task from '@/dataModel/Task';
-import SubtaskTypes from "@/dataModel/SubtaskTypes";
+import SubtaskTypes from '@/dataModel/SubtaskTypes';
 
 /**
  * The abstract class Subtask represents a subtask of a task.
@@ -9,14 +9,12 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
  */
 
 export default abstract class Subtask extends DataModel {
-
     private _parent: Task | undefined; // This attribute gets set when assigning it to a Task
     private _solution: Solution | undefined; // A subtask does not always have a solution
     private _instruction: string;
     private _isSolutionVeryfiable: boolean;
     private _isSolutionVisible: boolean;
     private _type: SubtaskTypes;
-
 
     /**
      * The constructor for this class.
@@ -29,9 +27,14 @@ export default abstract class Subtask extends DataModel {
      * @param allowedSqlStatements
      * @param type
      */
-    constructor(id: string, solution: Solution | undefined,
-                instruction: string, isSolutionVeryfiable: boolean,
-                isSolutionVisible: boolean, type: SubtaskTypes) {
+    constructor(
+        id: string,
+        solution: Solution | undefined,
+        instruction: string,
+        isSolutionVeryfiable: boolean,
+        isSolutionVisible: boolean,
+        type: SubtaskTypes
+    ) {
         super(id);
         this._solution = solution;
         this._instruction = instruction;

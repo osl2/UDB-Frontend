@@ -4,8 +4,6 @@
  */
 
 export default abstract class Solution {
-    protected constructor() {
-
-    }
+    protected constructor() {}
     public abstract get toJSON(): any;
 }

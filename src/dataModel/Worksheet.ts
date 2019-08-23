@@ -1,5 +1,5 @@
 import DataModel from '@/dataModel/DataModel';
-import {exists} from "@/api/BaseApi";
+import { exists } from '@/api/BaseApi';
 
 /**
  * The class Worksheet represents a worksheet provided by a teacher.
@@ -7,7 +7,6 @@ import {exists} from "@/api/BaseApi";
  */
 
 export default class Worksheet extends DataModel {
-
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
@@ -50,11 +49,13 @@ export default class Worksheet extends DataModel {
      */
 
     public static fromJSON(json: any): Worksheet {
-        return new Worksheet(json.id,
+        return new Worksheet(
+            json.id,
             !exists(json, 'name') ? undefined : json.name,
             !exists(json, 'tasks') ? undefined : json.tasks,
             json.is_online,
-            json.is_solution_online);
+            json.is_solution_online
+        );
     }
 
     private _name: string;
@@ -88,7 +89,4 @@ export default class Worksheet extends DataModel {
             tasks: this.taskIds,
         };
     }
-
 }
-
-

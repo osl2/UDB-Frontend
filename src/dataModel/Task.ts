@@ -5,7 +5,6 @@ import DataModel from '@/dataModel/DataModel';
  */
 
 export default class Task extends DataModel {
-
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
@@ -67,5 +66,4 @@ export default class Task extends DataModel {
             subtasks: this.subtaskIds,
         };
     }
-
 }

@@ -1,4 +1,4 @@
-import SolutionDiff from "@/dataModel/SolutionDiff";
+import SolutionDiff from '@/dataModel/SolutionDiff';
 
 /**
  * An instance of a MultipleChoiceSolutionDiff represents the data returned from the server after comparing the student
@@ -8,7 +8,6 @@ import SolutionDiff from "@/dataModel/SolutionDiff";
  */
 
 export default class MultipleChoiceSolutionDiff extends SolutionDiff {
-
     /**
      * The following methods are getter and setter for the attribute choices.
      */
@@ -37,7 +36,7 @@ export default class MultipleChoiceSolutionDiff extends SolutionDiff {
         return new MultipleChoiceSolutionDiff(
             json.multiple_choice.correct,
             json.multiple_choice.wrong_choices,
-            json.multiple_choice.missed_choices,
+            json.multiple_choice.missed_choices
         );
     }
 
@@ -62,20 +61,19 @@ export default class MultipleChoiceSolutionDiff extends SolutionDiff {
     public getFeedbackString(): string {
         const messages: string[] = [];
         if (this._wrongChoices.length) {
-            messages.push("Die folgenden ausgewählten Antworten waren falsch: ");
+            messages.push('Die folgenden ausgewählten Antworten waren falsch: ');
             for (let i = 0; i < this._wrongChoices.length - 1; i++) {
-                messages.push((this._wrongChoices[i] + 1).toString(), ", ");
+                messages.push((this._wrongChoices[i] + 1).toString(), ', ');
             }
-            messages.push((this._wrongChoices[this._wrongChoices.length - 1] + 1).toString(), ". ");
+            messages.push((this._wrongChoices[this._wrongChoices.length - 1] + 1).toString(), '. ');
         }
         if (this._missedChoices.length) {
-            messages.push(("Die folgenden Antworten wären noch richtig gewesen: "));
+            messages.push('Die folgenden Antworten wären noch richtig gewesen: ');
             for (let i = 0; i < this._missedChoices.length - 1; i++) {
-                messages.push((this._missedChoices[i] + 1).toString(), ", ");
+                messages.push((this._missedChoices[i] + 1).toString(), ', ');
             }
-            messages.push((this._missedChoices[this._missedChoices.length - 1] + 1).toString(), ".");
+            messages.push((this._missedChoices[this._missedChoices.length - 1] + 1).toString(), '.');
         }
-        return messages.join("");
+        return messages.join('');
     }
-
 }

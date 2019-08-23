@@ -1,14 +1,12 @@
 import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
 import Subtask from '@/dataModel/Subtask';
-import SubtaskTypes from "@/dataModel/SubtaskTypes";
-
+import SubtaskTypes from '@/dataModel/SubtaskTypes';
 
 /**
  * The class MultipleChoiceTask represents the type of subtask where there are multiple answers to choose from.
  * Because of that the solution should be an instance of the class MultipleChoiceSolution.
  */
 export default class MultipleChoiceTask extends Subtask {
-
     /**
      * The following methods are getter and setter for the additional attribute in this class.
      */
@@ -26,12 +24,14 @@ export default class MultipleChoiceTask extends Subtask {
      * thing the other way around. This is needed to store objects in the server or to read them.
      */
     public static fromJSON(json: any): MultipleChoiceTask {
-        return new MultipleChoiceTask(json.id,
+        return new MultipleChoiceTask(
+            json.id,
             json.content.multiple_choice.solution,
             json.instruction,
             json.solution_verifiable,
             json.solution_visible,
-            json.content.multiple_choice.answer_options);
+            json.content.multiple_choice.answer_options
+        );
     }
 
     private _answerOptions: string[];
@@ -45,13 +45,17 @@ export default class MultipleChoiceTask extends Subtask {
      * @param isSolutionVisible a boolean to the decide if a student can compare its solution to the task solution
      * @param answerOptions a string array that contains all possible answers
      */
-    constructor(id: string, solution: MultipleChoiceSolution | undefined, instruction: string,
-                isSolutionVeryfiable: boolean,  isSolutionVisible: boolean, answerOptions: string[]) {
-        super(id, solution, instruction, isSolutionVeryfiable,
-            isSolutionVisible, SubtaskTypes.MultipleChoice);
+    constructor(
+        id: string,
+        solution: MultipleChoiceSolution | undefined,
+        instruction: string,
+        isSolutionVeryfiable: boolean,
+        isSolutionVisible: boolean,
+        answerOptions: string[]
+    ) {
+        super(id, solution, instruction, isSolutionVeryfiable, isSolutionVisible, SubtaskTypes.MultipleChoice);
         this._answerOptions = answerOptions;
     }
-
 
     public toJSON(): any {
         return {
@@ -67,5 +71,4 @@ export default class MultipleChoiceTask extends Subtask {
             },
         };
     }
-
 }

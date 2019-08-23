@@ -1,4 +1,4 @@
-import SolutionDiff from "@/dataModel/SolutionDiff";
+import SolutionDiff from '@/dataModel/SolutionDiff';
 
 /**
  * An instance of a SqlSolutionDiff represents the data returned from the server after comparing the student
@@ -8,7 +8,6 @@ import SolutionDiff from "@/dataModel/SolutionDiff";
  */
 
 export default class SqlSolutionDiff extends SolutionDiff {
-
     /**
      * The following methods are getter and setter for each additional attribute in this class.
      */
@@ -29,19 +28,13 @@ export default class SqlSolutionDiff extends SolutionDiff {
         this._missedRows = value;
     }
 
-
-
     /**
      * the following method transforms a SqlSolutionDiff to an instance of the SqlSolutionDiff
      * class.
      * @param json the PlainTextSolutionDiff in json format
      */
     public static fromJSON(json: any): SqlSolutionDiff {
-        return new SqlSolutionDiff(
-            json.sql.correct,
-            json.sql.wrong_rows,
-            json.sql.missed_rows,
-        );
+        return new SqlSolutionDiff(json.sql.correct, json.sql.wrong_rows, json.sql.missed_rows);
     }
     private _wrongRows: string[][];
     private _missedRows: string[][];
@@ -64,17 +57,17 @@ export default class SqlSolutionDiff extends SolutionDiff {
     public getFeedbackString(): string {
         const messages: string[] = [];
         if (this._wrongRows.length) {
-            messages.push("Diese Ergebnisreihen waren fälschlicherweise bei Deiner Lösung mit dabei:");
+            messages.push('Diese Ergebnisreihen waren fälschlicherweise bei Deiner Lösung mit dabei:');
             for (let i = 0; i < this._wrongRows.length; i++) {
-                messages.push("\n" + (i + 1) + ". Reihe:", this._wrongRows[i].join(", "));
+                messages.push('\n' + (i + 1) + '. Reihe:', this._wrongRows[i].join(', '));
             }
         }
         if (this._missedRows.length) {
-                messages.push("\nDiese Ergebnisreihen fehlen bei Deiner Lösung:");
-                for (let i = 0; i < this._missedRows.length; i++) {
-                messages.push("\n" + (i + 1) + ". Reihe:", this._missedRows[i].join(", "));
+            messages.push('\nDiese Ergebnisreihen fehlen bei Deiner Lösung:');
+            for (let i = 0; i < this._missedRows.length; i++) {
+                messages.push('\n' + (i + 1) + '. Reihe:', this._missedRows[i].join(', '));
             }
         }
-        return messages.join(" ");
+        return messages.join(' ');
     }
 }

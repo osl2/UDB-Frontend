@@ -10,28 +10,27 @@
  * Do not edit the class manually.
  */
 
-
-import Course from "@/dataModel/Course";
-import Database from "@/dataModel/Database";
-import Subtask from "@/dataModel/Subtask";
-import Task from "@/dataModel/Task";
+import Course from '@/dataModel/Course';
+import Database from '@/dataModel/Database';
+import Subtask from '@/dataModel/Subtask';
+import Task from '@/dataModel/Task';
 import Worksheet from '@/dataModel/Worksheet';
-import * as runtime from "@/api/BaseApi";
-import User from "@/dataModel/User";
-import Solution from "@/dataModel/Solution";
-import {Configuration} from "@/api/BaseApi";
-import SolutionDiff from "@/dataModel/SolutionDiff";
-import SqlTask from "@/dataModel/SqlTask";
-import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
-import PlainTextTask from "@/dataModel/PlainTextTask";
-import SqlSolutionDiff from "@/dataModel/SqlSolutionDiff";
-import MultipleChoiceSolutionDiff from "@/dataModel/MultipleChoiceSolutionDiff";
-import PlainTextSolutionDiff from "@/dataModel/PlainTextSolutionDiff";
-import LocalStorageController from "@/controller/LocalStorageController";
-import InstructionTask from "@/dataModel/InstructionTask";
-import SqlSolution from "@/dataModel/SqlSolution";
-import PlainTextSolution from "@/dataModel/PlainTextSolution";
-import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
+import * as runtime from '@/api/BaseApi';
+import User from '@/dataModel/User';
+import Solution from '@/dataModel/Solution';
+import { Configuration } from '@/api/BaseApi';
+import SolutionDiff from '@/dataModel/SolutionDiff';
+import SqlTask from '@/dataModel/SqlTask';
+import MultipleChoiceTask from '@/dataModel/MultipleChoiceTask';
+import PlainTextTask from '@/dataModel/PlainTextTask';
+import SqlSolutionDiff from '@/dataModel/SqlSolutionDiff';
+import MultipleChoiceSolutionDiff from '@/dataModel/MultipleChoiceSolutionDiff';
+import PlainTextSolutionDiff from '@/dataModel/PlainTextSolutionDiff';
+import LocalStorageController from '@/controller/LocalStorageController';
+import InstructionTask from '@/dataModel/InstructionTask';
+import SqlSolution from '@/dataModel/SqlSolution';
+import PlainTextSolution from '@/dataModel/PlainTextSolution';
+import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
 
 export interface Token {
     token: string;
@@ -66,7 +65,7 @@ export interface DeleteCourseRequest {
 }
 
 export enum ObjectType {
-    COURSE = "COURSE",
+    COURSE = 'COURSE',
 }
 
 export interface CreateAliasRequest {
@@ -162,16 +161,15 @@ export interface UpdateWorksheetRequest {
  * no description
  */
 export class DefaultApi extends runtime.BaseAPI {
-
     constructor() {
-      const ls = new LocalStorageController();
-      const currentUser: User | undefined = ls.get("userState");
-      if (currentUser !== undefined) {
-          const user: User = Object.setPrototypeOf(currentUser, User.prototype);
-          super(new Configuration({accessToken: user.token}));
-      } else {
-        super(new Configuration());
-      }
+        const ls = new LocalStorageController();
+        const currentUser: User | undefined = ls.get('userState');
+        if (currentUser !== undefined) {
+            const user: User = Object.setPrototypeOf(currentUser, User.prototype);
+            super(new Configuration({ accessToken: user.token }));
+        } else {
+            super(new Configuration());
+        }
     }
 
     /**
@@ -179,8 +177,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async createAccountRaw(requestParameters: CreateAccountRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.account === null || requestParameters.account === undefined) {
-            throw new runtime.RequiredError('account',
-                'Required parameter requestParameters.account was null or undefined when calling createAccount.');
+            throw new runtime.RequiredError(
+                'account',
+                'Required parameter requestParameters.account was null or undefined when calling createAccount.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -188,7 +188,6 @@ export class DefaultApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         headerParameters['Content-Type'] = 'application/json';
-
 
         const response = await this.request({
             path: `/account/register`,
@@ -214,8 +213,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async createCourseRaw(requestParameters: CreateCourseRequest): Promise<runtime.ApiResponse<string>> {
         if (requestParameters.course === null || requestParameters.course === undefined) {
-            throw new runtime.RequiredError('course', 'Required parameter requestParameters.course was' +
-              ' null or undefined when calling createCourse.');
+            throw new runtime.RequiredError(
+                'course',
+                'Required parameter requestParameters.course was' + ' null or undefined when calling createCourse.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -226,7 +227,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -259,8 +260,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async createDatabaseRaw(requestParameters: CreateDatabaseRequest): Promise<runtime.ApiResponse<string>> {
         if (requestParameters.database === null || requestParameters.database === undefined) {
-            throw new runtime.RequiredError('database', 'Required parameter requestParameters.database' +
-              ' was null or undefined when calling createDatabase.');
+            throw new runtime.RequiredError(
+                'database',
+                'Required parameter requestParameters.database' + ' was null or undefined when calling createDatabase.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -271,7 +274,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -303,8 +306,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async createTaskRaw(requestParameters: CreateTaskRequest): Promise<runtime.ApiResponse<string>> {
         if (requestParameters.task === null || requestParameters.task === undefined) {
-            throw new runtime.RequiredError('task', 'Required parameter requestParameters.task was null ' +
-              'or undefined when calling createTask.');
+            throw new runtime.RequiredError(
+                'task',
+                'Required parameter requestParameters.task was null ' + 'or undefined when calling createTask.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -315,7 +320,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -346,10 +351,11 @@ export class DefaultApi extends runtime.BaseAPI {
      * Create a Subtask
      */
     public async createSubtaskRaw(requestParameters: CreateSubtaskRequest): Promise<runtime.ApiResponse<string>> {
-
         if (requestParameters.subtask === null || requestParameters.subtask === undefined) {
-            throw new runtime.RequiredError('subtask',
-                'Required parameter requestParameters.subtask was null or undefined when calling createSubtask.');
+            throw new runtime.RequiredError(
+                'subtask',
+                'Required parameter requestParameters.subtask was null or undefined when calling createSubtask.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -360,7 +366,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -392,8 +398,11 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async createWorksheetRaw(requestParameters: CreateWorksheetRequest): Promise<runtime.ApiResponse<string>> {
         if (requestParameters.worksheet === null || requestParameters.worksheet === undefined) {
-            throw new runtime.RequiredError('worksheet', 'Required parameter requestParameters.worksheet' +
-              ' was null or undefined when calling createWorksheet.');
+            throw new runtime.RequiredError(
+                'worksheet',
+                'Required parameter requestParameters.worksheet' +
+                    ' was null or undefined when calling createWorksheet.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -404,7 +413,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -435,7 +444,6 @@ export class DefaultApi extends runtime.BaseAPI {
      * Create a Course
      */
     public async createAliasRaw(requestParameters: CreateAliasRequest): Promise<runtime.ApiResponse<string>> {
-
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -444,7 +452,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -481,10 +489,12 @@ export class DefaultApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        if (this.configuration && (this.configuration.username !== undefined ||
-          this.configuration.password !== undefined)) {
-            headerParameters.Authorization = "Basic " + btoa(this.configuration.username + ":"
-              + this.configuration.password);
+        if (
+            this.configuration &&
+            (this.configuration.username !== undefined || this.configuration.password !== undefined)
+        ) {
+            headerParameters.Authorization =
+                'Basic ' + btoa(this.configuration.username + ':' + this.configuration.password);
         }
         const response = await this.request({
             path: `/account`,
@@ -509,8 +519,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async deleteCourseRaw(requestParameters: DeleteCourseRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.courseId === null || requestParameters.courseId === undefined) {
-            throw new runtime.RequiredError('courseId', 'Required parameter requestParameters.courseId' +
-              ' was null or undefined when calling deleteCourse.');
+            throw new runtime.RequiredError(
+                'courseId',
+                'Required parameter requestParameters.courseId' + ' was null or undefined when calling deleteCourse.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -519,15 +531,17 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/courses/{courseId}`.replace(`{${"courseId"}}`,
-              encodeURIComponent(String(requestParameters.courseId))),
+            path: `/courses/{courseId}`.replace(
+                `{${'courseId'}}`,
+                encodeURIComponent(String(requestParameters.courseId))
+            ),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -550,8 +564,11 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async deleteDatabaseRaw(requestParameters: DeleteDatabaseRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.databaseId === null || requestParameters.databaseId === undefined) {
-            throw new runtime.RequiredError('databaseId', 'Required parameter ' +
-              'requestParameters.databaseId was null or undefined when calling deleteDatabase.');
+            throw new runtime.RequiredError(
+                'databaseId',
+                'Required parameter ' +
+                    'requestParameters.databaseId was null or undefined when calling deleteDatabase.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -560,15 +577,17 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/databases/{databaseId}`.replace(`{${"databaseId"}}`,
-              encodeURIComponent(String(requestParameters.databaseId))),
+            path: `/databases/{databaseId}`.replace(
+                `{${'databaseId'}}`,
+                encodeURIComponent(String(requestParameters.databaseId))
+            ),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -591,8 +610,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async deleteSubtaskRaw(requestParameters: DeleteSubtaskRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
-            throw new runtime.RequiredError('subtaskId', 'Required parameter ' +
-              'requestParameters.subtaskId was null or undefined when calling deleteSubtask.');
+            throw new runtime.RequiredError(
+                'subtaskId',
+                'Required parameter ' + 'requestParameters.subtaskId was null or undefined when calling deleteSubtask.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -601,15 +622,17 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/subtasks/{subtaskId}`.replace(`{${"subtaskId"}}`,
-              encodeURIComponent(String(requestParameters.subtaskId))),
+            path: `/subtasks/{subtaskId}`.replace(
+                `{${'subtaskId'}}`,
+                encodeURIComponent(String(requestParameters.subtaskId))
+            ),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -632,8 +655,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async deleteTaskRaw(requestParameters: DeleteTaskRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId', 'Required parameter requestParameters.taskId ' +
-              'was null or undefined when calling deleteTask.');
+            throw new runtime.RequiredError(
+                'taskId',
+                'Required parameter requestParameters.taskId ' + 'was null or undefined when calling deleteTask.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -642,15 +667,14 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}`.replace(`{${"taskId"}}`,
-              encodeURIComponent(String(requestParameters.taskId))),
+            path: `/tasks/{taskId}`.replace(`{${'taskId'}}`, encodeURIComponent(String(requestParameters.taskId))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -673,8 +697,11 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async deleteWorksheetRaw(requestParameters: DeleteWorksheetRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.worksheetId === null || requestParameters.worksheetId === undefined) {
-            throw new runtime.RequiredError('worksheetId', 'Required parameter ' +
-              'requestParameters.worksheetId was null or undefined when calling deleteWorksheet.');
+            throw new runtime.RequiredError(
+                'worksheetId',
+                'Required parameter ' +
+                    'requestParameters.worksheetId was null or undefined when calling deleteWorksheet.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -683,15 +710,17 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/worksheets/{worksheetId}`.replace(`{${"worksheetId"}}`,
-              encodeURIComponent(String(requestParameters.worksheetId))),
+            path: `/worksheets/{worksheetId}`.replace(
+                `{${'worksheetId'}}`,
+                encodeURIComponent(String(requestParameters.worksheetId))
+            ),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -714,8 +743,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async getCourseRaw(requestParameters: GetCourseRequest): Promise<runtime.ApiResponse<Course>> {
         if (requestParameters.courseId === null || requestParameters.courseId === undefined) {
-            throw new runtime.RequiredError('courseId', 'Required parameter requestParameters.courseId ' +
-              'was null or undefined when calling getCourse.');
+            throw new runtime.RequiredError(
+                'courseId',
+                'Required parameter requestParameters.courseId ' + 'was null or undefined when calling getCourse.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -724,21 +755,23 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/courses/{courseId}`.replace(`{${"courseId"}}`,
-              encodeURIComponent(String(requestParameters.courseId))),
+            path: `/courses/{courseId}`.replace(
+                `{${'courseId'}}`,
+                encodeURIComponent(String(requestParameters.courseId))
+            ),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Course.fromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, jsonValue => Course.fromJSON(jsonValue));
     }
 
     /**
@@ -761,7 +794,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -774,7 +807,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(Course.fromJSON));
+        return new runtime.JSONApiResponse(response, jsonValue => jsonValue.map(Course.fromJSON));
     }
 
     /**
@@ -792,8 +825,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async getDatabaseRaw(requestParameters: GetDatabaseRequest): Promise<runtime.ApiResponse<Database>> {
         if (requestParameters.databaseId === null || requestParameters.databaseId === undefined) {
-            throw new runtime.RequiredError('databaseId', 'Required parameter ' +
-              'requestParameters.databaseId was null or undefined when calling getDatabase.');
+            throw new runtime.RequiredError(
+                'databaseId',
+                'Required parameter ' + 'requestParameters.databaseId was null or undefined when calling getDatabase.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -802,21 +837,23 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/databases/{databaseId}`.replace(`{${"databaseId"}}`,
-              encodeURIComponent(String(requestParameters.databaseId))),
+            path: `/databases/{databaseId}`.replace(
+                `{${'databaseId'}}`,
+                encodeURIComponent(String(requestParameters.databaseId))
+            ),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Database.fromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, jsonValue => Database.fromJSON(jsonValue));
     }
 
     /**
@@ -839,7 +876,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -852,7 +889,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(Database.fromJSON));
+        return new runtime.JSONApiResponse(response, jsonValue => jsonValue.map(Database.fromJSON));
     }
 
     /**
@@ -869,10 +906,11 @@ export class DefaultApi extends runtime.BaseAPI {
      * Get a Subtask
      */
     public async getSubtaskRaw(requestParameters: GetSubtaskRequest): Promise<runtime.ApiResponse<Subtask>> {
-
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
-            throw new runtime.RequiredError('subtaskId',
-                'Required parameter requestParameters.subtaskId was null or undefined when calling getSubtask.');
+            throw new runtime.RequiredError(
+                'subtaskId',
+                'Required parameter requestParameters.subtaskId was null or undefined when calling getSubtask.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -881,34 +919,36 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/subtasks/{subtaskId}`
-                .replace(`{${"subtaskId"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
+            path: `/subtasks/{subtaskId}`.replace(
+                `{${'subtaskId'}}`,
+                encodeURIComponent(String(requestParameters.subtaskId))
+            ),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => {
-            if (jsonValue.content.hasOwnProperty("sql")) {
+        return new runtime.JSONApiResponse(response, jsonValue => {
+            if (jsonValue.content.hasOwnProperty('sql')) {
                 return SqlTask.fromJSON(jsonValue);
             }
-            if (jsonValue.content.hasOwnProperty("multiple_choice")) {
+            if (jsonValue.content.hasOwnProperty('multiple_choice')) {
                 return MultipleChoiceTask.fromJSON(jsonValue);
             }
-            if (jsonValue.content.hasOwnProperty("plaintext")) {
+            if (jsonValue.content.hasOwnProperty('plaintext')) {
                 return PlainTextTask.fromJSON(jsonValue);
             }
-            if (jsonValue.content === "instruction") {
+            if (jsonValue.content === 'instruction') {
                 return InstructionTask.fromJSON(jsonValue);
             }
-            throw new Error("Unknown Subtask type");
+            throw new Error('Unknown Subtask type');
         });
     }
 
@@ -927,8 +967,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async getTaskRaw(requestParameters: GetTaskRequest): Promise<runtime.ApiResponse<Task>> {
         if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId', 'Required parameter requestParameters.taskId ' +
-              'was null or undefined when calling getTask.');
+            throw new runtime.RequiredError(
+                'taskId',
+                'Required parameter requestParameters.taskId ' + 'was null or undefined when calling getTask.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -937,21 +979,20 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}`
-                .replace(`{${"taskId"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            path: `/tasks/{taskId}`.replace(`{${'taskId'}}`, encodeURIComponent(String(requestParameters.taskId))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Task.fromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, jsonValue => Task.fromJSON(jsonValue));
     }
 
     /**
@@ -969,8 +1010,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async getWorksheetRaw(requestParameters: GetWorksheetRequest): Promise<runtime.ApiResponse<Worksheet>> {
         if (requestParameters.worksheetId === null || requestParameters.worksheetId === undefined) {
-            throw new runtime.RequiredError('worksheetId', 'Required parameter ' +
-              'requestParameters.worksheetId was null or undefined when calling getWorksheet.');
+            throw new runtime.RequiredError(
+                'worksheetId',
+                'Required parameter ' + 'requestParameters.worksheetId was null or undefined when calling getWorksheet.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -979,21 +1022,23 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/worksheets/{worksheetId}`.replace(`{${"worksheetId"}}`,
-              encodeURIComponent(String(requestParameters.worksheetId))),
+            path: `/worksheets/{worksheetId}`.replace(
+                `{${'worksheetId'}}`,
+                encodeURIComponent(String(requestParameters.worksheetId))
+            ),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => Worksheet.fromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, jsonValue => Worksheet.fromJSON(jsonValue));
     }
 
     /**
@@ -1011,8 +1056,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async getUUIDRaw(requestParameters: GetUUIDRequest): Promise<runtime.ApiResponse<AliasResponse>> {
         if (requestParameters.alias === null || requestParameters.alias === undefined) {
-            throw new runtime.RequiredError('alias', 'Required parameter ' +
-                'requestParameters.alias was null or undefined when calling getUUIDRaw.');
+            throw new runtime.RequiredError(
+                'alias',
+                'Required parameter ' + 'requestParameters.alias was null or undefined when calling getUUIDRaw.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1021,15 +1068,14 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/alias/uuid/{alias}`.replace(`{${"alias"}}`,
-                encodeURIComponent(String(requestParameters.alias))),
+            path: `/alias/uuid/{alias}`.replace(`{${'alias'}}`, encodeURIComponent(String(requestParameters.alias))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1053,59 +1099,17 @@ export class DefaultApi extends runtime.BaseAPI {
         return await response.value();
     }
 
-  /**
-   * Gets the alias when given uuid
-   * Get a string (UUID)
-   */
-  public async getAliasRaw(requestParameters: GetAliasRequest): Promise<runtime.ApiResponse<AliasResponse>> {
-    if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
-      throw new runtime.RequiredError('uuid', 'Required parameter ' +
-        'requestParameters.uuid was null or undefined when calling getWorksheet.');
-    }
-
-    const queryParameters: runtime.HTTPQuery = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
-      const token = this.configuration.accessToken || this.configuration.apiKey;
-      const tokenString = typeof token === 'function' ? token("Token", []) : token;
-
-      if (tokenString) {
-        headerParameters.Authorization = `Bearer ${tokenString}`;
-      }
-    }
-    const response = await this.request({
-      path: `/alias/{uuid}`.replace(`{${"uuid"}}`,
-        encodeURIComponent(String(requestParameters.uuid))),
-      method: 'GET',
-      headers: headerParameters,
-      query: queryParameters,
-    });
-
-    return new runtime.JSONApiResponse(response, (json: any) => {
-      return {
-        alias: json.alias,
-        uuid: json.object_id,
-        objectType: json.object_type,
-      } as AliasResponse;
-    });
-  }
-
-  /**
-   * Gets the uuid when given alias
-   * Get a string (UUID)
-   */
-  public async getAlias(requestParameters: GetAliasRequest): Promise<AliasResponse> {
-    const response = await this.getAliasRaw(requestParameters);
-    return await response.value();
-  }
-
     /**
-     * Gets a list of all `Subtask` entities.
-     * List All subtasks
+     * Gets the alias when given uuid
+     * Get a string (UUID)
      */
-    public async getSubtasksRaw(): Promise<runtime.ApiResponse<Subtask[]>> {
+    public async getAliasRaw(requestParameters: GetAliasRequest): Promise<runtime.ApiResponse<AliasResponse>> {
+        if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter ' + 'requestParameters.uuid was null or undefined when calling getWorksheet.'
+            );
+        }
 
         const queryParameters: runtime.HTTPQuery = {};
 
@@ -1113,7 +1117,49 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
+
+            if (tokenString) {
+                headerParameters.Authorization = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/alias/{uuid}`.replace(`{${'uuid'}}`, encodeURIComponent(String(requestParameters.uuid))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (json: any) => {
+            return {
+                alias: json.alias,
+                uuid: json.object_id,
+                objectType: json.object_type,
+            } as AliasResponse;
+        });
+    }
+
+    /**
+     * Gets the uuid when given alias
+     * Get a string (UUID)
+     */
+    public async getAlias(requestParameters: GetAliasRequest): Promise<AliasResponse> {
+        const response = await this.getAliasRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Gets a list of all `Subtask` entities.
+     * List All subtasks
+     */
+    public async getSubtasksRaw(): Promise<runtime.ApiResponse<Subtask[]>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
+            const token = this.configuration.accessToken || this.configuration.apiKey;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -1126,21 +1172,23 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map((singleJsonValue: any) => {
-            if (singleJsonValue.content.hasOwnProperty("sql")) {
-                return SqlTask.fromJSON(singleJsonValue);
-            }
-            if (singleJsonValue.content.hasOwnProperty("multiple_choice")) {
-                return MultipleChoiceTask.fromJSON(singleJsonValue);
-            }
-            if (singleJsonValue.content.hasOwnProperty("plaintext")) {
-                return PlainTextTask.fromJSON(singleJsonValue);
-            }
-            if (singleJsonValue.content === "instruction") {
-                return InstructionTask.fromJSON(singleJsonValue);
-            }
-            throw new Error("Unknown Subtask type");
-        }));
+        return new runtime.JSONApiResponse(response, jsonValue =>
+            jsonValue.map((singleJsonValue: any) => {
+                if (singleJsonValue.content.hasOwnProperty('sql')) {
+                    return SqlTask.fromJSON(singleJsonValue);
+                }
+                if (singleJsonValue.content.hasOwnProperty('multiple_choice')) {
+                    return MultipleChoiceTask.fromJSON(singleJsonValue);
+                }
+                if (singleJsonValue.content.hasOwnProperty('plaintext')) {
+                    return PlainTextTask.fromJSON(singleJsonValue);
+                }
+                if (singleJsonValue.content === 'instruction') {
+                    return InstructionTask.fromJSON(singleJsonValue);
+                }
+                throw new Error('Unknown Subtask type');
+            })
+        );
     }
 
     /**
@@ -1163,7 +1211,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -1176,7 +1224,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(Task.fromJSON));
+        return new runtime.JSONApiResponse(response, jsonValue => jsonValue.map(Task.fromJSON));
     }
 
     /**
@@ -1199,7 +1247,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -1212,7 +1260,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(Worksheet.fromJSON));
+        return new runtime.JSONApiResponse(response, jsonValue => jsonValue.map(Worksheet.fromJSON));
     }
 
     /**
@@ -1234,10 +1282,12 @@ export class DefaultApi extends runtime.BaseAPI {
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        if (this.configuration
-            && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
-            headerParameters.Authorization = "Basic "
-                + btoa(this.configuration.username + ":" + this.configuration.password);
+        if (
+            this.configuration &&
+            (this.configuration.username !== undefined || this.configuration.password !== undefined)
+        ) {
+            headerParameters.Authorization =
+                'Basic ' + btoa(this.configuration.username + ':' + this.configuration.password);
         }
         const response = await this.request({
             path: `/account/login`,
@@ -1246,7 +1296,7 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue);
+        return new runtime.JSONApiResponse(response, jsonValue => jsonValue);
     }
 
     /**
@@ -1262,7 +1312,7 @@ export class DefaultApi extends runtime.BaseAPI {
     public setJWT(token: string | undefined): void {
         this.configuration = new Configuration({
             basePath: this.configuration.basePath,
-            fetchApi:  this.configuration.fetchApi,
+            fetchApi: this.configuration.fetchApi,
             middleware: this.configuration.middleware,
             username: this.configuration.username,
             password: this.configuration.password,
@@ -1287,19 +1337,23 @@ export class DefaultApi extends runtime.BaseAPI {
      * Checks if the given solution is correct for this subtask.
      * Verify solution
      */
-    public async verifySubtaskSolutionRaw(requestParameters: VerifySubtaskSolutionRequest)
-        : Promise<runtime.ApiResponse<SolutionDiff>> {
-
+    public async verifySubtaskSolutionRaw(
+        requestParameters: VerifySubtaskSolutionRequest
+    ): Promise<runtime.ApiResponse<SolutionDiff>> {
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
-            throw new runtime.RequiredError('subtaskid',
+            throw new runtime.RequiredError(
+                'subtaskid',
                 'Required parameter requestParameters.subtaskid was ' +
-                'null or undefined when calling verifySubtaskSolution.');
+                    'null or undefined when calling verifySubtaskSolution.'
+            );
         }
 
         if (requestParameters.solution === null || requestParameters.solution === undefined) {
-            throw new runtime.RequiredError('solution',
+            throw new runtime.RequiredError(
+                'solution',
                 'Required parameter requestParameters.solution was' +
-                ' null or undefined when calling verifySubtaskSolution.');
+                    ' null or undefined when calling verifySubtaskSolution.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1310,7 +1364,7 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
@@ -1318,22 +1372,24 @@ export class DefaultApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/subtasks/{subtaskid}/verify`
-                .replace(`{${"subtaskid"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
+            path: `/subtasks/{subtaskid}/verify`.replace(
+                `{${'subtaskid'}}`,
+                encodeURIComponent(String(requestParameters.subtaskId))
+            ),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: requestParameters.solution.toJSON,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => {
-            if (jsonValue.hasOwnProperty("sql")) {
+        return new runtime.JSONApiResponse(response, jsonValue => {
+            if (jsonValue.hasOwnProperty('sql')) {
                 return SqlSolutionDiff.fromJSON(jsonValue);
             }
-            if (jsonValue.hasOwnProperty("multiple_choice")) {
+            if (jsonValue.hasOwnProperty('multiple_choice')) {
                 return MultipleChoiceSolutionDiff.fromJSON(jsonValue);
             }
-            if (jsonValue.hasOwnProperty("plaintext")) {
+            if (jsonValue.hasOwnProperty('plaintext')) {
                 return PlainTextSolutionDiff.fromJSON(jsonValue);
             }
             throw new Error(jsonValue.error);
@@ -1355,8 +1411,10 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async updateAccountRaw(requestParameters: UpdateAccountRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.account === null || requestParameters.account === undefined) {
-            throw new runtime.RequiredError('account',
-                'Required parameter requestParameters.account was null or undefined when calling updateAccount.');
+            throw new runtime.RequiredError(
+                'account',
+                'Required parameter requestParameters.account was null or undefined when calling updateAccount.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1365,10 +1423,12 @@ export class DefaultApi extends runtime.BaseAPI {
 
         headerParameters['Content-Type'] = 'application/json';
 
-        if (this.configuration
-            && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
-            headerParameters.Authorization = "Basic "
-                + btoa(this.configuration.username + ":" + this.configuration.password);
+        if (
+            this.configuration &&
+            (this.configuration.username !== undefined || this.configuration.password !== undefined)
+        ) {
+            headerParameters.Authorization =
+                'Basic ' + btoa(this.configuration.username + ':' + this.configuration.password);
         }
         const response = await this.request({
             path: `/account`,
@@ -1395,13 +1455,17 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async updateCourseRaw(requestParameters: UpdateCourseRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.courseId === null || requestParameters.courseId === undefined) {
-            throw new runtime.RequiredError('courseId', 'Required parameter requestParameters.courseId' +
-              ' was null or undefined when calling updateCourse.');
+            throw new runtime.RequiredError(
+                'courseId',
+                'Required parameter requestParameters.courseId' + ' was null or undefined when calling updateCourse.'
+            );
         }
 
         if (requestParameters.course === null || requestParameters.course === undefined) {
-            throw new runtime.RequiredError('course', 'Required parameter requestParameters.course' +
-              ' was null or undefined when calling updateCourse.');
+            throw new runtime.RequiredError(
+                'course',
+                'Required parameter requestParameters.course' + ' was null or undefined when calling updateCourse.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1412,15 +1476,17 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/courses/{courseId}`.replace(`{${"courseId"}}`,
-              encodeURIComponent(String(requestParameters.courseId))),
+            path: `/courses/{courseId}`.replace(
+                `{${'courseId'}}`,
+                encodeURIComponent(String(requestParameters.courseId))
+            ),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1444,13 +1510,18 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async updateDatabaseRaw(requestParameters: UpdateDatabaseRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.databaseId === null || requestParameters.databaseId === undefined) {
-            throw new runtime.RequiredError('databaseId', 'Required parameter ' +
-              'requestParameters.databaseId was null or undefined when calling updateDatabase.');
+            throw new runtime.RequiredError(
+                'databaseId',
+                'Required parameter ' +
+                    'requestParameters.databaseId was null or undefined when calling updateDatabase.'
+            );
         }
 
         if (requestParameters.database === null || requestParameters.database === undefined) {
-            throw new runtime.RequiredError('database', 'Required parameter requestParameters.database' +
-              ' was null or undefined when calling updateDatabase.');
+            throw new runtime.RequiredError(
+                'database',
+                'Required parameter requestParameters.database' + ' was null or undefined when calling updateDatabase.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1461,15 +1532,17 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/databases/{databaseId}`.replace(`{${"databaseId"}}`,
-              encodeURIComponent(String(requestParameters.databaseId))),
+            path: `/databases/{databaseId}`.replace(
+                `{${'databaseId'}}`,
+                encodeURIComponent(String(requestParameters.databaseId))
+            ),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1493,13 +1566,17 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async updateTaskRaw(requestParameters: UpdateTaskRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-            throw new runtime.RequiredError('taskId', 'Required parameter requestParameters.taskId ' +
-              'was null or undefined when calling updateTask.');
+            throw new runtime.RequiredError(
+                'taskId',
+                'Required parameter requestParameters.taskId ' + 'was null or undefined when calling updateTask.'
+            );
         }
 
         if (requestParameters.task === null || requestParameters.task === undefined) {
-            throw new runtime.RequiredError('task', 'Required parameter requestParameters.task' +
-              ' was null or undefined when calling updateTask.');
+            throw new runtime.RequiredError(
+                'task',
+                'Required parameter requestParameters.task' + ' was null or undefined when calling updateTask.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1510,15 +1587,14 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/tasks/{taskId}`.replace(`{${"taskId"}}`,
-              encodeURIComponent(String(requestParameters.taskId))),
+            path: `/tasks/{taskId}`.replace(`{${'taskId'}}`, encodeURIComponent(String(requestParameters.taskId))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1541,15 +1617,18 @@ export class DefaultApi extends runtime.BaseAPI {
      * Update a Subtask
      */
     public async updateSubtaskRaw(requestParameters: UpdateSubtaskRequest): Promise<runtime.ApiResponse<void>> {
-
         if (requestParameters.subtaskId === null || requestParameters.subtaskId === undefined) {
-            throw new runtime.RequiredError('subtaskId',
-                'Required parameter requestParameters.subtaskId was null or undefined when calling updateSubtask');
+            throw new runtime.RequiredError(
+                'subtaskId',
+                'Required parameter requestParameters.subtaskId was null or undefined when calling updateSubtask'
+            );
         }
 
         if (requestParameters.subtask === null || requestParameters.subtask === undefined) {
-            throw new runtime.RequiredError('subtask',
-                'Required parameter requestParameters.subtask was null or undefined when calling updateSubtask.');
+            throw new runtime.RequiredError(
+                'subtask',
+                'Required parameter requestParameters.subtask was null or undefined when calling updateSubtask.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1560,15 +1639,17 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/subtasks/{subtaskId}`
-                .replace(`{${"subtaskId"}}`, encodeURIComponent(String(requestParameters.subtaskId))),
+            path: `/subtasks/{subtaskId}`.replace(
+                `{${'subtaskId'}}`,
+                encodeURIComponent(String(requestParameters.subtaskId))
+            ),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1592,13 +1673,19 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     public async updateWorksheetRaw(requestParameters: UpdateWorksheetRequest): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.worksheetId === null || requestParameters.worksheetId === undefined) {
-            throw new runtime.RequiredError('worksheetId', 'Required parameter ' +
-              'requestParameters.worksheetId was null or undefined when calling updateWorksheet.');
+            throw new runtime.RequiredError(
+                'worksheetId',
+                'Required parameter ' +
+                    'requestParameters.worksheetId was null or undefined when calling updateWorksheet.'
+            );
         }
 
         if (requestParameters.worksheet === null || requestParameters.worksheet === undefined) {
-            throw new runtime.RequiredError('worksheet', 'Required parameter ' +
-              'requestParameters.worksheet was null or undefined when calling updateWorksheet.');
+            throw new runtime.RequiredError(
+                'worksheet',
+                'Required parameter ' +
+                    'requestParameters.worksheet was null or undefined when calling updateWorksheet.'
+            );
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -1609,15 +1696,17 @@ export class DefaultApi extends runtime.BaseAPI {
 
         if (this.configuration && (this.configuration.accessToken || this.configuration.apiKey)) {
             const token = this.configuration.accessToken || this.configuration.apiKey;
-            const tokenString = typeof token === 'function' ? token("Token", []) : token;
+            const tokenString = typeof token === 'function' ? token('Token', []) : token;
 
             if (tokenString) {
                 headerParameters.Authorization = `Bearer ${tokenString}`;
             }
         }
         const response = await this.request({
-            path: `/worksheets/{worksheetId}`.replace(`{${"worksheetId"}}`,
-              encodeURIComponent(String(requestParameters.worksheetId))),
+            path: `/worksheets/{worksheetId}`.replace(
+                `{${'worksheetId'}}`,
+                encodeURIComponent(String(requestParameters.worksheetId))
+            ),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
@@ -1634,5 +1723,4 @@ export class DefaultApi extends runtime.BaseAPI {
     public async updateWorksheet(requestParameters: UpdateWorksheetRequest): Promise<void> {
         await this.updateWorksheetRaw(requestParameters);
     }
-
 }

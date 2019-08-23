@@ -1,25 +1,24 @@
 import SubtaskService from '@/services/SubtaskService';
-import Task from "@/dataModel/Task";
+import Task from '@/dataModel/Task';
 import Subtask from '@/dataModel/Subtask';
 import {
     CreateSubtaskRequest,
     DefaultApi,
     DeleteSubtaskRequest,
-    GetSubtaskRequest, UpdateSubtaskRequest, VerifySubtaskSolutionRequest,
-} from "@/api/DefaultApi";
-import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
-import SolutionDiff from "@/dataModel/SolutionDiff";
+    GetSubtaskRequest,
+    UpdateSubtaskRequest,
+    VerifySubtaskSolutionRequest,
+} from '@/api/DefaultApi';
+import ApiControllerAbstract from '@/controller/ApiControllerAbstract';
+import SolutionDiff from '@/dataModel/SolutionDiff';
 
 export default class SubtaskController extends ApiControllerAbstract implements SubtaskService {
-
-
     private _subtasks: Map<string, Subtask>;
 
     constructor(api: DefaultApi) {
         super(api);
         this._subtasks = new Map<string, Subtask>();
     }
-
 
     /**
      * Loads all subtasks available
@@ -43,18 +42,18 @@ export default class SubtaskController extends ApiControllerAbstract implements 
      * @param object
      */
     public getChildren(object: Task): Promise<Subtask[]> {
-        return Promise.all(object.subtaskIds.map((subtaskId) =>
-          this.api.getSubtask({subtaskId} as GetSubtaskRequest)));
+        return Promise.all(object.subtaskIds.map(subtaskId => this.api.getSubtask({ subtaskId } as GetSubtaskRequest)));
     }
 
     public getChildrenWithoutSolution(object: Task): Promise<Subtask[]> {
-        return Promise.all(object.subtaskIds.map((subtaskId) => {
-            return this.api.getSubtask({subtaskId} as GetSubtaskRequest)
-              .then((subtask: Subtask) => {
-                  subtask.solution = undefined;
-                  return subtask;
-              });
-        }));
+        return Promise.all(
+            object.subtaskIds.map(subtaskId => {
+                return this.api.getSubtask({ subtaskId } as GetSubtaskRequest).then((subtask: Subtask) => {
+                    subtask.solution = undefined;
+                    return subtask;
+                });
+            })
+        );
     }
 
     /**
@@ -63,15 +62,14 @@ export default class SubtaskController extends ApiControllerAbstract implements 
      * @param id
      */
     public get(id: string): Promise<Subtask> {
-        return this.api.getSubtask({subtaskId: id} as GetSubtaskRequest);
+        return this.api.getSubtask({ subtaskId: id } as GetSubtaskRequest);
     }
 
     public getWithoutSolution(id: string): Promise<Subtask> {
-        return this.api.getSubtask({subtaskId: id} as GetSubtaskRequest)
-          .then((subtask: Subtask) => {
-              subtask.solution = undefined;
-              return subtask;
-          });
+        return this.api.getSubtask({ subtaskId: id } as GetSubtaskRequest).then((subtask: Subtask) => {
+            subtask.solution = undefined;
+            return subtask;
+        });
     }
 
     /**
@@ -80,11 +78,10 @@ export default class SubtaskController extends ApiControllerAbstract implements 
      * @param subtask
      */
     public create(subtask: Subtask): Promise<string> {
-        return this.api.createSubtask({subtask} as CreateSubtaskRequest)
-          .then((response: string) => {
-              subtask.id = response;
-              return subtask.id;
-          });
+        return this.api.createSubtask({ subtask } as CreateSubtaskRequest).then((response: string) => {
+            subtask.id = response;
+            return subtask.id;
+        });
     }
 
     /**
@@ -93,11 +90,11 @@ export default class SubtaskController extends ApiControllerAbstract implements 
      * @param object
      */
     public remove(object: Subtask): Promise<void> {
-        return this.api.deleteSubtask({subtaskId: object.id} as DeleteSubtaskRequest);
+        return this.api.deleteSubtask({ subtaskId: object.id } as DeleteSubtaskRequest);
     }
 
     public save(object: Subtask): Promise<void> {
-        return this.api.updateSubtask({subtask: object, subtaskId: object.id} as UpdateSubtaskRequest);
+        return this.api.updateSubtask({ subtask: object, subtaskId: object.id } as UpdateSubtaskRequest);
     }
 
     /**

@@ -1,4 +1,4 @@
-import LocalStorageService from "@/services/LocalStorageService";
+import LocalStorageService from '@/services/LocalStorageService';
 
 export default class LocalStorageController implements LocalStorageService {
     /**
@@ -28,9 +28,13 @@ export default class LocalStorageController implements LocalStorageService {
      * @param ignoreToJson if true the implemented method toJSON() will not be used to convert to string
      * @param isObjectString set true if object is already a string and JSON.stringify will be skipped
      */
-    public set(key: string, object: string | any, sessionOnly: boolean = false,
-               ignoreToJson?: boolean, isObjectString?: boolean): void {
-
+    public set(
+        key: string,
+        object: string | any,
+        sessionOnly: boolean = false,
+        ignoreToJson?: boolean,
+        isObjectString?: boolean
+    ): void {
         let value: string;
         if (isObjectString) {
             value = object;
@@ -47,5 +51,4 @@ export default class LocalStorageController implements LocalStorageService {
             window.localStorage.setItem(key, value);
         }
     }
-
 }

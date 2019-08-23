@@ -1,5 +1,5 @@
 export default interface LocalStorageService {
-  set(key: string, object: any, sessionOnly: boolean): void;
+    set(key: string, object: any, sessionOnly: boolean): void;
 
-  get<T>(key: string): T | undefined;
+    get<T>(key: string): T | undefined;
 }

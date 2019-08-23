@@ -1,6 +1,5 @@
 import DataModel from '@/dataModel/DataModel';
 
-
 /**
  * The class Database represents a database which a teacher assigns to a
  * task so the students can work on it. The students each get a copy of the
@@ -8,7 +7,6 @@ import DataModel from '@/dataModel/DataModel';
  */
 
 export default class Database extends DataModel {
-
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
@@ -45,7 +43,7 @@ export default class Database extends DataModel {
      */
     private static u8ToBase64(arr: Uint8Array | null) {
         if (!arr) {
-            return "";
+            return '';
         }
         const CHUNK_SZ = 0x8000;
         const c = [];
@@ -55,13 +53,17 @@ export default class Database extends DataModel {
         for (let i = 0; i < arr.length; i += CHUNK_SZ) {
             c.push(String.fromCharCode.apply(null, Array.from(arr.subarray(i, i + CHUNK_SZ))));
         }
-        return btoa(c.join(""));
+        return btoa(c.join(''));
     }
 
     private static base64ToU8(base64: string): Uint8Array {
-        return new Uint8Array(atob(base64).split("").map((c) => {
-            return c.charCodeAt(0);
-        }));
+        return new Uint8Array(
+            atob(base64)
+                .split('')
+                .map(c => {
+                    return c.charCodeAt(0);
+                })
+        );
     }
 
     private _name: string;
@@ -85,5 +87,4 @@ export default class Database extends DataModel {
             name: this.name,
         };
     }
-
 }

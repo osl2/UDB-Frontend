@@ -3,74 +3,70 @@ import Worksheet from '@/dataModel/Worksheet';
 import Task from '@/dataModel/Task';
 import ExportPDF from '@/services/ExportPDF';
 import SolutionService from '@/services/SolutionService';
-import Course from "@/dataModel/Course";
+import Course from '@/dataModel/Course';
 import {
     DefaultApi,
     CreateWorksheetRequest,
     DeleteWorksheetRequest,
     UpdateWorksheetRequest,
     GetWorksheetRequest,
-} from "@/api/DefaultApi";
-import ApiControllerAbstract from "@/controller/ApiControllerAbstract";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-import Subtask from "@/dataModel/Subtask";
-import PlainTextTask from "@/dataModel/PlainTextTask";
-import MultipleChoiceTask from "@/dataModel/MultipleChoiceTask";
-import SqlTask from "@/dataModel/SqlTask";
-import PlainTextSolution from "@/dataModel/PlainTextSolution";
-import MultipleChoiceSolution from "@/dataModel/MultipleChoiceSolution";
-import SqlSolution from "@/dataModel/SqlSolution";
-import SubtaskTypes from "@/dataModel/SubtaskTypes";
-import TaskController from "@/controller/TaskController";
-import SubtaskController from "@/controller/SubtaskController";
-import Solution from "@/dataModel/Solution";
-
+} from '@/api/DefaultApi';
+import ApiControllerAbstract from '@/controller/ApiControllerAbstract';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+import Subtask from '@/dataModel/Subtask';
+import PlainTextTask from '@/dataModel/PlainTextTask';
+import MultipleChoiceTask from '@/dataModel/MultipleChoiceTask';
+import SqlTask from '@/dataModel/SqlTask';
+import PlainTextSolution from '@/dataModel/PlainTextSolution';
+import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
+import SqlSolution from '@/dataModel/SqlSolution';
+import SubtaskTypes from '@/dataModel/SubtaskTypes';
+import TaskController from '@/controller/TaskController';
+import SubtaskController from '@/controller/SubtaskController';
+import Solution from '@/dataModel/Solution';
 
 export default class WorksheetController extends ApiControllerAbstract
     implements ParentService<Course, Worksheet>, SolutionService {
-
-
     constructor(api: DefaultApi) {
         super(api);
     }
-
 
     public getAll(): Promise<Worksheet[]> {
         return this.api.getWorksheets();
     }
 
     public getChildren(object: Course): Promise<Worksheet[]> {
-        return Promise.all(object.worksheetIds.map((worksheetId) =>
-          this.api.getWorksheet({worksheetId} as GetWorksheetRequest)
-            .catch((e) => {
-                if (e.status === 404) {
-                    return undefined;
-                }
-                Promise.reject(e);
-            })))
-          .then((worksheets: Array<Worksheet | undefined>) => {
-              // type cast is ok, because we filter undefined
-              return worksheets.filter((worksheet: Worksheet | undefined) => worksheet !== undefined) as Worksheet[];
-          });
+        return Promise.all(
+            object.worksheetIds.map(worksheetId =>
+                this.api.getWorksheet({ worksheetId } as GetWorksheetRequest).catch(e => {
+                    if (e.status === 404) {
+                        return undefined;
+                    }
+                    Promise.reject(e);
+                })
+            )
+        ).then((worksheets: Array<Worksheet | undefined>) => {
+            // type cast is ok, because we filter undefined
+            return worksheets.filter((worksheet: Worksheet | undefined) => worksheet !== undefined) as Worksheet[];
+        });
     }
 
     public get(id: string) {
-        return this.api.getWorksheet({worksheetId: id} as GetWorksheetRequest);
+        return this.api.getWorksheet({ worksheetId: id } as GetWorksheetRequest);
     }
 
     public create(worksheet: Worksheet): Promise<string> {
-        return this.api.createWorksheet({worksheet} as CreateWorksheetRequest)
-            .then((response: string) => {
-                worksheet.id = response;
-                return worksheet.id;
-            });
+        return this.api.createWorksheet({ worksheet } as CreateWorksheetRequest).then((response: string) => {
+            worksheet.id = response;
+            return worksheet.id;
+        });
     }
     public save(object: Worksheet): Promise<void> {
-        return this.api.updateWorksheet({worksheet: object, worksheetId: object.id} as UpdateWorksheetRequest);
+        return this.api.updateWorksheet({ worksheet: object, worksheetId: object.id } as UpdateWorksheetRequest);
     }
     public remove(object: Worksheet): Promise<void> {
-        return this.api.deleteWorksheet({worksheetId: object.id} as DeleteWorksheetRequest);
+        return this.api.deleteWorksheet({ worksheetId: object.id } as DeleteWorksheetRequest);
     }
 
     /**
@@ -94,16 +90,23 @@ export default class WorksheetController extends ApiControllerAbstract
         }
 
         const date = new Date();
-        const datestring = date.getFullYear() + "_" + ("0" + (date.getMonth() + 1)).slice(-2) + "_" +
-            ("0" + date.getDate()).slice(-2) + "_" +
-            ("0" + date.getHours()).slice(-2) + "_" + ("0" + date.getMinutes()).slice(-2);
+        const datestring =
+            date.getFullYear() +
+            '_' +
+            ('0' + (date.getMonth() + 1)).slice(-2) +
+            '_' +
+            ('0' + date.getDate()).slice(-2) +
+            '_' +
+            ('0' + date.getHours()).slice(-2) +
+            '_' +
+            ('0' + date.getMinutes()).slice(-2);
 
         const docDefinition = {
             content: [
                 {
                     stack: [
                         'Aufgabenblatt - ' + object.name,
-                        {text: 'Exportiert am: ' + datestring, style: 'subheader'},
+                        { text: 'Exportiert am: ' + datestring, style: 'subheader' },
                     ],
                     style: 'header',
                 },
@@ -141,67 +144,82 @@ export default class WorksheetController extends ApiControllerAbstract
             const task: Task = taskController.get(taskId);
             for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
                 const subtask: Subtask = subtaskController.get(subtaskId);
-                docDefinition.content.push({text: 'Aufgabe ' + task.name + '-'
-                        + (subtaskIndex + 1) + ': ', style: 'taskheader'});
-                docDefinition.content.push({text: subtask.instruction, style: 'taskdescription'});
+                docDefinition.content.push({
+                    text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ',
+                    style: 'taskheader',
+                });
+                docDefinition.content.push({ text: subtask.instruction, style: 'taskdescription' });
                 if (subtask.type !== SubtaskTypes.Instruction) {
-                    docDefinition.content.push({text: 'Lösungsvorschlag:', style: 'solutionheader'});
+                    docDefinition.content.push({ text: 'Lösungsvorschlag:', style: 'solutionheader' });
                 }
                 if (subtask.type === SubtaskTypes.PlainText) {
                     const typedSubtask = subtask as PlainTextTask;
                     if (solutions.has(subtaskId)) {
                         const solution = solutions.get(subtaskId) as PlainTextSolution;
-                        docDefinition.content.push({text: solution.text, style: 'solution'});
+                        docDefinition.content.push({ text: solution.text, style: 'solution' });
                     } else {
-                        docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
+                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
                     }
                 } else if (subtask.type === SubtaskTypes.MultipleChoice) {
                     const typedSubtask = subtask as MultipleChoiceTask;
                     if (solutions.has(subtaskId)) {
                         const solution = solutions.get(subtaskId) as MultipleChoiceSolution;
-                        let content: string = "";
+                        let content: string = '';
                         for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
                             if (content.length > 0) {
-                                content += "\n";
+                                content += '\n';
                             }
                             if (solution.choices.includes(index)) {
-                                content += "[X] " + answerOption;
+                                content += '[X] ' + answerOption;
                             } else {
-                                content += "[ ]" + answerOption;
+                                content += '[ ]' + answerOption;
                             }
                         }
-                        docDefinition.content.push({text: content, style: 'solution'});
+                        docDefinition.content.push({ text: content, style: 'solution' });
                     } else {
-                        docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
+                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
                     }
                 } else if (subtask.type === SubtaskTypes.Sql) {
                     const typedSubtask = subtask as SqlTask;
                     if (solutions.has(subtaskId)) {
                         const solution = solutions.get(subtaskId) as SqlSolution;
-                        const tablequery = {widths: ['*'], body: [
-                                [{text: 'Query:', fillColor: '#eeeeee',
-                                    border: [true, true, true, false], style: {bold: true}}],
-                                [{text: solution.querySolution, fillColor: '#eeeeee',
-                                    border: [true, false, true, true]}]]};
-                        docDefinition.content.push({table: tablequery, style: 'solutionQuery'});
-                        const tabledata = {widths: [] as string[], body: [] as string[][]};
+                        const tablequery = {
+                            widths: ['*'],
+                            body: [
+                                [
+                                    {
+                                        text: 'Query:',
+                                        fillColor: '#eeeeee',
+                                        border: [true, true, true, false],
+                                        style: { bold: true },
+                                    },
+                                ],
+                                [
+                                    {
+                                        text: solution.querySolution,
+                                        fillColor: '#eeeeee',
+                                        border: [true, false, true, true],
+                                    },
+                                ],
+                            ],
+                        };
+                        docDefinition.content.push({ table: tablequery, style: 'solutionQuery' });
+                        const tabledata = { widths: [] as string[], body: [] as string[][] };
                         // Set all table widths to star
                         for (const column of solution.columns) {
                             tabledata.widths.push('*');
                         }
                         tabledata.body = solution.values;
                         tabledata.body.unshift(solution.columns);
-                        docDefinition.content.push({table: tabledata, style: 'solutionTable'});
+                        docDefinition.content.push({ table: tabledata, style: 'solutionTable' });
                     } else {
-                        docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
+                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
                     }
                 }
             }
         }
 
-        pdfMake.createPdf(docDefinition)
-            .download('Print' + object.name.replace(' ', '_') + '_'
-              + datestring + '.pdf');
+        pdfMake.createPdf(docDefinition).download('Print' + object.name.replace(' ', '_') + '_' + datestring + '.pdf');
     }
 
     /**
@@ -214,14 +232,14 @@ export default class WorksheetController extends ApiControllerAbstract
      * @param solutions map SubtaskId to corresponding Solution
      */
     public exportObject(object: Worksheet, solutions: Map<string, Solution>): void {
-        const exportobject = {worksheet: {id: object.id}, solutions: [] as object[]};
+        const exportobject = { worksheet: { id: object.id }, solutions: [] as object[] };
 
         for (const [key, solution] of solutions.entries()) {
-            const tempobject = {id: "", type: 0 as SubtaskTypes, data: {}};
+            const tempobject = { id: '', type: 0 as SubtaskTypes, data: {} };
             tempobject.id = key;
             if (solution instanceof PlainTextSolution) {
                 tempobject.type = SubtaskTypes.PlainText;
-            } else if (solution instanceof  MultipleChoiceSolution) {
+            } else if (solution instanceof MultipleChoiceSolution) {
                 tempobject.type = SubtaskTypes.MultipleChoice;
             } else if (solution instanceof SqlSolution) {
                 tempobject.type = SubtaskTypes.Sql;
@@ -231,29 +249,36 @@ export default class WorksheetController extends ApiControllerAbstract
         }
 
         const jsonString = JSON.stringify(exportobject, null, 4);
-        const escapedJsonString = jsonString.replace(/\\n/g, "\\n")
+        const escapedJsonString = jsonString
+            .replace(/\\n/g, '\\n')
             .replace(/\\'/g, "\\'")
             .replace(/\\"/g, '\\"')
-            .replace(/\\&/g, "\\&")
-            .replace(/\\r/g, "\\r")
-            .replace(/\\t/g, "\\t")
-            .replace(/\\b/g, "\\b")
-            .replace(/\\f/g, "\\f");
+            .replace(/\\&/g, '\\&')
+            .replace(/\\r/g, '\\r')
+            .replace(/\\t/g, '\\t')
+            .replace(/\\b/g, '\\b')
+            .replace(/\\f/g, '\\f');
 
         const blob = new Blob([escapedJsonString!], {
             type: 'text/json',
         });
 
         const date = new Date();
-        const datestring = date.getFullYear() + "_" + ("0" + (date.getMonth() + 1)).slice(-2) + "_" +
-            ("0" + date.getDate()).slice(-2) + "_" +
-            ("0" + date.getHours()).slice(-2) + "_" + ("0" + date.getMinutes()).slice(-2);
+        const datestring =
+            date.getFullYear() +
+            '_' +
+            ('0' + (date.getMonth() + 1)).slice(-2) +
+            '_' +
+            ('0' + date.getDate()).slice(-2) +
+            '_' +
+            ('0' + date.getHours()).slice(-2) +
+            '_' +
+            ('0' + date.getMinutes()).slice(-2);
 
         const a = document.createElement('a');
         document.body.appendChild(a);
         a.href = window.URL.createObjectURL(blob);
-        a.download = 'Worksheet_Export_' + object.name.replace(" ", "_") + '_'
-          + datestring + '.json';
+        a.download = 'Worksheet_Export_' + object.name.replace(' ', '_') + '_' + datestring + '.json';
         a.onclick = () => {
             setTimeout(() => {
                 window.URL.revokeObjectURL(a.href);
@@ -358,19 +383,21 @@ export default class WorksheetController extends ApiControllerAbstract
             const task: Task = taskController.get(taskId);
             for (const [subtaskIndex, subtaskId] of task.subtaskIds.entries()) {
                 const subtask: Subtask = subtaskController.get(subtaskId);
-                docDefinition.content.push({text: 'Aufgabe ' + task.name
-                        + '-' + (subtaskIndex + 1) + ': ', style: 'taskheader'});
-                docDefinition.content.push({text: subtask.instruction, style: 'taskdescription'});
+                docDefinition.content.push({
+                    text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ',
+                    style: 'taskheader',
+                });
+                docDefinition.content.push({ text: subtask.instruction, style: 'taskdescription' });
                 if (subtask.type !== SubtaskTypes.Instruction) {
-                    docDefinition.content.push({text: 'Lösung:', style: 'solutionheader'});
+                    docDefinition.content.push({ text: 'Lösung:', style: 'solutionheader' });
                 }
                 if (subtask.type === SubtaskTypes.PlainText) {
                     const typedSubtask = subtask as PlainTextTask;
                     if (typedSubtask.solution !== undefined) {
                         const solution = typedSubtask.solution as PlainTextSolution;
-                        docDefinition.content.push({text: solution.text, style: 'solution'});
+                        docDefinition.content.push({ text: solution.text, style: 'solution' });
                     } else {
-                        docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
+                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
                     }
                 } else if (subtask.type === SubtaskTypes.MultipleChoice) {
                     const typedSubtask = subtask as MultipleChoiceTask;
@@ -379,44 +406,58 @@ export default class WorksheetController extends ApiControllerAbstract
                         let content: string | undefined;
                         for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
                             if (content !== undefined) {
-                                content += "\n";
+                                content += '\n';
                             }
                             if (solution.choices.indexOf(index) > 0) {
-                                content += "[X] " + answerOption;
+                                content += '[X] ' + answerOption;
                             } else {
-                                content += "[ ]" + answerOption;
+                                content += '[ ]' + answerOption;
                             }
                         }
-                        docDefinition.content.push({text: content, style: 'solution'});
+                        docDefinition.content.push({ text: content, style: 'solution' });
                     } else {
-                        docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
+                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
                     }
                 } else if (subtask.type === SubtaskTypes.Sql) {
                     const typedSubtask = subtask as SqlTask;
                     if (typedSubtask.solution !== undefined) {
                         const solution = typedSubtask.solution as SqlSolution;
-                        const tablequery = {widths: ['*'], body: [
-                            [{text: 'Query:', fillColor: '#eeeeee',
-                                border: [true, true, true, false], style: {bold: true}}],
-                                [{text: solution.querySolution, fillColor: '#eeeeee',
-                                    border: [true, false, true, true]}]]};
-                        docDefinition.content.push({table: tablequery, style: 'solutionQuery'});
-                        const tabledata = {widths: [] as string[], body: [] as string[][]};
+                        const tablequery = {
+                            widths: ['*'],
+                            body: [
+                                [
+                                    {
+                                        text: 'Query:',
+                                        fillColor: '#eeeeee',
+                                        border: [true, true, true, false],
+                                        style: { bold: true },
+                                    },
+                                ],
+                                [
+                                    {
+                                        text: solution.querySolution,
+                                        fillColor: '#eeeeee',
+                                        border: [true, false, true, true],
+                                    },
+                                ],
+                            ],
+                        };
+                        docDefinition.content.push({ table: tablequery, style: 'solutionQuery' });
+                        const tabledata = { widths: [] as string[], body: [] as string[][] };
                         // Set all table widths to star
                         for (const column of solution.columns) {
                             tabledata.widths.push('*');
                         }
                         tabledata.body = solution.values;
                         tabledata.body.unshift(solution.columns);
-                        docDefinition.content.push({table: tabledata, style: 'solutionTable'});
+                        docDefinition.content.push({ table: tabledata, style: 'solutionTable' });
                     } else {
-                        docDefinition.content.push({text: 'Keine Lösung vorhanden', style: 'solution'});
+                        docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
                     }
                 }
             }
         }
 
-        pdfMake.createPdf(docDefinition)
-            .download('Solution_' + sheet.name.replace(' ', '_') + '.pdf');
+        pdfMake.createPdf(docDefinition).download('Solution_' + sheet.name.replace(' ', '_') + '.pdf');
     }
 }

@@ -1,8 +1,8 @@
 import SQLService from '@/services/SQLService';
-import {SqlJs} from 'sql.js/module';
+import { SqlJs } from 'sql.js/module';
 import Database from '@/dataModel/Database';
 import QueryResult from '@/dataModel/QueryResult';
-import {ResultSet, ValueType} from '@/dataModel/ResultSet';
+import { ResultSet, ValueType } from '@/dataModel/ResultSet';
 import initSqlJs from 'sql.js';
 
 export default class SQLExecutor implements SQLService {
@@ -17,7 +17,7 @@ export default class SQLExecutor implements SQLService {
     public executeQuery(database: number, query: string, step: number): Promise<QueryResult> {
         const resultSet: ResultSet = {
             status: 0,
-            message: "",
+            message: '',
             columns: [],
             values: [[]],
         };
@@ -30,8 +30,7 @@ export default class SQLExecutor implements SQLService {
                 reject(e);
             }
         });
-        return this.dbResultTimed(15000, queryResultSqlDb,
-            "Query took longer that 15 sec").then((results) => {
+        return this.dbResultTimed(15000, queryResultSqlDb, 'Query took longer that 15 sec').then(results => {
             if (results.length > 0) {
                 if (results[0].columns.length > 0) {
                     resultSet.columns = results[0].columns;
@@ -45,7 +44,6 @@ export default class SQLExecutor implements SQLService {
                 result: resultSet,
             };
         });
-
     }
 
     public open(database: Database): Promise<number> {
@@ -85,10 +83,10 @@ export default class SQLExecutor implements SQLService {
     public close(dbNumber: number): Uint8Array {
         const dbArray = this.databaseSnapshots.get(dbNumber)!;
         if (!dbArray) {
-            throw new Error("Database with " + dbNumber + " does not exist");
+            throw new Error('Database with ' + dbNumber + ' does not exist');
         }
         const retVal = dbArray[dbArray.length - 1].export();
-        dbArray.forEach((element) => {
+        dbArray.forEach(element => {
             element.close();
         });
         this.databaseSnapshots.delete(dbNumber);
@@ -96,7 +94,6 @@ export default class SQLExecutor implements SQLService {
     }
 
     private dbResultTimed<T>(duration: number, promise: Promise<T>, rejectReason: string): Promise<T> {
-
         // Create a promise that rejects in <ms> milliseconds
         const timeout = new Promise<T>((resolve, reject) => {
             const id = setTimeout(() => {
@@ -106,13 +103,8 @@ export default class SQLExecutor implements SQLService {
         });
 
         // Returns a race between our timeout and the passed in promise
-        return Promise.race<T>([
-            promise,
-            timeout,
-        ]);
+        return Promise.race<T>([promise, timeout]);
     }
-
-
 }
 /**
  * This config is needed to parse database files in sql.js. This is the web assembly (wasm) binary of SQLLite.
@@ -123,4 +115,3 @@ export default class SQLExecutor implements SQLService {
 const config = {
     locateFile: (filename: string) => `/static/wasm/${filename}`,
 };
-

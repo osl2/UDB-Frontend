@@ -4,20 +4,19 @@
  */
 
 export default abstract class DataModel {
-  private _id!: string;
+    private _id!: string;
 
-  constructor(id: string) {
-    this._id = id;
-  }
+    constructor(id: string) {
+        this._id = id;
+    }
 
-  public abstract toJSON(): any;
+    public abstract toJSON(): any;
 
-  get id(): string {
-    return this._id;
-  }
+    get id(): string {
+        return this._id;
+    }
 
-  set id(value: string) {
-    this._id = value;
-  }
-
+    set id(value: string) {
+        this._id = value;
+    }
 }

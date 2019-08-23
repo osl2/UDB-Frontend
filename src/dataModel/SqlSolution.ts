@@ -8,7 +8,6 @@ import Solution from '@/dataModel/Solution';
  */
 
 export default class SqlSolution extends Solution {
-
     /**
      * the following methods transform an instance of the SqlSolution class to json format or do the same
      * thing the other way around. This is needed to store objects in the server or to read them.
@@ -20,7 +19,6 @@ export default class SqlSolution extends Solution {
             rows: this.values,
         };
     }
-
 
     /**
      * The following methods are getter and setter for each attribute in this class.
@@ -57,7 +55,6 @@ export default class SqlSolution extends Solution {
     private _columns: string[];
     private _values: string[][];
 
-
     /**
      * The constructor for this class.
      * @param querySolution: The attribute querySolution represents
@@ -74,4 +71,3 @@ export default class SqlSolution extends Solution {
         this._values = values;
     }
 }
-

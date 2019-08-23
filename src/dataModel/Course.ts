@@ -1,29 +1,28 @@
 import DataModel from '@/dataModel/DataModel';
-import {exists} from "@/api/BaseApi";
+import { exists } from '@/api/BaseApi';
 
 /**
  * The class Course represents a workspace for a student in this application.
  * It holds the worksheets and solution sheets provided by a teacher.
  */
 export default class Course extends DataModel {
-
     /**
      * The following methods are getter and setter for each attribute in this class.
      */
     get name(): string {
-      return this._name;
+        return this._name;
     }
 
     set name(value: string) {
-      this._name = value;
+        this._name = value;
     }
 
     get description(): string {
-      return this._description;
+        return this._description;
     }
 
     set description(value: string) {
-      this._description = value;
+        this._description = value;
     }
 
     get alias(): string {
@@ -35,11 +34,11 @@ export default class Course extends DataModel {
     }
 
     get worksheetIds(): string[] {
-      return this._worksheetIds;
+        return this._worksheetIds;
     }
 
     set worksheetIds(value: string[]) {
-      this._worksheetIds = value;
+        this._worksheetIds = value;
     }
 
     /**
@@ -47,11 +46,13 @@ export default class Course extends DataModel {
      * other way around. This is needed to store objects in the server or to read them.
      */
     public static fromJSON(json: any): Course {
-        return new Course(json.id,
+        return new Course(
+            json.id,
             json.name,
             !exists(json, 'description') ? undefined : json.description,
-            "",
-            json.worksheets);
+            '',
+            json.worksheets
+        );
     }
 
     private _name: string;
@@ -84,6 +85,4 @@ export default class Course extends DataModel {
             worksheets: this.worksheetIds,
         };
     }
-
 }
-

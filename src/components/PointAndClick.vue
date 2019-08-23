@@ -1,71 +1,69 @@
 <template>
     <div>
-        <div id="blocklyDiv" style="height: 600px; width: 100%; float:left">
-        </div>
+        <div id="blocklyDiv" style="height: 600px; width: 100%; float:left"></div>
         <div class="btn mt-2">
             <b-button @click="$emit('executeQuery', code)">
-                {{$t('query.executeButton')}}
+                {{ $t('query.executeButton') }}
             </b-button>
         </div>
-        <div class="clear">
-        </div>
+        <div class="clear"></div>
     </div>
 </template>
 
 <script lang="ts">
-    declare var Blockly: any;
+declare var Blockly: any;
 
-    import Vue from 'vue';
+import Vue from 'vue';
 
-    export default Vue.extend({
-        props: ['allowedSqlToolbox'],
-        data: () => ({
-            workspace: Blockly,
-            code: null,
-        }),
-        mounted() {
-            this.initBlockly();
+export default Vue.extend({
+    props: ['allowedSqlToolbox'],
+    data: () => ({
+        workspace: Blockly,
+        code: null,
+    }),
+    mounted() {
+        this.initBlockly();
+    },
+    methods: {
+        initBlockly() {
+            const toolbox = require('@/assets/blockly/' + this.allowedSqlToolbox);
+            // remove metadata from loaded toolbox
+            const cleantoolbox = toolbox.substring(28).toString();
+            // decode base64
+            const decodedtoolbox = atob(cleantoolbox);
+            this.workspace = Blockly.inject(
+                // this.$refs.blocklyDiv,
+                'blocklyDiv',
+                {
+                    toolbox: decodedtoolbox,
+                    path: './static/js/blockly/',
+                    collapse: false,
+                    comments: false,
+                    disable: false,
+                    maxBlocks: Infinity,
+                    trashcan: true,
+                    horizontalLayout: false,
+                    toolboxPosition: 'start',
+                    css: true,
+                    media: './static/js/blockly/media/',
+                    rtl: false,
+                    scrollbars: true,
+                    sounds: true,
+                    oneBasedIndex: true,
+                }
+            );
+            this.workspace.addChangeListener(this.updateCode);
         },
-        methods: {
-            initBlockly() {
-                const toolbox = require('@/assets/blockly/' + this.allowedSqlToolbox);
-                // remove metadata from loaded toolbox
-                const cleantoolbox = toolbox.substring(28).toString();
-                // decode base64
-                const decodedtoolbox = atob(cleantoolbox);
-                this.workspace = Blockly.inject(
-                    // this.$refs.blocklyDiv,
-                    'blocklyDiv',
-                    {
-                        toolbox: decodedtoolbox,
-                        path: './static/js/blockly/',
-                        collapse: false,
-                        comments: false,
-                        disable: false,
-                        maxBlocks: Infinity,
-                        trashcan: true,
-                        horizontalLayout: false,
-                        toolboxPosition: 'start',
-                        css: true,
-                        media: './static/js/blockly/media/',
-                        rtl: false,
-                        scrollbars: true,
-                        sounds: true,
-                        oneBasedIndex: true,
-                    },
-                );
-                this.workspace.addChangeListener(this.updateCode);
-            },
 
-            updateCode() {
-                this.code = Blockly.SQL.workspaceToCode(this.workspace);
-            },
+        updateCode() {
+            this.code = Blockly.SQL.workspaceToCode(this.workspace);
         },
-    });
+    },
+});
 </script>
 
 <style scoped>
-    .btn {
-        float: right;
-    }
+.btn {
+    float: right;
+}
 </style>

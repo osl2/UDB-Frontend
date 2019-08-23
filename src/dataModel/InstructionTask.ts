@@ -1,6 +1,5 @@
 import Subtask from '@/dataModel/Subtask';
-import SubtaskTypes from "@/dataModel/SubtaskTypes";
-
+import SubtaskTypes from '@/dataModel/SubtaskTypes';
 
 /**
  * The class InstructionTask represents the type of subtask where the teacher just gives an instruction
@@ -8,7 +7,6 @@ import SubtaskTypes from "@/dataModel/SubtaskTypes";
  * gets set to undefined and the attribute isSolutionVerifiable gets set to false in the constructor.
  */
 export default class InstructionTask extends Subtask {
-
     /**
      * the following methods transform an instance of the InstructionTask class to json format or do the same thing the
      * other way around. This is needed to store objects in the server or to read them.
@@ -32,7 +30,7 @@ export default class InstructionTask extends Subtask {
             instruction: this.instruction,
             solution_verifiable: this.isSolutionVeryfiable,
             solution_visible: this.isSolutionVisible,
-            content: "instruction",
+            content: 'instruction',
         };
     }
 }

@@ -1,62 +1,63 @@
 <template>
     <div class="top20">
-        <b-alert v-model="errorMsg" v-if="errorMsg !== ''" variant="danger" dismissible>{{errorMsg}}</b-alert>
+        <b-alert v-if="errorMsg !== ''" v-model="errorMsg" variant="danger" dismissible>{{ errorMsg }}</b-alert>
 
         <div :id="elementId" class="card" :class="cursorClickable">
-
-            <div v-if="!database || !database.content" :database:sync="database"
-                 class="card-body"
-                 @dragover.prevent
-                 @drop="dropHandler"
-                 @click="clickHandler"
-                 @dragover="setBackgroundColor"
-                 @dragenter="setBackgroundColor"
-                 @dragleave="removeBackgroundColor"
+            <div
+                v-if="!database || !database.content"
+                :database:sync="database"
+                class="card-body"
+                @dragover.prevent
+                @drop="dropHandler"
+                @click="clickHandler"
+                @dragover="setBackgroundColor"
+                @dragenter="setBackgroundColor"
+                @dragleave="removeBackgroundColor"
             >
                 <div class="row justify-content-center">
                     <div class="col-sm-2">
-                        <font-awesome-icon icon="upload" :style="{color: 'rgba(159,162,168,0.57)' } " size="4x"/>
+                        <font-awesome-icon icon="upload" :style="{ color: 'rgba(159,162,168,0.57)' }" size="4x" />
                     </div>
                     <div class="col-sm-6 ">
-
-                        <p class="text-muted">{{$t('database.dropDatabase')}}</p>
+                        <p class="text-muted">{{ $t('database.dropDatabase') }}</p>
                     </div>
-                    <input :id="elementId+'dbFile'" type="file" @change="changeHandler">
+                    <input :id="elementId + 'dbFile'" type="file" @change="changeHandler" />
                 </div>
             </div>
-            <div v-else="database.content" class="card-body" :database:sync="database">
-
-                <div v-if="tableMetaData.length > 0" class="d-flex flex-row flex-nowrap"
-                     :tableMetaData:sync="tableMetaData">
-                    <DatabaseTable :tableName="tableMeta.tableName" :columns="tableMeta.columns"
-                                   v-for="tableMeta in tableMetaData" :key="tableMeta.tableName"></DatabaseTable>
-
+            <div v-else class="card-body" :database:sync="database">
+                <div
+                    v-if="tableMetaData.length > 0"
+                    class="d-flex flex-row flex-nowrap"
+                    :tableMetaData:sync="tableMetaData"
+                >
+                    <DatabaseTable
+                        v-for="tableMeta in tableMetaData"
+                        :key="tableMeta.tableName"
+                        :table-name="tableMeta.tableName"
+                        :columns="tableMeta.columns"
+                    ></DatabaseTable>
                 </div>
                 <div v-else class="d-flex flex-row flex-nowrap" :tableMetaData:sync="tableMetaData">
-                    <p class="text-muted">{{$t('database.emptyDatabaseMsg')}}</p>
-
+                    <p class="text-muted">{{ $t('database.emptyDatabaseMsg') }}</p>
                 </div>
-
             </div>
         </div>
 
         <div v-if="showExportImport">
             <div v-if="!database || !database.content" :database:sync="database">
-
-                {{$t('database.noDBYetCreateOne')}} <a href="#" @click="createEmptyDatabase">{{$t('database.createEmptyDB')}}</a>
-                {{$t('database.orStartWith')}} <a href="#" @click="createExampleDatabase">{{$t('database.createExampleDB')}}</a>.
-
-
+                {{ $t('database.noDBYetCreateOne') }}
+                <a href="#" @click="createEmptyDatabase">{{ $t('database.createEmptyDB') }}</a>
+                {{ $t('database.orStartWith') }}
+                <a href="#" @click="createExampleDatabase">{{ $t('database.createExampleDB') }}</a>
+                .
             </div>
             <div v-if="database && database.content" :database:sync="database">
-
-                <a href="#" @click="downloadDatabase">{{$t('database.downloadDB')}}</a> {{$t('database.or')}}
-                <a href="#" @click="reset">{{$t('database.reset')}}</a>.
-
-
+                <a href="#" @click="downloadDatabase">{{ $t('database.downloadDB') }}</a>
+                {{ $t('database.or') }}
+                <a href="#" @click="reset">{{ $t('database.reset') }}</a>
+                .
             </div>
         </div>
-
     </div>
 </template>
 
@@ -64,14 +65,14 @@
 /**
  * This component should make possible to load, save and display table structure of the database
  */
-import {Prop, Vue} from 'vue-property-decorator';
+import { Prop, Vue } from 'vue-property-decorator';
 import Component from 'vue-class-component';
 import Database from '@/dataModel/Database';
 import DatabaseTable from '@/components/DatabaseTable.vue';
 import TableMetaData from '@/dataModel/TableDataModel';
-import SQLExecutor from "@/controller/SQLExecutor";
-import DatabaseController from "@/controller/DatabaseController";
-import LocalStorageController from "@/controller/LocalStorageController";
+import SQLExecutor from '@/controller/SQLExecutor';
+import DatabaseController from '@/controller/DatabaseController';
+import LocalStorageController from '@/controller/LocalStorageController';
 
 const CREATE_TABLE_SQL = `
     DROP TABLE IF EXISTS angestellte;
@@ -94,13 +95,12 @@ const CREATE_TABLE_SQL = `
     INSERT INTO angestellte VALUES (13,'MONROE','ENGINEER',10,'2000-12-03',30000);
     INSERT INTO angestellte VALUES (14,'ROOSEVELT','CPA',9,'1995-10-12',35000);
   `;
-const STORAGE_DB_KEY_NAME = "SandBox-DB";
+const STORAGE_DB_KEY_NAME = 'SandBox-DB';
 
 @Component({
-    components: {DatabaseTable},
+    components: { DatabaseTable },
 })
 export default class DatabaseComponent extends Vue {
-
     get cursorClickable() {
         return !this.database || !this.database.content ? 'cursorClickable' : '';
     }
@@ -112,7 +112,6 @@ export default class DatabaseComponent extends Vue {
     public tableMetaData: TableMetaData[] = [];
     private errorMsg: string = '';
 
-
     @Prop() private elementId!: string;
     @Prop() private showExportImport!: boolean;
     @Prop() private loadSandboxLocalStorageDb!: boolean;
@@ -120,37 +119,34 @@ export default class DatabaseComponent extends Vue {
     private databaseController: DatabaseController = this.$store.getters.databaseController;
     private localStorageController: LocalStorageController = this.$store.getters.localStorageController;
 
-
     public clickHandler() {
         document.getElementById(this.elementId + 'dbFile')!.click();
     }
 
     public loadMetaData() {
         this.tableMetaData = [];
-        this.sqlExecutor.executeQuery(this.databaseNumber,
-            'SELECT name FROM sqlite_master WHERE type = \'table\' ORDER BY name;', 0).then((results) => {
-            for (const result of results.result.values) {
-                const tableNames = result as string[];
-                for (const tableName of tableNames) {
-                    this.sqlExecutor.executeQuery(
-                        this.databaseNumber,
-                        'PRAGMA table_info(' + tableName + ');',
-                        0).then((columnsResults) => {
-                        const columns: string[] = [];
-                        if (columnsResults.result.values) {
-                            columnsResults.result.values.forEach((row: any) => {
-                                const columnName = row[1] as string;
-                                const columnType = row[2] as string;
-                                columns.push(columnName + ': ' + columnType);
+        this.sqlExecutor
+            .executeQuery(this.databaseNumber, "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name;", 0)
+            .then(results => {
+                for (const result of results.result.values) {
+                    const tableNames = result as string[];
+                    for (const tableName of tableNames) {
+                        this.sqlExecutor
+                            .executeQuery(this.databaseNumber, 'PRAGMA table_info(' + tableName + ');', 0)
+                            .then(columnsResults => {
+                                const columns: string[] = [];
+                                if (columnsResults.result.values) {
+                                    columnsResults.result.values.forEach((row: any) => {
+                                        const columnName = row[1] as string;
+                                        const columnType = row[2] as string;
+                                        columns.push(columnName + ': ' + columnType);
+                                    });
+                                }
+                                this.tableMetaData.push(new TableMetaData(tableName, columns));
                             });
-                        }
-                        this.tableMetaData.push(new TableMetaData(tableName, columns));
-                    });
-
+                    }
                 }
-            }
-        });
-
+            });
     }
 
     public updated() {
@@ -172,21 +168,23 @@ export default class DatabaseComponent extends Vue {
     }
 
     public postInit(db: Promise<Database>, replaceStorage: boolean = false): Promise<void> {
-        return db.then((database) => {
-            this.database = database;
-            return this.sqlExecutor.open(database);
-
-        }).then((dbIndex: number) => {
-            this.databaseNumber = dbIndex;
-            if (replaceStorage) {
-                this.replaceStorage();
-            }
-            this.loadMetaData();
-            this.removeBackgroundColor();
-        }).catch((e) => {
-            this.errorMsg = e.message;
-            this.reset();
-        });
+        return db
+            .then(database => {
+                this.database = database;
+                return this.sqlExecutor.open(database);
+            })
+            .then((dbIndex: number) => {
+                this.databaseNumber = dbIndex;
+                if (replaceStorage) {
+                    this.replaceStorage();
+                }
+                this.loadMetaData();
+                this.removeBackgroundColor();
+            })
+            .catch(e => {
+                this.errorMsg = e.message;
+                this.reset();
+            });
     }
 
     private dropHandler(event: DragEvent): void {
@@ -219,7 +217,7 @@ export default class DatabaseComponent extends Vue {
 
     private createExampleDatabase() {
         const db = this.databaseController.createEmptyDatabase('angestellte');
-        this.postInit(db).then((_) => {
+        this.postInit(db).then(_ => {
             this.sqlExecutor.executeQuery(this.databaseNumber, CREATE_TABLE_SQL, 0);
             this.loadMetaData();
             this.replaceStorage();
@@ -229,7 +227,6 @@ export default class DatabaseComponent extends Vue {
     private downloadDatabase() {
         this.databaseController.exportObject(this.database);
     }
-
 
     private initDatabase(file: File) {
         this.errorMsg = '';
@@ -244,31 +241,29 @@ export default class DatabaseComponent extends Vue {
         this.localStorageController.set(STORAGE_DB_KEY_NAME, undefined);
         this.$emit('reset');
     }
-
 }
 </script>
 
 <style scoped lang="scss">
-    .top20 {
-        margin-top: 3%;
-    }
+.top20 {
+    margin-top: 3%;
+}
 
-    .card-body {
-        overflow-x: auto;
-    }
+.card-body {
+    overflow-x: auto;
+}
 
+input[type='file'] {
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+}
 
-    input[type="file"] {
-        position: absolute;
-        opacity: 0;
-        z-index: -1;
-    }
+.cursorClickable {
+    cursor: pointer;
+}
 
-    .cursorClickable {
-        cursor: pointer;
-    }
-
-    .card-body {
-        overflow-x: auto;
-    }
+.card-body {
+    overflow-x: auto;
+}
 </style>

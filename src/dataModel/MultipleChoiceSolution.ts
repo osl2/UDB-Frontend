@@ -9,7 +9,6 @@ import Solution from '@/dataModel/Solution';
  */
 
 export default class MultipleChoiceSolution extends Solution {
-
     get toJSON(): any {
         return {
             correct_positions: this.choices,
