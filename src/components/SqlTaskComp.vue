@@ -1,3 +1,4 @@
+import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
 <template>
     <div>
         <h3>{{ $t('taskComp.instruction') }}</h3>
@@ -5,7 +6,7 @@
             {{ currentSubtask.instruction }}
         </div>
 
-        <div v-if="currentSubtask.allowedSqlStatements === 1">
+        <div v-if="isOnlySelectAllowed">
             {{ $t('sqlTaskComp.select') }}
         </div>
 
@@ -143,6 +144,17 @@ export default class SqlTaskComp extends Vue {
         } else {
             alert(this.$t('sqlTaskComp.alertStatement') as string);
         }
+    }
+
+    /*
+     Checks if only select statements are allowed to display an info if that's the ccase.
+     */
+    private isOnlySelectAllowed(): boolean {
+        const subtask = this.currentSubtask as SqlTask;
+        if (subtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
+            return true;
+        }
+        return false;
     }
 
     /*
