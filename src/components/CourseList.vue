@@ -62,6 +62,7 @@ export default class CourseList extends Vue {
 /deep/.card {
     text-align: left;
     min-width: 18rem;
+    height: 100%
 }
 
 /deep/.card-footer {
