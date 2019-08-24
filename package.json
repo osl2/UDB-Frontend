@@ -17,11 +17,7 @@
     }
   },
   "lint-staged": {
-    "linters": {
-      "src/**/*.{ts,js,vue}": ["prettier --write", "git add"],
-      "src/*.{ts,js,vue}": ["prettier --write", "git add"]
-    },
-    "ignore": ["node_modules", "dist"]
+	"*.{ts,js,vue}": ["prettier --write", "git add"]
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
