@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "postbuild": "mkdir -p dist/static/wasm/; cp node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm",
+    "postbuild": "mkdir -p dist/static/wasm/; cp node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm; cp -r submodules/blockly/dist/ dist/static/blockly/",
     "lint": "vue-cli-service lint",
     "pretest": "copy node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm",
     "test:e2e": "vue-cli-service test:e2e",
