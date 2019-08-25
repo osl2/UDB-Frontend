@@ -36,7 +36,7 @@ export default class PointAndClick extends Vue {
             'blocklyDiv',
             {
                 toolbox: decodedtoolbox,
-                path: './static/js/blockly/',
+                path: './static/blockly/',
                 collapse: false,
                 comments: false,
                 disable: false,
@@ -45,7 +45,7 @@ export default class PointAndClick extends Vue {
                 horizontalLayout: false,
                 toolboxPosition: 'start',
                 css: true,
-                media: './static/js/blockly/media/',
+                media: './static/blockly/media/',
                 rtl: false,
                 scrollbars: true,
                 sounds: true,
