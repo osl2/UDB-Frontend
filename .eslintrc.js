@@ -2,6 +2,7 @@ module.exports = {
     root: true,
     env: {
         node: true,
+        mocha: true,
     },
     extends: ['plugin:vue/recommended', '@vue/prettier', '@vue/typescript', 'plugin:prettier/recommended'],
     rules: {
