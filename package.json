@@ -8,7 +8,7 @@
     "postbuild": "mkdir -p dist/static/wasm/; cp node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm; cp -r submodules/blockly/dist/ dist/static/blockly/; cp -r submodules/blockly/blockly/media dist/static/blockly/",
     "lint": "vue-cli-service lint",
     "pretest": "copy node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm",
-    "test:e2e": "vue-cli-service test:e2e",
+    "test:e2e": "vue-cli-service test:e2e --config nightwatch.config.js --env default",
     "test:unit": "vue-cli-service test:unit"
   },
   "husky": {
@@ -17,7 +17,10 @@
     }
   },
   "lint-staged": {
-	"*.{ts,js,vue}": ["prettier --write", "git add"]
+    "*.{ts,js,vue}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
