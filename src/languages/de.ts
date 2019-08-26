@@ -81,7 +81,7 @@ const de = {
         emptyDatabaseMsg: 'Die Datenbank beinhaltet noch keine Tabellen.',
         downloadDB: 'Datenbank herunterladen',
         or: 'oder',
-        reset: 'Zurücksetzen',
+        reset: 'zurücksetzen',
         courseId: 'Kurs-Id',
     },
     helpMessages: {

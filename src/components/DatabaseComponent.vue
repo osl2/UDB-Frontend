@@ -48,14 +48,12 @@
                 {{ $t('database.noDBYetCreateOne') }}
                 <a href="#" @click="createEmptyDatabase">{{ $t('database.createEmptyDB') }}</a>
                 {{ $t('database.orStartWith') }}
-                <a href="#" @click="createExampleDatabase">{{ $t('database.createExampleDB') }}</a>
-                .
+                <a href="#" @click="createExampleDatabase">{{ $t('database.createExampleDB') }}.</a>
             </div>
             <div v-if="database && database.content" :database:sync="database">
                 <a href="#" @click="downloadDatabase">{{ $t('database.downloadDB') }}</a>
                 {{ $t('database.or') }}
                 <a href="#" @click="reset">{{ $t('database.reset') }}</a>
-                .
             </div>
         </div>
     </div>
