@@ -45,7 +45,7 @@
     <category name="ENTITIES">
         <block type="entity_table"></block>
         <block type="entity_table_statement"></block>
-        <block type="entitiy_column"></block>
+        <block type="entity_column"></block>
         <block type="entity_column_statement"></block>
     </category>
 </xml>
