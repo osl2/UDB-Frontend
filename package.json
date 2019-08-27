@@ -8,7 +8,7 @@
     "postbuild": "mkdir -p dist/static/wasm/; cp node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm; cp -r submodules/blockly/dist/ dist/static/blockly/; cp -r submodules/blockly/blockly/media dist/static/blockly/",
     "lint": "vue-cli-service lint",
     "pretest": "copy node_modules/sql.js/dist/sql-wasm.wasm dist/static/wasm/sql-wasm.wasm",
-    "test:e2e": "vue-cli-service test:e2e --config nightwatch.config.js --env default",
+    "test:e2e": "vue-cli-service test:e2e --config nightwatch.config.js --env firefox",
     "test:unit": "vue-cli-service test:unit"
   },
   "husky": {
@@ -48,7 +48,7 @@
     "@types/mocha": "^5.2.4",
     "@types/sinon": "^7.0.13",
     "@vue/cli-plugin-babel": "^3.9.0",
-    "@vue/cli-plugin-e2e-nightwatch": "^3.9.0",
+    "@vue/cli-plugin-e2e-nightwatch": "^3.11.0",
     "@vue/cli-plugin-eslint": "^3.10.0",
     "@vue/cli-plugin-pwa": "^3.9.0",
     "@vue/cli-plugin-typescript": "^3.9.0",
@@ -63,6 +63,7 @@
     "eslint": "^6.1.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-vue": "^5.2.3",
+    "geckodriver": "^1.16.2",
     "husky": "^3.0.4",
     "istanbul-instrumenter-loader": "^3.0.1",
     "jsdom": "^15.1.1",

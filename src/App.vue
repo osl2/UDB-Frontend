@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div id="upowdb-main-container" class="container">
         <router-view />
         <!-- footer language switcher -->
 

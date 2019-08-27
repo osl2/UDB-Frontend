@@ -16,34 +16,29 @@ module.exports = deepmerge(
             port: 4444,
             cli_args: {
                 'webdriver.chrome.driver': require('chromedriver').path,
+                'webdriver.gecko.driver': require('geckodriver').path,
             },
         },
 
         test_settings: {
             default: {
-                launch_url: 'http://localhost',
                 selenium_port: 4444,
-                selenium_host: 'localhost',
+                selenium_host: '127.0.0.1',
                 silent: true,
-                screenshots: {
-                    enabled: false,
-                    path: '',
-                },
+            },
+
+            chrome: {
                 desiredCapabilities: {
-                    browserName: 'firefox',
-                    marionette: true,
+                    browserName: 'chrome',
                     javascriptEnabled: true,
                     acceptSslCerts: true,
                 },
             },
-            chrome: {
+            firefox: {
                 desiredCapabilities: {
-                    browserName: 'chrome',
-                },
-            },
-            edge: {
-                desiredCapabilities: {
-                    browserName: 'MicrosoftEdge',
+                    browserName: 'firefox',
+                    javascriptEnabled: true,
+                    acceptSslCerts: true,
                 },
             },
         },
