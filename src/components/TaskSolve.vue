@@ -111,9 +111,11 @@ export default class TaskSolve extends Vue {
             .executeQuery(dbNumber, query, 0)
             .then((queryResult: QueryResult) => {
                 this.queryResult = queryResult;
-                // TODO
-                // const top = document.getElementById('queryResult')!.offsetTop; // Getting Y of target element
-                // window.scrollTo(0, top + 200);
+                const VueScrollTo = require('vue-scrollto');
+                const options = {
+                    easing: 'ease-in',
+                };
+                VueScrollTo.scrollTo('#queryResult', 500, options);
                 dbComponent.loadMetaData();
                 this.gotFirstQueryExecuted = true;
                 this.lastQueryExecuted = query;

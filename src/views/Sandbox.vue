@@ -91,8 +91,11 @@ export default class Sandbox extends Vue {
             .executeQuery(dbNumber, query, 0)
             .then(queryResult => {
                 this.queryResult = queryResult;
-                const top = document.getElementById('queryRes')!.offsetTop; // Getting Y of target element
-                window.scrollTo(0, top + 200);
+                const VueScrollTo = require('vue-scrollto');
+                const options = {
+                    easing: 'ease-in',
+                };
+                VueScrollTo.scrollTo('#queryRes', 500, options);
 
                 // this is not optimal because select requests does not need to replace database in storage neither metadata
                 // fix by implementing the logic by detecting query type (select, update or delete)
