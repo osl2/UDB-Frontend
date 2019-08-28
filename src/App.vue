@@ -1,5 +1,10 @@
 <template>
     <div id="upowdb-main-container" class="container">
+        <div v-if="this.$router.currentRoute.name !== 'home'" class="backButton btn-lg">
+            <b-btn href="#" @click="goBack">
+                {{ $t('home.back') }}
+            </b-btn>
+        </div>
         <router-view />
         <!-- footer language switcher -->
 
@@ -37,11 +42,21 @@ export default class App extends Vue {
             ],
         };
     }
+
+    private goBack() {
+        this.$router.go(-1);
+    }
 }
 </script>
 
 <style lang="scss">
 .lang-changer {
     margin-top: 20px;
+}
+.backButton {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    z-index: 99;
 }
 </style>

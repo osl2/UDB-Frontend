@@ -8,6 +8,7 @@ const de = {
         descriptionTextFreeMode: 'Hier kannst du ganz ohne Anmelden, Datenbanken erstellen und Anfragen üben.',
         descriptionTextCourse: 'Tritt hier einem Kurs von deinem Lehrer bei.',
         descriptionTextTeacher: 'Lehrerbereich ermöglicht Kurse für die Schüler zu erstellen.',
+        back: 'Zurück',
         login: 'Anmelden',
         register: 'Registrieren',
         enter: 'Beitreten',
