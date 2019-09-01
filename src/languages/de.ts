@@ -149,7 +149,10 @@ const de = {
         maximize: 'Aufgabe ausklappen',
         minimize: 'Aufgabe einklappen',
         name: 'Name der Aufgabe',
-        new: 'Neue Teilaufgabe erstellen',
+        newSql: 'Neue SQL-Aufgabe',
+        newMc: 'Neue Multiple-Choice-Aufgabe',
+        newText: 'Neue Freitextaufgabe',
+        newInstruction: 'Neuer Erklärtext',
         chooseDb: 'Wähle eine Datenbank aus',
         alertDelete: 'Aufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.',
     },
@@ -159,7 +162,7 @@ const de = {
         solutionOnline: 'Ist das Lösungsblatt für Schüler einsehbar?',
         yes: 'Ja',
         no: 'Nein',
-        new: 'Neue Aufgabe erstellen',
+        new: 'Neue Aufgabe',
         toOverview: 'Zurück zur Kursübersicht',
         alertReturn:
             'zurück zu Übersicht? Stelle sicher, dass alle Teilaufgaben gespeichert wurden,' +

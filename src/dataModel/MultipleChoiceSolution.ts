@@ -31,7 +31,7 @@ export default class MultipleChoiceSolution extends Solution {
      * thing the other way around. This is needed to store objects in the server or to read them.
      */
     public static fromJSON(json: any): MultipleChoiceSolution {
-        return new MultipleChoiceSolution(json.choices);
+        return new MultipleChoiceSolution(json.correct_positions);
     }
 
     private _choices: number[];

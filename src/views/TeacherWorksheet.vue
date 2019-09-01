@@ -12,8 +12,10 @@
             </h3>
             <!--Section to set options needed for a worksheet -->
             <b-input-group class="col-6">
-                <b-input-group-text><span>Name</span></b-input-group-text>
-                <b-input v-model="worksheet.name" :placeholder="$t('teacherWorksheet.name')">Name:</b-input>
+                <b-input-group-prepend>
+                    <b-input-group-text><span>Name</span></b-input-group-text>
+                </b-input-group-prepend>
+                <b-input v-model="worksheet.name" :placeholder="$t('teacherWorksheet.name')"></b-input>
             </b-input-group>
             <div class="d-flex">
                 <b-form-group :label="$t('teacherWorksheet.sheetOnline')" class="col-6">
@@ -41,24 +43,26 @@
             <h3>
                 Aufgaben
             </h3>
-            <TaskCreation
-                v-for="task in tasks"
-                :key="task.id"
-                :databases="databases"
-                :initial-task="task"
-                :event-bus="eventBus"
-                @updateTasks="updateTasks"
-                @delete="deleteTask"
-            ></TaskCreation>
+            <TaskCreation :databases="databases" @createTask="createTask"></TaskCreation>
+            <draggable-component v-model="tasks" handle=".task-drag-handle">
+                <TaskEdit
+                    v-for="task in tasks"
+                    :key="task.id"
+                    :databases="databases"
+                    :initial-task="task"
+                    :event-bus="eventBus"
+                    @updateTasks="updateTasks"
+                    @delete="deleteTask"
+                ></TaskEdit>
+            </draggable-component>
         </div>
-        <!--buttons to create a new Task assigned to the worksheet and to return to the course view -->
-        <b-button @click="createTask">{{ $t('teacherWorksheet.new') }}</b-button>
         <b-button variant="primary" @click="save">Speichern</b-button>
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import TaskEdit from '@/components/TaskEdit.vue';
 import TaskCreation from '@/components/TaskCreation.vue';
 import DatabaseController from '@/controller/DatabaseController';
 import WorksheetController from '@/controller/WorksheetController';
@@ -66,10 +70,13 @@ import Worksheet from '@/dataModel/Worksheet';
 import Task from '@/dataModel/Task';
 import TaskController from '@/controller/TaskController';
 import Database from '@/dataModel/Database';
+import draggableComponent from 'vuedraggable';
 
 @Component({
     components: {
+        draggableComponent,
         TaskCreation,
+        TaskEdit,
     },
 })
 export default class TeacherWorksheet extends Vue {
@@ -147,8 +154,7 @@ export default class TeacherWorksheet extends Vue {
             });
     }
 
-    public createTask() {
-        const task = new Task('', '', '', []);
+    public createTask(task: Task) {
         this.taskController
             .create(task)
             .then((taskId: string) => {

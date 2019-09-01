@@ -26,7 +26,7 @@ export default class MultipleChoiceTask extends Subtask {
     public static fromJSON(json: any): MultipleChoiceTask {
         return new MultipleChoiceTask(
             json.id,
-            json.content.multiple_choice.solution,
+            MultipleChoiceSolution.fromJSON(json.content.multiple_choice.solution),
             json.instruction,
             json.solution_verifiable,
             json.solution_visible,

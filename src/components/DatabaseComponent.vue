@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <div v-if="showExportImport">
+        <div v-if="showExportImport" id="export-import">
             <div v-if="!database || !database.content" :database:sync="database">
                 {{ $t('database.noDBYetCreateOne') }}
                 <a href="#" @click="createEmptyDatabase">{{ $t('database.createEmptyDB') }}</a>
