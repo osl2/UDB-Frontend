@@ -83,7 +83,6 @@ export default class SqlTaskComp extends Vue {
     @Prop() private gotFirstQueryExecuted!: boolean;
     @Prop() private lastQueryExecuted!: string;
     private isPointAndClickActive: boolean = false;
-    private allowedSqlToolbox: string = 'toolbox_all.xml';
     private sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
 
     get sqlTaskDynamicComponent() {
@@ -92,6 +91,14 @@ export default class SqlTaskComp extends Vue {
             return PointAndClick;
         } else {
             return Query;
+        }
+    }
+
+    get allowedSqlToolbox() {
+        if (this.isOnlySelectAllowed) {
+            return 'toolbox_query.xml';
+        } else {
+            return 'toolbox_all.xml';
         }
     }
 
@@ -117,24 +124,12 @@ export default class SqlTaskComp extends Vue {
             const solution: SqlSolution = this.solutions.get(this.currentSubtask.id) as SqlSolution;
             this.executeQuery(solution.querySolution);
         }
-        const tempSubtask = this.currentSubtask as SqlTask;
-        if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
-            this.allowedSqlToolbox = 'toolbox_query.xml';
-        } else {
-            this.allowedSqlToolbox = 'toolbox_all.xml';
-        }
     }
 
     mounted() {
         if (this.solutions.has(this.currentSubtask.id)) {
             const solution: SqlSolution = this.solutions.get(this.currentSubtask.id) as SqlSolution;
             this.executeQuery(solution.querySolution);
-        }
-        const tempSubtask = this.currentSubtask as SqlTask;
-        if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
-            this.allowedSqlToolbox = 'toolbox_query.xml';
-        } else {
-            this.allowedSqlToolbox = 'toolbox_all.xml';
         }
     }
 
