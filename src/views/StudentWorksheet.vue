@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="worksheetHeader">
+        <div class="worksheetHeader mb-5 pt-3 pb-3 text-center text-white">
             <h2>{{ worksheet.name }}</h2>
         </div>
         <!--Shows an Overview  of all Tasks with their Instructions-->
@@ -8,17 +8,18 @@
             <WorksheetInstructions
                 v-for="task in tasks"
                 :key="task.id"
-                class="instructionContainer"
+                class="mb-3"
                 :task="task"
                 @openTask="openTask"
             ></WorksheetInstructions>
 
             <!--Buttons to import and export the solutions the student created. This is used to be able to work
              on the same worksheet on different occasions while not loosing the progress made-->
-            <b-button @click="exportSheet">{{ $t('studentWorksheet.exportSolution') }}</b-button>
-
-            <b-button @click="uploadTrigger">{{ $t('studentWorksheet.importSolution') }}</b-button>
-            <input id="fileUpload" type="file" style="display:none;" accept=".json" @change="importSheet" />
+            <div class="d-flex mt-4 justify-content-center">
+                <b-button @click="exportSheet" class="mr-3">{{ $t('studentWorksheet.exportSolution') }}</b-button>
+                <b-button @click="uploadTrigger">{{ $t('studentWorksheet.importSolution') }}</b-button>
+                <input id="fileUpload" type="file" style="display:none;" accept=".json" @change="importSheet" />
+            </div>
         </div>
 
         <!-- Renders a TaskSolve Component for the current task that can be solved by the student -->
@@ -39,8 +40,10 @@
                 @compare="compare"
             ></TaskSolve>
         </div>
-        <div>
-            <b-button @click="exportSheetAsPDF">{{ $t('studentWorksheet.exportPdf') }}</b-button>
+        <div class="d-flex mt-3 justify-content-center">
+            <b-button @click="exportSheetAsPDF">
+                {{ $t('studentWorksheet.exportPdf') }}
+            </b-button>
         </div>
     </div>
 </template>
@@ -303,15 +306,6 @@ export default class StudentWorksheet extends Vue {
 
 <style scoped>
 .worksheetHeader {
-    padding-top: 15px;
-    padding-bottom: 15px;
-    margin-bottom: 35px;
-    text-align: center;
     background-color: #17a2b8;
-    color: white;
-}
-
-.instructionContainer {
-    margin-bottom: 20px;
 }
 </style>
