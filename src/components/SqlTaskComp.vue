@@ -11,7 +11,7 @@ import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
         </div>
 
         <div>
-            <div v-if="currentSubtask.isPointAndClickAllowed" class="taskSwitchButton">
+            <div v-if="currentSubtask.isPointAndClickAllowed" class="taskSwitchButton mt-1 mb-2">
                 <b-button v-if="isPointAndClickActive" @click="switchComponent">
                     {{ $t('sandbox.switchToPlainSQL') }}
                 </b-button>
@@ -29,7 +29,7 @@ import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
                 ></component>
             </div>
 
-            <div v-if="gotFirstQueryExecuted" class="queryResult">
+            <div v-if="gotFirstQueryExecuted" class="queryResult mt-5">
                 <p>{{ $t('sandbox.resultText') }}({{ lastQueryExecuted }}):</p>
                 <QueryResultComp
                     :columns="queryResult.result.columns"
@@ -37,12 +37,13 @@ import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
                 ></QueryResultComp>
             </div>
 
-            <b-button v-b-popover.hover="$t('sqlTaskComp.save')" @click="$emit('save', subtaskSolution)">
+            <b-button v-b-popover.hover="$t('sqlTaskComp.save')" class="mt-2" @click="$emit('save', subtaskSolution)">
                 {{ $t('taskComp.save') }}
             </b-button>
             <b-button
                 v-if="currentSubtask.isSolutionVisible"
                 id="compareSolutionButtonSQL"
+                class="mt-2 ml-2"
                 @click="$emit('compare', subtaskSolution)"
             >
                 {{ $t('taskComp.compare') }}

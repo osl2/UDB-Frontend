@@ -6,9 +6,15 @@
         </div>
 
         <div>
-            <b-form-textarea id="textarea" v-model="studentSolution" placeholder="Antwort eingeben"></b-form-textarea>
+            <b-form-textarea
+                id="textarea"
+                v-model="studentSolution"
+                :placeholder="$t('taskComp.enterSolution')"
+            ></b-form-textarea>
 
-            <b-button id="saveText" @click="$emit('save', subtaskSolution)">{{ $t('taskComp.save') }}</b-button>
+            <b-button id="saveText" class="mt-2" @click="$emit('save', subtaskSolution)">
+                {{ $t('taskComp.save') }}
+            </b-button>
             <b-popover
                 target="saveText"
                 triggers="hover focus"
@@ -17,6 +23,7 @@
             <b-button
                 v-if="currentSubtask.isSolutionVisible"
                 id="compareSolutionButtonText"
+                class="mt-2 ml-2"
                 @click="$emit('compare', subtaskSolution)"
             >
                 {{ $t('taskComp.compare') }}

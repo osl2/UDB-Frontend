@@ -11,50 +11,60 @@
             <DatabaseComponent ref="databaseComponent" :element-id="task.id"></DatabaseComponent>
         </div>
         <!--Loads the component that matches the type of the current Subtask -->
-        <div v-if="typeOfSubtask() === 1">
-            <SqlTaskComp
-                :current-subtask="currentSubtask"
-                :solutions="solutions"
-                :query-result="queryResult"
-                :got-first-query-executed="gotFirstQueryExecuted"
-                :last-query-executed="lastQueryExecuted"
-                @save="saveSubtask"
-                @executeQuery="executeQuery"
-                @compare="compare"
-            ></SqlTaskComp>
-        </div>
-        <div v-else-if="typeOfSubtask() === 2">
-            <McTask
-                :current-subtask="currentSubtask"
-                :solutions="solutions"
-                @save="saveSubtask"
-                @compare="compare"
-            ></McTask>
-        </div>
-        <div v-else-if="typeOfSubtask() === 3">
-            <TextTask
-                :current-subtask="currentSubtask"
-                :solutions="solutions"
-                @save="saveSubtask"
-                @compare="compare"
-            ></TextTask>
-        </div>
-        <div v-else>
-            <InstructionTaskComp :current-subtask="currentSubtask"></InstructionTaskComp>
+        <div class="my-3">
+            <div v-if="typeOfSubtask() === 1">
+                <SqlTaskComp
+                    :current-subtask="currentSubtask"
+                    :solutions="solutions"
+                    :query-result="queryResult"
+                    :got-first-query-executed="gotFirstQueryExecuted"
+                    :last-query-executed="lastQueryExecuted"
+                    @save="saveSubtask"
+                    @executeQuery="executeQuery"
+                    @compare="compare"
+                ></SqlTaskComp>
+            </div>
+            <div v-else-if="typeOfSubtask() === 2">
+                <McTask
+                    :current-subtask="currentSubtask"
+                    :solutions="solutions"
+                    @save="saveSubtask"
+                    @compare="compare"
+                ></McTask>
+            </div>
+            <div v-else-if="typeOfSubtask() === 3">
+                <TextTask
+                    :current-subtask="currentSubtask"
+                    :solutions="solutions"
+                    @save="saveSubtask"
+                    @compare="compare"
+                ></TextTask>
+            </div>
+            <div v-else>
+                <InstructionTaskComp :current-subtask="currentSubtask"></InstructionTaskComp>
+            </div>
         </div>
 
         <!-- Buttons to navigate through one task-->
-        <div>
-            <b-button @click="$emit('prevSubtask')">{{ $t('taskSolve.prevSubtask') }}</b-button>
-            <b-button @click="$emit('nextSubtask')">{{ $t('taskSolve.nextSubtask') }}</b-button>
+        <div class="d-flex my-4 justify-content-between">
+            <b-button :disabled="!hasPreviousSubtask" @click="$emit('prevSubtask')">
+                {{ $t('taskSolve.prevSubtask') }}
+            </b-button>
+
+            <div>
+                <b-button @click="$emit('switchback')">
+                    {{ $t('taskSolve.toOverview') }}
+                </b-button>
+                <b-button class="btn btn-danger ml-3" @click="$emit('reset')">
+                    {{ $t('taskSolve.resetTask') }}
+                </b-button>
+            </div>
+
+            <b-button :disabled="!hasNextSubtask" @click="$emit('nextSubtask')">
+                {{ $t('taskSolve.nextSubtask') }}
+            </b-button>
         </div>
         <div class="clear"></div>
-
-        <div>
-            <b-button @click="$emit('switchback')">{{ $t('taskSolve.toOverview') }}</b-button>
-
-            <b-button class="btn" @click="$emit('reset')">{{ $t('taskSolve.resetTask') }}</b-button>
-        </div>
     </div>
 </template>
 
@@ -89,6 +99,8 @@ export default class TaskSolve extends Vue {
     @Prop() private subtaskIndex!: number;
     @Prop() private numberOfSubtasks!: number;
     @Prop() private database!: Database;
+    @Prop() private hasNextSubtask!: boolean;
+    @Prop() private hasPreviousSubtask!: boolean;
     private sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
     private queryResult: QueryResult = {} as QueryResult;
     private gotFirstQueryExecuted: boolean = false;

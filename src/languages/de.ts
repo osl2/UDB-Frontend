@@ -191,6 +191,7 @@ const de = {
     },
     taskComp: {
         instruction: 'Aufgabenstellung:',
+        enterSolution: 'Antwort eingeben',
         save: 'Speichern',
         compare: 'Vergleich mit der Musterlösung',
     },

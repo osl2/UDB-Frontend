@@ -20,6 +20,11 @@
                 <b-button @click="uploadTrigger">{{ $t('studentWorksheet.importSolution') }}</b-button>
                 <input id="fileUpload" type="file" style="display:none;" accept=".json" @change="importSheet" />
             </div>
+            <div class="d-flex mt-3 justify-content-center">
+                <b-button @click="exportSheetAsPDF">
+                    {{ $t('studentWorksheet.exportPdf') }}
+                </b-button>
+            </div>
         </div>
 
         <!-- Renders a TaskSolve Component for the current task that can be solved by the student -->
@@ -32,6 +37,8 @@
                 :subtask-index="subtaskIndex"
                 :number-of-subtasks="numberOfSubtasks"
                 :database="database"
+                :has-next-subtask="hasNextSubtask"
+                :has-previous-subtask="hasPreviousSubtask"
                 @prevSubtask="prevSubtask"
                 @nextSubtask="nextSubtask"
                 @switchback="switchback"
@@ -39,11 +46,6 @@
                 @reset="reset"
                 @compare="compare"
             ></TaskSolve>
-        </div>
-        <div class="d-flex mt-3 justify-content-center">
-            <b-button @click="exportSheetAsPDF">
-                {{ $t('studentWorksheet.exportPdf') }}
-            </b-button>
         </div>
     </div>
 </template>
@@ -174,6 +176,14 @@ export default class StudentWorksheet extends Vue {
     public openTask(task: Task, subtasks: Subtask[]) {
         this.showSheetInstructions = false;
         this.setCurrentTask(task, subtasks, 0);
+    }
+
+    get hasPreviousSubtask() {
+        return this.subtaskIndex !== 0;
+    }
+
+    get hasNextSubtask() {
+        return this.subtaskIndex !== this.currentMatchingSubtasks.length - 1;
     }
 
     /*

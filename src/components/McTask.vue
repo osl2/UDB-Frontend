@@ -5,30 +5,32 @@
             {{ currentSubtask.instruction }}
         </div>
         <h3>{{ $t('mcTask.answerOptions') }}</h3>
-        <div class="taskContainer">
+        <div class="taskContainer pb-0 mb-0">
             <b-form-group>
                 <b-form-checkbox-group v-model="selected" :options="options" stacked></b-form-checkbox-group>
             </b-form-group>
-
-            <b-button id="saveMC" @click="$emit('save', subtaskSolution)">{{ $t('taskComp.save') }}</b-button>
-            <b-popover
-                target="saveMC"
-                triggers="hover focus"
-                :content="$t('hoverText.saveMessageStudentWorksheet')"
-            ></b-popover>
-            <b-button
-                v-show="currentSubtask.isSolutionVisible"
-                id="compareSolutionButtonMC"
-                @click="$emit('compare', subtaskSolution)"
-            >
-                {{ $t('taskComp.compare') }}
-            </b-button>
-            <b-popover
-                target="compareSolutionButtonMC"
-                triggers="hover focus"
-                :content="$t('hoverText.compareSolutionMessage')"
-            ></b-popover>
         </div>
+        <b-button id="saveMC" class="mt-2" @click="$emit('save', subtaskSolution)">
+            {{ $t('taskComp.save') }}
+        </b-button>
+        <b-popover
+            target="saveMC"
+            triggers="hover focus"
+            :content="$t('hoverText.saveMessageStudentWorksheet')"
+        ></b-popover>
+        <b-button
+            v-show="currentSubtask.isSolutionVisible"
+            id="compareSolutionButtonMC"
+            class="mt-2 ml-2"
+            @click="$emit('compare', subtaskSolution)"
+        >
+            {{ $t('taskComp.compare') }}
+        </b-button>
+        <b-popover
+            target="compareSolutionButtonMC"
+            triggers="hover focus"
+            :content="$t('hoverText.compareSolutionMessage')"
+        ></b-popover>
     </div>
 </template>
 
