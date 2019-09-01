@@ -139,12 +139,13 @@ export default class WorksheetController extends ApiControllerAbstract
             },
         };
 
-        for (const taskId of object.taskIds) {
-            taskController.get(taskId).then((task: Task) => {
-                subtaskController.getChildren(task).then((subtasks: Subtask[]) => {
-                    for (const [subtaskIndex, subtask] of subtasks.entries()) {
+        taskController.getChildren(object).then((tasks: Task[]) => {
+            Promise.all(tasks.map((task: Task) => subtaskController.getChildren(task))).then((value: Subtask[][]) => {
+                for (let i = 0; i < value.length; i++) {
+                    //Iterate Tasks
+                    for (const [subtaskIndex, subtask] of value[i].entries()) {
                         docDefinition.content.push({
-                            text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ',
+                            text: 'Aufgabe ' + tasks[i].name + '-' + (subtaskIndex + 1) + ': ',
                             style: 'taskheader',
                         });
                         docDefinition.content.push({ text: subtask.instruction, style: 'taskdescription' });
@@ -216,11 +217,12 @@ export default class WorksheetController extends ApiControllerAbstract
                             }
                         }
                     }
-                });
+                }
+                pdfMake
+                    .createPdf(docDefinition)
+                    .download('Print' + object.name.replace(' ', '_') + '_' + datestring + '.pdf');
             });
-        }
-
-        pdfMake.createPdf(docDefinition).download('Print' + object.name.replace(' ', '_') + '_' + datestring + '.pdf');
+        });
     }
 
     /**
@@ -379,90 +381,87 @@ export default class WorksheetController extends ApiControllerAbstract
                 },
             },
         };
-
-        for (const taskId of sheet.taskIds) {
-            taskController.get(taskId).then((task: Task) => {
-                subtaskController.getChildren(task).then((subtasks: Subtask[]) => {
-                    for (const [subtaskIndex, subtask] of subtasks.entries()) {
-                        subtaskController.get(subtask.id).then((subtask: Subtask) => {
-                            docDefinition.content.push({
-                                text: 'Aufgabe ' + task.name + '-' + (subtaskIndex + 1) + ': ',
-                                style: 'taskheader',
-                            });
-                            docDefinition.content.push({ text: subtask.instruction, style: 'taskdescription' });
-                            if (subtask.type !== SubtaskTypes.Instruction) {
-                                docDefinition.content.push({ text: 'Lösung:', style: 'solutionheader' });
-                            }
-                            if (subtask.type === SubtaskTypes.PlainText) {
-                                const typedSubtask = subtask as PlainTextTask;
-                                if (typedSubtask.solution !== undefined) {
-                                    const solution = typedSubtask.solution as PlainTextSolution;
-                                    docDefinition.content.push({ text: solution.text, style: 'solution' });
-                                } else {
-                                    docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
-                                }
-                            } else if (subtask.type === SubtaskTypes.MultipleChoice) {
-                                const typedSubtask = subtask as MultipleChoiceTask;
-                                if (typedSubtask.solution !== undefined) {
-                                    const solution = typedSubtask.solution as MultipleChoiceSolution;
-                                    let content: string | undefined;
-                                    for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
-                                        if (content !== undefined) {
-                                            content += '\n';
-                                        }
-                                        if (solution.choices.indexOf(index) > 0) {
-                                            content += '[X] ' + answerOption;
-                                        } else {
-                                            content += '[ ]' + answerOption;
-                                        }
-                                    }
-                                    docDefinition.content.push({ text: content, style: 'solution' });
-                                } else {
-                                    docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
-                                }
-                            } else if (subtask.type === SubtaskTypes.Sql) {
-                                const typedSubtask = subtask as SqlTask;
-                                if (typedSubtask.solution !== undefined) {
-                                    const solution = typedSubtask.solution as SqlSolution;
-                                    const tablequery = {
-                                        widths: ['*'],
-                                        body: [
-                                            [
-                                                {
-                                                    text: 'Query:',
-                                                    fillColor: '#eeeeee',
-                                                    border: [true, true, true, false],
-                                                    style: { bold: true },
-                                                },
-                                            ],
-                                            [
-                                                {
-                                                    text: solution.querySolution,
-                                                    fillColor: '#eeeeee',
-                                                    border: [true, false, true, true],
-                                                },
-                                            ],
-                                        ],
-                                    };
-                                    docDefinition.content.push({ table: tablequery, style: 'solutionQuery' });
-                                    const tabledata = { widths: [] as string[], body: [] as string[][] };
-                                    // Set all table widths to star
-                                    for (const column of solution.columns) {
-                                        tabledata.widths.push('*');
-                                    }
-                                    tabledata.body = solution.values;
-                                    tabledata.body.unshift(solution.columns);
-                                    docDefinition.content.push({ table: tabledata, style: 'solutionTable' });
-                                } else {
-                                    docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
-                                }
-                            }
+        taskController.getChildren(sheet).then((tasks: Task[]) => {
+            Promise.all(tasks.map((task: Task) => subtaskController.getChildren(task))).then((value: Subtask[][]) => {
+                for (let i = 0; i < value.length; i++) {
+                    //Iterate Tasks
+                    for (const [subtaskIndex, subtask] of value[i].entries()) {
+                        docDefinition.content.push({
+                            text: 'Aufgabe ' + tasks[i].name + '-' + (subtaskIndex + 1) + ': ',
+                            style: 'taskheader',
                         });
+                        docDefinition.content.push({ text: subtask.instruction, style: 'taskdescription' });
+                        if (subtask.type !== SubtaskTypes.Instruction) {
+                            docDefinition.content.push({ text: 'Lösung:', style: 'solutionheader' });
+                        }
+                        if (subtask.type === SubtaskTypes.PlainText) {
+                            const typedSubtask = subtask as PlainTextTask;
+                            if (typedSubtask.solution !== undefined && typedSubtask.isSolutionVisible) {
+                                const solution = typedSubtask.solution as PlainTextSolution;
+                                docDefinition.content.push({ text: solution.text, style: 'solution' });
+                            } else {
+                                docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
+                            }
+                        } else if (subtask.type === SubtaskTypes.MultipleChoice) {
+                            const typedSubtask = subtask as MultipleChoiceTask;
+                            if (typedSubtask.solution !== undefined && typedSubtask.isSolutionVisible) {
+                                const solution = typedSubtask.solution as MultipleChoiceSolution;
+                                let content: string | undefined;
+                                for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
+                                    if (content !== undefined) {
+                                        content += '\n';
+                                    }
+                                    if (solution.choices.indexOf(index) > 0) {
+                                        content += '[X] ' + answerOption;
+                                    } else {
+                                        content += '[ ]' + answerOption;
+                                    }
+                                }
+                                docDefinition.content.push({ text: content, style: 'solution' });
+                            } else {
+                                docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
+                            }
+                        } else if (subtask.type === SubtaskTypes.Sql) {
+                            const typedSubtask = subtask as SqlTask;
+                            if (typedSubtask.solution !== undefined && typedSubtask.isSolutionVisible) {
+                                const solution = typedSubtask.solution as SqlSolution;
+                                const tablequery = {
+                                    widths: ['*'],
+                                    body: [
+                                        [
+                                            {
+                                                text: 'Query:',
+                                                fillColor: '#eeeeee',
+                                                border: [true, true, true, false],
+                                                style: { bold: true },
+                                            },
+                                        ],
+                                        [
+                                            {
+                                                text: solution.querySolution,
+                                                fillColor: '#eeeeee',
+                                                border: [true, false, true, true],
+                                            },
+                                        ],
+                                    ],
+                                };
+                                docDefinition.content.push({ table: tablequery, style: 'solutionQuery' });
+                                const tabledata = { widths: [] as string[], body: [] as string[][] };
+                                // Set all table widths to star
+                                for (const column of solution.columns) {
+                                    tabledata.widths.push('*');
+                                }
+                                tabledata.body = solution.values;
+                                tabledata.body.unshift(solution.columns);
+                                docDefinition.content.push({ table: tabledata, style: 'solutionTable' });
+                            } else {
+                                docDefinition.content.push({ text: 'Keine Lösung vorhanden', style: 'solution' });
+                            }
+                        }
                     }
-                });
+                }
+                pdfMake.createPdf(docDefinition).download('Solution_' + sheet.name.replace(' ', '_') + '.pdf');
             });
-        }
-
-        pdfMake.createPdf(docDefinition).download('Solution_' + sheet.name.replace(' ', '_') + '.pdf');
+        });
     }
 }
