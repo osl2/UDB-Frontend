@@ -2,7 +2,10 @@
     <div>
         <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
             <!--<img src="../assets/logo.png" class="img-fluid" alt="Responsive image">-->
-            <h1 v-html="$t('home.logo')"></h1>
+            <h1>
+                u
+                <sup>DB</sup>
+            </h1>
             <h2>{{ $t('home.slogan') }}</h2>
         </div>
 

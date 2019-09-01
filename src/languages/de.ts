@@ -14,7 +14,7 @@ const de = {
         enter: 'Beitreten',
         enterCourse: 'Kurs beitreten',
         courseId: 'Kurs-Id',
-        alreadyLoggedIn: 'Beitreten als <strong>{userName}</strong>',
+        alreadyLoggedIn: 'Beitreten als ',
         name: 'Nutzername',
         pw: 'Passwort',
         repeatedpw: 'Passwort wiederholen',

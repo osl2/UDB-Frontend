@@ -26,7 +26,8 @@
 
                 <router-link :to="path">
                     <b-button v-if="loggedIn" tag="button" class="btn btn-lg btn-block btn-secondary">
-                        <span v-html="$t('home.alreadyLoggedIn', { userName: userController.userState.name })"></span>
+                        {{ $t('home.alreadyLoggedIn') }}
+                        <strong>{{ userController.userState.name }}</strong>
                     </b-button>
                 </router-link>
 
