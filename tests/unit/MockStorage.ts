@@ -1,6 +1,4 @@
 export default class MockStorage implements Storage {
-
-
     public storageMap: Map<string, string> = new Map<string, string>();
     public readonly length: number = this.storageMap.size;
 
@@ -28,5 +26,4 @@ export default class MockStorage implements Storage {
     public setItem(key: string, value: string): void {
         this.storageMap.set(key, value);
     }
-
 }

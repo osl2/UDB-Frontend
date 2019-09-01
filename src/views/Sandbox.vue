@@ -1,6 +1,6 @@
 <template>
     <div>
-        <HelpButton :helpmsg="$t('helpMessages.sandbox')"></HelpButton>
+        <HelpButton :helpMsg="$t('helpMessages.sandbox')"></HelpButton>
         <DatabaseComponent
             ref="databaseComponent"
             element-id="sandbox-dropzone-db"
