@@ -20,6 +20,7 @@ export default class PointAndClick extends Vue {
     @Prop() private allowedSqlToolbox!: string;
     private workspace: any = Blockly;
     private code: string = '';
+    private basedir?: string = process.env.BASE_URL;
 
     mounted() {
         this.initBlockly();
@@ -36,7 +37,7 @@ export default class PointAndClick extends Vue {
             'blocklyDiv',
             {
                 toolbox: decodedtoolbox,
-                path: './static/blockly/',
+                path: this.basedir + 'static/blockly/',
                 collapse: false,
                 comments: false,
                 disable: false,
@@ -45,7 +46,7 @@ export default class PointAndClick extends Vue {
                 horizontalLayout: false,
                 toolboxPosition: 'start',
                 css: true,
-                media: './static/blockly/media/',
+                media: this.basedir + 'static/blockly/media/',
                 rtl: false,
                 scrollbars: true,
                 sounds: true,
