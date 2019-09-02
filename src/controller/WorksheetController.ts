@@ -247,7 +247,7 @@ export default class WorksheetController extends ApiControllerAbstract
             } else if (solution instanceof SqlSolution) {
                 tempobject.type = SubtaskTypes.Sql;
             }
-            tempobject.data = solution;
+            tempobject.data = solution.toJSON;
             exportobject.solutions.push(tempobject);
         }
 
