@@ -157,6 +157,7 @@ const de = {
         alertDelete: 'Aufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.',
     },
     teacherWorksheet: {
+        successfulSave: 'Speichern erfolgreich.',
         name: 'Name des Aufgabenblatts',
         sheetOnline: 'Ist das Aufgabenblatt für Schüler online?',
         solutionOnline: 'Ist das Lösungsblatt für Schüler einsehbar?',

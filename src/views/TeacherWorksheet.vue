@@ -100,12 +100,9 @@ export default class TeacherWorksheet extends Vue {
                 this.worksheet = worksheet;
                 this.taskController
                     .getChildren(this.worksheet)
-                    .then(
-                        (tasks: Task[]) => {
-                            this.tasks = tasks;
-                        }
-                        // TODO catchen
-                    )
+                    .then((tasks: Task[]) => {
+                        this.tasks = tasks;
+                    })
                     .catch(error => {
                         switch (error.status) {
                             case 404:
@@ -199,8 +196,7 @@ export default class TeacherWorksheet extends Vue {
         this.worksheetController
             .save(this.worksheet)
             .then(() => {
-                // TODO Sprache auslagern
-                alert('Speichern erfolgreich');
+                alert(this.$t('teacherWorksheet.successfulSave') as string);
             })
             .catch(error => {
                 switch (error.status) {
