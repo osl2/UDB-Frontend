@@ -42,7 +42,6 @@
                         :result-bus="resultBus"
                         @delete="deleteSubtask"
                         @executeQuery="executeQuery"
-                        @updateSubtasks="updateSubtasks"
                     ></SubtaskEdit>
                 </draggable-component>
                 <SubtaskCreation @createSubtask="createSubtask"></SubtaskCreation>
@@ -176,28 +175,6 @@ export default class TaskEdit extends Vue {
     public updateSinT() {
         this.task.subtaskIds = this.subtasks.map((s: Subtask) => s.id);
         return true;
-    }
-
-    /*
-   this method gets calles whenever a subtask gets saved in SubtaskEdit.vue. That is so the subtask
-   array in this view can get updated. It just gets called when the save call to the API was successful.
-   */
-    public updateSubtasks() {
-        this.subtaskController
-            .getChildren(this.task)
-            .then((subtasks: Subtask[]) => {
-                this.subtasks = subtasks;
-            })
-            .catch(error => {
-                switch (error.status) {
-                    case 500:
-                        alert(this.$t('apiError.server500') as string);
-                        break;
-                    default:
-                        alert(this.$t('apiError.defaultMsg') as string);
-                        break;
-                }
-            });
     }
 
     public executeQuery(query: string, subtaskId: string) {
