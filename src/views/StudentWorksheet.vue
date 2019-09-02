@@ -16,7 +16,7 @@
             <!--Buttons to import and export the solutions the student created. This is used to be able to work
              on the same worksheet on different occasions while not loosing the progress made-->
             <div class="d-flex mt-4 justify-content-center">
-                <b-button @click="exportSheet" class="mr-3">{{ $t('studentWorksheet.exportSolution') }}</b-button>
+                <b-button class="mr-3" @click="exportSheet">{{ $t('studentWorksheet.exportSolution') }}</b-button>
                 <b-button @click="uploadTrigger">{{ $t('studentWorksheet.importSolution') }}</b-button>
                 <input id="fileUpload" type="file" style="display:none;" accept=".json" @change="importSheet" />
             </div>
