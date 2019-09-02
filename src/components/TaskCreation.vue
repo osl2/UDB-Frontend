@@ -51,7 +51,6 @@ export default class TaskCreation extends Vue {
     public created() {}
 
     public select(db: Database) {
-        console.log(db);
         if (db === undefined) {
             return;
         }
@@ -65,6 +64,7 @@ export default class TaskCreation extends Vue {
             return;
         }
         this.$emit('createTask', this.task);
+        this.task = new Task('', '', '', []);
     }
 }
 </script>
