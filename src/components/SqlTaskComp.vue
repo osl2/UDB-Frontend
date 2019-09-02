@@ -29,6 +29,7 @@ import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
                 ></component>
             </div>
 
+            <div id="queryRes"></div>
             <div v-if="gotFirstQueryExecuted" class="queryResult mt-5">
                 <p>{{ $t('sandbox.resultText') }}({{ lastQueryExecuted }}):</p>
                 <QueryResultComp
