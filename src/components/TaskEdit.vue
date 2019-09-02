@@ -170,9 +170,7 @@ export default class TaskEdit extends Vue {
     }
 
     public save() {
-        this.taskController.save(this.task).then(() => {
-            this.$emit('updateTasks');
-        });
+        this.taskController.save(this.task);
     }
 
     public updateSinT() {

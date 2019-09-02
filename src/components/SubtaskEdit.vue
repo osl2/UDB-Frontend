@@ -135,9 +135,7 @@ export default class SubtaskEdit extends Vue {
         Vue.nextTick(() => {
             this.subtaskController
                 .save(this.subtask)
-                .then(() => {
-                    this.$emit('updateSubtasks');
-                })
+                .then()
                 .catch(error => {
                     switch (error.status) {
                         case 500:
