@@ -104,7 +104,7 @@ export default class SqlTask extends Subtask {
                     allowed_sql: AllowedSqlToJSON(this.allowedSqlStatements),
                     is_point_and_click_allowed: this.isPointAndClickAllowed,
                     row_order_matters: this.doesRowOrderMatter,
-                    solution: this.solution ? this.solution.toJSON : {},
+                    solution: this.solution ? this.solution.toJSON.sql : {},
                 },
             },
         };

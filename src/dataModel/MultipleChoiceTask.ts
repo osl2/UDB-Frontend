@@ -66,7 +66,7 @@ export default class MultipleChoiceTask extends Subtask {
             content: {
                 multiple_choice: {
                     answer_options: this.answerOptions,
-                    solution: this.solution ? this.solution.toJSON : {},
+                    solution: this.solution ? this.solution.toJSON.multiple_choice : {},
                 },
             },
         };
