@@ -159,10 +159,10 @@ export default class TeacherWorksheet extends Vue {
             .create(task)
             .then((taskId: string) => {
                 task.id = taskId;
-                this.tasks.push(task);
                 this.worksheet.taskIds.push(taskId);
-                // TODO entfernen, wenn create auf dem Backend auch das Worksheet aktualisiert
-                this.worksheetController.save(this.worksheet).then();
+                this.worksheetController.save(this.worksheet).then(() => {
+                    this.tasks.push(task);
+                });
             })
             .catch(error => {
                 switch (error.status) {
@@ -177,14 +177,11 @@ export default class TeacherWorksheet extends Vue {
     }
 
     public deleteTask(task: Task) {
-        this.taskController
-            .remove(task)
-            .then(() => {
-                this.tasks = this.tasks.filter((oldTask: Task) => oldTask.id !== task.id);
-                this.worksheet.taskIds = this.worksheet.taskIds.filter((id: string) => id !== task.id);
-                // TODO entfernen, wenn delete auf dem Backend auch das Worksheet aktualisiert
-                this.worksheetController.save(this.worksheet).then();
-            })
+        this.tasks = this.tasks.filter((oldTask: Task) => oldTask.id !== task.id);
+        this.worksheet.taskIds = this.worksheet.taskIds.filter((id: string) => id !== task.id);
+        this.worksheetController
+            .save(this.worksheet)
+            .then()
             .catch(error => {
                 switch (error.status) {
                     case 500:
