@@ -1,59 +1,77 @@
 <xml id="toolbox" style="display: none">
-    <category name="SELECT">
-        <block type="block_select">
-            <value name="COLUMN">
-                <shadow type="entity_column_statement">
-                    <field name="column">*</field>
-                </shadow>
-            </value>
-        </block>
-        <block type="block_subselect">
-            <value name="COLUMN">
-                <shadow type="entity_column_statement">
-                    <field name="column">*</field>
-                </shadow>
-            </value>
-        </block>
-        <block type="select_join"></block>
-        <block type="select_where"></block>
-        <block type="select_group"></block>
-        <block type="select_group_having"></block>
-        <block type="select_order"></block>
-        <block type="select_limit"></block>
-        <block type="cond_block"></block>
+    <category name="Anfragen" expanded="true">
+        <category name="SELECT">
+            <block type="block_select">
+                <value name="COLUMN">
+                    <shadow type="entity_column_statement">
+                        <field name="column">*</field>
+                    </shadow>
+                </value>
+            </block>
+        </category>
+        <category name="SUBSELECT">
+            <block type="block_subselect">
+                <value name="COLUMN">
+                    <shadow type="entity_column_statement">
+                        <field name="column">*</field>
+                    </shadow>
+                </value>
+            </block>
+        </category>
+        <sep></sep>
+        <category name="Modifikatoren">
+            <block type="select_join"></block>
+            <block type="select_where"></block>
+            <block type="select_group"></block>
+            <block type="select_group_having"></block>
+            <block type="select_order"></block>
+            <block type="select_limit"></block>
+        </category>
+        <category name="Bedingungen">
+            <block type="cond_block"></block>
+            <block type="cond_not"></block>
+            <block type="cond_or"></block>
+            <block type="cond_and"></block>
+        </category>
     </category>
     <sep></sep>
-    <category name="ALTER">
-        <block type="block_alter"></block>
-        <block type="alter_rename_to"></block>
-        <block type="alter_rename_column"></block>
-        <block type="alter_add_column"></block>
-        <block type="columndefinition"></block>
-    </category>
-    <category name="CREATE">
-        <block type="block_create"></block>
-        <block type="columndefinition"></block>
-    </category>
-    <category name="DROP">
-        <block type="block_drop"></block>
-    </category>
-    <category name="INSERT">
-        <block type="block_insert"></block>
-    </category>
-    <category name="UPDATE">
-        <block type="block_update"></block>
-        <block type="update_where"></block>
-        <block type="columntovalue"></block>
+    <category name="Bearbeiten" expanded="true">
+        <category name="INSERT">
+            <block type="block_insert"></block>
+        </category>
+        <category name="UPDATE">
+            <block type="block_update"></block>
+            <block type="update_where"></block>
+            <block type="columntovalue"></block>
+        </category>
+        <category name="CREATE">
+            <block type="block_create"></block>
+            <block type="columndefinition"></block>
+        </category>
+        <category name="ALTER">
+            <block type="block_alter"></block>
+            <block type="alter_rename_to"></block>
+            <block type="alter_rename_column"></block>
+            <block type="alter_add_column"></block>
+            <block type="columndefinition"></block>
+        </category>
+        <category name="DROP">
+            <block type="block_drop"></block>
+        </category>
+        <sep></sep>
+        <category name="Bedingungen">
+            <block type="cond_block"></block>
+            <block type="cond_not"></block>
+            <block type="cond_or"></block>
+            <block type="cond_and"></block>
+        </category>
     </category>
     <sep></sep>
-    <category name="CONDITION">
-        <block type="cond_block"></block>
-        <block type="cond_not"></block>
-        <block type="cond_or"></block>
-        <block type="cond_and"></block>
-    </category>
-    <sep></sep>
-    <category name="DATAELEMENTS">
+    <category name="Datenelemente">
+        <block type="entity_table"></block>
+        <block type="entity_table_statement"></block>
+        <block type="entity_column"></block>
+        <block type="entity_column_statement"></block>
         <block type="data_boolean"></block>
         <block type="data_boolean_statement"></block>
         <block type="data_string"></block>
@@ -64,11 +82,5 @@
         <block type="data_date_statement"></block>
         <block type="data_datetime"></block>
         <block type="data_datetime_statement"></block>
-    </category>
-    <category name="ENTITIES">
-        <block type="entity_table"></block>
-        <block type="entity_table_statement"></block>
-        <block type="entity_column"></block>
-        <block type="entity_column_statement"></block>
     </category>
 </xml>
