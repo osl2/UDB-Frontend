@@ -221,6 +221,8 @@ const de = {
         delete: 'Löschen',
         open: 'Kurs öffnen',
         new: 'Neuer Kurs',
+        change: 'Ändern',
+        cancel: 'Abbrechen',
     },
     apiError: {
         defaultMsg: 'ERROR: Etwas ist schiefgelaufen.',

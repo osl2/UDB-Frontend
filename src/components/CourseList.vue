@@ -4,6 +4,14 @@
             <b-card v-for="course in courses" :key="course.id" bg-variant="light" class="card ml-3 col col-2 p-0">
                 <b-card-title>
                     {{ course.name }}
+                    <b-btn
+                        v-b-modal.changeCourse
+                        class="float-right mr-2"
+                        variant="secondary"
+                        @click="selectCourse(course)"
+                    >
+                        <font-awesome-icon icon="cog" />
+                    </b-btn>
                 </b-card-title>
                 <b-card-text>
                     {{ course.description }}
@@ -37,19 +45,63 @@
             <!--Empty Div is needed to fix slider behaviour!-->
             <div class="ml-3"></div>
         </div>
+        <b-modal
+            id="changeCourse"
+            :ok-title="$t('courseList.change')"
+            :cancel-title="$t('courseList.cancel')"
+            @ok="updateCourse(selectedCourse)"
+        >
+            <label>{{ $t('courseList.name') }}:</label>
+            <b-form-input
+                v-model="selectedCourseName"
+                class="inputfield mb-1"
+                @keydown.enter.native="updateCourse(selectedCourse)"
+            ></b-form-input>
+            <label>{{ $t('courseList.description') }}:</label>
+            <b-form-input
+                v-model="selectedCourseDescription"
+                class="inputfield"
+                @keydown.enter.native="updateCourse(selectedCourse)"
+            ></b-form-input>
+        </b-modal>
     </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import Course from '@/dataModel/Course';
+import { faCog } from '@fortawesome/free-solid-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import CourseController from '@/controller/CourseController';
+library.add(faCog);
 
 @Component({})
 export default class CourseList extends Vue {
     @Prop() private courses!: Course[];
 
+    private courseController: CourseController = this.$store.getters.courseController;
+
     private name: string = '';
     private description: string = '';
+    private selected: Course = new Course('', '', '', '', []);
+    private selectedCourseName: string = '';
+    private selectedCourseDescription: string = '';
+
+    get selectedCourse() {
+        return this.selected;
+    }
+
+    private selectCourse(course: Course) {
+        this.selected = course;
+        this.selectedCourseName = course.name;
+        this.selectedCourseDescription = course.description;
+    }
+
+    private updateCourse(course: Course) {
+        course.name = this.selectedCourseName;
+        course.description = this.selectedCourseDescription;
+        this.courseController.save(course).then();
+    }
 }
 </script>
 
