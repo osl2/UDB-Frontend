@@ -99,7 +99,7 @@ export default class StartpageTeacher extends Vue {
      */
     public addCourse(name: string, description: string) {
         if (!name) {
-            alert(this.$t('teacher.alertCourse') as string);
+            alert(this.$t('teacher.alertName') as string);
             return;
         }
         const newCourse = new Course('', name, description, '', []);
