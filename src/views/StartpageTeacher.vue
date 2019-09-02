@@ -193,8 +193,6 @@ export default class StartpageTeacher extends Vue {
             });
     }
 
-    // Computed methods
-
     private uploadTrigger(event: Event) {
         document.getElementById('fileUpload')!.click();
     }
