@@ -13,7 +13,7 @@
                         {{ database.name }}
                     </b-dropdown-item>
                 </b-dropdown>
-                <b-button variant="info" @click="createTask()">
+                <b-button id="create-task" variant="info" @click="createTask()">
                     <font-awesome-icon icon="plus"></font-awesome-icon>
                     {{ $t('teacherWorksheet.new') }}
                 </b-button>

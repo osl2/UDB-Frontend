@@ -1,18 +1,18 @@
 <template>
     <div class="create-subtasks">
-        <b-button variant="info" @click="createSubtask(0)">
+        <b-button id="create-sql" variant="info" @click="createSubtask(0)">
             <font-awesome-icon icon="plus"></font-awesome-icon>
             {{ $t('taskCreation.newSql') }}
         </b-button>
-        <b-button variant="info" @click="createSubtask(1)">
+        <b-button id="create-mc" variant="info" @click="createSubtask(1)">
             <font-awesome-icon icon="plus"></font-awesome-icon>
             {{ $t('taskCreation.newMc') }}
         </b-button>
-        <b-button variant="info" @click="createSubtask(2)">
+        <b-button id="create-text" variant="info" @click="createSubtask(2)">
             <font-awesome-icon icon="plus"></font-awesome-icon>
             {{ $t('taskCreation.newText') }}
         </b-button>
-        <b-button variant="info" @click="createSubtask(3)">
+        <b-button id="create-instruction" variant="info" @click="createSubtask(3)">
             <font-awesome-icon icon="plus"></font-awesome-icon>
             {{ $t('taskCreation.newInstruction') }}
         </b-button>

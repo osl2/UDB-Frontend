@@ -4,9 +4,9 @@
             <b-input-group-prepend>
                 <b-input-group-text>{{ itemDescription }}</b-input-group-text>
             </b-input-group-prepend>
-            <b-input v-model="newItem"></b-input>
+            <b-input id="item-name" v-model="newItem"></b-input>
             <b-input-group-append>
-                <b-button @click="addItem">
+                <b-button id="btn-add-item" @click="addItem">
                     <font-awesome-icon icon="plus"></font-awesome-icon>
                     {{ $t('subtaskCreation.addAnswer') }}
                 </b-button>
@@ -17,7 +17,12 @@
         </div>
         <div v-for="(item, index) in items" :key="index" class="list-edit-item">
             <span>{{ item }}</span>
-            <b-button variant="outline-danger" class="btn-sm float-right" @click="removeItem(index)">
+            <b-button
+                :id="'remove-item-' + index"
+                variant="outline-danger"
+                class="btn-sm float-right"
+                @click="removeItem(index)"
+            >
                 <font-awesome-icon icon="minus-circle"></font-awesome-icon>
             </b-button>
         </div>
