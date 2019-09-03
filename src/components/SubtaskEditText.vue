@@ -6,27 +6,27 @@
             @change="change()"
         ></b-form-textarea>
 
-        <b-form-group :label="$t('subtaskCreation.verifiable')">
-            <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="true" @change="change()">
+        <b-form-group :label="$t('subtaskCreation.visible')">
+            <b-form-radio v-model="subtask.isSolutionVisible" :value="true" @change="change()">
                 {{ $t('subtaskCreation.yes') }}
             </b-form-radio>
-            <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="false">
+            <b-form-radio v-model="subtask.isSolutionVisible" :value="false">
                 {{ $t('subtaskCreation.no') }}
             </b-form-radio>
         </b-form-group>
 
-        <div v-if="subtask.isSolutionVeryfiable">
+        <div v-if="subtask.isSolutionVisible">
             <b-form-textarea
                 v-model="subtask.solution.text"
                 :placeholder="$t('subtaskCreation.solution')"
                 @change="change()"
             ></b-form-textarea>
 
-            <b-form-group :label="$t('subtaskCreation.visible')">
-                <b-form-radio v-model="subtask.isSolutionVisible" :value="true" @change="change()">
+            <b-form-group :label="$t('subtaskCreation.verifiable')">
+                <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="true" @change="change()">
                     {{ $t('subtaskCreation.yes') }}
                 </b-form-radio>
-                <b-form-radio v-model="subtask.isSolutionVisible" :value="false">
+                <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="false">
                     {{ $t('subtaskCreation.no') }}
                 </b-form-radio>
             </b-form-group>

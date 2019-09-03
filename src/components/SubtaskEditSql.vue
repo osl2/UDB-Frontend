@@ -24,21 +24,21 @@
             </b-form-radio>
         </b-form-group>
 
-        <b-form-group :label="$t('subtaskCreation.verifiable')">
-            <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="true">
+        <b-form-group :label="$t('subtaskCreation.visible')">
+            <b-form-radio v-model="subtask.isSolutionVisible" :value="true">
                 {{ $t('subtaskCreation.yes') }}
             </b-form-radio>
-            <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="false">
+            <b-form-radio v-model="subtask.isSolutionVisible" :value="false">
                 {{ $t('subtaskCreation.no') }}
             </b-form-radio>
         </b-form-group>
 
-        <div v-if="subtask.isSolutionVeryfiable">
+        <div v-if="subtask.isSolutionVisible">
             <h4>Lösung</h4>
             <b-input-group>
                 <b-form-input
                     v-model="subtask.solution.querySolution"
-                    :placeholder="$t('subtaskCreation.visible')"
+                    :placeholder="$t('subtaskCreation.verifiable')"
                     @change="change()"
                 ></b-form-input>
                 <b-input-group-append>
@@ -46,16 +46,16 @@
                 </b-input-group-append>
             </b-input-group>
             <QueryResult :columns="columns" :rows="rows"></QueryResult>
-            <b-form-group :label="$t('subtaskCreation.visible')">
-                <b-form-radio v-model="subtask.isSolutionVisible" :value="true">
+            <b-form-group :label="$t('subtaskCreation.verifiable')">
+                <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="true">
                     {{ $t('subtaskCreation.yes') }}
                 </b-form-radio>
-                <b-form-radio v-model="subtask.isSolutionVisible" :value="false">
+                <b-form-radio v-model="subtask.isSolutionVeryfiable" :value="false">
                     {{ $t('subtaskCreation.no') }}
                 </b-form-radio>
             </b-form-group>
 
-            <b-form-group v-if="subtask.isSolutionVisible" :label="$t('subtaskCreation.rowOrder')">
+            <b-form-group v-if="subtask.isSolutionVeryfiable" :label="$t('subtaskCreation.rowOrder')">
                 <b-form-radio v-model="subtask.doesRowOrderMatter" :value="true">
                     {{ $t('subtaskCreation.yes') }}
                 </b-form-radio>
