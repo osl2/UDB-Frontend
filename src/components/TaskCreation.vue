@@ -33,7 +33,7 @@ library.add(faPlus);
 
 @Component({})
 export default class TaskCreation extends Vue {
-    @Prop() private databases: Database[] = [];
+    @Prop() private databases!: Database[];
 
     private task: Task = new Task('', '', '', []);
     private databaseName = 'Datenbank wählen';
