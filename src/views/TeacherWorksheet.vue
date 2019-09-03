@@ -8,7 +8,7 @@
         </div>
         <div>
             <h3>
-                Einstellungen
+                {{ $t('teacherWorksheet.settings') }}
             </h3>
             <!--Section to set options needed for a worksheet -->
             <b-input-group class="col-6">
@@ -100,12 +100,9 @@ export default class TeacherWorksheet extends Vue {
                 this.worksheet = worksheet;
                 this.taskController
                     .getChildren(this.worksheet)
-                    .then(
-                        (tasks: Task[]) => {
-                            this.tasks = tasks;
-                        }
-                        // TODO catchen
-                    )
+                    .then((tasks: Task[]) => {
+                        this.tasks = tasks;
+                    })
                     .catch(error => {
                         switch (error.status) {
                             case 404:
@@ -199,8 +196,7 @@ export default class TeacherWorksheet extends Vue {
         this.worksheetController
             .save(this.worksheet)
             .then(() => {
-                // TODO Sprache auslagern
-                alert('Speichern erfolgreich');
+                alert(this.$t('teacherWorksheet.successfulSave') as string);
             })
             .catch(error => {
                 switch (error.status) {
@@ -214,7 +210,7 @@ export default class TeacherWorksheet extends Vue {
             });
     }
     /*
-     this method gets calles whenever a task gets saved in taskCreation.vue. That is so the task
+     this method gets calles whenever a task gets saved in TaskCreation.vue. That is so the task
      array in this view can get updated. It just gets called when the save call to the API was successful.
      */
     public updateTasks() {

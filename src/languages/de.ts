@@ -157,6 +157,7 @@ const de = {
         alertDelete: 'Aufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.',
     },
     teacherWorksheet: {
+        successfulSave: 'Speichern erfolgreich.',
         name: 'Name des Aufgabenblatts',
         sheetOnline: 'Ist das Aufgabenblatt für Schüler online?',
         solutionOnline: 'Ist das Lösungsblatt für Schüler einsehbar?',
@@ -167,6 +168,7 @@ const de = {
         alertReturn:
             'zurück zu Übersicht? Stelle sicher, dass alle Teilaufgaben gespeichert wurden,' +
             ' ansonsten sind sie nicht im Aufgabenblatt enthalten',
+        settings: 'Einstellungen',
     },
     studentWorksheet: {
         importSolution: 'Bearbeitungsstand importieren',
@@ -220,6 +222,8 @@ const de = {
         delete: 'Löschen',
         open: 'Kurs öffnen',
         new: 'Neuer Kurs',
+        change: 'Ändern',
+        cancel: 'Abbrechen',
     },
     apiError: {
         defaultMsg: 'ERROR: Etwas ist schiefgelaufen.',

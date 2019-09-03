@@ -33,8 +33,6 @@
                         <template slot="button-content">
                             {{ $t('navbar.profileDropdown') }}
                         </template>
-                        <!-- TODO: Implement settings view
-                       <b-dropdown-item href="#">{{$t('navbar.settings')}}</b-dropdown-item> -->
                         <b-dropdown-item href="#" @click="$emit('logoutTeacher')">
                             {{ $t('navbar.logout') }}
                         </b-dropdown-item>

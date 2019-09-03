@@ -29,6 +29,7 @@ import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
                 ></component>
             </div>
 
+            <div id="queryRes"></div>
             <div v-if="gotFirstQueryExecuted" class="queryResult mt-5">
                 <p>{{ $t('sandbox.resultText') }}({{ lastQueryExecuted }}):</p>
                 <QueryResultComp
@@ -105,9 +106,15 @@ export default class SqlTaskComp extends Vue {
 
     get subtaskSolution(): SqlSolution {
         const values: string[][] = [[]];
+        let first = true;
         let i = 0;
         for (const row of this.queryResult.result.values) {
-            values.push([]);
+            // fix  issue #87
+            if (first) {
+                first = false;
+            } else {
+                values.push([]);
+            }
             for (const cell of row) {
                 if (cell != null) {
                     values[i].push(cell.toString());

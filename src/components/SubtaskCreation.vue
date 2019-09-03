@@ -1,4 +1,3 @@
-import AllowedSqlStatements from "@/dataModel/AllowedSqlStatements";
 <template>
     <div class="create-subtasks">
         <b-button variant="info" @click="createSubtask(0)">
@@ -36,8 +35,8 @@ import AllowedSqlStatements from '@/dataModel/AllowedSqlStatements';
 
 library.add(faPlus);
 
-@Component
-export default class TaskCreation extends Vue {
+@Component({})
+export default class SubtaskCreation extends Vue {
     public createSubtask(type: SubtaskTypes) {
         switch (type) {
             case SubtaskTypes.Instruction:

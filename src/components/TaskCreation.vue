@@ -31,17 +31,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faPlus);
 
-export class DatabaseOption {
-    public name: string;
-    public id: string;
-
-    constructor(name: string, id: string) {
-        this.name = name;
-        this.id = id;
-    }
-}
-
-@Component
+@Component({})
 export default class TaskCreation extends Vue {
     @Prop() private databases: Database[] = [];
 
