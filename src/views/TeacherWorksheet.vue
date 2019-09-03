@@ -8,7 +8,7 @@
         </div>
         <div>
             <h3>
-                Einstellungen
+                {{ $t('teacherWorksheet.settings') }}
             </h3>
             <!--Section to set options needed for a worksheet -->
             <b-input-group class="col-6">
@@ -210,7 +210,7 @@ export default class TeacherWorksheet extends Vue {
             });
     }
     /*
-     this method gets calles whenever a task gets saved in taskCreation.vue. That is so the task
+     this method gets calles whenever a task gets saved in TaskCreation.vue. That is so the task
      array in this view can get updated. It just gets called when the save call to the API was successful.
      */
     public updateTasks() {

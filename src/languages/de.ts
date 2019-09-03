@@ -168,6 +168,7 @@ const de = {
         alertReturn:
             'zurück zu Übersicht? Stelle sicher, dass alle Teilaufgaben gespeichert wurden,' +
             ' ansonsten sind sie nicht im Aufgabenblatt enthalten',
+        settings: 'Einstellungen',
     },
     studentWorksheet: {
         importSolution: 'Bearbeitungsstand importieren',
