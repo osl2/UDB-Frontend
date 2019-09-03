@@ -5,7 +5,7 @@ import Vuex from 'vuex';
 import Course from '@/dataModel/Course';
 import i18n from 'vue-i18n';
 import { expect } from 'chai';
-
+import store from '@/store';
 const localVue = createLocalVue();
 localVue.use(Vuex);
 localVue.use(i18n);
@@ -23,6 +23,7 @@ describe('CourseList.vue', () => {
             mocks: {
                 $t: () => {},
             },
+            store,
         });
         expect(wrapper.find('h4.card-title').text()).to.include(courseName);
     });
@@ -37,6 +38,7 @@ describe('CourseList.vue', () => {
             mocks: {
                 $t: () => {},
             },
+            store,
         });
         const removeButton = wrapper.find('button');
         removeButton.trigger('click');
@@ -56,6 +58,7 @@ describe('CourseList.vue', () => {
             mocks: {
                 $t: () => {},
             },
+            store,
         });
         const loadButton = wrapper.find('button.bg-info');
         loadButton.trigger('click');
@@ -71,6 +74,7 @@ describe('CourseList.vue', () => {
             mocks: {
                 $t: () => {},
             },
+            store,
         });
 
         //Fill form with name and description
