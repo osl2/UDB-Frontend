@@ -13,7 +13,12 @@
             >
                 {{ $t('buttonText.changeView') }}
             </b-button>
-            <b-popover target="changeViewButton" triggers="hover focus" :content="changeMessage"></b-popover>
+            <b-popover
+                v-if="!isStudentsViewActive"
+                target="changeViewButton"
+                triggers="hover focus"
+                :content="changeMessage"
+            ></b-popover>
         </div>
         <div class="clear"></div>
         <div class="container">
