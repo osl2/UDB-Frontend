@@ -53,7 +53,7 @@ export default class TaskCreation extends Vue {
 
     public createTask() {
         if (this.task.databaseId === '') {
-            alert(this.$t('taskCreation.AlertChooseDB') as string);
+            alert(this.$t('taskCreation.alertChooseDB') as string);
             return;
         }
         if (this.task.name === '') {
@@ -62,6 +62,7 @@ export default class TaskCreation extends Vue {
         }
         this.$emit('createTask', this.task);
         this.task = new Task('', '', '', []);
+        this.databaseName = this.$t('taskCreation.chooseDB') as string;
     }
 }
 </script>
