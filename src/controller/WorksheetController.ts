@@ -79,7 +79,6 @@ export default class WorksheetController extends ApiControllerAbstract
      * @param solutions map SubtaskId to corresponding Solution
      */
     public exportPDF(object: Worksheet, solutions: Map<string, Solution>): void {
-        // TODO Texte auslagern sodass diese übersetzt werden können!
         const store = require('@/store').default;
         const taskController: TaskController = store.getters.taskController;
         const subtaskController: SubtaskController = store.getters.subtaskController;
@@ -334,7 +333,6 @@ export default class WorksheetController extends ApiControllerAbstract
      * @param sheet internal Worksheet object
      */
     public getSolution(sheet: Worksheet): void {
-        // TODO Texte auslagern sodass diese übersetzt werden können!
         const store = require('@/store').default;
         const taskController: TaskController = store.getters.taskController;
         const subtaskController: SubtaskController = store.getters.subtaskController;

@@ -4,7 +4,6 @@
             <b-card v-if="areWorksheetsEmpty" bg-variant="light" class="card ml-3 col col-2 p-0">
                 <b-card-title>{{ $t('worksheetList.noSheets') }}</b-card-title>
             </b-card>
-            <!--TODO Checken ob das div so tut-->
             <div v-for="worksheet in visibleWorksheets" :key="worksheet.id">
                 <b-card bg-variant="light" class="card ml-3 col col-2 p-0">
                     <b-card-title>

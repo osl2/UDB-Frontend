@@ -150,11 +150,23 @@ export default class CourseView extends Vue {
         this.worksheetController
             .create(newWorksheet)
             .then(worksheetId => {
-                this.worksheets.push(newWorksheet);
                 this.course.worksheetIds.push(worksheetId);
-                // TODO rausschmeißen, wenn das Backend bei create den Kurs aktualisiert
-                this.courseController.save(this.course).then();
-                this.worksheetsChanged = true;
+                this.courseController
+                    .save(this.course)
+                    .then(() => {
+                        this.worksheets.push(newWorksheet);
+                        this.worksheetsChanged = true;
+                    })
+                    .catch(error => {
+                        switch (error.status) {
+                            case 500:
+                                alert(this.$t('apiError.server500') as string);
+                                break;
+                            default:
+                                alert(this.$t('apiError.defaultMsg') as string);
+                                break;
+                        }
+                    });
             })
             .catch(error => {
                 switch (error.status) {
