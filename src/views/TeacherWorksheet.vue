@@ -56,7 +56,7 @@
                 ></TaskEdit>
             </draggable-component>
         </div>
-        <b-button variant="primary" @click="save">Speichern</b-button>
+        <b-button class="mt-2" variant="primary" @click="save">Speichern</b-button>
     </div>
 </template>
 
