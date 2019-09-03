@@ -119,7 +119,7 @@ export default class SqlTaskComp extends Vue {
                 if (cell != null) {
                     values[i].push(cell.toString());
                 } else {
-                    values[i].push('null');
+                    values[i].push('');
                 }
             }
             i++;
