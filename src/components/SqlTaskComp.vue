@@ -38,11 +38,17 @@ import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
                 ></QueryResultComp>
             </div>
 
-            <b-button v-b-popover.hover="$t('sqlTaskComp.save')" class="mt-2" @click="$emit('save', subtaskSolution)">
+            <b-button
+                v-b-popover.hover="$t('sqlTaskComp.save')"
+                :disabled="!queryExecuted"
+                class="mt-2"
+                @click="$emit('save', subtaskSolution)"
+            >
                 {{ $t('taskComp.save') }}
             </b-button>
             <b-button
                 v-if="currentSubtask.isSolutionVisible"
+                :disabled="!queryExecuted"
                 id="compareSolutionButtonSQL"
                 class="mt-2 ml-2"
                 @click="$emit('compare', subtaskSolution)"
@@ -86,6 +92,7 @@ export default class SqlTaskComp extends Vue {
     @Prop() private lastQueryExecuted!: string;
     private isPointAndClickActive: boolean = false;
     private sqlExecutor: SQLExecutor = this.$store.getters.sqlExecutor;
+    private queryExecuted: boolean = false;
 
     get sqlTaskDynamicComponent() {
         const subtask: SqlTask = this.currentSubtask as SqlTask;
@@ -142,6 +149,7 @@ export default class SqlTaskComp extends Vue {
     }
 
     private executeQuery(query: string) {
+        this.queryExecuted = true;
         if (this.checkAllowedSqlStatements(query)) {
             this.$emit('executeQuery', query);
         } else {
