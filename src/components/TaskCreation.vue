@@ -36,9 +36,12 @@ export default class TaskCreation extends Vue {
     @Prop() private databases!: Database[];
 
     private task: Task = new Task('', '', '', []);
-    private databaseName = this.$t('taskCreation.chooseDB') as string;
+    private databaseName = '';
 
-    public created() {}
+    public created() {
+        this.task = new Task('', '', '', []);
+        this.databaseName = this.$t('taskCreation.chooseDB') as string;
+    }
 
     public select(db: Database) {
         if (db === undefined) {

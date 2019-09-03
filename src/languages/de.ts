@@ -153,7 +153,7 @@ const de = {
         newMc: 'Neue Multiple-Choice-Aufgabe',
         newText: 'Neue Freitextaufgabe',
         newInstruction: 'Neuer Erklärtext',
-        chooseDb: 'Datenbank wählen',
+        chooseDB: 'Datenbank wählen',
         alertChooseDB: 'Bitte wählen Sie eine Datenbank aus.',
         alertDelete: 'Aufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.',
         alertNoName: 'Bitte geben Sie einen Namen an.',
