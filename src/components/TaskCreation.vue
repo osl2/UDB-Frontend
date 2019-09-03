@@ -36,7 +36,7 @@ export default class TaskCreation extends Vue {
     @Prop() private databases!: Database[];
 
     private task: Task = new Task('', '', '', []);
-    private databaseName = 'Datenbank wählen';
+    private databaseName = this.$t('taskCreation.chooseDB') as string;
 
     public created() {}
 
@@ -50,7 +50,11 @@ export default class TaskCreation extends Vue {
 
     public createTask() {
         if (this.task.databaseId === '') {
-            alert('Bitte wählen Sie eine Datenbank aus');
+            alert(this.$t('taskCreation.AlertChooseDB') as string);
+            return;
+        }
+        if (this.task.name === '') {
+            alert(this.$t('taskCreation.alertNoName') as string);
             return;
         }
         this.$emit('createTask', this.task);
