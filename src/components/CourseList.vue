@@ -17,7 +17,7 @@
                     {{ course.description }}
                 </b-card-text>
                 <b-card-text>
-                    {{ $t('courseList.name') }}
+                    {{ $t('courseList.id') }}
                     <br />
                     {{ course.alias }}
                 </b-card-text>
