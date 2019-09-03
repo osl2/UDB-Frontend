@@ -12,8 +12,8 @@ import LocalStorageController from '@/controller/LocalStorageController';
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
-export const BASE_PATH = 'https://api.staging.upowdb.xyz/api/v1'.replace(/\/+$/, '');
+// please set the value in /static/api-config.js - this is possible as well in dist folder
+declare const UPOWDB_BASE_PATH: string;
 
 const isBlob = (value: any) => typeof Blob !== 'undefined' && value instanceof Blob;
 
@@ -138,7 +138,7 @@ export class Configuration {
     constructor(private configuration: ConfigurationParameters = {}) {}
 
     get basePath(): string {
-        return this.configuration.basePath || BASE_PATH;
+        return this.configuration.basePath || UPOWDB_BASE_PATH;
     }
 
     get fetchApi(): FetchAPI {
