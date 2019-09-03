@@ -409,7 +409,7 @@ export default class WorksheetController extends ApiControllerAbstract
                                     if (content !== undefined) {
                                         content += '\n';
                                     }
-                                    if (solution.choices.indexOf(index) > 0) {
+                                    if (solution.choices.includes(index)) {
                                         content += '[X] ' + answerOption;
                                     } else {
                                         content += '[ ]' + answerOption;
