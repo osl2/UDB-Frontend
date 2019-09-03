@@ -71,10 +71,10 @@ export default class SqlTask extends Subtask {
      * @param id the unique id for an instance of the SqlTask class
      * @param solution a solution of the Type SqlSolution
      * @param instruction the task instruction provided by the teacher
-     * @param isSolutionVeryfiable a boolean that indicates whether a solution exists or not
+     * @param isSolutionVeryfiable a boolean that indicates whether a student can compare its solution or not
      * @param isPointAndClickAllowed a boolean that indicates whether the Point and Click feature can be used or not
      * @param doesRowOrderMatter a boolean that indicates whether the order of rows should matter for a solution or not
-     * @param isSolutionVisible a boolean that indicates whether a student can compare its solution or not
+     * @param isSolutionVisible a boolean that indicates whether the solution can be used for the solutionsheet
      * @param allowedSqlStatements indicates what kind of sql statements can be used to solve the task
      */
     constructor(

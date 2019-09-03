@@ -41,8 +41,8 @@ export default class MultipleChoiceTask extends Subtask {
      * @param id unique id for an instance of the multipleChoiceTask
      * @param solution a solution of the type MultipleChoiceSolution
      * @param instruction the instruction of the task provided by the teacher
-     * @param isSolutionVeryfiable a boolean to decide if a MultipleChoiceTask has a solution
-     * @param isSolutionVisible a boolean to the decide if a student can compare its solution to the task solution
+     * @param isSolutionVeryfiable a boolean to decide if a student can compare its solution to the task solution
+     * @param isSolutionVisible a boolean to decide if a solution can be used for a solutionsheet
      * @param answerOptions a string array that contains all possible answers
      */
     constructor(

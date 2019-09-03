@@ -27,8 +27,8 @@ export default class PlainTextTask extends Subtask {
      * @param id the unique id for an instance of the PlainTextTask class
      * @param solution a solution of the class PlainTextSolution
      * @param instruction the instruction of the task provided by the teacher
-     * @param isSolutionVeryfiable a boolean that indicates if a solution for the task exists
-     * @param isSolutionVisible a boolean that indicates if a student can compare it's solution
+     * @param isSolutionVeryfiable a boolean that indicates if a student can compare it's solution
+     * @param isSolutionVisible a boolean that indicates if a solution can be used for the solutionsheet
      */
     constructor(
         id: string,
