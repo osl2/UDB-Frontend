@@ -40,7 +40,7 @@ describe('CourseList.vue', () => {
             },
             store,
         });
-        const removeButton = wrapper.find('button');
+        const removeButton = wrapper.find('button.bg-danger');
         removeButton.trigger('click');
         //Event was in fact fired
         expect(wrapper.emitted().removeCourse).to.have.length(1);
