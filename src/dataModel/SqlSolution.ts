@@ -50,7 +50,7 @@ export default class SqlSolution extends Solution {
         this._values = value;
     }
     public static fromJSON(json: any): SqlSolution {
-        return new SqlSolution(json.query, json.columns, json.rows);
+        return new SqlSolution(json.sql.query, json.sql.columns, json.sql.rows);
     }
 
     private _querySolution: string;

@@ -33,7 +33,7 @@ export default class PlainTextSolution extends Solution {
      * thing the other way around. This is needed to store objects in the server or to read them.
      */
     public static fromJSON(json: any): PlainTextSolution {
-        return new PlainTextSolution(json.text);
+        return new PlainTextSolution(json.plaintext.text);
     }
     private _text: string;
 
