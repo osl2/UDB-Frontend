@@ -48,8 +48,8 @@ import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
             </b-button>
             <b-button
                 v-if="currentSubtask.isSolutionVisible"
-                :disabled="!queryExecuted"
                 id="compareSolutionButtonSQL"
+                :disabled="!queryExecuted"
                 class="mt-2 ml-2"
                 @click="$emit('compare', subtaskSolution)"
             >
