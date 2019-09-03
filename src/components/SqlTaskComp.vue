@@ -39,6 +39,7 @@ import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
             </div>
 
             <b-button
+                id="saveExecutedQueryButtonSQL"
                 v-b-popover.hover="$t('sqlTaskComp.save')"
                 :disabled="!queryExecuted"
                 class="mt-2"
@@ -158,8 +159,8 @@ export default class SqlTaskComp extends Vue {
     }
 
     /*
-     Checks if only select statements are allowed to display an info if that's the ccase.
-     */
+         Checks if only select statements are allowed to display an info if that's the ccase.
+         */
     private isOnlySelectAllowed(): boolean {
         const subtask = this.currentSubtask as SqlTask;
         if (subtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
@@ -169,8 +170,8 @@ export default class SqlTaskComp extends Vue {
     }
 
     /*
-    checks if the query the student created only uses sql statements that are allowed to use in the subtask
-     */
+        checks if the query the student created only uses sql statements that are allowed to use in the subtask
+         */
     checkAllowedSqlStatements(query: string): boolean {
         const tempSubtask = this.currentSubtask as SqlTask;
         if (tempSubtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
