@@ -404,9 +404,9 @@ export default class WorksheetController extends ApiControllerAbstract
                             const typedSubtask = subtask as MultipleChoiceTask;
                             if (typedSubtask.solution !== undefined && typedSubtask.isSolutionVisible) {
                                 const solution = typedSubtask.solution as MultipleChoiceSolution;
-                                let content: string | undefined;
+                                let content: string = '';
                                 for (const [index, answerOption] of typedSubtask.answerOptions.entries()) {
-                                    if (content !== undefined) {
+                                    if (content.length > 0) {
                                         content += '\n';
                                     }
                                     if (solution.choices.includes(index)) {
