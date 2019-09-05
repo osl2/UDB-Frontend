@@ -20,6 +20,9 @@ library.add(faUpload, faCloudUploadAlt);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false;
+
+// profiling
+Vue.config.performance = true;
 // here
 Vue.use(VueI18n);
 
