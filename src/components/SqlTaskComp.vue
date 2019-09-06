@@ -161,7 +161,7 @@ export default class SqlTaskComp extends Vue {
     /*
          Checks if only select statements are allowed to display an info if that's the ccase.
          */
-    private isOnlySelectAllowed(): boolean {
+    get isOnlySelectAllowed(): boolean {
         const subtask = this.currentSubtask as SqlTask;
         if (subtask.allowedSqlStatements === AllowedSqlStatements.SelectStatements) {
             return true;
