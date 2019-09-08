@@ -126,7 +126,9 @@ export default class StartpageTeacher extends Vue {
     public removeCourse(course: Course) {
         if (
             confirm(((this.$t('teacher.alertCourse') as string) +
+                ' ' +
                 course.name +
+                ' ' +
                 this.$t('teacher.alertDelete')) as string)
         ) {
             this.courseController
@@ -229,7 +231,9 @@ export default class StartpageTeacher extends Vue {
     private deleteDatabase(database: Database) {
         if (
             confirm(((this.$t('teacher.alertDatabase') as string) +
+                ' ' +
                 database.name +
+                ' ' +
                 this.$t('teacher.alertDelete')) as string)
         ) {
             this.databaseController
