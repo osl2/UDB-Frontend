@@ -38,7 +38,7 @@
             <b-input-group>
                 <b-form-input
                     v-model="subtask.solution.querySolution"
-                    :placeholder="$t('subtaskCreation.verifiable')"
+                    :placeholder="$t('subtaskCreation.solution')"
                     @change="change()"
                 ></b-form-input>
                 <b-input-group-append>
