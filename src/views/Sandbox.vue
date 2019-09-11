@@ -95,7 +95,10 @@ export default class Sandbox extends Vue {
                 const options = {
                     easing: 'ease-in',
                 };
-                VueScrollTo.scrollTo('#queryRes', 500, options);
+                if (query.match(/.*(select).*/i)) {
+                    //If query is SELECT Statement scroll to result table
+                    VueScrollTo.scrollTo('#queryRes', 500, options);
+                }
 
                 // this is not optimal because select requests does not need to replace database in storage neither metadata
                 // fix by implementing the logic by detecting query type (select, update or delete)

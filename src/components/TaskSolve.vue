@@ -127,7 +127,10 @@ export default class TaskSolve extends Vue {
                 const options = {
                     easing: 'ease-in',
                 };
-                VueScrollTo.scrollTo('#queryRes', 500, options);
+                if (query.match(/.*(select).*/i)) {
+                    //If query is SELECT Statement scroll to result table
+                    VueScrollTo.scrollTo('#queryRes', 500, options);
+                }
                 dbComponent.loadMetaData();
                 this.gotFirstQueryExecuted = true;
                 this.lastQueryExecuted = query;
