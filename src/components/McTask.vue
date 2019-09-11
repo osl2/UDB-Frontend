@@ -19,7 +19,7 @@
             :content="$t('hoverText.saveMessageStudentWorksheet')"
         ></b-popover>
         <b-button
-            v-show="currentSubtask.isSolutionVisible"
+            v-show="currentSubtask.isSolutionVeryfiable"
             id="compareSolutionButtonMC"
             class="mt-2 ml-2"
             @click="$emit('compare', subtaskSolution)"

@@ -48,7 +48,7 @@ import AllowedSqlStatements from "../dataModel/AllowedSqlStatements";
                 {{ $t('taskComp.save') }}
             </b-button>
             <b-button
-                v-if="currentSubtask.isSolutionVisible"
+                v-if="currentSubtask.isSolutionVeryfiable"
                 id="compareSolutionButtonSQL"
                 :disabled="!queryExecuted"
                 class="mt-2 ml-2"
