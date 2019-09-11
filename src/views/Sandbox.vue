@@ -2,6 +2,7 @@
     <div>
         <HelpButton :help-msg="$t('helpMessages.sandbox')"></HelpButton>
         <DatabaseComponent
+            id="databaseComponent"
             ref="databaseComponent"
             element-id="sandbox-dropzone-db"
             show-export-import="true"
@@ -98,6 +99,9 @@ export default class Sandbox extends Vue {
                 if (query.match(/.*(select).*/i)) {
                     //If query is SELECT Statement scroll to result table
                     VueScrollTo.scrollTo('#queryRes', 500, options);
+                } else if (query.match(/.*(create).*/i)) {
+                    //If query is CREATE Statement scroll to database overview
+                    VueScrollTo.scrollTo('#databaseComponent', 500, options);
                 }
 
                 // this is not optimal because select requests does not need to replace database in storage neither metadata

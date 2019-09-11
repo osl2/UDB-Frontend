@@ -8,7 +8,7 @@
         </div>
         <div class="containerDatabase">
             <h3>{{ $t('taskSolve.dbOverview') }}</h3>
-            <DatabaseComponent ref="databaseComponent" :element-id="task.id"></DatabaseComponent>
+            <DatabaseComponent id="databaseComponent" ref="databaseComponent" :element-id="task.id"></DatabaseComponent>
         </div>
         <!--Loads the component that matches the type of the current Subtask -->
         <div class="my-3">
@@ -130,6 +130,9 @@ export default class TaskSolve extends Vue {
                 if (query.match(/.*(select).*/i)) {
                     //If query is SELECT Statement scroll to result table
                     VueScrollTo.scrollTo('#queryRes', 500, options);
+                } else if (query.match(/.*(create).*/i)) {
+                    //If query is CREATE Statement scroll to database overview
+                    VueScrollTo.scrollTo('#databaseComponent', 500, options);
                 }
                 dbComponent.loadMetaData();
                 this.gotFirstQueryExecuted = true;
