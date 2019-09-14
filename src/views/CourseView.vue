@@ -187,12 +187,15 @@ export default class CourseView extends Vue {
 
     public deleteWorksheet(worksheet: Worksheet) {
         if (confirm(this.$t('course.alertDelete') as string)) {
-            this.worksheetController
-                .remove(worksheet)
+            this.course.worksheetIds = this.course.worksheetIds.filter((id: string) => id !== worksheet.id);
+            this.courseController
+                .save(this.course)
                 .then(() => {
                     this.worksheets = this.worksheets.filter((ws: Worksheet) => ws.id !== worksheet.id);
                 })
                 .catch(error => {
+                    // if the removing fails, add the worksheet to the course again in the frontend
+                    this.course.worksheetIds.push(worksheet.id);
                     switch (error.status) {
                         case 500:
                             alert(this.$t('apiError.server500') as string);
