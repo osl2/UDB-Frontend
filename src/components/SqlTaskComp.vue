@@ -135,17 +135,10 @@ export default class SqlTaskComp extends Vue {
         return new SqlSolution(this.queryResult.query, this.queryResult.result.columns, values);
     }
 
-    created() {
-        if (this.solutions.has(this.currentSubtask.id)) {
-            const solution: SqlSolution = this.solutions.get(this.currentSubtask.id) as SqlSolution;
-            this.executeQuery(solution.querySolution);
-        }
-    }
-
     mounted() {
         if (this.solutions.has(this.currentSubtask.id)) {
             const solution: SqlSolution = this.solutions.get(this.currentSubtask.id) as SqlSolution;
-            this.executeQuery(solution.querySolution);
+            this.$emit('prepareSolution', solution);
         }
     }
 

@@ -22,6 +22,7 @@
                     @save="saveSubtask"
                     @executeQuery="executeQuery"
                     @compare="compare"
+                    @prepareSolution="prepareSolution"
                 ></SqlTaskComp>
             </div>
             <div v-else-if="typeOfSubtask() === 2">
@@ -82,6 +83,7 @@ import Database from '@/dataModel/Database';
 import InstructionTaskComp from '@/components/InstructionTaskComp.vue';
 import SQLExecutor from '@/controller/SQLExecutor';
 import QueryResult from '@/dataModel/QueryResult';
+import SqlSolution from '@/dataModel/SqlSolution';
 
 @Component({
     components: {
@@ -116,6 +118,19 @@ export default class TaskSolve extends Vue {
         this.initDatabase();
     }
 
+    public prepareSolution(solution: SqlSolution) {
+        this.gotFirstQueryExecuted = true;
+        this.lastQueryExecuted = solution.querySolution;
+        this.queryResult = {
+            query: solution.querySolution,
+            result: {
+                status: 0,
+                message: 'form storage',
+                columns: solution.columns,
+                values: solution.values,
+            },
+        };
+    }
     /*
                 method executes the query created by the student and checks if only allowed Statements are used
                 */
