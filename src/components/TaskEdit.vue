@@ -93,7 +93,7 @@ library.add(faTrash, faAngleDown, faArrowsAltV, faPlus);
     },
 })
 export default class TaskEdit extends Vue {
-    @Prop() private databases: Database[] = [];
+    @Prop() private databases!: Database[];
     @Prop() private initialTask!: Task;
     @Prop() private eventBus!: Vue; // bus to send save()-command to subtasks
 
@@ -104,8 +104,8 @@ export default class TaskEdit extends Vue {
     private task: Task = new Task('', '', '', []);
     private database!: Database;
     private databaseNumber: number = 0;
-    private dbOptions: Array<{ text: string; value: string }> = [];
     private subtasks: Subtask[] = [];
+    private dbOptions: Array<{ text: string; value: string }> = [];
     private resultBus: Vue = new Vue(); // bus to send result of sql query to sql-subtask-component
 
     /*
@@ -124,7 +124,9 @@ export default class TaskEdit extends Vue {
                 this.databaseNumber = dbNr;
             });
         }
-
+        for (const database of this.databases) {
+            this.dbOptions.push({ text: database.name, value: database.id });
+        }
         this.subtaskController
             .getChildren(this.task)
             .then((subtasks: Subtask[]) => {
@@ -164,13 +166,6 @@ export default class TaskEdit extends Vue {
                         break;
                 }
             });
-    }
-
-    @Watch('databases')
-    public onDbChange() {
-        for (const database of this.databases) {
-            this.dbOptions.push({ text: database.name, value: database.id });
-        }
     }
 
     public save() {
@@ -217,7 +212,7 @@ export default class TaskEdit extends Vue {
    the data of the component.
    */
     public deleteTask() {
-        if (confirm(this.$t('taskCreation.alertDelete') as string)) {
+        if (confirm(this.$t('subtaskCreation.alertDelete') as string)) {
             this.$emit('delete', this.task);
         }
     }
