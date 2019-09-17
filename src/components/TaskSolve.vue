@@ -117,12 +117,16 @@ export default class TaskSolve extends Vue {
     }
 
     /*
-            method executes the query created by the student and checks if only allowed Statements are used
-            */
+                method executes the query created by the student and checks if only allowed Statements are used
+                */
     public executeQuery(query: string) {
         this.initDatabase().then((v: void) => {
             const dbComponent: DatabaseComponent = (this.$refs.databaseComponent as unknown) as DatabaseComponent;
             const dbNumber = dbComponent.$data.databaseNumber;
+            if (dbNumber == 0) {
+                //db component not fully initialized
+                return;
+            }
             this.sqlExecutor
                 .executeQuery(dbNumber, query, 0)
                 .then((queryResult: QueryResult) => {
@@ -138,11 +142,14 @@ export default class TaskSolve extends Vue {
                         //If query is CREATE Statement scroll to database overview
                         VueScrollTo.scrollTo('#databaseComponent', 500, options);
                     }
+                    dbComponent.loadMetaData();
                     this.gotFirstQueryExecuted = true;
                     this.lastQueryExecuted = query;
                 })
                 .catch((e: string) => {
-                    alert(e);
+                    if (this.initHappened) {
+                        alert(e);
+                    }
                 });
         });
     }
