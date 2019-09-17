@@ -158,6 +158,10 @@ const de = {
         alertDelete: 'Aufgabe wirklich löschen? Dies kann nicht mehr rückgängig gemacht werden.',
         alertNoName: 'Bitte geben Sie einen Namen an.',
     },
+    taskEdit: {
+        name: 'Aufgabenname',
+        database: 'Datenbank',
+    },
     teacherWorksheet: {
         successfulSave: 'Speichern erfolgreich.',
         name: 'Name des Aufgabenblatts',
