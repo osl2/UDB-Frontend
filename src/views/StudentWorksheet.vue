@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 
 import Worksheet from '@/dataModel/Worksheet.ts';
 import Task from '@/dataModel/Task';
@@ -66,6 +66,12 @@ import SubtaskService from '@/services/SubtaskService';
 import DataManagementService from '@/services/DataManagementService';
 import Database from '@/dataModel/Database';
 import SolutionDiff from '@/dataModel/SolutionDiff';
+import LocalStorageController from '@/controller/LocalStorageController';
+import MultipleChoiceSolution from '@/dataModel/MultipleChoiceSolution';
+import SqlSolution from '@/dataModel/SqlSolution';
+import PlainTextSolution from '@/dataModel/PlainTextSolution';
+
+const SOLUTION_STORAGE_KEY = 'studentSolution';
 
 @Component({
     components: {
@@ -80,7 +86,7 @@ export default class StudentWorksheet extends Vue {
     private tasks: Task[] = [];
 
     // the solution maps an id of a subtask to the students solution.
-    private solutions: Map<string, Solution> = new Map<string, Solution>();
+    // private solutions: Map<string, Solution> = new Map<string, Solution>();
     private showSheetInstructions: boolean = true;
 
     // Attributes for the current chosen Task and Subtasks
@@ -95,6 +101,7 @@ export default class StudentWorksheet extends Vue {
     private taskController: ParentService<Worksheet, Task> = this.$store.getters.taskController;
     private subtaskController: SubtaskService = this.$store.getters.subtaskController;
     private databaseController: DataManagementService<Database> = this.$store.getters.databaseController;
+    private localStorageController: LocalStorageController = this.$store.getters.localStorageController;
 
     public created() {
         this.worksheetController = this.$store.getters.worksheetController;
@@ -141,15 +148,45 @@ export default class StudentWorksheet extends Vue {
 
     // methods
     /*
-       Exports the solutions the student created for the worksheet
-       */
+               Exports the solutions the student created for the worksheet
+               */
     public exportSheet() {
         this.worksheetController.exportObject(this.worksheet, this.solutions);
     }
 
+    get solutions(): Map<string, Solution> {
+        if (this.localStorageController.get(SOLUTION_STORAGE_KEY) === undefined) {
+            const init = new Map<string, Solution>();
+            const value = JSON.stringify(Array.from(init.entries()));
+            this.localStorageController.set(SOLUTION_STORAGE_KEY, value, false, false, true);
+            return init;
+        } else {
+            const tmp = this.localStorageController.get(SOLUTION_STORAGE_KEY) as [string, any][];
+            const array: [string, Solution][] = [];
+            tmp.forEach((value, index) => {
+                if (value[1]._choices) {
+                    array.push([value[0], new MultipleChoiceSolution(value[1]._choices)]);
+                } else if (value[1]._querySolution) {
+                    array.push([
+                        value[0],
+                        new SqlSolution(value[1]._querySolution, value[1]._columns, value[1]._values),
+                    ]);
+                } else if (value[1]._text) {
+                    array.push([value[0], new PlainTextSolution(value[1]._text)]);
+                }
+            });
+            return new Map<string, Solution>(array);
+        }
+    }
+
+    set solutions(solutions: Map<string, Solution>) {
+        const value = JSON.stringify(Array.from(solutions.entries()));
+        this.localStorageController.set(SOLUTION_STORAGE_KEY, value, false, false, true);
+    }
+
     /*
-       imports a previously exported solution
-       */
+               imports a previously exported solution
+               */
     public importSheet(event: Event) {
         const target = event.target as (HTMLInputElement & Event);
         const files = target!.files!;
@@ -164,15 +201,15 @@ export default class StudentWorksheet extends Vue {
     }
 
     /*
-       exports the solutions the student created for the worksheet as a pdf
-       */
+               exports the solutions the student created for the worksheet as a pdf
+               */
     public exportSheetAsPDF() {
         this.worksheetController.exportPDF(this.worksheet, this.solutions);
     }
 
     /*
-       changes the Component to display the task that should be solved
-       */
+               changes the Component to display the task that should be solved
+               */
     public openTask(task: Task, subtasks: Subtask[]) {
         this.showSheetInstructions = false;
         this.setCurrentTask(task, subtasks, 0);
@@ -187,8 +224,8 @@ export default class StudentWorksheet extends Vue {
     }
 
     /*
-       loads the subtask that is placed before the current task in the array of subtasks assigned to the task
-       */
+               loads the subtask that is placed before the current task in the array of subtasks assigned to the task
+               */
     public prevSubtask() {
         if (this.subtaskIndex === 0) {
             return;
@@ -199,8 +236,8 @@ export default class StudentWorksheet extends Vue {
     }
 
     /*
-       loads the subtask that is placed after the current task in the array of subtasks assigned to the task
-       */
+               loads the subtask that is placed after the current task in the array of subtasks assigned to the task
+               */
     public nextSubtask() {
         if (this.subtaskIndex === this.currentMatchingSubtasks.length - 1) {
             return;
@@ -211,18 +248,21 @@ export default class StudentWorksheet extends Vue {
     }
 
     /*
-       saves the solution the student created
-       */
+               saves the solution the student created
+               */
     public save(subtaskId: string, subtaskSolution: Solution) {
         if (subtaskSolution === undefined) {
             alert(this.$t('studentWorksheet.alertSolutionUndefined') as string);
             return;
         }
+        const solutionFromStorage = this.solutions;
         // There should always just be one solution per subtask.
-        if (this.solutions.has(subtaskId)) {
-            this.solutions.delete(subtaskId);
+        if (solutionFromStorage.has(subtaskId)) {
+            solutionFromStorage.delete(subtaskId);
         }
-        this.solutions.set(subtaskId, subtaskSolution);
+        solutionFromStorage.set(subtaskId, subtaskSolution);
+        this.solutions = solutionFromStorage;
+
         alert(this.$t('studentWorksheet.alertSave') as string);
     }
 
@@ -241,9 +281,9 @@ export default class StudentWorksheet extends Vue {
     }
 
     /*
-       compares the solution of the subtask created by the student with the solution the teacher provided
+               compares the solution of the subtask created by the student with the solution the teacher provided
 
-       */
+               */
     public compare(subtaskSolution: Solution) {
         this.currentSubtask.solution = subtaskSolution;
         this.save(this.currentSubtask.id, this.currentSubtask.solution);
@@ -277,15 +317,15 @@ export default class StudentWorksheet extends Vue {
     }
 
     /*
-       opens file upload dialog
-       */
+               opens file upload dialog
+               */
     private uploadTrigger(event: Event) {
         document.getElementById('fileUpload')!.click();
     }
 
     /* sets the current Task to the task provided. Also sets the current subtask to the subtask that can be found at
-       the provided index in the array of subtasks provided.
-       */
+               the provided index in the array of subtasks provided.
+               */
     private setCurrentTask(task: Task, subtasks: Subtask[], index: number) {
         this.currentTask = task;
         this.currentMatchingSubtasks = subtasks;

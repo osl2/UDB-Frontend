@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import DatabaseComponent from '@/components/DatabaseComponent.vue';
 import SqlTaskComp from '@/components/SqlTaskComp.vue';
 import McTask from '@/components/McTask.vue';
@@ -105,6 +105,8 @@ export default class TaskSolve extends Vue {
     private queryResult: QueryResult = {} as QueryResult;
     private gotFirstQueryExecuted: boolean = false;
     private lastQueryExecuted: string = '';
+    // variable to ensure that database is initialized only once.
+    private initHappened: boolean = false;
 
     public created() {
         this.sqlExecutor = this.$store.getters.sqlExecutor;
@@ -113,39 +115,42 @@ export default class TaskSolve extends Vue {
     public mounted() {
         this.initDatabase();
     }
+
     /*
-        method executes the query created by the student and checks if only allowed Statements are used
-        */
+            method executes the query created by the student and checks if only allowed Statements are used
+            */
     public executeQuery(query: string) {
-        const dbComponent: DatabaseComponent = (this.$refs.databaseComponent as unknown) as DatabaseComponent;
-        const dbNumber = dbComponent.$data.databaseNumber;
-        this.sqlExecutor
-            .executeQuery(dbNumber, query, 0)
-            .then((queryResult: QueryResult) => {
-                this.queryResult = queryResult;
-                const VueScrollTo = require('vue-scrollto');
-                const options = {
-                    easing: 'ease-in',
-                };
-                if (query.match(/.*(select).*/i)) {
-                    //If query is SELECT Statement scroll to result table
-                    VueScrollTo.scrollTo('#queryRes', 500, options);
-                } else if (query.match(/.*(create).*/i)) {
-                    //If query is CREATE Statement scroll to database overview
-                    VueScrollTo.scrollTo('#databaseComponent', 500, options);
-                }
-                dbComponent.loadMetaData();
-                this.gotFirstQueryExecuted = true;
-                this.lastQueryExecuted = query;
-            })
-            .catch((e: string) => {
-                alert(e);
-            });
+        this.initDatabase().then((v: void) => {
+            const dbComponent: DatabaseComponent = (this.$refs.databaseComponent as unknown) as DatabaseComponent;
+            const dbNumber = dbComponent.$data.databaseNumber;
+            this.sqlExecutor
+                .executeQuery(dbNumber, query, 0)
+                .then((queryResult: QueryResult) => {
+                    this.queryResult = queryResult;
+                    const VueScrollTo = require('vue-scrollto');
+                    const options = {
+                        easing: 'ease-in',
+                    };
+                    if (query.match(/.*(select).*/i)) {
+                        //If query is SELECT Statement scroll to result table
+                        VueScrollTo.scrollTo('#queryRes', 500, options);
+                    } else if (query.match(/.*(create).*/i)) {
+                        //If query is CREATE Statement scroll to database overview
+                        VueScrollTo.scrollTo('#databaseComponent', 500, options);
+                    }
+                    this.gotFirstQueryExecuted = true;
+                    this.lastQueryExecuted = query;
+                })
+                .catch((e: string) => {
+                    alert(e);
+                });
+        });
     }
 
     @Watch('database')
     public onDatabaseChange(value: Database, oldValue: Database) {
         if (value !== oldValue) {
+            this.initHappened = false;
             this.initDatabase();
             return;
         }
@@ -165,9 +170,13 @@ export default class TaskSolve extends Vue {
     /*
      * opens the database provided through props
      */
-    public initDatabase() {
-        const dbComponent: DatabaseComponent = (this.$refs.databaseComponent as unknown) as DatabaseComponent;
-        dbComponent.postInit(Promise.resolve(this.database));
+    public initDatabase(): Promise<void> {
+        if (!this.initHappened) {
+            this.initHappened = true;
+            const dbComponent: DatabaseComponent = (this.$refs.databaseComponent as unknown) as DatabaseComponent;
+            return dbComponent.postInit(Promise.resolve(this.database));
+        }
+        return Promise.resolve();
     }
 
     private typeOfSubtask(): number {
@@ -194,6 +203,7 @@ export default class TaskSolve extends Vue {
     background-color: #17a2b8;
     color: white;
 }
+
 .containerDatabase {
     margin-bottom: 20px;
 }
