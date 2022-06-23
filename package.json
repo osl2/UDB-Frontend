@@ -68,7 +68,7 @@
     "geckodriver": "^1.16.2",
     "husky": "^3.0.4",
     "istanbul-instrumenter-loader": "^3.0.1",
-    "jsdom": "^15.1.1",
+    "jsdom": "^16.5.0",
     "jsdom-global": "^3.0.2",
     "lint-staged": "^9.2.3",
     "node-sass": "^4.9.0",
